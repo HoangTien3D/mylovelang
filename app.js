@@ -270,7 +270,6 @@ let userState = {
   unlockedMemories: JSON.parse(localStorage.getItem("otome_memories")) || [],
   unreadMessages: JSON.parse(localStorage.getItem("otome_unread")) || { ren: 0, bao: 0, julian: 0 },
   isPouting: JSON.parse(localStorage.getItem("otome_pouting")) || { ren: false, bao: false, julian: false },
-  unrepliedCount: JSON.parse(localStorage.getItem("otome_unreplied_count")) || { ren: 0, bao: 0, julian: 0 },
   showRomaji: localStorage.getItem("otome_show_romaji") !== "false",
 };
 
@@ -506,9 +505,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCharactersList();
   renderRoadmap();
   
-  // Initial Convex Sync & Start 30-Second Periodic Auto-Sync Engine
+  // Initial Convex Sync
   syncUserDataToConvex("Initial app load sync");
-  startConvexAutoSyncEngine();
 });
 
 // Timer for Session Analytics
@@ -970,11 +968,9 @@ function openChatroom(charId) {
   activeCharacterId = charId;
   analyticsData.characterInteractions[charId]++;
   
-  // Clear unread, pout status, and unreplied count when opening chat
+  // Clear unread and pout status when opening chat
   userState.unreadMessages[charId] = 0;
   userState.isPouting[charId] = false;
-  if (!userState.unrepliedCount) userState.unrepliedCount = { ren: 0, bao: 0, julian: 0 };
-  userState.unrepliedCount[charId] = 0;
   lastUserReplyTime[charId] = Date.now();
   lastMessageWasLi[charId] = false;
   saveLocalState();
@@ -1289,14 +1285,6 @@ function addUserMessageToHistory(text) {
     time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   });
   userState.chatHistories[activeCharacterId] = history;
-
-  // Reset unreplied tracking & pout state when user responds
-  if (!userState.unrepliedCount) userState.unrepliedCount = { ren: 0, bao: 0, julian: 0 };
-  userState.unrepliedCount[activeCharacterId] = 0;
-  userState.isPouting[activeCharacterId] = false;
-  lastUserReplyTime[activeCharacterId] = Date.now();
-  lastMessageWasLi[activeCharacterId] = false;
-
   saveLocalState();
   renderChatHistory();
 }
@@ -1601,14 +1589,6 @@ function startCheckUpAndPoutEngine() {
       const char = CHARACTERS[charId];
       if (!char) return;
 
-      if (!userState.unrepliedCount) userState.unrepliedCount = { ren: 0, bao: 0, julian: 0 };
-      const unreplied = userState.unrepliedCount[charId] || 0;
-
-      // STOP spamming if the character has sent 3 consecutive messages without user response
-      if (unreplied >= 3) {
-        return;
-      }
-
       // 1. Spontaneous Check-Up Trigger (~25-35s idle check)
       const timeSinceCheckup = now - (lastLiCheckupTime[charId] || 0);
       const timeSinceUserReply = now - (lastUserReplyTime[charId] || 0);
@@ -1631,7 +1611,6 @@ function startCheckUpAndPoutEngine() {
 
             lastLiCheckupTime[charId] = now;
             lastMessageWasLi[charId] = true;
-            userState.unrepliedCount[charId] = (userState.unrepliedCount[charId] || 0) + 1;
 
             if (activeCharacterId !== charId) {
               userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
@@ -1642,7 +1621,7 @@ function startCheckUpAndPoutEngine() {
 
             saveLocalState();
             renderChatList();
-            logDashboardEvent(`💬 Check-Up Message (${userState.unrepliedCount[charId]}/3) sent by ${char.name}`);
+            logDashboardEvent(`💬 Check-Up Message sent by ${char.name}`);
             return;
           }
         }
@@ -1666,7 +1645,6 @@ function startCheckUpAndPoutEngine() {
 
           userState.isPouting[charId] = true;
           userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
-          userState.unrepliedCount[charId] = (userState.unrepliedCount[charId] || 0) + 1;
           lastMessageWasLi[charId] = false;
 
           showNotificationToast(char, pout.text, true);
@@ -1677,7 +1655,7 @@ function startCheckUpAndPoutEngine() {
 
           saveLocalState();
           renderChatList();
-          logDashboardEvent(`💢 ${char.name} got impatient (${userState.unrepliedCount[charId]}/3) & sent pout message!`);
+          logDashboardEvent(`💢 ${char.name} got impatient & sent pout message!`);
         }
       }
     });
@@ -1759,7 +1737,6 @@ function saveLocalState() {
   localStorage.setItem("otome_memories", JSON.stringify(userState.unlockedMemories));
   localStorage.setItem("otome_unread", JSON.stringify(userState.unreadMessages));
   localStorage.setItem("otome_pouting", JSON.stringify(userState.isPouting));
-  localStorage.setItem("otome_unreplied_count", JSON.stringify(userState.unrepliedCount || { ren: 0, bao: 0, julian: 0 }));
 }
 
 // Synchronize User Data to Convex Cloud (`/sync-user`)
@@ -1774,20 +1751,6 @@ async function syncUserDataToConvex(reason = "") {
       streak: userState.streak,
       tiers: userState.currentTiers,
       affection: userState.affection,
-      chatStep: userState.chatStep,
-      chatHistories: userState.chatHistories,
-      unlockedMemories: userState.unlockedMemories,
-      unreadMessages: userState.unreadMessages,
-      isPouting: userState.isPouting,
-      unrepliedCount: userState.unrepliedCount,
-      activities: {
-        totalClicks: analyticsData.clicks,
-        answersSubmitted: analyticsData.answersSubmitted,
-        timeSpentSeconds: analyticsData.timeSpentSeconds,
-        apiCalls: analyticsData.apiCalls,
-        convexSyncCount: analyticsData.convexSyncCount,
-        characterInteractions: analyticsData.characterInteractions,
-      },
       syncedAt: new Date().toISOString(),
       syncReason: reason,
     };
@@ -1811,14 +1774,6 @@ async function syncUserDataToConvex(reason = "") {
     if (statusEl) statusEl.textContent = "🔴 Sync Offline";
     logDashboardEvent(`Convex [/sync-user] fetch error: ${err.message}`);
   }
-}
-
-// 30-Second Periodic Auto-Sync Engine to Convex
-function startConvexAutoSyncEngine() {
-  setInterval(() => {
-    syncUserDataToConvex("Automated 30-second activity & user data sync");
-    uploadAnalyticsToConvex();
-  }, 30000);
 }
 
 // Upload Analytics Telemetry Payload to Convex Cloud (`/analytics`)
