@@ -1,0 +1,6 @@
+{
+  "name": "Otome Lingua",
+  "description": "A Duolingo competitor disguised as a Mystic Messenger style Otome dating simulation with 10-tier difficulty progression, OpenRouter Gemma-4 integration, Convex sync, and hidden analytics dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

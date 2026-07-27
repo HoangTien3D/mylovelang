@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Otome | My Love Language</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <!-- Main Mobile App Frame -->
+  <div class="app-container" id="appFrame">
+    
+    <!-- Mystic Messenger Status Bar -->
+    <div class="status-bar">
+      <span class="clock" id="liveClock">11:42 PM</span>
+      <span>My Love Language</span>
+      <span id="signalBattery">📶 5G  🔋 98%</span>
+    </div>
+
+    <!-- Floating LI Incoming Message / Pout Toast Notification Banner -->
+    <div id="liNotificationToast" class="li-toast-banner" style="display:none;">
+      <img id="toastAvatar" src="" class="toast-avatar" alt="Avatar" />
+      <div class="toast-content">
+        <div class="toast-header">
+          <span id="toastName" class="toast-name">Ren Takahashi</span>
+          <span id="toastTag" class="toast-tag">💬 Incoming Message</span>
+        </div>
+        <div id="toastText" class="toast-text">ねえ、今何してる？</div>
+      </div>
+      <button id="toastReplyBtn" class="toast-action-btn">Reply</button>
+    </div>
+
+    <!-- App Top Navigation Header -->
+    <header class="app-header">
+      <div class="app-brand">
+        <div class="app-logo-icon">❤️</div>
+        <div>
+          <h1 class="app-title">My Love Language</h1>
+        </div>
+      </div>
+
+      <div class="user-stats-bar">
+        <div class="stat-chip streak" title="Daily Learning Streak">
+          <span>🔥</span> <span id="userStreak">5</span>
+        </div>
+        <div class="stat-chip hearts" title="Affection Hearts Earned">
+          <span>❤️</span> <span id="userHearts">285</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Views Content Area -->
+    <main class="main-content">
+
+      <!-- VIEW 1: CHATROOMS LIST -->
+      <section class="view-section active" id="view-chats">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>Messenger Chats</span>
+            <span style="font-size:12px; color:var(--accent-emerald);" id="convexSyncStatus">🟢 Convex Synced</span>
+          </h2>
+          <p class="section-subtitle">Select a Love Interest to start learning & chatting</p>
+        </div>
+
+        <div class="chat-list" id="chatListContainer">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </section>
+
+      <!-- VIEW 2: CHARACTERS PROFILES -->
+      <section class="view-section" id="view-characters">
+        <div class="section-header">
+          <h2 class="section-title">Love Interests</h2>
+          <p class="section-subtitle">Unlock memories, relationship levels & special CGs</p>
+        </div>
+
+        <div id="charactersListContainer">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </section>
+
+      <!-- VIEW 3: 10-TIER PROGRESSION ROADMAP -->
+      <section class="view-section" id="view-progress">
+        <div class="section-header">
+          <h2 class="section-title">10-Tier Difficulty Progression</h2>
+          <p class="section-subtitle">From Baby Talk (MC) to Advanced Free-Form Romance</p>
+        </div>
+
+        <div class="tier-roadmap" id="roadmapContainer">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </section>
+
+      <!-- VIEW 4: SETTINGS & OPENROUTER API KEY -->
+      <section class="view-section" id="view-settings">
+        <div class="section-header">
+          <h2 class="section-title">Messenger Settings</h2>
+          <p class="section-subtitle">Configure AI model & Convex Cloud connection</p>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-label">
+            <span>🔑 OpenRouter API Key</span>
+            <span id="keySavedStatus" style="color:var(--accent-emerald); font-size:11px;">Key Active</span>
+          </div>
+          <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+            Uses model: <code style="color:var(--accent-emerald);">google/gemma-4-26b-a4b-it:free</code>
+          </p>
+          <input type="password" id="openRouterKeyInput" class="setting-input" placeholder="sk-or-v1-..." />
+          <button class="primary-btn" id="saveKeyBtn">Save API Key to LocalStorage</button>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-label">☁️ Convex Cloud Backend Sync</div>
+          <p style="font-size:11px; color:var(--text-muted);">
+            HTTP Actions URL: <code style="color:var(--accent-gold);">https://wary-reindeer-174.convex.site</code>
+          </p>
+          <button class="primary-btn" id="manualSyncBtn" style="background: linear-gradient(135deg, #059669, #2563eb); color:#fff;">
+            Sync Progress Now to Convex
+          </button>
+        </div>
+
+        <div class="settings-group" style="border: 1px solid rgba(230, 0, 92, 0.35); background: rgba(230, 0, 92, 0.04);">
+          <div class="settings-label" style="color: var(--primary-pink); display:flex; align-items:center; gap:6px;">
+            <span>🔄 Reset Story & Chat Progress</span>
+          </div>
+          <p style="font-size:11px; color:var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+            Wipe all chat histories, reset affection levels back to initial nonchalant states, and restart story choices for a fresh experience.
+          </p>
+          <button class="primary-btn" id="resetStoryBtn" type="button" style="background: linear-gradient(135deg, #e6005c, #b30047); color:#fff;">
+            Reset All Story Progress & Replay
+          </button>
+          <div id="resetSuccessMessage" style="display:none; margin-top:10px; padding:8px 12px; background:rgba(5, 150, 105, 0.1); border:1px solid rgba(5, 150, 105, 0.3); border-radius:10px; font-size:12px; font-weight:700; color:var(--accent-emerald); text-align:center;">
+            ✓ All story progress and chat histories have been reset!
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTIVE CHATROOM OVERLAY SCREEN -->
+      <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+          <button class="back-btn" id="closeChatBtn">←</button>
+          <img src="" id="chatHeaderAvatar" class="chat-header-avatar" alt="LI Avatar" />
+          <div class="chat-header-info">
+            <div class="chat-header-name" id="chatHeaderName">
+              Ren Takahashi <span id="chatHeaderFlag">🇯🇵</span>
+            </div>
+            <div class="chat-header-sub">
+              <span>● Online</span> | <span id="chatHeaderTier">Tier 1: Baby Talk</span> | <span id="chatHeaderAffection">❤️ 45%</span>
+            </div>
+          </div>
+          <button id="romajiToggleBtn" type="button" style="background: rgba(217, 0, 87, 0.08); border: 1px solid rgba(217, 0, 87, 0.3); color: var(--primary-pink); border-radius: 12px; padding: 5px 10px; font-size: 11px; font-weight: 800; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;">
+            🔤 Romaji: ON
+          </button>
+        </div>
+
+        <!-- Chat History Message Stream -->
+        <div class="chat-history" id="chatHistory">
+          <!-- Populated dynamically by app.js -->
+        </div>
+
+        <!-- Dynamic Chat Input Controls (Swaps based on Tier) -->
+        <div class="chat-controls">
+          <div class="tier-input-indicator">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <span id="tierModeLabel" style="font-weight:700;">Tier 1</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <label for="tierSelectDropdown" style="font-size:11px; color:var(--text-muted); font-weight:700;">Select Level:</label>
+                <select id="tierSelectDropdown" class="tier-dropdown-select">
+                  <option value="1">Tier 1: Baby Talk (Greetings)</option>
+                  <option value="2">Tier 2: First Impressions</option>
+                  <option value="3">Tier 3: Coffee Date</option>
+                  <option value="4">Tier 4: Word Builder</option>
+                  <option value="5">Tier 5: Daily Routines</option>
+                  <option value="6">Tier 6: Flirting & Compliments</option>
+                  <option value="7">Tier 7: Heart-to-Heart</option>
+                  <option value="8">Tier 8: Advanced Romance</option>
+                  <option value="9">Tier 9: Poetic Fluency</option>
+                  <option value="10">Tier 10: Soulmate Mastery</option>
+                </select>
+              </div>
+            </div>
+            <span style="color:var(--primary-pink); font-size:11px;" id="tierHeartMultiplier">+10 ❤️ / answer</span>
+          </div>
+
+          <!-- Tier 1-3: Multiple Choice Container -->
+          <div class="mc-options-container" id="mcContainer">
+            <!-- Dynamic choice buttons inserted here -->
+          </div>
+
+          <!-- Tier 4-7: Word Bank / Sentence Builder -->
+          <div class="word-bank-container" id="wordBankContainer" style="display:none;">
+            <div class="prompt-guide" id="wordBankPromptGuide">Translate: "Good morning! Did you sleep well?"</div>
+            <div class="constructed-sentence-box" id="constructedSentenceBox">
+              <span style="color:var(--text-muted); font-size:12px;" id="constructedPlaceholder">Click words below to build sentence...</span>
+            </div>
+            <div class="word-chips-grid" id="wordChipsGrid"></div>
+            <button class="primary-btn" id="submitSentenceBtn" style="padding:8px; font-size:12px;">Send Built Sentence</button>
+          </div>
+
+          <!-- Tier 8-10: Free-Form Text Chat -->
+          <div class="text-input-bar" id="freeInputContainer" style="display:none;">
+            <input type="text" id="freeChatInput" class="chat-input" placeholder="Type message in target language..." />
+            <button class="send-btn" id="sendFreeMsgBtn">➤</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Bottom Tab Navigation Bar -->
+    <nav class="tab-bar">
+      <button class="tab-btn active" data-tab="chats">
+        <span class="tab-icon">💬</span>
+        <span>Chats</span>
+      </button>
+      <button class="tab-btn" data-tab="characters">
+        <span class="tab-icon">👥</span>
+        <span>LIs</span>
+      </button>
+      <button class="tab-btn" data-tab="progress">
+        <span class="tab-icon">🏆</span>
+        <span>Roadmap</span>
+      </button>
+      <button class="tab-btn" data-tab="settings">
+        <span class="tab-icon">⚙️</span>
+        <span>Settings</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- API KEY INITIAL SETUP MODAL (Shown if key missing, can be dismissed) -->
+  <div id="apiKeyModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(10,5,20,0.88); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:1000; padding:20px;">
+    <div style="background:var(--bg-card); border:1px solid var(--primary-pink); border-radius:24px; padding:24px; max-width:400px; width:100%; box-shadow:0 10px 40px rgba(255,51,119,0.3);">
+      <h2 style="font-size:20px; font-weight:800; color:#fff; margin-bottom:8px;">Welcome to Otome Lingua! ❤️</h2>
+      <p style="font-size:13px; color:var(--text-muted); line-height:1.4; margin-bottom:16px;">
+        To unlock real-time Gemma 4 AI responses for Japanese, Vietnamese, and English romance chats, enter your <strong>OpenRouter API Key</strong>. It will be stored safely in your browser's <code>localStorage</code>.
+      </p>
+      <input type="password" id="modalKeyInput" class="setting-input" placeholder="sk-or-v1-..." style="margin-bottom:12px;" />
+      <div style="display:flex; gap:10px;">
+        <button class="primary-btn" id="saveModalKeyBtn" style="flex:1;">Save Key & Play</button>
+        <button id="skipModalKeyBtn" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:var(--text-muted); padding:10px 14px; border-radius:12px; font-size:12px; cursor:pointer;">
+          Play with Fallback AI
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECRET ANALYTICS DASHBOARD OVERLAY (CTRL + SHIFT + ALT) -->
+  <div class="secret-dashboard-overlay" id="secretDashboard">
+    <div class="dash-header">
+      <div class="dash-title">
+        <span>⚡ MLL TELEMETRY & MANAGEMENT DASHBOARD</span>
+      </div>
+      <button id="closeDashBtn" style="background:transparent; border:1px solid #00ffcc; color:#00ffcc; padding:4px 12px; border-radius:6px; cursor:pointer; font-family:monospace;">
+        CLOSE [ESC]
+      </button>
+    </div>
+
+    <p style="font-size:12px; color:#80ffe5; margin-bottom:16px;">
+      Secret shortcut triggered (CTRL + SHIFT + ALT). Monitoring real-time user interactions, LLM calls, and Convex cloud syncs.
+    </p>
+
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-val" id="dashTotalClicks">0</div>
+        <div class="dash-lbl">Total UI Clicks</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-val" id="dashAnswersSubmitted">0</div>
+        <div class="dash-lbl">Answers Submitted</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-val" id="dashTimeSpent">00:00:00</div>
+        <div class="dash-lbl">Session Time Spent</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-val" id="dashApiCalls">0</div>
+        <div class="dash-lbl">OpenRouter API Calls</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-val" id="dashTotalHearts">285</div>
+        <div class="dash-lbl">Total Affection Hearts</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-val" id="dashConvexSyncCount">0</div>
+        <div class="dash-lbl">Convex HTTP Syncs</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px; display:flex; gap:12px; align-items:center;">
+      <button id="dashUploadBtn" style="background:#00ffcc; color:#000; border:none; padding:12px 20px; border-radius:8px; font-weight:bold; font-family:monospace; cursor:pointer; box-shadow:0 0 15px #00ffcc;">
+        🚀 Upload Analytics to Convex (`/analytics`)
+      </button>
+      <span id="dashUploadStatus" style="font-size:12px; color:#fff;">Status: Ready</span>
+    </div>
+
+    <div style="font-size:13px; font-weight:bold; color:#00ffcc; margin-bottom:6px;">LIVE LOG CONSOLE:</div>
+    <div class="dash-log-box" id="dashLogBox">
+      [SYSTEM] Secret Dashboard Initialized.<br/>
+      [KEYBIND] CTRL + SHIFT + ALT active listener attached.<br/>
+    </div>
+  </div>
+
+  <!-- MEMORY CG UNLOCK POPUP MODAL -->
+  <div id="memoryUnlockModal" class="modal-overlay" style="display:none;">
+    <div class="modal-card memory-unlock-card">
+      <div class="memory-unlock-sparkles">✨ 💖 ✨</div>
+      <div class="memory-unlock-badge">NEW MEMORY CG UNLOCKED!</div>
+      
+      <!-- CG Card Frame -->
+      <div id="unlockCgFrame" class="memory-cg-frame">
+        <div id="unlockCgIcon" class="cg-icon">🎸</div>
+        <div id="unlockCgTitle" class="cg-title">Moonlight Strumming</div>
+        <div id="unlockCgSub" class="cg-sub">25% Affection Milestone</div>
+      </div>
+
+      <div class="memory-quote-box">
+        <div id="unlockQuoteText" class="memory-quote">"君の聴いている顔が、すごく綺麗だった。"</div>
+        <div id="unlockQuoteRomaji" class="memory-romaji">Kimi no kiite iru kao ga, sugoku kirei datta.</div>
+        <div id="unlockQuoteTrans" class="memory-translation">💬 "The expression on your face as you listened was so beautiful."</div>
+      </div>
+
+      <p id="unlockDescText" class="memory-desc">
+        After practice, Ren played a gentle solo acoustic song just for you under the silver moonlight.
+      </p>
+
+      <div style="display:flex; gap:10px; width:100%; margin-top:16px;">
+        <button id="openGalleryBtn" class="primary-btn" style="flex:1; background: linear-gradient(135deg, #7c3aed, #db2777);">
+          🖼️ View Gallery
+        </button>
+        <button id="closeUnlockModalBtn" class="primary-btn" style="flex:1;">
+          ❤️ Continue Romance
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEMORY GALLERY MODAL -->
+  <div id="memoryGalleryModal" class="modal-overlay" style="display:none;">
+    <div class="modal-card gallery-modal-card">
+      <div class="gallery-header">
+        <div>
+          <h2 style="font-size:18px; font-weight:800; color:#fff; display:flex; align-items:center; gap:6px;">
+            🖼️ Romantic Memory CG Gallery
+          </h2>
+          <p style="font-size:11px; color:var(--text-muted);">Unlock CGs at 25%, 50%, 75%, and 100% affection milestones!</p>
+        </div>
+        <button id="closeGalleryModalBtn" class="close-modal-icon">✕</button>
+      </div>
+
+      <div class="gallery-filter-tabs">
+        <button class="gallery-tab active" data-filter="all">All LIs</button>
+        <button class="gallery-tab" data-filter="ren">Ren 🇯🇵</button>
+        <button class="gallery-tab" data-filter="bao">Bao 🇻🇳</button>
+        <button class="gallery-tab" data-filter="julian">Julian 🇬🇧</button>
+      </div>
+
+      <div class="gallery-grid" id="galleryGridContainer">
+        <!-- Populated dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
