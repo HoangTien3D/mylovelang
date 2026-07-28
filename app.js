@@ -21,7 +21,7 @@ const CHARACTERS = {
     greeting: "あ、こんにちは。何か用ですか？",
     romaji: "A, konnichiwa. Nani ka you desu ka?",
     greetingTranslation: "Ah, hello. Did you need something?",
-    greetingTip: "'Nani ka you desu ka?' means 'Did you need something?' in a calm, neutral tone.",
+    greetingTip: "'Nani ka you desu ka?' (何か用ですか) means 'Did you need something?'. 'Konnichiwa' (こんにちは) is the standard Japanese greeting for 'Hello'.",
     sampleVoice: "Gentle Japanese tenor",
   },
   bao: {
@@ -34,7 +34,7 @@ const CHARACTERS = {
     personality: "Laid-back, nonchalant barista. Starts cool and casual, but gets intrigued as you chat in Vietnamese.",
     greeting: "Chào em. Em muốn gọi món gì không?",
     greetingTranslation: "Hello. Would you like to order anything?",
-    greetingTip: "'Em muốn gọi món gì không?' is a standard way to ask for an order.",
+    greetingTip: "'Chào em' is 'Hello'. 'Em muốn gọi món gì không?' is a standard polite way to ask a customer for their order in a Vietnamese cafe.",
     sampleVoice: "Warm energetic baritone",
   },
   julian: {
@@ -47,7 +47,7 @@ const CHARACTERS = {
     personality: "Composed, intellectual scholar. Starts reserved, but gets charmed as you chat.",
     greeting: "Good day. Did you need something?",
     greetingTranslation: "Good day. Did you need something?",
-    greetingTip: "'Good day' is a polite formal greeting.",
+    greetingTip: "'Good day' is a formal polite greeting. 'Did you need something?' is a reserved, thoughtful inquiry.",
     sampleVoice: "Refined British scholar",
   }
 };
@@ -60,7 +60,7 @@ const STORY_TREES = {
         greeting: "あ、こんにちは。何か用ですか？",
         romaji: "A, konnichiwa. Nani ka you desu ka?",
         greetingTranslation: "Ah, hello. Did you need something?",
-        greetingTip: "'Nani ka you desu ka?' (何か用ですか) means 'Did you need something?'.",
+        greetingTip: "'Nani ka you desu ka?' (何か用ですか) means 'Did you need something?'. 'Konnichiwa' means 'Hello'.",
         options: [
           { text: "Konnichiwa, Ren-san. O-jama desu ka?", hint: "Hello Ren. Am I bothering you?" },
           { text: "Ren-san no guitar, kikitai desu.", hint: "I'd like to hear your guitar playing." },
@@ -71,7 +71,7 @@ const STORY_TREES = {
         greeting: "邪魔じゃないですよ。少し話しをしましょう。",
         romaji: "Jama ja nai desu yo. Sukoshi hanashi wo shimashou.",
         greetingTranslation: "You're not bothering me. Let's talk a little bit.",
-        greetingTip: "'Jama ja nai' (邪魔じゃない) means 'not in the way / not bothering'.",
+        greetingTip: "'Jama ja nai' (邪魔じゃない) means 'not in the way / not bothering'. 'Sukoshi hanashi wo shimashou' means 'let's talk a little'.",
         options: [
           { text: "Arigatou gozaimasu! Ren-san, kirei desu ne.", hint: "Thank you! Ren, that sounds lovely." },
           { text: "Renshuu no ato, o-cha wo nomimashou ka?", hint: "Shall we drink tea after practice?" },
@@ -82,7 +82,7 @@ const STORY_TREES = {
         greeting: "そう言われると、少し照れますね。",
         romaji: "Sou iwareru to, sukoshi teremasu ne.",
         greetingTranslation: "When you say that, I get a little embarrassed.",
-        greetingTip: "'Teremasu' (照れます) means to feel shy or embarrassed.",
+        greetingTip: "'Teremasu' (照れます) means to feel shy or embarrassed. 'Sou iwareru to' means 'when told that'.",
         options: [
           { text: "Motto Ren-san wo shiritai desu!", hint: "I want to know more about you, Ren!" },
           { text: "Ren-san ga hohoemu to, glad desu.", hint: "When you smile, I feel happy." },
@@ -93,7 +93,7 @@ const STORY_TREES = {
         greeting: "実は、あなたと話すのが楽しみでした。",
         romaji: "Jitsu wa, anata to hanasu no ga tanoshimi deshita.",
         greetingTranslation: "Actually, I was looking forward to talking with you.",
-        greetingTip: "'Tanoshimi' (楽しみ) means 'looking forward to something'.",
+        greetingTip: "'Jitsu wa' (実は) means 'actually/in truth'. 'Tanoshimi deshita' (楽しみでした) means 'was looking forward to'.",
         options: [
           { text: "Hai! Ashita mo kanarazu aimashou.", hint: "Yes! Let's definitely meet tomorrow." },
           { text: "Ren-san no soba ni itai desu.", hint: "I want to stay by your side, Ren." },
@@ -104,7 +104,7 @@ const STORY_TREES = {
         greeting: "約束です。感謝しています。",
         romaji: "Yakusoku desu. Kansha shite imasu.",
         greetingTranslation: "It's a promise. I am truly grateful.",
-        greetingTip: "'Yakusoku' (約束) means promise. 'Kansha' (感謝) means gratitude.",
+        greetingTip: "'Yakusoku' (約束) means promise. 'Kansha shite imasu' (感謝しています) means 'I am feeling grateful'.",
         options: [
           { text: "Ren-san no smile ga my favorite desu.", hint: "Your smile is my favorite." },
           { text: "Issho ni iru jikan ga happy desu.", hint: "Time spent together makes me happy." },
@@ -135,7 +135,7 @@ const STORY_TREES = {
       {
         greeting: "Chào em. Em muốn gọi món gì không?",
         greetingTranslation: "Hello. Would you like to order anything?",
-        greetingTip: "'Em muốn gọi món gì không?' is a standard way to ask for an order.",
+        greetingTip: "'Em muốn gọi món gì không?' is a standard way to ask for a coffee or food order in Vietnamese.",
         options: [
           { text: "Xin chào anh Bao! Cho em một ly cà phê ạ.", hint: "Hello Bao! Give me a coffee please." },
           { text: "Anh Bao bận rộn quá nhỉ!", hint: "You look busy, Bao!" },
@@ -145,7 +145,7 @@ const STORY_TREES = {
       {
         greeting: "Ồ, em nói tiếng Việt à? Rất dễ thương.",
         greetingTranslation: "Oh, you speak Vietnamese? Very cute.",
-        greetingTip: "'Dễ thương' means cute.",
+        greetingTip: "'Nói tiếng Việt' means 'speak Vietnamese'. 'Dễ thương' means 'cute/sweet'.",
         options: [
           { text: "Cà phê anh pha ngon tuyệt vời!", hint: "The coffee you brewed is wonderful!" },
           { text: "Cảm ơn anh Bao nhé!", hint: "Thank you so much, Bao!" },
@@ -155,7 +155,7 @@ const STORY_TREES = {
       {
         greeting: "Nói chuyện với em rất vui.",
         greetingTranslation: "Talking with you is very fun.",
-        greetingTip: "'Nói chuyện' means talking, and 'rất vui' means very fun.",
+        greetingTip: "'Nói chuyện' means 'talking/chatting'. 'Rất vui' means 'very fun/happy'.",
         options: [
           { text: "Em cũng thích nói chuyện với anh Bao!", hint: "I also love chatting with you, Bao!" },
           { text: "Mỗi ngày em sẽ ghé thăm anh.", hint: "I will visit you every day." },
@@ -165,7 +165,7 @@ const STORY_TREES = {
       {
         greeting: "Ở lại uống cà phê với anh chút nữa nhé?",
         greetingTranslation: "Stay and drink coffee with me a bit longer okay?",
-        greetingTip: "'Chút nữa' means a bit longer.",
+        greetingTip: "'Ở lại' means 'stay'. 'Chút nữa' means 'a bit longer'.",
         options: [
           { text: "Vâng ạ! Em rất muốn ở lại cùng anh.", hint: "Yes! I really want to stay with you." },
           { text: "Mình vừa uống cà phê vừa ngắm phố nhé!", hint: "Let's drink coffee and watch the street!" },
@@ -201,7 +201,7 @@ const STORY_TREES = {
       {
         greeting: "Curious about books? That is wonderful.",
         greetingTranslation: "Curious about books? That is wonderful.",
-        greetingTip: "'Wonderful' expresses delight or admiration.",
+        greetingTip: "'Curious' means eager to learn or know. 'Wonderful' expresses delight.",
         options: [
           { text: "Classical literature has a timeless charm.", hint: "Thoughtful reply" },
           { text: "I find your taste in books sophisticated.", hint: "Subtle compliment" },
@@ -211,7 +211,7 @@ const STORY_TREES = {
       {
         greeting: "I am really enjoying our chat today.",
         greetingTranslation: "I am really enjoying our chat today.",
-        greetingTip: "'Enjoying' means deriving pleasure from an activity.",
+        greetingTip: "'Enjoying' means taking pleasure in an interaction.",
         options: [
           { text: "I'm delighted to hear that, Julian.", hint: "Warm agreement" },
           { text: "Shall we share a warm cup of tea together?", hint: "Casual offer" },
@@ -221,7 +221,7 @@ const STORY_TREES = {
       {
         greeting: "I was hoping you would visit today.",
         greetingTranslation: "I was hoping you would visit today.",
-        greetingTip: "'Hoping' means holding a wish or desire.",
+        greetingTip: "'Hoping' expresses a gentle desire or wish.",
         options: [
           { text: "I was looking forward to seeing you too.", hint: "Reciprocating interest" },
           { text: "I'll always visit whenever you wish.", hint: "Devoted promise" },
@@ -439,38 +439,38 @@ const MEMORY_CARDS = [
 // Spontaneous LI Check-Up Messages Pool
 const SPONTANEOUS_CHECKUPS = {
   ren: [
-    { text: "ねえ、今何してる？", romaji: "Nee, ima nani shiteru?", translation: "Hey, what are you doing right now?", tip: "'Nee' is a friendly casual way to catch someone's attention." },
-    { text: "ギターの練習が終わったよ。少し話せる？", romaji: "Guitar no renshuu ga owatta yo. Sukoshi hanaseru?", translation: "Finished guitar practice. Can we talk for a bit?", tip: "'Sukoshi hanaseru?' means 'Can we talk for a little bit?'" },
-    { text: "静かだな…君の声が聞きたくなった。", romaji: "Shizuka da na... Kimi no koe ga kikitaku natta.", translation: "It's quiet... I wanted to hear your voice.", tip: "'Kikitaku natta' means 'came to want to hear'." }
+    { text: "ねえ、今何してる？", romaji: "Nee, ima nani shiteru?", translation: "Hey, what are you doing right now?", tip: "'Nee' is a casual way to catch attention. 'Ima' (今) means 'now'. 'Nani shiteru?' (何してる) means 'what are you doing?'." },
+    { text: "ギターの練習が終わったよ。少し話せる？", romaji: "Guitar no renshuu ga owatta yo. Sukoshi hanaseru?", translation: "Finished guitar practice. Can we talk for a bit?", tip: "'Renshuu' (練習) means 'practice'. 'Sukoshi hanaseru?' (少し話せる) means 'Can we talk a little bit?'." },
+    { text: "静かだな…君の声が聞きたくなった。", romaji: "Shizuka da na... Kimi no koe ga kikitaku natta.", translation: "It's quiet... I wanted to hear your voice.", tip: "'Shizuka' (静か) means 'quiet'. 'Koe' (声) means 'voice'. 'Kikitaku natta' means 'became wanting to hear'." }
   ],
   bao: [
-    { text: "Em ơi, rảnh không? Anh vừa pha ly cà phê mới nè!", translation: "Hey, free? I just brewed a fresh cup of coffee!", tip: "'Rảnh không?' means 'Are you free?'" },
-    { text: "Đang làm gì đấy? Có nhớ anh không?", translation: "What are you doing? Do you miss me?", tip: "'Có nhớ anh không?' means 'Do you miss me?'" },
-    { text: "Quán vắng quá, ước gì có em ở đây nói chuyện.", translation: "The cafe is so quiet today, I wish you were here chatting with me.", tip: "'Ước gì' means 'I wish'." }
+    { text: "Em ơi, rảnh không? Anh vừa pha ly cà phê mới nè!", translation: "Hey, are you free? I just brewed a fresh cup of coffee!", tip: "'Em ơi' is a sweet form of address. 'Rảnh không?' means 'Are you free?'. 'Pha cà phê' means 'brew coffee'." },
+    { text: "Đang làm gì đấy? Có nhớ anh không?", translation: "What are you doing? Do you miss me?", tip: "'Đang làm gì' means 'what are you doing'. 'Nhớ anh' means 'miss me'." },
+    { text: "Quán vắng quá, ước gì có em ở đây nói chuyện.", translation: "The cafe is so quiet today, I wish you were here chatting with me.", tip: "'Quán vắng' means quiet cafe. 'Ước gì' means 'I wish'. 'Nói chuyện' means 'to chat'." }
   ],
   julian: [
-    { text: "Are you free at the moment? I stumbled upon a fascinating poem.", translation: "Are you free at the moment? I stumbled upon a fascinating poem.", tip: "'Fascinating' means captivating and full of charm." },
-    { text: "I found myself thinking of you while reading by the window.", translation: "I found myself thinking of you while reading by the window.", tip: "A sincere expression of affection." },
-    { text: "Good day! Just wanted to hear how your afternoon is going.", translation: "Good day! Just wanted to hear how your afternoon is going.", tip: "A polite and thoughtful check-in." }
+    { text: "Are you free at the moment? I stumbled upon a fascinating poem.", translation: "Are you free at the moment? I stumbled upon a fascinating poem.", tip: "'Stumbled upon' means discovered by chance. 'Fascinating' means captivating." },
+    { text: "I found myself thinking of you while reading by the window.", translation: "I found myself thinking of you while reading by the window.", tip: "'Found myself thinking' describes a gentle, spontaneous romantic thought." },
+    { text: "Good day! Just wanted to hear how your afternoon is going.", translation: "Good day! Just wanted to hear how your afternoon is going.", tip: "A polite, refined British inquiry checking in on your day." }
   ]
 };
 
 // Impatient Pout Messages Pool (Mad if no response fast enough)
 const POUT_MESSAGES = {
   ren: [
-    { text: "…返事遅い。忙しいの？ 💢", romaji: "...Henji osoi. Isogashii no?", translation: "...Slow reply. Are you busy?", tip: "'Henji osoi' means 'reply is slow'. 'Isogashii' means 'busy'." },
-    { text: "既読スルー？ひどいな… 💔", romaji: "Kidoku suruu? Hidoi na...", translation: "Left on read? That's mean...", tip: "'Kidoku suruu' is Japanese slang for leaving someone on read." },
-    { text: "返事してくれないと、もうギター弾かないよ。 😤", romaji: "Henji shite kurenai to, mou guitar hikanai yo.", translation: "If you don't answer, I won't play guitar anymore.", tip: "'Mou hikanai' means 'won't play anymore'." }
+    { text: "…返事遅い。忙しいの？ 💢", romaji: "...Henji osoi. Isogashii no?", translation: "...Slow reply. Are you busy?", tip: "'Henji' (返事) means 'reply'. 'Osoi' (遅い) means 'slow'. 'Isogashii' (忙しい) means 'busy'." },
+    { text: "既読スルー？ひどいな… 💔", romaji: "Kidoku suruu? Hidoi na...", translation: "Left on read? That's mean...", tip: "'Kidoku suruu' (既読スルー) is Japanese slang for leaving someone on read. 'Hidoi' (ひどい) means 'cruel/mean'." },
+    { text: "返事してくれないと、もうギター弾かないよ。 😤", romaji: "Henji shite kurenai to, mou guitar hikanai yo.", translation: "If you don't answer me, I won't play guitar anymore.", tip: "'Henji shite kurenai' means 'not replying'. 'Mou hikanai' means 'won't play anymore'." }
   ],
   bao: [
-    { text: "Sao không trả lời anh? Giận rồi đấy! 💢", translation: "Why aren't you answering me? I'm pouting now!", tip: "'Giận rồi' means 'getting angry / pouting'." },
-    { text: "Cà phê nguội hết rồi nè! Em bận gì à? ☕💔", translation: "The coffee got completely cold! What are you busy with?", tip: "'Nguội hết' means 'turned completely cold'." },
-    { text: "Đừng lờ tin nhắn của anh mà~ 🥺", translation: "Don't ignore my messages~", tip: "'Đừng lờ' means 'don't ignore'." }
+    { text: "Sao không trả lời anh? Giận rồi đấy! 💢", translation: "Why aren't you replying to me? I'm pouting now!", tip: "'Sao không' means 'why not'. 'Trả lời' means 'reply'. 'Giận' means 'pouting/getting mad'." },
+    { text: "Cà phê nguội hết rồi nè! Em bận gì à? ☕💔", translation: "The coffee has gone completely cold! Are you busy with something?", tip: "'Nguội' means cold (for drinks). 'Bận' means busy." },
+    { text: "Đừng lờ tin nhắn của anh mà~ 🥺", translation: "Please don't ignore my messages~", tip: "'Đừng' means 'don't'. 'Lờ' means 'ignore'. 'Tin nhắn' means 'text message'." }
   ],
   julian: [
-    { text: "Leaving my message unread? How terribly cruel of you... 💔", translation: "Leaving my message unread? How terribly cruel of you...", tip: "An expression of playful dramatic dismay." },
-    { text: "Did a vintage book catch your attention more than my message? 📖💢", translation: "Did a vintage book catch your attention more than my message?", tip: "'Catch attention' means to attract notice." },
-    { text: "I suppose I'll sit here waiting... impatiently. ⏳", translation: "I suppose I'll sit here waiting... impatiently.", tip: "Expressing eager or restless waiting." }
+    { text: "Leaving my message unread? How terribly cruel of you... 💔", translation: "Leaving my message unread? How terribly cruel of you...", tip: "'Terribly cruel' expresses playful dramatic dismay at being ignored." },
+    { text: "Did a vintage book catch your attention more than my message? 📖💢", translation: "Did a vintage book catch your attention more than my message?", tip: "'Catch attention' means to attract focus or interest." },
+    { text: "I suppose I'll sit here waiting... impatiently. ⏳", translation: "I suppose I'll sit here waiting... impatiently.", tip: "'Impatiently' expresses restless expectation while waiting for you." }
   ]
 };
 
@@ -506,9 +506,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCharactersList();
   renderRoadmap();
   
-  // Initial Convex Sync & Start 30-Second Periodic Auto-Sync Engine
+  // Initial Convex Sync
   syncUserDataToConvex("Initial app load sync");
-  startConvexAutoSyncEngine();
 });
 
 // Timer for Session Analytics
@@ -778,14 +777,12 @@ function initOpenRouterKey() {
 
 function updateKeySavedStatus(isSaved) {
   const statusEl = document.getElementById("keySavedStatus");
-  if (statusEl) {
-    if (isSaved) {
-      statusEl.textContent = "OpenRouter Key Active (Gemma 4)";
-      statusEl.style.color = "var(--accent-emerald)";
-    } else {
-      statusEl.textContent = "Gemma 4 Server AI Active";
-      statusEl.style.color = "var(--accent-emerald)";
-    }
+  if (isSaved) {
+    statusEl.textContent = "Key Active";
+    statusEl.style.color = "var(--accent-emerald)";
+  } else {
+    statusEl.textContent = "⚠️ Key Required";
+    statusEl.style.color = "var(--accent-coral)";
   }
 }
 
@@ -1303,52 +1300,126 @@ function addUserMessageToHistory(text) {
   renderChatHistory();
 }
 
-// LLM Integration with Gemma 4 via /api/chat backend
+// LLM Integration with Gemma 4 via OpenRouter API (API Key Strictly Required)
 async function triggerLLMResponse(userText, tierObj) {
   analyticsData.apiCalls++;
-  const openRouterKey = localStorage.getItem("openrouter_api_key");
+  const apiKey = localStorage.getItem("openrouter_api_key");
   const char = CHARACTERS[activeCharacterId];
 
   // Show "Typing..." indicator in chat
   showTypingIndicator(char);
 
+  if (!apiKey) {
+    removeTypingIndicator();
+    // Prompt user for API Key
+    document.getElementById("apiKeyModal").style.display = "flex";
+    
+    // Add system requirement message in history
+    const history = userState.chatHistories[activeCharacterId] || [];
+    history.push({
+      sender: "li",
+      text: `⚠️ API Key Required: An OpenRouter API key is required to receive LLM responses from ${char.name}. Please enter your key in Settings or the setup modal.`,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    });
+    userState.chatHistories[activeCharacterId] = history;
+    saveLocalState();
+    renderChatHistory();
+    return;
+  }
+
   let responseData = null;
 
   try {
-    logDashboardEvent(`Sending AI request to /api/chat for ${char.name}...`);
+    logDashboardEvent(`Sending OpenRouter API call (${OPENROUTER_MODEL}) for ${char.name}...`);
     
-    const res = await fetch("/api/chat", {
+    const prompt = `You are playing the role of ${char.name}, a handsome Otome dating sim character from Otome Lingua.
+Target Language taught: ${char.language}.
+Personality & Evolution Directive: ${char.personality}.
+
+CRITICAL SHORT TEXT RULE FOR BEGINNERS:
+- Keep 'characterResponse' EXTREMELY SHORT and simple (1 short sentence, 3 to 8 words maximum).
+- The user is a beginner language learner. Never write long, complex sentences or multiple paragraphs!
+
+CRITICAL DYNAMIC TONE INSTRUCTION:
+- You start off composed, cool, nonchalant, and slightly reserved or casual.
+- As the user chats and affection increases, you gradually become more interested, intrigued, warm, and subtly affectionate.
+
+Current User Difficulty Tier: ${tierObj.name}.
+User just said: "${userText}".
+
+CRITICAL LANGUAGE RULE:
+1. 'characterResponse' MUST BE 100% IN ${char.language.toUpperCase()} ONLY! Do NOT mix English inside 'characterResponse' (unless target language is English).
+${char.language === "Japanese" ? "2. CRITICAL JAPANESE ROMAJI RULE: Provide the exact Romanji (latin alphabet pronunciation) in 'romaji' (e.g. 'A, konnichiwa. Nani ka you desu ka?')." : "2. Set 'romaji' to null."}
+3. Provide full English translation in 'translation'.
+4. Provide a helpful grammar/vocabulary tip in 'tip'.
+5. Provide a gentle correction in 'fix' if the user made a grammar/vocab mistake (or null if none).
+6. For Tier 1-3, provide 3 short, simple options in ${char.language} for the user's NEXT turn in 'nextMcOptions': [{"text": "short phrase in ${char.language}", "hint": "English hint"}].
+
+Respond strictly in valid JSON format with these exact keys:
+{
+  "characterResponse": "short 100% ${char.language} text",
+  "romaji": ${char.language === "Japanese" ? '"Romanized reading"' : "null"},
+  "translation": "English translation",
+  "tip": "Grammar/vocab tip",
+  "fix": "Gentle correction or null",
+  "nextMcOptions": [
+    { "text": "Option 1", "hint": "Hint 1" },
+    { "text": "Option 2", "hint": "Hint 2" },
+    { "text": "Option 3", "hint": "Hint 3" }
+  ],
+  "affectionChange": 5
+}`;
+
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "HTTP-Referer": window.location.origin,
+        "X-Title": "Otome Lingua",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        characterId: activeCharacterId,
-        userText: userText,
-        tierName: tierObj.name,
-        openRouterKey: openRouterKey || null
+        model: OPENROUTER_MODEL,
+        messages: [
+          { role: "system", content: "You are a language tutor in a romantic Otome game. Always reply in valid JSON." },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.7,
       }),
     });
 
     if (res.ok) {
       const json = await res.json();
-      if (json.success && json.data) {
-        responseData = json.data;
-        if (responseData.nextMcOptions && responseData.nextMcOptions.length > 0) {
-          dynamicMcOptions[char.id] = responseData.nextMcOptions;
-        }
-        logDashboardEvent(`AI response received successfully (${json.engineUsed || 'Gemma 4'}).`);
+      const content = json.choices[0].message.content;
+      try {
+        responseData = JSON.parse(content);
+      } catch {
+        // If JSON wrapped in ```json block
+        const clean = content.replace(/```json/g, "").replace(/```/g, "").trim();
+        responseData = JSON.parse(clean);
       }
+      if (responseData && responseData.nextMcOptions) {
+        dynamicMcOptions[char.id] = responseData.nextMcOptions;
+      }
+      logDashboardEvent(`OpenRouter API response received successfully.`);
     } else {
-      logDashboardEvent(`Server /api/chat returned status ${res.status}.`);
+      logDashboardEvent(`OpenRouter API returned status ${res.status}.`);
+      throw new Error(`HTTP ${res.status}`);
     }
   } catch (err) {
-    logDashboardEvent(`AI request error: ${err.message}.`);
-  }
+    logDashboardEvent(`OpenRouter API call failed: ${err.message}.`);
+    removeTypingIndicator();
 
-  // Fallback Engine if API call failed
-  if (!responseData) {
-    responseData = generateFallbackResponse(char, userText, tierObj);
+    const history = userState.chatHistories[activeCharacterId] || [];
+    history.push({
+      sender: "li",
+      text: `⚠️ OpenRouter API Error: Unable to communicate with ${char.name}. Please check your API key in Settings. (${err.message})`,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    });
+    userState.chatHistories[activeCharacterId] = history;
+    saveLocalState();
+    renderChatHistory();
+    return;
   }
 
   // Remove typing indicator
@@ -1379,23 +1450,6 @@ async function triggerLLMResponse(userText, tierObj) {
 
   // Auto Sync to Convex Cloud
   syncUserDataToConvex(`Post-chat response sync (${char.name})`);
-}
-
-// Fallback Response Generator (100% Pure Target Language)
-function generateFallbackResponse(char, userText, tierObj) {
-  const tree = STORY_TREES[char.id] || STORY_TREES.ren;
-  const step = userState.chatStep[char.id] || 0;
-  const stageIndex = Math.min(step, tree.mcStages.length - 1);
-  const nextStage = tree.mcStages[stageIndex] || tree.mcStages[0];
-
-  return {
-    characterResponse: nextStage.greeting,
-    romaji: nextStage.romaji || null,
-    translation: nextStage.greetingTranslation,
-    tip: nextStage.greetingTip,
-    fix: userText.length < 3 ? "Tip: Try writing a slightly longer response for bonus affection points!" : null,
-    affectionChange: 10,
-  };
 }
 
 // Typing Indicator Helpers
@@ -1572,13 +1626,15 @@ function startCheckUpAndPoutEngine() {
             const checkup = pool[Math.floor(Math.random() * pool.length)];
 
             if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             userState.chatHistories[charId].push({
-              sender: charId,
+              sender: "li",
               text: checkup.text,
               romaji: checkup.romaji || null,
               translation: checkup.translation,
               tip: checkup.tip,
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              time: timeStr,
+              timestamp: timeStr
             });
 
             lastLiCheckupTime[charId] = now;
@@ -1607,13 +1663,15 @@ function startCheckUpAndPoutEngine() {
           const pout = pool[Math.floor(Math.random() * pool.length)];
 
           if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
+          const poutTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           userState.chatHistories[charId].push({
-            sender: charId,
+            sender: "li",
             text: pout.text,
             romaji: pout.romaji || null,
             translation: pout.translation,
             tip: pout.tip,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            time: poutTimeStr,
+            timestamp: poutTimeStr
           });
 
           userState.isPouting[charId] = true;
@@ -1726,20 +1784,6 @@ async function syncUserDataToConvex(reason = "") {
       streak: userState.streak,
       tiers: userState.currentTiers,
       affection: userState.affection,
-      chatStep: userState.chatStep,
-      chatHistories: userState.chatHistories,
-      unlockedMemories: userState.unlockedMemories,
-      unreadMessages: userState.unreadMessages,
-      isPouting: userState.isPouting,
-      unrepliedCount: userState.unrepliedCount,
-      activities: {
-        totalClicks: analyticsData.clicks,
-        answersSubmitted: analyticsData.answersSubmitted,
-        timeSpentSeconds: analyticsData.timeSpentSeconds,
-        apiCalls: analyticsData.apiCalls,
-        convexSyncCount: analyticsData.convexSyncCount,
-        characterInteractions: analyticsData.characterInteractions,
-      },
       syncedAt: new Date().toISOString(),
       syncReason: reason,
     };
@@ -1763,14 +1807,6 @@ async function syncUserDataToConvex(reason = "") {
     if (statusEl) statusEl.textContent = "🔴 Sync Offline";
     logDashboardEvent(`Convex [/sync-user] fetch error: ${err.message}`);
   }
-}
-
-// 30-Second Periodic Auto-Sync Engine to Convex
-function startConvexAutoSyncEngine() {
-  setInterval(() => {
-    syncUserDataToConvex("Automated 30-second activity & user data sync");
-    uploadAnalyticsToConvex();
-  }, 30000);
 }
 
 // Upload Analytics Telemetry Payload to Convex Cloud (`/analytics`)
