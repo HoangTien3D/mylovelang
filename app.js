@@ -9,6 +9,10 @@
 const CONVEX_HTTP_SITE = "https://wary-reindeer-174.convex.site";
 const OPENROUTER_MODEL = "google/gemma-4-26b-a4b-it:free";
 
+// PASTE YOUR OPENROUTER API KEY HERE IF YOU WANT IT HARDCODED IN CODE:
+// Example: const HARDCODED_OPENROUTER_API_KEY = "sk-or-v1-1234567890abcdef...";
+const HARDCODED_OPENROUTER_API_KEY = "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";
+
 // Character Definitions
 const CHARACTERS = {
   ren: {
@@ -411,10 +415,27 @@ function switchTab(tabName) {
 }
 
 // OpenRouter Key Management
+function getOpenRouterApiKey() {
+  if (typeof HARDCODED_OPENROUTER_API_KEY !== "undefined" && HARDCODED_OPENROUTER_API_KEY && HARDCODED_OPENROUTER_API_KEY.trim()) {
+    return HARDCODED_OPENROUTER_API_KEY.trim();
+  }
+  const localKey = localStorage.getItem("openrouter_api_key");
+  if (localKey) return localKey;
+  try {
+    if (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_OPENROUTER_API_KEY) {
+      return import.meta.env.VITE_OPENROUTER_API_KEY;
+    }
+  } catch (e) {
+    // Ignore env lookup error if not in bundler env
+  }
+  return "";
+}
+
 function initOpenRouterKey() {
-  const savedKey = localStorage.getItem("openrouter_api_key");
+  const savedKey = getOpenRouterApiKey();
   if (savedKey) {
-    document.getElementById("openRouterKeyInput").value = savedKey;
+    const inputEl = document.getElementById("openRouterKeyInput");
+    if (inputEl) inputEl.value = savedKey;
     updateKeySavedStatus(true);
   } else {
     updateKeySavedStatus(false);
@@ -949,7 +970,7 @@ function addUserMessageToHistory(text) {
 // LLM Integration with Gemma 4 via OpenRouter API
 async function triggerLLMResponse(userText, tierObj) {
   analyticsData.apiCalls++;
-  const apiKey = localStorage.getItem("openrouter_api_key");
+  const apiKey = getOpenRouterApiKey();
   const char = CHARACTERS[activeCharacterId];
 
   showTypingIndicator(char);
