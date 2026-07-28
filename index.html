@@ -31,7 +31,7 @@
       <button id="toastReplyBtn" class="toast-action-btn">Reply</button>
     </div>
 
-    <!-- App Top Navigation Header -->
+    <!-- App Top Navigation Header 
     <header class="app-header">
       <div class="app-brand">
         <div class="app-logo-icon">❤️</div>
@@ -48,7 +48,7 @@
           <span>❤️</span> <span id="userHearts">285</span>
         </div>
       </div>
-    </header>
+    </header> -->
 
     <!-- Main Dynamic Views Content Area -->
     <main class="main-content">
@@ -72,7 +72,7 @@
       <section class="view-section" id="view-characters">
         <div class="section-header">
           <h2 class="section-title">Love Interests</h2>
-          <p class="section-subtitle">Unlock memories, relationship levels & special CGs</p>
+          <p class="section-subtitle">Personality profiles, relationship levels & affection stats</p>
         </div>
 
         <div id="charactersListContainer">
@@ -160,7 +160,7 @@
           <!-- Populated dynamically by app.js -->
         </div>
 
-        <!-- Dynamic Chat Input Controls (Swaps based on Tier) -->
+        <!-- Dynamic Chat Input Controls (Sentence Builder & Free Text) -->
         <div class="chat-controls">
           <div class="tier-input-indicator">
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -168,7 +168,7 @@
               <div style="display:flex; align-items:center; gap:4px;">
                 <label for="tierSelectDropdown" style="font-size:11px; color:var(--text-muted); font-weight:700;">Select Level:</label>
                 <select id="tierSelectDropdown" class="tier-dropdown-select">
-                  <option value="1">Tier 1: Baby Talk (Greetings)</option>
+                  <option value="1">Tier 1: Greetings & Warm-up</option>
                   <option value="2">Tier 2: First Impressions</option>
                   <option value="3">Tier 3: Coffee Date</option>
                   <option value="4">Tier 4: Word Builder</option>
@@ -184,24 +184,29 @@
             <span style="color:var(--primary-pink); font-size:11px;" id="tierHeartMultiplier">+10 ❤️ / answer</span>
           </div>
 
-          <!-- Tier 1-3: Multiple Choice Container -->
-          <div class="mc-options-container" id="mcContainer">
-            <!-- Dynamic choice buttons inserted here -->
+          <!-- Input Feature Mode Selector (Sentence Builder vs Free Text) -->
+          <div class="input-mode-switcher" style="display:flex; gap:6px; margin-top:2px;">
+            <button id="modeSentenceBuilderBtn" class="mode-tab-btn active" type="button" style="flex:1; padding:8px 10px; border-radius:12px; font-weight:800; font-size:11.5px; border:1px solid var(--primary-pink); background:rgba(217, 0, 87, 0.12); color:var(--primary-pink); cursor:pointer; transition:all 0.2s ease;">
+              🧩 Sentence Builder
+            </button>
+            <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" style="flex:1; padding:8px 10px; border-radius:12px; font-weight:800; font-size:11.5px; border:1px solid rgba(160, 140, 190, 0.3); background:rgba(255,255,255,0.6); color:var(--text-muted); cursor:pointer; transition:all 0.2s ease;">
+              💬 Free Text Chat
+            </button>
           </div>
 
-          <!-- Tier 4-7: Word Bank / Sentence Builder -->
-          <div class="word-bank-container" id="wordBankContainer" style="display:none;">
-            <div class="prompt-guide" id="wordBankPromptGuide">Translate: "Good morning! Did you sleep well?"</div>
+          <!-- Feature 1: Contextual Word Bank / Sentence Builder -->
+          <div class="word-bank-container" id="wordBankContainer">
+            <div class="prompt-guide" id="wordBankPromptGuide">Build your reply in Japanese:</div>
             <div class="constructed-sentence-box" id="constructedSentenceBox">
-              <span style="color:var(--text-muted); font-size:12px;" id="constructedPlaceholder">Click words below to build sentence...</span>
+              <span style="color:var(--text-muted); font-size:12px;" id="constructedPlaceholder">Click word chips below to build your sentence...</span>
             </div>
             <div class="word-chips-grid" id="wordChipsGrid"></div>
-            <button class="primary-btn" id="submitSentenceBtn" style="padding:8px; font-size:12px;">Send Built Sentence</button>
+            <button class="primary-btn" id="submitSentenceBtn" style="padding:10px; font-size:12.5px; font-weight:800;">Send Built Sentence ❤️</button>
           </div>
 
-          <!-- Tier 8-10: Free-Form Text Chat -->
+          <!-- Feature 2: Free-Form Text Chat -->
           <div class="text-input-bar" id="freeInputContainer" style="display:none;">
-            <input type="text" id="freeChatInput" class="chat-input" placeholder="Type message in target language..." />
+            <input type="text" id="freeChatInput" class="chat-input" placeholder="Type custom message in target language..." />
             <button class="send-btn" id="sendFreeMsgBtn">➤</button>
           </div>
         </div>
@@ -300,66 +305,6 @@
     <div class="dash-log-box" id="dashLogBox">
       [SYSTEM] Secret Dashboard Initialized.<br/>
       [KEYBIND] CTRL + SHIFT + ALT active listener attached.<br/>
-    </div>
-  </div>
-
-  <!-- MEMORY CG UNLOCK POPUP MODAL -->
-  <div id="memoryUnlockModal" class="modal-overlay" style="display:none;">
-    <div class="modal-card memory-unlock-card">
-      <div class="memory-unlock-sparkles">✨ 💖 ✨</div>
-      <div class="memory-unlock-badge">NEW MEMORY CG UNLOCKED!</div>
-      
-      <!-- CG Card Frame -->
-      <div id="unlockCgFrame" class="memory-cg-frame">
-        <div id="unlockCgIcon" class="cg-icon">🎸</div>
-        <div id="unlockCgTitle" class="cg-title">Moonlight Strumming</div>
-        <div id="unlockCgSub" class="cg-sub">25% Affection Milestone</div>
-      </div>
-
-      <div class="memory-quote-box">
-        <div id="unlockQuoteText" class="memory-quote">"君の聴いている顔が、すごく綺麗だった。"</div>
-        <div id="unlockQuoteRomaji" class="memory-romaji">Kimi no kiite iru kao ga, sugoku kirei datta.</div>
-        <div id="unlockQuoteTrans" class="memory-translation">💬 "The expression on your face as you listened was so beautiful."</div>
-      </div>
-
-      <p id="unlockDescText" class="memory-desc">
-        After practice, Ren played a gentle solo acoustic song just for you under the silver moonlight.
-      </p>
-
-      <div style="display:flex; gap:10px; width:100%; margin-top:16px;">
-        <button id="openGalleryBtn" class="primary-btn" style="flex:1; background: linear-gradient(135deg, #7c3aed, #db2777);">
-          🖼️ View Gallery
-        </button>
-        <button id="closeUnlockModalBtn" class="primary-btn" style="flex:1;">
-          ❤️ Continue Romance
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MEMORY GALLERY MODAL -->
-  <div id="memoryGalleryModal" class="modal-overlay" style="display:none;">
-    <div class="modal-card gallery-modal-card">
-      <div class="gallery-header">
-        <div>
-          <h2 style="font-size:18px; font-weight:800; color:#fff; display:flex; align-items:center; gap:6px;">
-            🖼️ Romantic Memory CG Gallery
-          </h2>
-          <p style="font-size:11px; color:var(--text-muted);">Unlock CGs at 25%, 50%, 75%, and 100% affection milestones!</p>
-        </div>
-        <button id="closeGalleryModalBtn" class="close-modal-icon">✕</button>
-      </div>
-
-      <div class="gallery-filter-tabs">
-        <button class="gallery-tab active" data-filter="all">All LIs</button>
-        <button class="gallery-tab" data-filter="ren">Ren 🇯🇵</button>
-        <button class="gallery-tab" data-filter="bao">Bao 🇻🇳</button>
-        <button class="gallery-tab" data-filter="julian">Julian 🇬🇧</button>
-      </div>
-
-      <div class="gallery-grid" id="galleryGridContainer">
-        <!-- Populated dynamically by app.js -->
-      </div>
     </div>
   </div>
 

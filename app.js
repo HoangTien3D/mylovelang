@@ -1,14 +1,15 @@
 /**
  * Otome Lingua - App Logic Engine
  * Duolingo competitor disguised as Mystic Messenger Otome Sim
- * Features 10-Tier progression, Gemma 4 OpenRouter LLM, Convex Sync & Secret Telemetry Dashboard
+ * Features 10-Tier progression, Gemma 4 OpenRouter LLM, Contextual Sentence Builder,
+ * Free Text Chat, Convex Sync & Telemetry Dashboard
  */
 
 // Global Configuration
 const CONVEX_HTTP_SITE = "https://wary-reindeer-174.convex.site";
 const OPENROUTER_MODEL = "google/gemma-4-26b-a4b-it:free";
 
-// Character Definitions (Pure Target Language Greetings - Concise for Beginners)
+// Character Definitions
 const CHARACTERS = {
   ren: {
     id: "ren",
@@ -21,7 +22,7 @@ const CHARACTERS = {
     greeting: "あ、こんにちは。何か用ですか？",
     romaji: "A, konnichiwa. Nani ka you desu ka?",
     greetingTranslation: "Ah, hello. Did you need something?",
-    greetingTip: "'Nani ka you desu ka?' (何か用ですか) means 'Did you need something?'. 'Konnichiwa' (こんにちは) is the standard Japanese greeting for 'Hello'.",
+    greetingTip: "'Nani ka you desu ka?' (何か用ですか) means 'Did you need something?'. 'Konnichiwa' (こんにちは) is standard Japanese for 'Hello'.",
     sampleVoice: "Gentle Japanese tenor",
   },
   bao: {
@@ -34,7 +35,7 @@ const CHARACTERS = {
     personality: "Laid-back, nonchalant barista. Starts cool and casual, but gets intrigued as you chat in Vietnamese.",
     greeting: "Chào em. Em muốn gọi món gì không?",
     greetingTranslation: "Hello. Would you like to order anything?",
-    greetingTip: "'Chào em' is 'Hello'. 'Em muốn gọi món gì không?' is a standard polite way to ask a customer for their order in a Vietnamese cafe.",
+    greetingTip: "'Chào em' is 'Hello'. 'Em muốn gọi món gì không?' is a polite cafe greeting in Vietnamese.",
     sampleVoice: "Warm energetic baritone",
   },
   julian: {
@@ -47,216 +48,62 @@ const CHARACTERS = {
     personality: "Composed, intellectual scholar. Starts reserved, but gets charmed as you chat.",
     greeting: "Good day. Did you need something?",
     greetingTranslation: "Good day. Did you need something?",
-    greetingTip: "'Good day' is a formal polite greeting. 'Did you need something?' is a reserved, thoughtful inquiry.",
+    greetingTip: "'Good day' is a formal polite greeting. 'Did you need something?' is a reserved inquiry.",
     sampleVoice: "Refined British scholar",
-  }
-};
-
-// Progressive Story Trees for Dynamic Story Evolution (Concise phrases for beginner learners)
-const STORY_TREES = {
-  ren: {
-    mcStages: [
-      {
-        greeting: "あ、こんにちは。何か用ですか？",
-        romaji: "A, konnichiwa. Nani ka you desu ka?",
-        greetingTranslation: "Ah, hello. Did you need something?",
-        greetingTip: "'Nani ka you desu ka?' (何か用ですか) means 'Did you need something?'. 'Konnichiwa' means 'Hello'.",
-        options: [
-          { text: "Konnichiwa, Ren-san. O-jama desu ka?", hint: "Hello Ren. Am I bothering you?" },
-          { text: "Ren-san no guitar, kikitai desu.", hint: "I'd like to hear your guitar playing." },
-          { text: "Kyou wa nihongo wo renshuu shitai desu!", hint: "I want to practice Japanese today!" }
-        ]
-      },
-      {
-        greeting: "邪魔じゃないですよ。少し話しをしましょう。",
-        romaji: "Jama ja nai desu yo. Sukoshi hanashi wo shimashou.",
-        greetingTranslation: "You're not bothering me. Let's talk a little bit.",
-        greetingTip: "'Jama ja nai' (邪魔じゃない) means 'not in the way / not bothering'. 'Sukoshi hanashi wo shimashou' means 'let's talk a little'.",
-        options: [
-          { text: "Arigatou gozaimasu! Ren-san, kirei desu ne.", hint: "Thank you! Ren, that sounds lovely." },
-          { text: "Renshuu no ato, o-cha wo nomimashou ka?", hint: "Shall we drink tea after practice?" },
-          { text: "Anata no voice, calm desu ne.", hint: "Your voice is very calm." }
-        ]
-      },
-      {
-        greeting: "そう言われると、少し照れますね。",
-        romaji: "Sou iwareru to, sukoshi teremasu ne.",
-        greetingTranslation: "When you say that, I get a little embarrassed.",
-        greetingTip: "'Teremasu' (照れます) means to feel shy or embarrassed. 'Sou iwareru to' means 'when told that'.",
-        options: [
-          { text: "Motto Ren-san wo shiritai desu!", hint: "I want to know more about you, Ren!" },
-          { text: "Ren-san ga hohoemu to, glad desu.", hint: "When you smile, I feel happy." },
-          { text: "Ashita mo issho ni renshuu dekimasu ka?", hint: "Can we practice together again tomorrow?" }
-        ]
-      },
-      {
-        greeting: "実は、あなたと話すのが楽しみでした。",
-        romaji: "Jitsu wa, anata to hanasu no ga tanoshimi deshita.",
-        greetingTranslation: "Actually, I was looking forward to talking with you.",
-        greetingTip: "'Jitsu wa' (実は) means 'actually/in truth'. 'Tanoshimi deshita' (楽しみでした) means 'was looking forward to'.",
-        options: [
-          { text: "Hai! Ashita mo kanarazu aimashou.", hint: "Yes! Let's definitely meet tomorrow." },
-          { text: "Ren-san no soba ni itai desu.", hint: "I want to stay by your side, Ren." },
-          { text: "Anata no song wo kikitai desu!", hint: "I want to hear your song!" }
-        ]
-      },
-      {
-        greeting: "約束です。感謝しています。",
-        romaji: "Yakusoku desu. Kansha shite imasu.",
-        greetingTranslation: "It's a promise. I am truly grateful.",
-        greetingTip: "'Yakusoku' (約束) means promise. 'Kansha shite imasu' (感謝しています) means 'I am feeling grateful'.",
-        options: [
-          { text: "Ren-san no smile ga my favorite desu.", hint: "Your smile is my favorite." },
-          { text: "Issho ni iru jikan ga happy desu.", hint: "Time spent together makes me happy." },
-          { text: "Komban mo anata no dream wo mimasu.", hint: "I'll dream of you tonight." }
-        ]
-      }
-    ],
-    wordBankStages: [
-      {
-        prompt: 'Translate: "I want to listen to your guitar songs."',
-        translation: "Anata no guitar no kyoku wo kikitai desu.",
-        chips: ["Anata no", "guitar no", "kyoku wo", "kikitai desu", "suki", "oishii"]
-      },
-      {
-        prompt: 'Translate: "Talking with you makes me happy."',
-        translation: "Anata to hanasu no ga tanoshii desu.",
-        chips: ["Anata to", "hanasu no ga", "tanoshii desu", "itsumo", "kirei", "arigatou"]
-      },
-      {
-        prompt: 'Translate: "Let\'s drink tea together tomorrow as well."',
-        translation: "Ashita mo issho ni o-cha wo nomimashou.",
-        chips: ["Ashita mo", "issho ni", "o-cha wo", "nomimashou", "daisuki", "shiawase"]
-      }
-    ]
-  },
-  bao: {
-    mcStages: [
-      {
-        greeting: "Chào em. Em muốn gọi món gì không?",
-        greetingTranslation: "Hello. Would you like to order anything?",
-        greetingTip: "'Em muốn gọi món gì không?' is a standard way to ask for a coffee or food order in Vietnamese.",
-        options: [
-          { text: "Xin chào anh Bao! Cho em một ly cà phê ạ.", hint: "Hello Bao! Give me a coffee please." },
-          { text: "Anh Bao bận rộn quá nhỉ!", hint: "You look busy, Bao!" },
-          { text: "Em muốn học tiếng Việt cùng anh Bao!", hint: "I want to learn Vietnamese with you, Bao!" }
-        ]
-      },
-      {
-        greeting: "Ồ, em nói tiếng Việt à? Rất dễ thương.",
-        greetingTranslation: "Oh, you speak Vietnamese? Very cute.",
-        greetingTip: "'Nói tiếng Việt' means 'speak Vietnamese'. 'Dễ thương' means 'cute/sweet'.",
-        options: [
-          { text: "Cà phê anh pha ngon tuyệt vời!", hint: "The coffee you brewed is wonderful!" },
-          { text: "Cảm ơn anh Bao nhé!", hint: "Thank you so much, Bao!" },
-          { text: "Anh Bao nói chuyện hay quá.", hint: "You speak so nicely, Bao." }
-        ]
-      },
-      {
-        greeting: "Nói chuyện với em rất vui.",
-        greetingTranslation: "Talking with you is very fun.",
-        greetingTip: "'Nói chuyện' means 'talking/chatting'. 'Rất vui' means 'very fun/happy'.",
-        options: [
-          { text: "Em cũng thích nói chuyện với anh Bao!", hint: "I also love chatting with you, Bao!" },
-          { text: "Mỗi ngày em sẽ ghé thăm anh.", hint: "I will visit you every day." },
-          { text: "Anh làm em thấy rất vui vẻ.", hint: "You make me feel so happy." }
-        ]
-      },
-      {
-        greeting: "Ở lại uống cà phê với anh chút nữa nhé?",
-        greetingTranslation: "Stay and drink coffee with me a bit longer okay?",
-        greetingTip: "'Ở lại' means 'stay'. 'Chút nữa' means 'a bit longer'.",
-        options: [
-          { text: "Vâng ạ! Em rất muốn ở lại cùng anh.", hint: "Yes! I really want to stay with you." },
-          { text: "Mình vừa uống cà phê vừa ngắm phố nhé!", hint: "Let's drink coffee and watch the street!" },
-          { text: "Ở bên anh Bao làm em bình yên lắm.", hint: "Being by your side makes me feel peaceful." }
-        ]
-      }
-    ],
-    wordBankStages: [
-      {
-        prompt: 'Translate: "I love drinking coffee with you."',
-        translation: "Em thích uống cà phê cùng anh.",
-        chips: ["Em", "thích", "uống", "cà phê", "cùng anh", "rất", "ngon"]
-      },
-      {
-        prompt: 'Translate: "Talking with you is so fun."',
-        translation: "Nói chuyện cùng anh rất vui.",
-        chips: ["Nói chuyện", "cùng anh", "rất vui", "thật sự", "đẹp"]
-      }
-    ]
-  },
-  julian: {
-    mcStages: [
-      {
-        greeting: "Good day. Did you need something?",
-        greetingTranslation: "Good day. Did you need something?",
-        greetingTip: "'Good day' is a polite formal greeting.",
-        options: [
-          { text: "Good day, Julian! I didn't mean to disturb you.", hint: "Polite greeting" },
-          { text: "What book are you reading?", hint: "Curious inquiry" },
-          { text: "I'd love to learn literature with you today.", hint: "Enthusiastic engagement" }
-        ]
-      },
-      {
-        greeting: "Curious about books? That is wonderful.",
-        greetingTranslation: "Curious about books? That is wonderful.",
-        greetingTip: "'Curious' means eager to learn or know. 'Wonderful' expresses delight.",
-        options: [
-          { text: "Classical literature has a timeless charm.", hint: "Thoughtful reply" },
-          { text: "I find your taste in books sophisticated.", hint: "Subtle compliment" },
-          { text: "Could you recommend a poem for me?", hint: "Eager request" }
-        ]
-      },
-      {
-        greeting: "I am really enjoying our chat today.",
-        greetingTranslation: "I am really enjoying our chat today.",
-        greetingTip: "'Enjoying' means taking pleasure in an interaction.",
-        options: [
-          { text: "I'm delighted to hear that, Julian.", hint: "Warm agreement" },
-          { text: "Shall we share a warm cup of tea together?", hint: "Casual offer" },
-          { text: "Your company makes reading wonderful.", hint: "Charming response" }
-        ]
-      },
-      {
-        greeting: "I was hoping you would visit today.",
-        greetingTranslation: "I was hoping you would visit today.",
-        greetingTip: "'Hoping' expresses a gentle desire or wish.",
-        options: [
-          { text: "I was looking forward to seeing you too.", hint: "Reciprocating interest" },
-          { text: "I'll always visit whenever you wish.", hint: "Devoted promise" },
-          { text: "You bring so much joy into my afternoons.", hint: "Sweet reflection" }
-        ]
-      }
-    ],
-    wordBankStages: [
-      {
-        prompt: 'Translate: "I enjoy discussing books with you."',
-        translation: "I enjoy discussing books with you.",
-        chips: ["I", "enjoy", "discussing", "books", "with", "you", "dearly"]
-      },
-      {
-        prompt: 'Translate: "Your conversation brings warmth to my day."',
-        translation: "Your conversation brings warmth to my day.",
-        chips: ["Your", "conversation", "brings", "warmth", "to", "my", "day"]
-      }
-    ]
   }
 };
 
 // 10-Tier Difficulty Progression System
 const TIERS = [
-  { level: 1, name: "Tier 1: Baby Talk (Greetings)", mode: "mc", heartsPerAns: 10, desc: "Basic hellos, polite greetings & high-frequency phrases." },
-  { level: 2, name: "Tier 2: First Impressions", mode: "mc", heartsPerAns: 12, desc: "Sharing favorite foods, hobbies & polite introductions." },
-  { level: 3, name: "Tier 3: Coffee Date", mode: "mc", heartsPerAns: 15, desc: "Ordering drinks, warm gratitude & simple compliments." },
-  { level: 4, name: "Tier 4: Word Builder", mode: "wordbank", heartsPerAns: 18, desc: "Building 4–6 word sentences with Word Bank chips." },
-  { level: 5, name: "Tier 5: Daily Routines", mode: "wordbank", heartsPerAns: 20, desc: "Expressing daily schedule, time & weather feelings." },
-  { level: 6, name: "Tier 6: Flirting & Compliments", mode: "wordbank", heartsPerAns: 22, desc: "Crafting romantic compliments & sweet invitations." },
-  { level: 7, name: "Tier 7: Heart-to-Heart", mode: "wordbank", heartsPerAns: 25, desc: "Deeper personal conversations & shared dreams." },
+  { level: 1, name: "Tier 1: Greetings & Warm-up", mode: "wordbank", heartsPerAns: 10, desc: "Build greetings with Contextual Sentence Builder." },
+  { level: 2, name: "Tier 2: First Impressions", mode: "wordbank", heartsPerAns: 12, desc: "Express preferences with Contextual Sentence Builder." },
+  { level: 3, name: "Tier 3: Coffee Date", mode: "wordbank", heartsPerAns: 15, desc: "Order drinks & express gratitude with Word Bank." },
+  { level: 4, name: "Tier 4: Word Builder", mode: "wordbank", heartsPerAns: 18, desc: "Build 4–6 word conversational sentences." },
+  { level: 5, name: "Tier 5: Daily Routines", mode: "wordbank", heartsPerAns: 20, desc: "Express schedules & feelings in target language." },
+  { level: 6, name: "Tier 6: Flirting & Compliments", mode: "free", heartsPerAns: 22, desc: "Craft romantic compliments with Free Text Chat." },
+  { level: 7, name: "Tier 7: Heart-to-Heart", mode: "free", heartsPerAns: 25, desc: "Deeper personal conversations in Free Text Chat." },
   { level: 8, name: "Tier 8: Advanced Romance", mode: "free", heartsPerAns: 30, desc: "Free-form text input evaluated by Gemma 4 AI." },
   { level: 9, name: "Tier 9: Poetic Fluency", mode: "free", heartsPerAns: 35, desc: "Metaphors, romantic idioms & emotional nuances." },
   { level: 10, name: "Tier 10: Soulmate Mastery", mode: "free", heartsPerAns: 50, desc: "Full immersion, natural speed & romantic soulmate bond." }
 ];
+
+// Spontaneous LI Check-Up Messages Pool (Natural & Romantic Otome Texts)
+const SPONTANEOUS_CHECKUPS = {
+  ren: [
+    { text: "ねえ、今なにしてる？ちょっと君の声が聞きたくなった。", romaji: "Nee, ima nani shiteru? Chotto kimi no koe ga kikitaku natta.", translation: "Hey, what are you doing right now? I suddenly wanted to hear your voice.", tip: "'Nee' (ねえ) catches attention softly. 'Kikitaku natta' (聞きたくなった) means 'came to want to hear'." },
+    { text: "ギターの練習ひと区切りついたよ。少し話せる？", romaji: "Guitar no renshuu hitokugiri tsuita yo. Sukoshi hanaseru?", translation: "I reached a good stopping point in my guitar practice. Can we talk for a bit?", tip: "'Hitokugiri tsuita' (ひと区切りついた) means reached a break/pause. 'Sukoshi hanaseru?' means 'Can we talk a little?'." },
+    { text: "ふと君のこと考えてた。今日もお疲れ様。", romaji: "Futo kimi no koto kangaeteta. Kyou mo otsukaresama.", translation: "I unexpectedly found myself thinking about you. Thanks for your hard work today.", tip: "'Futo' (ふと) means spontaneously. 'Otsukaresama' (お疲れ様) expresses thoughtful appreciation." }
+  ],
+  bao: [
+    { text: "Em ơi, rảnh không? Anh vừa pha ly cà phê thơm lắm nè!", translation: "Hey sweetheart, are you free? I just brewed a really fragrant coffee!", tip: "'Em ơi' is a sweet form of address. 'Rảnh không?' means 'Are you free?'. 'Pha cà phê' means 'brew coffee'." },
+    { text: "Đang làm gì đấy? Tự nhiên anh nhớ giọng em quá.", translation: "What are you doing? I suddenly missed your voice so much.", tip: "'Tự nhiên' means 'suddenly/out of nowhere'. 'Nhớ giọng em' means 'miss your voice'." },
+    { text: "Hôm nay quán vắng, ước gì em ghé qua ngồi chơi với anh.", translation: "The cafe is quiet today, I wish you could stop by and hang out with me.", tip: "'Quán vắng' means quiet cafe. 'Ước gì' means 'I wish'. 'Ghé qua' means 'stop by'." }
+  ],
+  julian: [
+    { text: "Are you free at the moment? I stumbled upon a line in this novel that reminded me of you.", translation: "Are you free at the moment? I stumbled upon a line in this novel that reminded me of you.", tip: "'Stumbled upon' means discovered by chance. 'Reminded me of you' expresses gentle romance." },
+    { text: "I found myself pausing my reading just to check if you were around.", translation: "I found myself pausing my reading just to check if you were around.", tip: "'Pausing my reading' reflects taking time out of his favorite activity for you." },
+    { text: "Good afternoon. I hope your day is treating you gently today.", translation: "Good afternoon. I hope your day is treating you gently today.", tip: "'Treating you gently' is a warm, polite expression of care." }
+  ]
+};
+
+// Impatient Pout Messages Pool (Natural & Cute Otome Pout Texts)
+const POUT_MESSAGES = {
+  ren: [
+    { text: "…返事遅い。忙しいのかな？ちょっと心配。", romaji: "...Henji osoi. Isogashii no kana? Chotto shinpai.", translation: "...Slow reply. Are you busy? I'm getting a little worried.", tip: "'Henji' (返事) means 'reply'. 'Osoi' (遅い) means 'slow'. 'Shinpai' (心配) means 'worried'." },
+    { text: "既読ついたのに返事ないの、少し寂しいな… 💔", romaji: "Kidoku tsuita noni henji nai no, sukoshi sabishii na...", translation: "You saw my message but haven't replied... I feel a bit lonely...", tip: "'Kidoku tsuita' (既読ついた) means 'left on read'. 'Sabishii' (寂しい) means 'lonely'." },
+    { text: "返事くれないと、君のために曲を書くのやめちゃうよ？ 😤", romaji: "Henji kurenai to, kimi no tame ni kyoku wo kaku no yamechau yo?", translation: "If you don't answer me, I might stop writing this song for you, you know?", tip: "'Kimi no tame ni' (君のために) means 'for your sake'. 'Kyoku wo kaku' means 'write a song'." }
+  ],
+  bao: [
+    { text: "Em đi đâu rồi? Sao lỡ để anh đợi lâu thế này~ ☕💔", translation: "Where did you go? Why leave me waiting so long like this~", tip: "'Đi đâu rồi' means 'where did you go'. 'Đợi lâu' means 'wait long'." },
+    { text: "Cà phê anh pha cho em nguội hết rồi đó nha! 💢", translation: "The coffee I brewed for you has gone completely cold, you know!", tip: "'Pha cho em' means 'brew for you'. 'Nguội hết' means 'gone completely cold'." },
+    { text: "Nhắn tin mà em lờ anh luôn, giận thật đấy! 🥺", translation: "I texted you but you ignored me, I'm pouting for real now!", tip: "'Nhắn tin' means 'text message'. 'Lờ anh' means 'ignore me'. 'Giận' means 'pouting'." }
+  ],
+  julian: [
+    { text: "Leaving me waiting on read? How terribly cruel of a gentleman's heart... 💔", translation: "Leaving my message unread? How terribly cruel of a gentleman's heart...", tip: "A witty, charming expression of romantic dramatic dismay." },
+    { text: "Has a good book stolen your attention away from me? 📖💢", translation: "Has a good book stolen your attention away from me?", tip: "'Stolen your attention' playfully compares reading to his rival for your time." },
+    { text: "I suppose I shall wait here patiently... though my coffee is growing cold. ⏳", translation: "I suppose I shall wait here patiently... though my coffee is growing cold.", tip: "'Growing cold' adds a melancholic, charming touch to his waiting." }
+  ]
+};
 
 // App Persistent State
 let userState = {
@@ -267,7 +114,6 @@ let userState = {
   affection: JSON.parse(localStorage.getItem("otome_affection")) || { ren: 10, bao: 10, julian: 10 },
   chatStep: JSON.parse(localStorage.getItem("otome_chat_step")) || { ren: 0, bao: 0, julian: 0 },
   chatHistories: JSON.parse(localStorage.getItem("otome_chats")) || {},
-  unlockedMemories: JSON.parse(localStorage.getItem("otome_memories")) || [],
   unreadMessages: JSON.parse(localStorage.getItem("otome_unread")) || { ren: 0, bao: 0, julian: 0 },
   isPouting: JSON.parse(localStorage.getItem("otome_pouting")) || { ren: false, bao: false, julian: false },
   unrepliedCount: JSON.parse(localStorage.getItem("otome_unreplied_count")) || { ren: 0, bao: 0, julian: 0 },
@@ -278,204 +124,13 @@ let userState = {
 let lastUserReplyTime = { ren: Date.now(), bao: Date.now(), julian: Date.now() };
 let lastLiCheckupTime = { ren: Date.now(), bao: Date.now(), julian: Date.now() };
 let lastMessageWasLi = { ren: false, bao: false, julian: false };
-
-// Romantic Memory CG Cards Milestones Data (25%, 50%, 75%, 100% Affection)
-const MEMORY_CARDS = [
-  // REN TAKAHASHI
-  {
-    id: "ren_25",
-    charId: "ren",
-    milestone: 25,
-    title: "Moonlight Strumming",
-    subtitle: "25% Affection Milestone CG",
-    romanticQuote: "君の聴いている顔が、すごく綺麗だった。",
-    romaji: "Kimi no kiite iru kao ga, sugoku kirei datta.",
-    translation: "The expression on your face as you listened was so beautiful.",
-    description: "After practice, Ren played a gentle solo acoustic song just for you under the silver moonlight outside the music room.",
-    themeColor: "linear-gradient(135deg, #1e1b4b, #4c1d95, #831843)",
-    icon: "🎸"
-  },
-  {
-    id: "ren_50",
-    charId: "ren",
-    milestone: 50,
-    title: "Shared Earbuds",
-    subtitle: "50% Affection Milestone CG",
-    romanticQuote: "片方、貸してあげる。このメロディ、君に一番に聴かせたかった。",
-    romaji: "Katahou, kashite ageru. Kono melody, kimi ni ichiban ni kikasetakatta.",
-    translation: "Here, take one earbud. I wanted you to be the very first person to hear this melody.",
-    description: "Sitting side-by-side on the courtyard bench, Ren leaned in close and placed an earbud into your ear, his heart beating fast.",
-    themeColor: "linear-gradient(135deg, #31103f, #6b21a8, #be185d)",
-    icon: "🎧"
-  },
-  {
-    id: "ren_75",
-    charId: "ren",
-    milestone: 75,
-    title: "Rainy Bus Stop Shelter",
-    subtitle: "75% Affection Milestone CG",
-    romanticQuote: "濡れないで。僕の肩にもっと寄って…離れたくない。",
-    romaji: "Nurenaide. Boku no kata ni motto yotte... Hanaretakunai.",
-    translation: "Don't get wet. Lean closer against my shoulder... I don't want to let you go.",
-    description: "A sudden downpour trapped you two under a tiny bus stop canopy. Ren wrapped his arm around your waist to protect you.",
-    themeColor: "linear-gradient(135deg, #0f172a, #1e3a8a, #701a75)",
-    icon: "🌧️"
-  },
-  {
-    id: "ren_100",
-    charId: "ren",
-    milestone: 100,
-    title: "Starlit Concert Dedication",
-    subtitle: "100% Affection Soulmate CG",
-    romanticQuote: "この歌は君だけに捧げる。一生、僕の隣にいてほしい。",
-    romaji: "Kono uta wa kimi dake ni sasageru. Isshou, boku no tonari ni ite hoshii.",
-    translation: "This song is dedicated only to you. I want you by my side for the rest of my life.",
-    description: "On stage before thousands of cheering fans, Ren looked directly into your eyes in the VIP section, playing the melody written for your love.",
-    themeColor: "linear-gradient(135deg, #020617, #581c87, #db2777)",
-    icon: "💖"
-  },
-
-  // BAO NGUYEN
-  {
-    id: "bao_25",
-    charId: "bao",
-    milestone: 25,
-    title: "Heart-Shaped Latte Art",
-    subtitle: "25% Affection Milestone CG",
-    romanticQuote: "Anh pha ly này riêng cho em đấy. Thấy hình trái tim không?",
-    translation: "I brewed this cup specially for you. Do you see the heart shape?",
-    description: "Bao slid a freshly brewed steaming latte across the wooden bar with a shy smile, a delicate heart crafted perfectly in milk foam.",
-    themeColor: "linear-gradient(135deg, #2d1810, #78350f, #92400e)",
-    icon: "☕"
-  },
-  {
-    id: "bao_50",
-    charId: "bao",
-    milestone: 50,
-    title: "Secret Recipe Tasting",
-    subtitle: "50% Affection Milestone CG",
-    romanticQuote: "Nếm thử đi. Anh muốn em là người đầu tiên thử món này.",
-    translation: "Taste this. I wanted you to be the very first person to try my new creation.",
-    description: "Late at night in the dimly lit cafe kitchen, Bao gently brought a spoonful of his signature dessert to your lips with a tender gaze.",
-    themeColor: "linear-gradient(135deg, #1c1917, #7c2d12, #b45309)",
-    icon: "🍰"
-  },
-  {
-    id: "bao_75",
-    charId: "bao",
-    milestone: 75,
-    title: "Rainy Cafe Evening",
-    subtitle: "75% Affection Milestone CG",
-    romanticQuote: "Ở lại đây với anh. Ngoài trời mưa to, nhưng bên em anh thấy ấm áp lắm.",
-    translation: "Stay here with me. It's raining heavily outside, but beside you I feel so warm.",
-    description: "With rain pattering against the cafe glass, Bao wrapped a soft blanket around your shoulders and held your hands.",
-    themeColor: "linear-gradient(135deg, #0f172a, #047857, #065f46)",
-    icon: "☕"
-  },
-  {
-    id: "bao_100",
-    charId: "bao",
-    milestone: 100,
-    title: "Sunset Beach Promise",
-    subtitle: "100% Affection Soulmate CG",
-    romanticQuote: "Anh muốn làm cà phê cho em mỗi buổi sáng, suốt đời này.",
-    translation: "I want to brew coffee for you every single morning, for the rest of my life.",
-    description: "As the golden sun dipped over the ocean waves, Bao cupped your cheeks gently and kissed you under the crimson sky.",
-    themeColor: "linear-gradient(135deg, #451a03, #9a3412, #be123c)",
-    icon: "🌅"
-  },
-
-  // JULIAN VANCE
-  {
-    id: "julian_25",
-    charId: "julian",
-    milestone: 25,
-    title: "Vintage Library Alcove",
-    subtitle: "25% Affection Milestone CG",
-    romanticQuote: "I rarely share my quiet alcove with anyone... but you are a rare exception.",
-    translation: "I rarely share my quiet alcove with anyone... but you are a rare exception.",
-    description: "In the cozy dust-mote filled archway of the antique library, Julian reached up to pull down a classic leatherbound poetry volume for you.",
-    themeColor: "linear-gradient(135deg, #1e1b4b, #3730a3, #4338ca)",
-    icon: "📚"
-  },
-  {
-    id: "julian_50",
-    charId: "julian",
-    milestone: 50,
-    title: "Candlelit Poetry Reading",
-    subtitle: "50% Affection Milestone CG",
-    romanticQuote: "Every romantic sonnet I read tonight seems to describe your eyes.",
-    translation: "Every romantic sonnet I read tonight seems to describe your eyes.",
-    description: "By warm flickering candlelight, Julian recited a passage in his velvety British accent, looking up to meet your gaze with emotion.",
-    themeColor: "linear-gradient(135deg, #2e1065, #5b21b6, #831843)",
-    icon: "🕯️"
-  },
-  {
-    id: "julian_75",
-    charId: "julian",
-    milestone: 75,
-    title: "Clocktower Stargazing",
-    subtitle: "75% Affection Milestone CG",
-    romanticQuote: "The stars above are constant, yet none shine as brilliantly as you.",
-    translation: "The stars above are constant, yet none shine as brilliantly as you.",
-    description: "Atop the clocktower overlooking the foggy city lights, Julian wrapped his tailored coat around you to keep you warm.",
-    themeColor: "linear-gradient(135deg, #020617, #1e1b4b, #1e40af)",
-    icon: "🌌"
-  },
-  {
-    id: "julian_100",
-    charId: "julian",
-    milestone: 100,
-    title: "Eternity Promise Ring",
-    subtitle: "100% Affection Soulmate CG",
-    romanticQuote: "My heart has found its permanent home in yours. Will you stay with me forever?",
-    translation: "My heart has found its permanent home in yours. Will you stay with me forever?",
-    description: "In the private botanical courtyard garden, Julian dropped to one knee with a vintage engraved silver ring, tears of joy in his eyes.",
-    themeColor: "linear-gradient(135deg, #0f172a, #4c1d95, #9d174d)",
-    icon: "💍"
-  }
-];
-
-// Spontaneous LI Check-Up Messages Pool
-const SPONTANEOUS_CHECKUPS = {
-  ren: [
-    { text: "ねえ、今何してる？", romaji: "Nee, ima nani shiteru?", translation: "Hey, what are you doing right now?", tip: "'Nee' is a casual way to catch attention. 'Ima' (今) means 'now'. 'Nani shiteru?' (何してる) means 'what are you doing?'." },
-    { text: "ギターの練習が終わったよ。少し話せる？", romaji: "Guitar no renshuu ga owatta yo. Sukoshi hanaseru?", translation: "Finished guitar practice. Can we talk for a bit?", tip: "'Renshuu' (練習) means 'practice'. 'Sukoshi hanaseru?' (少し話せる) means 'Can we talk a little bit?'." },
-    { text: "静かだな…君の声が聞きたくなった。", romaji: "Shizuka da na... Kimi no koe ga kikitaku natta.", translation: "It's quiet... I wanted to hear your voice.", tip: "'Shizuka' (静か) means 'quiet'. 'Koe' (声) means 'voice'. 'Kikitaku natta' means 'became wanting to hear'." }
-  ],
-  bao: [
-    { text: "Em ơi, rảnh không? Anh vừa pha ly cà phê mới nè!", translation: "Hey, are you free? I just brewed a fresh cup of coffee!", tip: "'Em ơi' is a sweet form of address. 'Rảnh không?' means 'Are you free?'. 'Pha cà phê' means 'brew coffee'." },
-    { text: "Đang làm gì đấy? Có nhớ anh không?", translation: "What are you doing? Do you miss me?", tip: "'Đang làm gì' means 'what are you doing'. 'Nhớ anh' means 'miss me'." },
-    { text: "Quán vắng quá, ước gì có em ở đây nói chuyện.", translation: "The cafe is so quiet today, I wish you were here chatting with me.", tip: "'Quán vắng' means quiet cafe. 'Ước gì' means 'I wish'. 'Nói chuyện' means 'to chat'." }
-  ],
-  julian: [
-    { text: "Are you free at the moment? I stumbled upon a fascinating poem.", translation: "Are you free at the moment? I stumbled upon a fascinating poem.", tip: "'Stumbled upon' means discovered by chance. 'Fascinating' means captivating." },
-    { text: "I found myself thinking of you while reading by the window.", translation: "I found myself thinking of you while reading by the window.", tip: "'Found myself thinking' describes a gentle, spontaneous romantic thought." },
-    { text: "Good day! Just wanted to hear how your afternoon is going.", translation: "Good day! Just wanted to hear how your afternoon is going.", tip: "A polite, refined British inquiry checking in on your day." }
-  ]
-};
-
-// Impatient Pout Messages Pool (Mad if no response fast enough)
-const POUT_MESSAGES = {
-  ren: [
-    { text: "…返事遅い。忙しいの？ 💢", romaji: "...Henji osoi. Isogashii no?", translation: "...Slow reply. Are you busy?", tip: "'Henji' (返事) means 'reply'. 'Osoi' (遅い) means 'slow'. 'Isogashii' (忙しい) means 'busy'." },
-    { text: "既読スルー？ひどいな… 💔", romaji: "Kidoku suruu? Hidoi na...", translation: "Left on read? That's mean...", tip: "'Kidoku suruu' (既読スルー) is Japanese slang for leaving someone on read. 'Hidoi' (ひどい) means 'cruel/mean'." },
-    { text: "返事してくれないと、もうギター弾かないよ。 😤", romaji: "Henji shite kurenai to, mou guitar hikanai yo.", translation: "If you don't answer me, I won't play guitar anymore.", tip: "'Henji shite kurenai' means 'not replying'. 'Mou hikanai' means 'won't play anymore'." }
-  ],
-  bao: [
-    { text: "Sao không trả lời anh? Giận rồi đấy! 💢", translation: "Why aren't you replying to me? I'm pouting now!", tip: "'Sao không' means 'why not'. 'Trả lời' means 'reply'. 'Giận' means 'pouting/getting mad'." },
-    { text: "Cà phê nguội hết rồi nè! Em bận gì à? ☕💔", translation: "The coffee has gone completely cold! Are you busy with something?", tip: "'Nguội' means cold (for drinks). 'Bận' means busy." },
-    { text: "Đừng lờ tin nhắn của anh mà~ 🥺", translation: "Please don't ignore my messages~", tip: "'Đừng' means 'don't'. 'Lờ' means 'ignore'. 'Tin nhắn' means 'text message'." }
-  ],
-  julian: [
-    { text: "Leaving my message unread? How terribly cruel of you... 💔", translation: "Leaving my message unread? How terribly cruel of you...", tip: "'Terribly cruel' expresses playful dramatic dismay at being ignored." },
-    { text: "Did a vintage book catch your attention more than my message? 📖💢", translation: "Did a vintage book catch your attention more than my message?", tip: "'Catch attention' means to attract focus or interest." },
-    { text: "I suppose I'll sit here waiting... impatiently. ⏳", translation: "I suppose I'll sit here waiting... impatiently.", tip: "'Impatiently' expresses restless expectation while waiting for you." }
-  ]
+let nextSpontaneousDelay = {
+  ren: (7 + Math.random() * 3) * 60 * 1000,
+  bao: (7 + Math.random() * 3) * 60 * 1000,
+  julian: (7 + Math.random() * 3) * 60 * 1000
 };
 
 // Runtime cache for dynamic AI generated next turn options
-let dynamicMcOptions = { ren: null, bao: null, julian: null };
 let dynamicWordBank = { ren: null, bao: null, julian: null };
 
 // Save user id
@@ -546,11 +201,46 @@ document.addEventListener("click", () => {
 function initUI() {
   // Tab Buttons
   document.querySelectorAll(".tab-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
+    btn.addEventListener("click", () => {
       const tabName = btn.dataset.tab || btn.closest(".tab-btn")?.dataset?.tab;
       if (tabName) switchTab(tabName);
     });
   });
+
+  // Feature Input Mode Switcher (Contextual Sentence Builder vs Free Text Chat)
+  const modeSentenceBtn = document.getElementById("modeSentenceBuilderBtn");
+  const modeFreeBtn = document.getElementById("modeFreeTextBtn");
+  if (modeSentenceBtn && modeFreeBtn) {
+    modeSentenceBtn.addEventListener("click", () => {
+      modeSentenceBtn.classList.add("active");
+      modeSentenceBtn.style.border = "1px solid var(--primary-pink)";
+      modeSentenceBtn.style.background = "rgba(217, 0, 87, 0.12)";
+      modeSentenceBtn.style.color = "var(--primary-pink)";
+
+      modeFreeBtn.classList.remove("active");
+      modeFreeBtn.style.border = "1px solid rgba(160, 140, 190, 0.3)";
+      modeFreeBtn.style.background = "rgba(255,255,255,0.6)";
+      modeFreeBtn.style.color = "var(--text-muted)";
+
+      document.getElementById("wordBankContainer").style.display = "flex";
+      document.getElementById("freeInputContainer").style.display = "none";
+    });
+
+    modeFreeBtn.addEventListener("click", () => {
+      modeFreeBtn.classList.add("active");
+      modeFreeBtn.style.border = "1px solid var(--primary-pink)";
+      modeFreeBtn.style.background = "rgba(217, 0, 87, 0.12)";
+      modeFreeBtn.style.color = "var(--primary-pink)";
+
+      modeSentenceBtn.classList.remove("active");
+      modeSentenceBtn.style.border = "1px solid rgba(160, 140, 190, 0.3)";
+      modeSentenceBtn.style.background = "rgba(255,255,255,0.6)";
+      modeSentenceBtn.style.color = "var(--text-muted)";
+
+      document.getElementById("freeInputContainer").style.display = "flex";
+      document.getElementById("wordBankContainer").style.display = "none";
+    });
+  }
 
   // Difficulty Tier Dropdown Listener
   const dropdownEl = document.getElementById("tierSelectDropdown");
@@ -580,7 +270,6 @@ function initUI() {
       userState.currentTiers = { ren: 1, bao: 1, julian: 1 };
       userState.totalHearts = 0;
       userState.streak = 1;
-      dynamicMcOptions = { ren: null, bao: null, julian: null };
       dynamicWordBank = { ren: null, bao: null, julian: null };
 
       localStorage.removeItem("otome_chats");
@@ -696,44 +385,6 @@ function initUI() {
     document.getElementById("secretDashboard").classList.remove("visible");
   });
 
-  // Memory Unlock & Gallery Modals Handlers
-  const headerGalleryBtn = document.getElementById("headerGalleryBtn");
-  if (headerGalleryBtn) {
-    headerGalleryBtn.addEventListener("click", () => openMemoryGallery("all"));
-  }
-
-  const closeGalleryModalBtn = document.getElementById("closeGalleryModalBtn");
-  if (closeGalleryModalBtn) {
-    closeGalleryModalBtn.addEventListener("click", () => {
-      document.getElementById("memoryGalleryModal").style.display = "none";
-    });
-  }
-
-  const closeUnlockModalBtn = document.getElementById("closeUnlockModalBtn");
-  if (closeUnlockModalBtn) {
-    closeUnlockModalBtn.addEventListener("click", () => {
-      document.getElementById("memoryUnlockModal").style.display = "none";
-    });
-  }
-
-  const openGalleryBtn = document.getElementById("openGalleryBtn");
-  if (openGalleryBtn) {
-    openGalleryBtn.addEventListener("click", () => {
-      document.getElementById("memoryUnlockModal").style.display = "none";
-      openMemoryGallery("all");
-    });
-  }
-
-  // Gallery Filter Tabs
-  document.querySelectorAll(".gallery-tab").forEach((tab) => {
-    tab.addEventListener("click", (e) => {
-      document.querySelectorAll(".gallery-tab").forEach((t) => t.classList.remove("active"));
-      tab.classList.add("active");
-      const filter = tab.dataset.filter || "all";
-      renderGalleryGrid(filter);
-    });
-  });
-
   // Update Header Badges
   document.getElementById("userHearts").textContent = userState.totalHearts;
   document.getElementById("userStreak").textContent = userState.streak;
@@ -741,7 +392,6 @@ function initUI() {
 
 // Switch Bottom Tabs
 function switchTab(tabName) {
-  // Always dismiss open chat window overlay when switching bottom tabs
   const chatWin = document.getElementById("chatWindow");
   if (chatWin) {
     chatWin.classList.remove("active");
@@ -768,7 +418,6 @@ function initOpenRouterKey() {
     updateKeySavedStatus(true);
   } else {
     updateKeySavedStatus(false);
-    // Show modal on first load if key missing
     setTimeout(() => {
       document.getElementById("apiKeyModal").style.display = "flex";
     }, 600);
@@ -789,7 +438,6 @@ function updateKeySavedStatus(isSaved) {
 // Secret Keyboard Shortcut Listener (CTRL + SHIFT + ALT)
 function initKeybinds() {
   window.addEventListener("keydown", (e) => {
-    // Secret Keybind: CTRL + SHIFT + ALT
     if (e.ctrlKey && e.shiftKey && e.altKey) {
       e.preventDefault();
       const dash = document.getElementById("secretDashboard");
@@ -797,7 +445,6 @@ function initKeybinds() {
       logDashboardEvent("Secret Keybind [CTRL + SHIFT + ALT] pressed.");
       updateDashboardUI();
     }
-    // ESC to close dashboard
     if (e.key === "Escape") {
       document.getElementById("secretDashboard").classList.remove("visible");
     }
@@ -812,7 +459,6 @@ function updateDashboardUI() {
   document.getElementById("dashTotalHearts").textContent = userState.totalHearts;
   document.getElementById("dashConvexSyncCount").textContent = analyticsData.convexSyncCount;
 
-  // Format time spent HH:MM:SS
   const s = analyticsData.timeSpentSeconds;
   const hrs = Math.floor(s / 3600).toString().padStart(2, "0");
   const mins = Math.floor((s % 3600) / 60).toString().padStart(2, "0");
@@ -822,6 +468,7 @@ function updateDashboardUI() {
 
 function logDashboardEvent(msg) {
   const box = document.getElementById("dashLogBox");
+  if (!box) return;
   const time = new Date().toLocaleTimeString();
   box.innerHTML += `[${time}] ${msg}<br/>`;
   box.scrollTop = box.scrollHeight;
@@ -830,11 +477,11 @@ function logDashboardEvent(msg) {
 // Render Chatrooms List
 function renderChatList() {
   const container = document.getElementById("chatListContainer");
+  if (!container) return;
   container.innerHTML = "";
 
   Object.values(CHARACTERS).forEach((char) => {
     const tierNum = userState.currentTiers[char.id] || 1;
-    const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
     const affectionPct = userState.affection[char.id] || 0;
     const unreadCount = userState.unreadMessages[char.id] || 0;
     const isPout = userState.isPouting[char.id] || false;
@@ -878,12 +525,12 @@ function renderChatList() {
 // Render Characters Tab
 function renderCharactersList() {
   const container = document.getElementById("charactersListContainer");
+  if (!container) return;
   container.innerHTML = "";
 
   Object.values(CHARACTERS).forEach((char) => {
     const affectionPct = userState.affection[char.id] || 0;
     const tierNum = userState.currentTiers[char.id] || 1;
-    const unlockedCount = MEMORY_CARDS.filter(m => m.charId === char.id && userState.unlockedMemories.includes(m.id)).length;
 
     const card = document.createElement("div");
     card.className = "character-card";
@@ -906,17 +553,9 @@ function renderCharactersList() {
           <div class="affection-fill" style="width: ${affectionPct}%;"></div>
         </div>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-        <span style="font-size:11px; font-weight:700; color:var(--accent-gold);">
-          🖼️ CGs: ${unlockedCount}/4 Unlocked
-        </span>
-        <button class="primary-btn" style="padding:4px 10px; font-size:11px; width:auto; margin:0; background:rgba(124, 58, 237, 0.25); border:1px solid rgba(124, 58, 237, 0.5);" onclick="openMemoryGallery('${char.id}')">
-          Gallery
-        </button>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
         <span class="tier-badge">Current Tier: ${tierNum} / 10</span>
-        <button class="primary-btn" style="padding:6px 14px; font-size:12px; width:auto; margin:0;" onclick="openChatroom('${char.id}')">
+        <button class="primary-btn" style="padding:7px 16px; font-size:12px; width:auto; margin:0;" onclick="openChatroom('${char.id}')">
           Chat with ${char.name.split(" ")[0]} ❤️
         </button>
       </div>
@@ -929,6 +568,7 @@ function renderCharactersList() {
 // Render 10-Tier Roadmap
 function renderRoadmap() {
   const container = document.getElementById("roadmapContainer");
+  if (!container) return;
   container.innerHTML = "";
 
   TIERS.forEach((tier) => {
@@ -1015,6 +655,7 @@ function openChatroom(charId) {
 // Render Chat History Messages
 function renderChatHistory() {
   const container = document.getElementById("chatHistory");
+  if (!container) return;
   container.innerHTML = "";
 
   const char = CHARACTERS[activeCharacterId];
@@ -1076,15 +717,66 @@ function renderChatHistory() {
     container.appendChild(group);
   });
 
-  // Auto scroll to bottom
   container.scrollTop = container.scrollHeight;
 }
 
-// Setup Input Bar based on Tier Mode (MC vs WordBank vs FreeForm)
+// Contextual Word Chips Generator for Sentence Builder
+function generateContextualWordChips(charId, lastMsgText) {
+  const text = (lastMsgText || "").toLowerCase();
+
+  if (charId === "ren") {
+    let prompt = "Build your reply to Ren (Japanese 🇯🇵):";
+    let chips = ["こんにちは", "Ren-san", "お疲れ様です", "今", "は", "元気", "です", "少し", "話したい", "よ", "ありがとう"];
+
+    if (text.includes("何してる") || text.includes("なにしてる") || text.includes("忙しい") || text.includes("声")) {
+      prompt = 'Build reply: "I\'m free right now, I wanted to talk with you!"';
+      chips = ["今", "は", "暇", "です", "よ", "Ren-san", "と", "話したかった", "です", "勉強", "して", "いた", "音楽", "聴いてた"];
+    } else if (text.includes("ギター") || text.includes("練習") || text.includes("曲")) {
+      prompt = 'Build reply: "I want to hear your guitar song!"';
+      chips = ["Ren-san", "の", "ギター", "を", "聴きたい", "です", "綺麗", "すごい", "練習", "お疲れ様"];
+    } else if (text.includes("返事") || text.includes("既読") || text.includes("寂しい") || text.includes("心配")) {
+      prompt = 'Build reply: "Sorry for replying late! I missed you too."';
+      chips = ["ごめんなさい", "返事", "が", "遅くなって", "Ren-san", "に", "会いたかった", "好き", "です"];
+    } else if (text.includes("茶") || text.includes("カフェ") || text.includes("休み") || text.includes("会")) {
+      prompt = 'Build reply: "Let\'s meet and drink tea together tomorrow!"';
+      chips = ["明日", "一緒に", "お茶", "を", "飲みましょう", "楽しみ", "です", "Ren-san", "の声", "が", "好き"];
+    }
+    return { prompt, chips };
+  } else if (charId === "bao") {
+    let prompt = "Build your reply to Bao (Vietnamese 🇻🇳):";
+    let chips = ["Xin chào", "anh Bao", "ạ", "em", "rất", "vui", "được", "gặp", "anh"];
+
+    if (text.includes("gọi món") || text.includes("cà phê") || text.includes("pha")) {
+      prompt = 'Build reply: "Hello Bao! Give me a cup of delicious coffee please."';
+      chips = ["Cho em", "một ly", "cà phê", "ngon", "nhé", "anh Bao", "cảm ơn", "ạ", "rất thích"];
+    } else if (text.includes("rảnh") || text.includes("làm gì") || text.includes("ở đây") || text.includes("nhớ")) {
+      prompt = 'Build reply: "I am free! I really enjoy chatting with you."';
+      chips = ["Em đang", "rảnh nè", "nói chuyện", "với anh", "Bao", "rất vui", "thích lắm", "ạ", "em cũng nhớ anh"];
+    } else if (text.includes("đợi") || text.includes("nguội") || text.includes("lờ") || text.includes("giận")) {
+      prompt = 'Build reply: "Sorry Bao! I was busy, please don\'t be mad at me."';
+      chips = ["Em xin lỗi", "anh Bao", "đừng giận", "em", "nhé", "thương anh", "mà", "em vừa bận chút"];
+    }
+    return { prompt, chips };
+  } else {
+    let prompt = "Build your reply to Julian (English 🇬🇧):";
+    let chips = ["Good day", "Julian", "I am", "happy to", "talk with", "you", "today"];
+
+    if (text.includes("book") || text.includes("reading") || text.includes("poem") || text.includes("novel")) {
+      prompt = 'Build reply: "I would love to read that poem together with you."';
+      chips = ["I would", "love to", "read that", "poem", "with you", "Julian", "sounds wonderful"];
+    } else if (text.includes("free") || text.includes("afternoon") || text.includes("thinking") || text.includes("around")) {
+      prompt = 'Build reply: "I was hoping to hear from you as well."';
+      chips = ["I was", "hoping to", "hear from", "you", "as well", "Julian", "delighted"];
+    } else if (text.includes("cruel") || text.includes("read") || text.includes("cold") || text.includes("wait")) {
+      prompt = 'Build reply: "Forgive me Julian! I was distracted for a moment."';
+      chips = ["Forgive me", "Julian", "I was", "distracted", "I missed", "you too", "my apologies"];
+    }
+    return { prompt, chips };
+  }
+}
+
+// Setup Input Controls for Active Tier
 function setupTierInputControls(tierObj, char) {
-  const mcContainer = document.getElementById("mcContainer");
-  const wordBankContainer = document.getElementById("wordBankContainer");
-  const freeInputContainer = document.getElementById("freeInputContainer");
   const labelEl = document.getElementById("tierModeLabel");
   const multEl = document.getElementById("tierHeartMultiplier");
   const dropdownEl = document.getElementById("tierSelectDropdown");
@@ -1096,78 +788,21 @@ function setupTierInputControls(tierObj, char) {
   labelEl.textContent = `Tier ${tierObj.level}`;
   multEl.textContent = `+${tierObj.heartsPerAns} ❤️ / answer`;
 
-  mcContainer.style.display = "none";
-  wordBankContainer.style.display = "none";
-  freeInputContainer.style.display = "none";
+  // Always configure Contextual Word Bank for current conversation step
+  setupWordBankPrompt(tierObj, char);
 
-  if (tierObj.mode === "mc") {
-    // Tier 1–3 Multiple Choice Mode
-    mcContainer.style.display = "flex";
-    renderMultipleChoiceOptions(tierObj, char);
-  } else if (tierObj.mode === "wordbank") {
-    // Tier 4–7 Word Bank Sentence Builder
-    wordBankContainer.style.display = "flex";
-    setupWordBankPrompt(tierObj, char);
+  // Set default active mode tab based on tier level
+  const modeSentenceBtn = document.getElementById("modeSentenceBuilderBtn");
+  const modeFreeBtn = document.getElementById("modeFreeTextBtn");
+
+  if (tierObj.level <= 5) {
+    if (modeSentenceBtn) modeSentenceBtn.click();
   } else {
-    // Tier 8–10 Free Form Text Chat
-    freeInputContainer.style.display = "flex";
+    if (modeFreeBtn) modeFreeBtn.click();
   }
 }
 
-// Render Progressive Multiple Choice Options for Tier 1–3
-function renderMultipleChoiceOptions(tierObj, char) {
-  const container = document.getElementById("mcContainer");
-  container.innerHTML = "";
-
-  let options = [];
-
-  // Check if AI generated dynamic next-turn options exist
-  if (dynamicMcOptions[char.id] && dynamicMcOptions[char.id].length > 0) {
-    options = dynamicMcOptions[char.id];
-  } else {
-    // Fallback to progressive story tree stages based on current chatStep
-    const tree = STORY_TREES[char.id] || STORY_TREES.ren;
-    const stepIndex = (userState.chatStep[char.id] || 0) % tree.mcStages.length;
-    const stage = tree.mcStages[stepIndex];
-    options = stage.options;
-  }
-
-  options.forEach((opt) => {
-    const btn = document.createElement("button");
-    btn.className = "mc-option-btn";
-    btn.innerHTML = `
-      <span>${opt.text}</span>
-      <span class="mc-hint">${opt.hint}</span>
-    `;
-    btn.onclick = () => handleSelectMCOption(opt, tierObj);
-    container.appendChild(btn);
-  });
-}
-
-// Handle Multiple Choice Choice Click
-async function handleSelectMCOption(option, tierObj) {
-  analyticsData.answersSubmitted++;
-
-  // Add User Message
-  addUserMessageToHistory(option.text);
-
-  // Advance Chat Step
-  userState.chatStep[activeCharacterId] = (userState.chatStep[activeCharacterId] || 0) + 1;
-  // Clear consumed dynamic options so next stage loads
-  dynamicMcOptions[activeCharacterId] = null;
-
-  // Award Hearts & Affection
-  addHearts(tierObj.heartsPerAns);
-  increaseAffection(activeCharacterId, 5);
-
-  // Trigger Heart Visual Particles
-  triggerHeartBurst();
-
-  // Fetch AI or Fallback Response
-  await triggerLLMResponse(option.text, tierObj);
-}
-
-// Setup Word Bank Prompt for Tier 4–7
+// Setup Word Bank Prompt for Contextual Sentence Builder
 let currentConstructedWords = [];
 function setupWordBankPrompt(tierObj, char) {
   currentConstructedWords = [];
@@ -1177,18 +812,27 @@ function setupWordBankPrompt(tierObj, char) {
 
   boxEl.innerHTML = `<span style="color:var(--text-muted); font-size:12px;" id="constructedPlaceholder">Click word chips below to build your sentence...</span>`;
 
+  let history = userState.chatHistories[char.id] || [];
+  let lastLiMsgText = "";
+  for (let i = history.length - 1; i >= 0; i--) {
+    if (history[i].sender === "li") {
+      lastLiMsgText = history[i].text;
+      break;
+    }
+  }
+  if (!lastLiMsgText) lastLiMsgText = char.greeting;
+
   let promptText = "";
   let chips = [];
 
-  if (dynamicWordBank[char.id] && dynamicWordBank[char.id].prompt) {
-    promptText = dynamicWordBank[char.id].prompt;
-    chips = dynamicWordBank[char.id].chips || [];
+  // Check if AI generated dynamic word bank exists
+  if (dynamicWordBank[char.id] && dynamicWordBank[char.id].chips && dynamicWordBank[char.id].chips.length > 0) {
+    promptText = dynamicWordBank[char.id].prompt || `Build your reply to ${char.name.split(" ")[0]}:`;
+    chips = dynamicWordBank[char.id].chips;
   } else {
-    const tree = STORY_TREES[char.id] || STORY_TREES.ren;
-    const stepIndex = (userState.chatStep[char.id] || 0) % tree.wordBankStages.length;
-    const stage = tree.wordBankStages[stepIndex];
-    promptText = stage.prompt;
-    chips = stage.chips;
+    const contextualData = generateContextualWordChips(char.id, lastLiMsgText);
+    promptText = contextualData.prompt;
+    chips = contextualData.chips;
   }
 
   guideEl.textContent = promptText;
@@ -1197,6 +841,7 @@ function setupWordBankPrompt(tierObj, char) {
   chips.forEach((word) => {
     const chip = document.createElement("button");
     chip.className = "word-chip";
+    chip.type = "button";
     chip.textContent = word;
     chip.onclick = () => {
       currentConstructedWords.push(word);
@@ -1241,12 +886,11 @@ async function handleSendWordBankMessage() {
   // Add User Message
   addUserMessageToHistory(constructedText);
 
-  // Advance Chat Step
   userState.chatStep[activeCharacterId] = (userState.chatStep[activeCharacterId] || 0) + 1;
   dynamicWordBank[activeCharacterId] = null;
 
-  const tierNum = userState.currentTiers[activeCharacterId] || 4;
-  const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[3];
+  const tierNum = userState.currentTiers[activeCharacterId] || 1;
+  const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
 
   addHearts(tierObj.heartsPerAns);
   increaseAffection(activeCharacterId, 8);
@@ -1289,32 +933,31 @@ function addUserMessageToHistory(text) {
   });
   userState.chatHistories[activeCharacterId] = history;
 
-  // Reset unreplied tracking & pout state when user responds
+  // Reset unreplied tracking, pout state & timers when user responds
   if (!userState.unrepliedCount) userState.unrepliedCount = { ren: 0, bao: 0, julian: 0 };
   userState.unrepliedCount[activeCharacterId] = 0;
   userState.isPouting[activeCharacterId] = false;
   lastUserReplyTime[activeCharacterId] = Date.now();
+  lastLiCheckupTime[activeCharacterId] = Date.now();
   lastMessageWasLi[activeCharacterId] = false;
+  nextSpontaneousDelay[activeCharacterId] = (7 + Math.random() * 3) * 60 * 1000;
 
   saveLocalState();
   renderChatHistory();
 }
 
-// LLM Integration with Gemma 4 via OpenRouter API (API Key Strictly Required)
+// LLM Integration with Gemma 4 via OpenRouter API
 async function triggerLLMResponse(userText, tierObj) {
   analyticsData.apiCalls++;
   const apiKey = localStorage.getItem("openrouter_api_key");
   const char = CHARACTERS[activeCharacterId];
 
-  // Show "Typing..." indicator in chat
   showTypingIndicator(char);
 
   if (!apiKey) {
     removeTypingIndicator();
-    // Prompt user for API Key
     document.getElementById("apiKeyModal").style.display = "flex";
     
-    // Add system requirement message in history
     const history = userState.chatHistories[activeCharacterId] || [];
     history.push({
       sender: "li",
@@ -1353,7 +996,8 @@ ${char.language === "Japanese" ? "2. CRITICAL JAPANESE ROMAJI RULE: Provide the 
 3. Provide full English translation in 'translation'.
 4. Provide a helpful grammar/vocabulary tip in 'tip'.
 5. Provide a gentle correction in 'fix' if the user made a grammar/vocab mistake (or null if none).
-6. For Tier 1-3, provide 3 short, simple options in ${char.language} for the user's NEXT turn in 'nextMcOptions': [{"text": "short phrase in ${char.language}", "hint": "English hint"}].
+6. Provide a set of 6-8 contextual word chips in ${char.language} for the user's NEXT turn sentence builder in 'contextualChips': ["word1", "word2", "word3", ...].
+7. Provide an English prompt guide for those chips in 'contextualChipsPrompt' (e.g. "Build reply expressing...").
 
 Respond strictly in valid JSON format with these exact keys:
 {
@@ -1362,11 +1006,8 @@ Respond strictly in valid JSON format with these exact keys:
   "translation": "English translation",
   "tip": "Grammar/vocab tip",
   "fix": "Gentle correction or null",
-  "nextMcOptions": [
-    { "text": "Option 1", "hint": "Hint 1" },
-    { "text": "Option 2", "hint": "Hint 2" },
-    { "text": "Option 3", "hint": "Hint 3" }
-  ],
+  "contextualChipsPrompt": "English guide for user reply",
+  "contextualChips": ["chip1", "chip2", "chip3", "chip4", "chip5", "chip6"],
   "affectionChange": 5
 }`;
 
@@ -1394,12 +1035,14 @@ Respond strictly in valid JSON format with these exact keys:
       try {
         responseData = JSON.parse(content);
       } catch {
-        // If JSON wrapped in ```json block
         const clean = content.replace(/```json/g, "").replace(/```/g, "").trim();
         responseData = JSON.parse(clean);
       }
-      if (responseData && responseData.nextMcOptions) {
-        dynamicMcOptions[char.id] = responseData.nextMcOptions;
+      if (responseData && responseData.contextualChips && responseData.contextualChips.length > 0) {
+        dynamicWordBank[char.id] = {
+          prompt: responseData.contextualChipsPrompt || `Build your reply to ${char.name.split(" ")[0]}:`,
+          chips: responseData.contextualChips
+        };
       }
       logDashboardEvent(`OpenRouter API response received successfully.`);
     } else {
@@ -1422,10 +1065,8 @@ Respond strictly in valid JSON format with these exact keys:
     return;
   }
 
-  // Remove typing indicator
   removeTypingIndicator();
 
-  // Push LI Message to History
   const history = userState.chatHistories[activeCharacterId] || [];
   history.push({
     sender: "li",
@@ -1439,13 +1080,15 @@ Respond strictly in valid JSON format with these exact keys:
 
   userState.chatHistories[activeCharacterId] = history;
 
-  // Check for Tier Level Up if Affection hits threshold
+  lastMessageWasLi[activeCharacterId] = true;
+  lastLiCheckupTime[activeCharacterId] = Date.now();
+
   checkTierLevelUp(activeCharacterId);
 
   saveLocalState();
   renderChatHistory();
 
-  // Refresh input controls for NEXT turn so options progress!
+  // Refresh input controls for NEXT turn
   setupTierInputControls(tierObj, char);
 
   // Auto Sync to Convex Cloud
@@ -1455,6 +1098,7 @@ Respond strictly in valid JSON format with these exact keys:
 // Typing Indicator Helpers
 function showTypingIndicator(char) {
   const container = document.getElementById("chatHistory");
+  if (!container) return;
   const indicator = document.createElement("div");
   indicator.id = "typingIndicator";
   indicator.className = "message-group li-msg";
@@ -1478,7 +1122,8 @@ function removeTypingIndicator() {
 // Hearts & Affection Increment
 function addHearts(amount) {
   userState.totalHearts += amount;
-  document.getElementById("userHearts").textContent = userState.totalHearts;
+  const heartsEl = document.getElementById("userHearts");
+  if (heartsEl) heartsEl.textContent = userState.totalHearts;
   saveLocalState();
 }
 
@@ -1486,115 +1131,6 @@ function increaseAffection(charId, amount) {
   userState.affection[charId] = Math.min(100, (userState.affection[charId] || 0) + amount);
   saveLocalState();
   renderCharactersList();
-  checkAffectionMilestones(charId);
-}
-
-// Memory Unlock & Gallery Engine
-function checkAffectionMilestones(charId) {
-  const currentAff = userState.affection[charId] || 0;
-  const charMems = MEMORY_CARDS.filter((m) => m.charId === charId);
-
-  charMems.forEach((mem) => {
-    if (currentAff >= mem.milestone && !userState.unlockedMemories.includes(mem.id)) {
-      userState.unlockedMemories.push(mem.id);
-      saveLocalState();
-      triggerMemoryUnlockModal(mem);
-      logDashboardEvent(`🎉 CG MEMORY UNLOCKED: ${mem.title} (${charId} @ ${mem.milestone}%)`);
-    }
-  });
-}
-
-function triggerMemoryUnlockModal(mem) {
-  const modal = document.getElementById("memoryUnlockModal");
-  if (!modal) return;
-
-  const frame = document.getElementById("unlockCgFrame");
-  const icon = document.getElementById("unlockCgIcon");
-  const title = document.getElementById("unlockCgTitle");
-  const sub = document.getElementById("unlockCgSub");
-  const quote = document.getElementById("unlockQuoteText");
-  const romaji = document.getElementById("unlockQuoteRomaji");
-  const trans = document.getElementById("unlockQuoteTrans");
-  const desc = document.getElementById("unlockDescText");
-
-  if (frame) frame.style.background = mem.themeColor;
-  if (icon) icon.textContent = mem.icon;
-  if (title) title.textContent = mem.title;
-  if (sub) sub.textContent = mem.subtitle;
-  if (quote) quote.textContent = `"${mem.romanticQuote}"`;
-
-  if (romaji) {
-    if (mem.romaji) {
-      romaji.textContent = mem.romaji;
-      romaji.style.display = "block";
-    } else {
-      romaji.style.display = "none";
-    }
-  }
-
-  if (trans) trans.textContent = `💬 "${mem.translation}"`;
-  if (desc) desc.textContent = mem.description;
-
-  modal.style.display = "flex";
-  triggerHeartBurst();
-}
-
-function openMemoryGallery(filterCharId = "all") {
-  const modal = document.getElementById("memoryGalleryModal");
-  if (!modal) return;
-
-  // Set active filter tab
-  document.querySelectorAll(".gallery-tab").forEach((tab) => {
-    tab.classList.toggle("active", (tab.dataset.filter || "all") === filterCharId);
-  });
-
-  renderGalleryGrid(filterCharId);
-  modal.style.display = "flex";
-}
-
-function renderGalleryGrid(filterCharId = "all") {
-  const container = document.getElementById("galleryGridContainer");
-  if (!container) return;
-  container.innerHTML = "";
-
-  const filtered = MEMORY_CARDS.filter((m) => filterCharId === "all" || m.charId === filterCharId);
-
-  filtered.forEach((mem) => {
-    const isUnlocked = userState.unlockedMemories.includes(mem.id);
-    const char = CHARACTERS[mem.charId];
-
-    const card = document.createElement("div");
-    card.className = `gallery-card ${isUnlocked ? "" : "locked"}`;
-
-    if (isUnlocked) {
-      card.style.background = mem.themeColor;
-      card.onclick = () => triggerMemoryUnlockModal(mem);
-
-      card.innerHTML = `
-        <div class="gallery-card-top">
-          <span class="gallery-card-icon">${mem.icon}</span>
-          <span class="gallery-card-milestone">❤️ ${mem.milestone}% Milestone</span>
-        </div>
-        <div>
-          <div class="gallery-card-title">${mem.title}</div>
-          <div class="gallery-card-li">${char ? char.name : ''} ${char ? char.flag : ''}</div>
-        </div>
-      `;
-    } else {
-      card.innerHTML = `
-        <div class="gallery-card-top">
-          <span class="gallery-card-icon" style="filter:grayscale(1);">🔒</span>
-          <span class="gallery-card-milestone" style="color:#aaa; border-color:#666;">Locked</span>
-        </div>
-        <div>
-          <div class="gallery-card-title" style="color:var(--text-muted);">???</div>
-          <div class="gallery-card-li">Unlocks at ${mem.milestone}% Affection</div>
-        </div>
-      `;
-    }
-
-    container.appendChild(card);
-  });
 }
 
 // Spontaneous LI Check-Up & Impatience ("Mad/Pout") Messaging Loop
@@ -1607,91 +1143,87 @@ function startCheckUpAndPoutEngine() {
       const char = CHARACTERS[charId];
       if (!char) return;
 
-      if (!userState.unrepliedCount) userState.unrepliedCount = { ren: 0, bao: 0, julian: 0 };
-      const unreplied = userState.unrepliedCount[charId] || 0;
-
-      // STOP spamming if the character has sent 3 consecutive messages without user response
-      if (unreplied >= 3) {
+      // If character is pouting with "...", STOP sending all messages until user replies!
+      if (userState.isPouting[charId]) {
         return;
       }
 
-      // 1. Spontaneous Check-Up Trigger (~25-35s idle check)
       const timeSinceCheckup = now - (lastLiCheckupTime[charId] || 0);
       const timeSinceUserReply = now - (lastUserReplyTime[charId] || 0);
+      const delay = nextSpontaneousDelay[charId] || (7 * 60 * 1000);
 
-      if (timeSinceCheckup > 30000 && timeSinceUserReply > 20000) {
-        if (Math.random() < 0.5) {
-          const pool = SPONTANEOUS_CHECKUPS[charId];
-          if (pool && pool.length > 0) {
-            const checkup = pool[Math.floor(Math.random() * pool.length)];
+      // 1. Impatience / Pout Trigger: If LI sent a message and user hasn't replied in >2 minutes (120,000 ms)
+      if (lastMessageWasLi[charId] && timeSinceUserReply > 120000) {
+        if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
+        const poutTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-            if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
-            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            userState.chatHistories[charId].push({
-              sender: "li",
-              text: checkup.text,
-              romaji: checkup.romaji || null,
-              translation: checkup.translation,
-              tip: checkup.tip,
-              time: timeStr,
-              timestamp: timeStr
-            });
+        const poutMsg = {
+          sender: "li",
+          text: "...",
+          romaji: char.language === "Japanese" ? "..." : null,
+          translation: "... (Silence... Pouting because you haven't replied)",
+          tip: `${char.name} is pouting because you left them on read! Send a message to break the silence.`,
+          time: poutTimeStr,
+          timestamp: poutTimeStr
+        };
 
-            lastLiCheckupTime[charId] = now;
-            lastMessageWasLi[charId] = true;
-            userState.unrepliedCount[charId] = (userState.unrepliedCount[charId] || 0) + 1;
+        userState.chatHistories[charId].push(poutMsg);
 
-            if (activeCharacterId !== charId) {
-              userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
-              showNotificationToast(char, checkup.text, false);
-            } else {
-              renderChatHistory();
-            }
+        userState.isPouting[charId] = true;
+        userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
+        lastMessageWasLi[charId] = false;
 
-            saveLocalState();
-            renderChatList();
-            logDashboardEvent(`💬 Check-Up Message (${userState.unrepliedCount[charId]}/3) sent by ${char.name}`);
-            return;
-          }
+        showNotificationToast(char, "...", true);
+
+        if (activeCharacterId === charId) {
+          renderChatHistory();
+          setupWordBankPrompt(TIERS[0], char);
         }
+
+        saveLocalState();
+        renderChatList();
+        logDashboardEvent(`💢 ${char.name} pouted with "..." and stopped sending messages until user replies.`);
+        return;
       }
 
-      // 2. Impatience / Pout Trigger (If LI sent last message and user didn't reply in >20s)
-      if (lastMessageWasLi[charId] && !userState.isPouting[charId] && timeSinceUserReply > 20000) {
-        const pool = POUT_MESSAGES[charId];
+      // 2. Spontaneous Check-Up Trigger (Once every 7-10 minutes)
+      if (!lastMessageWasLi[charId] && timeSinceCheckup > delay && timeSinceUserReply > delay) {
+        const pool = SPONTANEOUS_CHECKUPS[charId];
         if (pool && pool.length > 0) {
-          const pout = pool[Math.floor(Math.random() * pool.length)];
+          const checkup = pool[Math.floor(Math.random() * pool.length)];
 
           if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
-          const poutTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           userState.chatHistories[charId].push({
             sender: "li",
-            text: pout.text,
-            romaji: pout.romaji || null,
-            translation: pout.translation,
-            tip: pout.tip,
-            time: poutTimeStr,
-            timestamp: poutTimeStr
+            text: checkup.text,
+            romaji: checkup.romaji || null,
+            translation: checkup.translation,
+            tip: checkup.tip,
+            time: timeStr,
+            timestamp: timeStr
           });
 
-          userState.isPouting[charId] = true;
-          userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
-          userState.unrepliedCount[charId] = (userState.unrepliedCount[charId] || 0) + 1;
-          lastMessageWasLi[charId] = false;
+          lastLiCheckupTime[charId] = now;
+          lastMessageWasLi[charId] = true;
+          // Set next randomized delay between 7 and 10 minutes (420,000ms to 600,000ms)
+          nextSpontaneousDelay[charId] = (7 + Math.random() * 3) * 60 * 1000;
 
-          showNotificationToast(char, pout.text, true);
-
-          if (activeCharacterId === charId) {
+          if (activeCharacterId !== charId) {
+            userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
+            showNotificationToast(char, checkup.text, false);
+          } else {
             renderChatHistory();
+            setupWordBankPrompt(TIERS[0], char);
           }
 
           saveLocalState();
           renderChatList();
-          logDashboardEvent(`💢 ${char.name} got impatient (${userState.unrepliedCount[charId]}/3) & sent pout message!`);
+          logDashboardEvent(`💬 Spontaneous Check-Up Message sent by ${char.name} (Next checkup in 7-10 min)`);
         }
       }
     });
-  }, 8000);
+  }, 10000);
 }
 
 // Show In-App Top Banner Notification Toast
@@ -1766,7 +1298,6 @@ function saveLocalState() {
   localStorage.setItem("otome_affection", JSON.stringify(userState.affection));
   localStorage.setItem("otome_chat_step", JSON.stringify(userState.chatStep));
   localStorage.setItem("otome_chats", JSON.stringify(userState.chatHistories));
-  localStorage.setItem("otome_memories", JSON.stringify(userState.unlockedMemories));
   localStorage.setItem("otome_unread", JSON.stringify(userState.unreadMessages));
   localStorage.setItem("otome_pouting", JSON.stringify(userState.isPouting));
   localStorage.setItem("otome_unreplied_count", JSON.stringify(userState.unrepliedCount || { ren: 0, bao: 0, julian: 0 }));
@@ -1812,6 +1343,7 @@ async function syncUserDataToConvex(reason = "") {
 // Upload Analytics Telemetry Payload to Convex Cloud (`/analytics`)
 async function uploadAnalyticsToConvex() {
   const statusEl = document.getElementById("dashUploadStatus");
+  if (!statusEl) return;
   statusEl.textContent = "Uploading telemetry...";
 
   try {
