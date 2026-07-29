@@ -1131,7 +1131,17 @@ async function triggerLLMResponse(userText, tierObj) {
       }),
     });
 
-    const json = await res.json();
+    const rawText = await res.text();
+    let json;
+    try {
+      json = JSON.parse(rawText);
+    } catch (e) {
+      if (rawText.trim().startsWith("<") || !res.ok) {
+        throw new Error(`Server endpoint /api/chat returned non-JSON response (${res.status} ${res.statusText}). When deploying to Vercel, ensure api/chat.ts serverless function is included.`);
+      } else {
+        throw new Error(`Invalid response format from server.`);
+      }
+    }
 
     if (res.ok && json.success) {
       responseData = json.data;
