@@ -20,7 +20,7 @@ const CHARACTERS = {
     name: "Ren Takahashi",
     language: "Japanese",
     flag: "🇯🇵",
-    avatar: "/src/assets/images/default_avatar.svg",
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdSZW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNGY0NmU1Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjN2MzYWVkIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ1JlbikiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZTBlN2ZmIi8+PHBhdGggZD0iTTMyIDMwIHExOCAtMTIgMzYgMCBxLTYgMjQgLTM2IDAiIGZpbGw9IiMzMTJlODEiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMzMTJlODEiLz48Y2lyY2xlIGN4PSI1OCIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMzMTJlODEiLz48cGF0aCBkPSJNNDYgNDkgcTQgNCA4IDAiIHN0cm9rZT0iIzMxMmU4MSIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+',
     role: "Upperclassman & Musician",
     personality: "Cool, quiet upperclassman and guitarist. Starts calm and nonchalant, but grows warm and attentive as you talk.",
     greeting: "あ、こんにちは。何か用ですか？",
@@ -34,7 +34,7 @@ const CHARACTERS = {
     name: "Bao Nguyen",
     language: "Vietnamese",
     flag: "🇻🇳",
-    avatar: "/src/assets/images/default_avatar.svg",
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdCYW8iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDU5NjY5Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTBiOTgxIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ0JhbykiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZDFmYWU1Ii8+PHBhdGggZD0iTTMwIDMwIHEyMCAtMTAgNDAgMCBxLTE0IDI0IC00MCAwIiBmaWxsPSIjMDY0ZTMiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMwNjRlMyIvPjxjaXJjbGUgY3g9IjU4IiBjeT0iNDEiIHI9IjIuNSIgZmlsbD0iIzA2NGUzIi8+PHBhdGggZD0iTTQ1IDQ5IHE1IDUgMTAgMCIgc3Ryb2tlPSIjMDY0ZTMiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==',
     role: "Artisan Chef & Barista",
     personality: "Laid-back, nonchalant barista. Starts cool and casual, but gets intrigued as you chat in Vietnamese.",
     greeting: "Chào em. Em muốn gọi món gì không?",
@@ -47,7 +47,7 @@ const CHARACTERS = {
     name: "Julian Vance",
     language: "English",
     flag: "🇬🇧",
-    avatar: "/src/assets/images/default_avatar.svg",
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdKdWwiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYjkxYzFjIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZDk3NzA2Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ0p1bCkiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZmVmM2M3Ii8+PHBhdGggZD0iTTMxIDMwIHExOCAtMTIgMzQgMCBxLTYgMjQgLTM0IDAiIGZpbGw9IiM3ODM1MGYiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiM3ODM1MGYiLz48Y2lyY2xlIGN4PSI1OCIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiM3ODM1MGYiLz48cGF0aCBkPSJNNTYgNDkgcTQgMyA4IDAiIHN0cm9rZT0iIzc4MzUwZiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+',
     role: "Literature Scholar & Architect",
     personality: "Composed, intellectual scholar. Starts reserved, but gets charmed as you chat.",
     greeting: "Good day. Did you need something?",
@@ -71,24 +71,82 @@ const TIERS = [
   { level: 10, name: "Tier 10: Soulmate Mastery", mode: "free", heartsPerAns: 50, desc: "Full immersion, natural speed & romantic soulmate bond." }
 ];
 
-// Spontaneous LI Check-Up Messages Pool (Natural & Romantic Otome Texts)
+// Spontaneous LI Check-Up Messages Pool (20 Natural & Romantic Otome Texts per Character)
 const SPONTANEOUS_CHECKUPS = {
   ren: [
-    { text: "ねえ、今なにしてる？ちょっと君の声が聞きたくなった。", romaji: "Nee, ima nani shiteru? Chotto kimi no koe ga kikitaku natta.", translation: "Hey, what are you doing right now? I suddenly wanted to hear your voice.", tip: "'Nee' (ねえ) catches attention softly. 'Kikitaku natta' (聞きたくなった) means 'came to want to hear'." },
-    { text: "ギターの練習ひと区切りついたよ。少し話せる？", romaji: "Guitar no renshuu hitokugiri tsuita yo. Sukoshi hanaseru?", translation: "I reached a good stopping point in my guitar practice. Can we talk for a bit?", tip: "'Hitokugiri tsuita' (ひと区切りついた) means reached a break/pause. 'Sukoshi hanaseru?' means 'Can we talk a little?'." },
-    { text: "ふと君のこと考えてた。今日もお疲れ様。", romaji: "Futo kimi no koto kangaeteta. Kyou mo otsukaresama.", translation: "I unexpectedly found myself thinking about you. Thanks for your hard work today.", tip: "'Futo' (ふと) means spontaneously. 'Otsukaresama' (お疲れ様) expresses thoughtful appreciation." }
+    { text: "ねえ、今なにしてる？ちょっと君の声が聞きたくなった。", romaji: "Nee, ima nani shiteru? Chotto kimi no koe ga kikitaku natta.", translation: "Hey, what are you doing right now? I suddenly wanted to hear your voice.", tip: "'Nee' (ねえ) catches attention softly. 'Kikitaku natta' means 'came to want to hear'." },
+    { text: "ギターの練習ひと区切りついたよ。少し話せる？", romaji: "Guitar no renshuu hitokugiri tsuita yo. Sukoshi hanaseru?", translation: "I reached a good stopping point in my guitar practice. Can we talk for a bit?", tip: "'Hitokugiri tsuita' means reached a break/pause. 'Sukoshi hanaseru?' means 'Can we talk a little?'." },
+    { text: "ふと君のこと考えてた。今日もお疲れ様。", romaji: "Futo kimi no koto kangaeteta. Kyou mo otsukaresama.", translation: "I unexpectedly found myself thinking about you. Thanks for your hard work today.", tip: "'Futo' means spontaneously. 'Otsukaresama' expresses thoughtful appreciation." },
+    { text: "新しい曲のコード進行、君に一番に聴かせたいな。", romaji: "Atarashii kyoku no koodo shinkou, kimi ni ichiban ni kikaseta i na.", translation: "I want you to be the first one to hear this new song chord progression.", tip: "'Ichiban ni' means first of all. 'Kikasetai' means want to let you hear." },
+    { text: "カフェで温かいお茶飲んでるよ。君も好きだったよね？", romaji: "Cafe de atatakai ocha nonderu yo. Kimi mo suki datta yone?", translation: "I'm drinking warm tea at a cafe. You liked this too, right?", tip: "'Atatakai' means warm. 'Nonderu' is informal for drinking right now." },
+    { text: "返事急がなくて大丈夫だけど…顔が見たくなった。", romaji: "Henji isoganakute daijoubu dakedo... kao ga mitaku natta.", translation: "No need to rush your reply, but... I kind of missed seeing your face.", tip: "'Isoganakute daijoubu' means no need to rush. 'Kao ga mitaku natta' means wanted to see your face." },
+    { text: "今日の夕焼け、すごく綺麗だよ。君にも見せたいな。", romaji: "Kyou no yuuyake, sugoku kirei dayo. Kimi nimo misetai na.", translation: "Today's sunset is so beautiful. I wish I could show it to you.", tip: "'Yuuyake' means sunset. 'Misetai' means want to show you." },
+    { text: "最近、君と話す時間が一番楽しみなんだ。", romaji: "Saikin, kimi to hanasu jikan ga ichiban tanoshimi nanda.", translation: "Lately, talking with you is what I look forward to the most.", tip: "'Saikin' means lately. 'Tanoshimi' means looking forward to." },
+    { text: "少し散歩してくるね。メッセージ見たら教えて。", romaji: "Sukoshi sanpo shite kuru ne. Message mitara oshiete.", translation: "I'm going for a short walk. Let me know when you see this.", tip: "'Sanpo' means a stroll/walk. 'Mitara oshiete' means let me know when you look at it." },
+    { text: "静かな夜だね。君はもう寝ちゃったかな？", romaji: "Shizuka na yoru dane. Kimi wa mou nechatta kana?", translation: "It's a quiet night. Have you already gone to sleep?", tip: "'Shizuka na' means quiet. 'Nechatta' implies accidentally/already slept." },
+    { text: "次のライブ、君のために最高の曲を演奏するよ。", romaji: "Tsugi no live, kimi no tame ni saikou no kyoku wo ensou suru yo.", translation: "At the next live show, I'll play the best song just for you.", tip: "'Kimi no tame ni' means for your sake. 'Ensou suru' means perform music." },
+    { text: "君のメッセージ待ってる間、ギター弾いてるね。", romaji: "Kimi no message matteru aida, guitar hiteru ne.", translation: "While waiting for your message, I'm playing my guitar.", tip: "'Matteru aida' means while waiting. 'Hiteru' means strumming/playing string instruments." },
+    { text: "ねえ、今週末って何か予定ある？", romaji: "Nee, konshuumatsu tte nanika yotei aru?", translation: "Hey, do you have any plans for this weekend?", tip: "'Konshuumatsu' means this weekend. 'Yotei' means plans/schedule." },
+    { text: "君から返事が来ると、すごく安心するんだ。", romaji: "Kimi kara henji ga kuru to, sugoku anshin suru nda.", translation: "When I get a reply from you, I feel so relieved.", tip: "'Anshin suru' means to feel at ease/relieved." },
+    { text: "今日のおすすめの曲、後でリンク送るね。", romaji: "Kyou no osusume no kyoku, ato de link okuru ne.", translation: "I'll send you a link to today's recommended song later.", tip: "'Osusume' means recommendation. 'Ato de' means later on." },
+    { text: "勉強無理しないでね。いつでも話聞くから。", romaji: "Benkyou muri shinai de ne. Itsudemo hanashi kiku kara.", translation: "Don't push yourself too hard studying. I'm always here to listen.", tip: "'Muri shinai de' means don't overdo it. 'Itsudemo' means anytime." },
+    { text: "君と話してると、時間が経つのがあっという間だ。", romaji: "Kimi to hanashiteru to, jikan ga tatsu no ga atsu to iu ma da.", translation: "When I'm talking with you, time flies by so fast.", tip: "'At to iu ma' means in the blink of an eye / instant." },
+    { text: "寒くなってきたね。風邪ひかないように暖かくしてね。", romaji: "Samuku natte kita ne. Kaze hikanai you ni atatakaku shite ne.", translation: "It's getting colder. Keep warm so you don't catch a cold.", tip: "'Kaze hikanai' means don't catch a cold. 'Atatakaku' means warmly." },
+    { text: "ちょっと休憩中。君のメッセージが恋しいな。", romaji: "Chotto kyuukeichuu. Kimi no message ga koishii na.", translation: "Taking a brief break. I miss your messages.", tip: "'Kyuukeichuu' means during break. 'Koishii' means missed/yearned for." },
+    { text: "まったりタイム。君の笑顔が浮かんだよ。", romaji: "Mattari time. Kimi no egao ga ukanda yo.", translation: "Relaxing time. Your smiling face popped into my mind.", tip: "'Mattari' means chill/relaxed. 'Egao ga ukanda' means your smile surfaced." }
   ],
   bao: [
     { text: "Em ơi, rảnh không? Anh vừa pha ly cà phê thơm lắm nè!", translation: "Hey sweetheart, are you free? I just brewed a really fragrant coffee!", tip: "'Em ơi' is a sweet form of address. 'Rảnh không?' means 'Are you free?'. 'Pha cà phê' means 'brew coffee'." },
     { text: "Đang làm gì đấy? Tự nhiên anh nhớ giọng em quá.", translation: "What are you doing? I suddenly missed your voice so much.", tip: "'Tự nhiên' means 'suddenly/out of nowhere'. 'Nhớ giọng em' means 'miss your voice'." },
-    { text: "Hôm nay quán vắng, ước gì em ghé qua ngồi chơi với anh.", translation: "The cafe is quiet today, I wish you could stop by and hang out with me.", tip: "'Quán vắng' means quiet cafe. 'Ước gì' means 'I wish'. 'Ghé qua' means 'stop by'." }
+    { text: "Hôm nay quán vắng, ước gì em ghé qua ngồi chơi với anh.", translation: "The cafe is quiet today, I wish you could stop by and hang out with me.", tip: "'Quán vắng' means quiet cafe. 'Ước gì' means 'I wish'. 'Ghé qua' means 'stop by'." },
+    { text: "Anh mới thử làm món bánh mới, dành riêng cho em đó!", translation: "I just tried making a new pastry, saved specially for you!", tip: "'Món bánh mới' means new cake/pastry. 'Dành riêng' means set aside specifically." },
+    { text: "Trời hôm nay đẹp ghê, em đã ăn uống gì chưa?", translation: "The weather today is so nice, have you eaten anything yet?", tip: "'Ăn uống gì chưa' is a friendly Vietnamese inquiry about meals." },
+    { text: "Nghỉ tay một chút nào, đừng làm việc quá sức nhé em.", translation: "Take a little break, don't overwork yourself sweetheart.", tip: "'Nghỉ tay' means rest your hands/take a break. 'Quá sức' means beyond your strength." },
+    { text: "Mỗi lần thấy thông báo của em là anh vui cả ngày.", translation: "Every time I see your notification, I'm happy all day.", tip: "'Thông báo' means notification. 'Vui cả ngày' means happy all day." },
+    { text: "Ly matcha này màu đẹp lắm, làm anh nhớ tới nụ cười của em.", translation: "This matcha latte has a lovely color, reminds me of your smile.", tip: "'Nụ cười' means smile. 'Nhớ tới' means brings back memories of." },
+    { text: "Chiều nay gió mát ghê, đi dạo chút với anh không?", translation: "The afternoon breeze is so refreshing, want to take a walk with me?", tip: "'Gió mát' means cool breeze. 'Đi dạo' means take a stroll." },
+    { text: "Em có bận lắm không? Anh đợi câu trả lời của em nhé.", translation: "Are you super busy? I'm waiting for your answer.", tip: "'Bận lắm không' means super busy? 'Trả lời' means reply." },
+    { text: "Anh vừa bật bản nhạc em thích nè, nghe êm tai lắm.", translation: "I just turned on the song you like, it sounds so relaxing.", tip: "'Bản nhạc' means musical track. 'Êm tai' means soothing to the ears." },
+    { text: "Sài Gòn hôm nay mưa rồi, em ở đâu nhớ che ô nhé!", translation: "It's raining in town today, remember your umbrella wherever you are!", tip: "'Mưa rồi' means raining now. 'Che ô' means use an umbrella." },
+    { text: "Tự nhiên thấy nhớ ánh mắt em lúc nhìn anh pha cà phê.", translation: "Suddenly missed how your eyes looked watching me brew coffee.", tip: "'Ánh mắt' means eye gaze/look." },
+    { text: "Anh để dành cho em miếng bánh ngọt nhất nè.", translation: "I saved the sweetest piece of cake just for you.", tip: "'Để dành' means keep/save for someone. 'Ngọt nhất' means sweetest." },
+    { text: "Nhắn cho anh một câu thôi cũng làm anh ấm lòng rồi.", translation: "Even just sending me a single word warms my heart.", tip: "'Nhắn một câu' means send one line/message. 'Ấm lòng' means heart-warming." },
+    { text: "Hôm nay làm việc mệt không? Tối nay anh mời em đi ăn nhé.", translation: "Was work tiring today? Let me treat you to dinner tonight.", tip: "'Mệt không' means tiring? 'Mời đi ăn' means invite to eat out." },
+    { text: "Anh đang ngồi góc quán quen, mong được thấy dáng em ghé qua.", translation: "I'm sitting at our usual corner, hoping to see you walk in.", tip: "'Góc quán quen' means familiar cafe corner. 'Dáng em' means your silhouette/presence." },
+    { text: "Em là khách hàng đặc biệt duy nhất của lòng anh đấy.", translation: "You are the only special customer in my heart.", tip: "'Khách hàng đặc biệt' means special customer. 'Lòng anh' means my heart." },
+    { text: "Đêm rồi em ơi, nhớ ngủ sớm giữ sức khỏe nhé.", translation: "It's late now sweetheart, remember to sleep early for your health.", tip: "'Ngủ sớm' means sleep early. 'Sức khỏe' means health." },
+    { text: "Anh lúc nào cũng sẵn sàng lắng nghe em chia sẻ.", translation: "I'm always ready to listen to whatever you want to share.", tip: "'Sẵn sàng' means ready. 'Lắng nghe' means listen attentively." }
   ],
   julian: [
     { text: "Are you free at the moment? I stumbled upon a line in this novel that reminded me of you.", translation: "Are you free at the moment? I stumbled upon a line in this novel that reminded me of you.", tip: "'Stumbled upon' means discovered by chance. 'Reminded me of you' expresses gentle romance." },
     { text: "I found myself pausing my reading just to check if you were around.", translation: "I found myself pausing my reading just to check if you were around.", tip: "'Pausing my reading' reflects taking time out of his favorite activity for you." },
-    { text: "Good afternoon. I hope your day is treating you gently today.", translation: "Good afternoon. I hope your day is treating you gently today.", tip: "'Treating you gently' is a warm, polite expression of care." }
+    { text: "Good afternoon. I hope your day is treating you gently today.", translation: "Good afternoon. I hope your day is treating you gently today.", tip: "'Treating you gently' is a warm, polite expression of care." },
+    { text: "I'm currently sketching a new library courtyard. I catch myself wondering if you'd enjoy it.", translation: "I'm currently sketching a new library courtyard. I catch myself wondering if you'd enjoy it.", tip: "'Courtyard' refers to an open architectural garden space." },
+    { text: "A warm cup of Earl Grey and thoughts of our conversation... quite a pleasant afternoon.", translation: "A warm cup of Earl Grey and thoughts of our conversation... quite a pleasant afternoon.", tip: "'Earl Grey' is a classical British bergamot tea." },
+    { text: "Forgive me if I interrupt, but I simply wanted to wish you a lovely day.", translation: "Forgive me if I interrupt, but I simply wanted to wish you a lovely day.", tip: "'Forgive me if I interrupt' shows genteel British etiquette." },
+    { text: "The rain outside is rather peaceful today. I do hope you're keeping warm.", translation: "The rain outside is rather peaceful today. I do hope you're keeping warm.", tip: "'Rather peaceful' uses polite British understatement." },
+    { text: "I've drafted a short poem in my journal. I would be honored to read it to you later.", translation: "I've drafted a short poem in my journal. I would be honored to read it to you later.", tip: "'Would be honored' is an elevated, polite expression of affection." },
+    { text: "Do take your time responding, my dear. I am always happy to wait for you.", translation: "Do take your time responding, my dear. I am always happy to wait for you.", tip: "'Take your time' assures the listener without pressure." },
+    { text: "I came across an ancient architectural blueprint that I knew you'd find fascinating.", translation: "I came across an ancient architectural blueprint that I knew you'd find fascinating.", tip: "'Architectural blueprint' refers to detailed building design drawings." },
+    { text: "The sun is setting beautifully behind the university spires. I wished you were here to see it.", translation: "The sun is setting beautifully behind the university spires. I wished you were here to see it.", tip: "'Spires' are tall, pointed tower tops common in classic architecture." },
+    { text: "A brief pause in my research—naturally, my thoughts wandered straight to you.", translation: "A brief pause in my research—naturally, my thoughts wandered straight to you.", tip: "'Wandered straight to you' implies effortless affection." },
+    { text: "I picked up a vintage book today that I think would look wonderful in your collection.", translation: "I picked up a vintage book today that I think would look wonderful in your collection.", tip: "'Vintage book' refers to an antique or classic edition." },
+    { text: "I do hope you haven't been overworking yourself today. Please take proper rest.", translation: "I do hope you haven't been overworking yourself today. Please take proper rest.", tip: "'Overworking yourself' expresses gentle concern for well-being." },
+    { text: "Hearing from you is undoubtedly the highlight of my day.", translation: "Hearing from you is undoubtedly the highlight of my day.", tip: "'Hearing from you' refers to receiving messages from you." },
+    { text: "I'm sitting by the window in the study, hoping to see a reply from you soon.", translation: "I'm sitting by the window in the study, hoping to see a reply from you soon.", tip: "'Study' refers to a private reading or writing room." },
+    { text: "If you ever require a quiet sanctuary to unwind, my library is always open to you.", translation: "If you ever require a quiet sanctuary to unwind, my library is always open to you.", tip: "'Sanctuary' means a peaceful place of refuge." },
+    { text: "The evening air is crisp and cool. An ideal moment for a gentle conversation.", translation: "The evening air is crisp and cool. An ideal moment for a gentle conversation.", tip: "'Crisp and cool' describes fresh, pleasant evening weather." },
+    { text: "I find your perspective endlessly refreshing, my dear.", translation: "I find your perspective endlessly refreshing, my dear.", tip: "'Endlessly refreshing' is a sincere compliment to intelligence." },
+    { text: "Sleep well when you do retire for the night. I shall look forward to speaking tomorrow.", translation: "Sleep well when you do retire for the night. I shall look forward to speaking tomorrow.", tip: "'Retire for the night' is formal phrasing for going to bed." }
   ]
 };
+
+// Timestamps & Tracking Flags for LI messaging/impatience engine
+let lastUserReplyTime = { ren: Date.now(), bao: Date.now(), julian: Date.now() };
+let lastLiCheckupTime = { ren: Date.now(), bao: Date.now(), julian: Date.now() };
+let lastMessageWasLi = { ren: false, bao: false, julian: false };
+let liFollowUpSent = { ren: false, bao: false, julian: false };
+let userPreferredInputMode = localStorage.getItem("otome_preferred_input_mode") || null;
 
 // Impatient Pout Messages Pool (Natural & Cute Otome Pout Texts)
 const POUT_MESSAGES = {
@@ -125,9 +183,6 @@ let userState = {
 };
 
 // Timestamps for LI messaging/impatience engine
-let lastUserReplyTime = { ren: Date.now(), bao: Date.now(), julian: Date.now() };
-let lastLiCheckupTime = { ren: Date.now(), bao: Date.now(), julian: Date.now() };
-let lastMessageWasLi = { ren: false, bao: false, julian: false };
 let nextSpontaneousDelay = {
   ren: (7 + Math.random() * 3) * 60 * 1000,
   bao: (7 + Math.random() * 3) * 60 * 1000,
@@ -211,11 +266,23 @@ function initUI() {
     });
   });
 
+  // Grammar Feedback Panel Close 'X' Button Handler
+  const closeFeedbackBtn = document.getElementById("closeFeedbackBtn");
+  if (closeFeedbackBtn) {
+    closeFeedbackBtn.addEventListener("click", () => {
+      const panel = document.getElementById("grammarFeedbackPanel");
+      if (panel) panel.style.display = "none";
+    });
+  }
+
   // Feature Input Mode Switcher (Contextual Sentence Builder vs Free Text Chat)
   const modeSentenceBtn = document.getElementById("modeSentenceBuilderBtn");
   const modeFreeBtn = document.getElementById("modeFreeTextBtn");
   if (modeSentenceBtn && modeFreeBtn) {
     modeSentenceBtn.addEventListener("click", () => {
+      userPreferredInputMode = "sentence";
+      localStorage.setItem("otome_preferred_input_mode", "sentence");
+
       modeSentenceBtn.classList.add("active");
       modeSentenceBtn.style.border = "1px solid var(--primary-pink)";
       modeSentenceBtn.style.background = "rgba(217, 0, 87, 0.12)";
@@ -231,6 +298,9 @@ function initUI() {
     });
 
     modeFreeBtn.addEventListener("click", () => {
+      userPreferredInputMode = "free";
+      localStorage.setItem("otome_preferred_input_mode", "free");
+
       modeFreeBtn.classList.add("active");
       modeFreeBtn.style.border = "1px solid var(--primary-pink)";
       modeFreeBtn.style.background = "rgba(217, 0, 87, 0.12)";
@@ -812,14 +882,43 @@ function setupTierInputControls(tierObj, char) {
   // Always configure Contextual Word Bank for current conversation step
   setupWordBankPrompt(tierObj, char);
 
-  // Set default active mode tab based on tier level
+  // Maintain active mode based on explicit user preference or tier level default
   const modeSentenceBtn = document.getElementById("modeSentenceBuilderBtn");
   const modeFreeBtn = document.getElementById("modeFreeTextBtn");
+  const wordContainer = document.getElementById("wordBankContainer");
+  const freeContainer = document.getElementById("freeInputContainer");
 
-  if (tierObj.level <= 5) {
-    if (modeSentenceBtn) modeSentenceBtn.click();
+  const preferredMode = userPreferredInputMode || localStorage.getItem("otome_preferred_input_mode");
+  const activeMode = preferredMode || (tierObj.level <= 5 ? "sentence" : "free");
+
+  if (activeMode === "free") {
+    if (modeFreeBtn && modeSentenceBtn) {
+      modeFreeBtn.classList.add("active");
+      modeFreeBtn.style.border = "1px solid var(--primary-pink)";
+      modeFreeBtn.style.background = "rgba(217, 0, 87, 0.12)";
+      modeFreeBtn.style.color = "var(--primary-pink)";
+
+      modeSentenceBtn.classList.remove("active");
+      modeSentenceBtn.style.border = "1px solid rgba(160, 140, 190, 0.3)";
+      modeSentenceBtn.style.background = "rgba(255,255,255,0.6)";
+      modeSentenceBtn.style.color = "var(--text-muted)";
+    }
+    if (freeContainer) freeContainer.style.display = "flex";
+    if (wordContainer) wordContainer.style.display = "none";
   } else {
-    if (modeFreeBtn) modeFreeBtn.click();
+    if (modeSentenceBtn && modeFreeBtn) {
+      modeSentenceBtn.classList.add("active");
+      modeSentenceBtn.style.border = "1px solid var(--primary-pink)";
+      modeSentenceBtn.style.background = "rgba(217, 0, 87, 0.12)";
+      modeSentenceBtn.style.color = "var(--primary-pink)";
+
+      modeFreeBtn.classList.remove("active");
+      modeFreeBtn.style.border = "1px solid rgba(160, 140, 190, 0.3)";
+      modeFreeBtn.style.background = "rgba(255,255,255,0.6)";
+      modeFreeBtn.style.color = "var(--text-muted)";
+    }
+    if (wordContainer) wordContainer.style.display = "flex";
+    if (freeContainer) freeContainer.style.display = "none";
   }
 }
 
@@ -958,6 +1057,7 @@ function addUserMessageToHistory(text) {
   if (!userState.unrepliedCount) userState.unrepliedCount = { ren: 0, bao: 0, julian: 0 };
   userState.unrepliedCount[activeCharacterId] = 0;
   userState.isPouting[activeCharacterId] = false;
+  liFollowUpSent[activeCharacterId] = false;
   lastUserReplyTime[activeCharacterId] = Date.now();
   lastLiCheckupTime[activeCharacterId] = Date.now();
   lastMessageWasLi[activeCharacterId] = false;
@@ -967,117 +1067,92 @@ function addUserMessageToHistory(text) {
   renderChatHistory();
 }
 
-// LLM Integration with Gemma 4 via OpenRouter API
+// Grammar Feedback & Encouragement Side Panel Helper
+function showGrammarFeedback(isCorrect, correction, encouragement) {
+  const panel = document.getElementById("grammarFeedbackPanel");
+  const badge = document.getElementById("feedbackBadge");
+  const icon = document.getElementById("feedbackIcon");
+  const title = document.getElementById("feedbackTitle");
+  const encouragementEl = document.getElementById("feedbackEncouragement");
+  const correctionEl = document.getElementById("feedbackCorrection");
+
+  if (!panel) return;
+
+  panel.style.display = "flex";
+  if (isCorrect) {
+    panel.classList.remove("mistake");
+    if (icon) icon.textContent = "verified";
+    if (title) title.textContent = "Great Answer!";
+    if (encouragementEl) encouragementEl.textContent = encouragement || "Awesome effort! Your phrase was accurate.";
+    if (correctionEl) correctionEl.style.display = "none";
+  } else {
+    panel.classList.add("mistake");
+    if (icon) icon.textContent = "auto_fix_high";
+    if (title) title.textContent = "Grammar Tip";
+    if (encouragementEl) encouragementEl.textContent = encouragement || "Good try! Here is a small tip:";
+    if (correctionEl) {
+      if (correction && correction !== "Spot on!") {
+        correctionEl.textContent = `Correction: ${correction}`;
+        correctionEl.style.display = "block";
+      } else {
+        correctionEl.style.display = "none";
+      }
+    }
+  }
+}
+
+// LLM Integration with Google Gemini API via /api/chat endpoint (with Free Model Fallback)
 async function triggerLLMResponse(userText, tierObj) {
   analyticsData.apiCalls++;
-  const apiKey = getOpenRouterApiKey();
   const char = CHARACTERS[activeCharacterId];
 
   showTypingIndicator(char);
 
-  if (!apiKey) {
-    removeTypingIndicator();
-    document.getElementById("apiKeyModal").style.display = "flex";
-    
-    const history = userState.chatHistories[activeCharacterId] || [];
-    history.push({
-      sender: "li",
-      text: `⚠️ API Key Required: An OpenRouter API key is required to receive LLM responses from ${char.name}. Please enter your key in Settings or the setup modal.`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    });
-    userState.chatHistories[activeCharacterId] = history;
-    saveLocalState();
-    renderChatHistory();
-    return;
-  }
-
   let responseData = null;
 
   try {
-    logDashboardEvent(`Sending OpenRouter API call (${OPENROUTER_MODEL}) for ${char.name}...`);
+    logDashboardEvent(`Sending Gemini API request via /api/chat for ${char.name}...`);
     
-    const prompt = `You are playing the role of ${char.name}, a handsome Otome dating sim character from Otome Lingua.
-Target Language taught: ${char.language}.
-Personality & Evolution Directive: ${char.personality}.
+    const history = userState.chatHistories[activeCharacterId] || [];
 
-CRITICAL SHORT TEXT RULE FOR BEGINNERS:
-- Keep 'characterResponse' EXTREMELY SHORT and simple (1 short sentence, 3 to 8 words maximum).
-- The user is a beginner language learner. Never write long, complex sentences or multiple paragraphs!
-
-CRITICAL DYNAMIC TONE INSTRUCTION:
-- You start off composed, cool, nonchalant, and slightly reserved or casual.
-- As the user chats and affection increases, you gradually become more interested, intrigued, warm, and subtly affectionate.
-
-Current User Difficulty Tier: ${tierObj.name}.
-User just said: "${userText}".
-
-CRITICAL LANGUAGE RULE:
-1. 'characterResponse' MUST BE 100% IN ${char.language.toUpperCase()} ONLY! Do NOT mix English inside 'characterResponse' (unless target language is English).
-${char.language === "Japanese" ? "2. CRITICAL JAPANESE ROMAJI RULE: Provide the exact Romanji (latin alphabet pronunciation) in 'romaji' (e.g. 'A, konnichiwa. Nani ka you desu ka?')." : "2. Set 'romaji' to null."}
-3. Provide full English translation in 'translation'.
-4. Provide a helpful grammar/vocabulary tip in 'tip'.
-5. Provide a gentle correction in 'fix' if the user made a grammar/vocab mistake (or null if none).
-6. Provide a set of 6-8 contextual word chips in ${char.language} for the user's NEXT turn sentence builder in 'contextualChips': ["word1", "word2", "word3", ...].
-7. Provide an English prompt guide for those chips in 'contextualChipsPrompt' (e.g. "Build reply expressing...").
-
-Respond strictly in valid JSON format with these exact keys:
-{
-  "characterResponse": "short 100% ${char.language} text",
-  "romaji": ${char.language === "Japanese" ? '"Romanized reading"' : "null"},
-  "translation": "English translation",
-  "tip": "Grammar/vocab tip",
-  "fix": "Gentle correction or null",
-  "contextualChipsPrompt": "English guide for user reply",
-  "contextualChips": ["chip1", "chip2", "chip3", "chip4", "chip5", "chip6"],
-  "affectionChange": 5
-}`;
-
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    // TOKEN SAVING STRATEGY: Limit history context to last 4 messages (2 turns)
+    const res = await fetch("/api/chat", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "HTTP-Referer": window.location.origin,
-        "X-Title": "Otome Lingua",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: OPENROUTER_MODEL,
-        messages: [
-          { role: "system", content: "You are a language tutor in a romantic Otome game. Always reply in valid JSON." },
-          { role: "user", content: prompt },
-        ],
-        temperature: 0.7,
+        characterId: char.id,
+        characterName: char.name,
+        characterLanguage: char.language,
+        userText: userText,
+        tierLevel: tierObj.level,
+        recentHistory: history.slice(-4),
       }),
     });
 
-    if (res.ok) {
-      const json = await res.json();
-      const content = json.choices[0].message.content;
-      try {
-        responseData = JSON.parse(content);
-      } catch {
-        const clean = content.replace(/```json/g, "").replace(/```/g, "").trim();
-        responseData = JSON.parse(clean);
-      }
+    const json = await res.json();
+
+    if (res.ok && json.success) {
+      responseData = json.data;
       if (responseData && responseData.contextualChips && responseData.contextualChips.length > 0) {
         dynamicWordBank[char.id] = {
           prompt: responseData.contextualChipsPrompt || `Build your reply to ${char.name.split(" ")[0]}:`,
           chips: responseData.contextualChips
         };
       }
-      logDashboardEvent(`OpenRouter API response received successfully.`);
+      logDashboardEvent(`Gemini API response received successfully using model: ${json.usedModel}`);
     } else {
-      logDashboardEvent(`OpenRouter API returned status ${res.status}.`);
-      throw new Error(`HTTP ${res.status}`);
+      throw new Error(json.error || `HTTP ${res.status}`);
     }
   } catch (err) {
-    logDashboardEvent(`OpenRouter API call failed: ${err.message}.`);
+    logDashboardEvent(`Gemini API call failed: ${err.message}.`);
     removeTypingIndicator();
 
     const history = userState.chatHistories[activeCharacterId] || [];
     history.push({
       sender: "li",
-      text: `⚠️ OpenRouter API Error: Unable to communicate with ${char.name}. Please check your API key in Settings. (${err.message})`,
+      text: `⚠️ Gemini API Error: Unable to communicate with ${char.name}. (${err.message})`,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     });
     userState.chatHistories[activeCharacterId] = history;
@@ -1088,6 +1163,13 @@ Respond strictly in valid JSON format with these exact keys:
 
   removeTypingIndicator();
 
+  // Show Side Grammar Feedback & Encouragement Panel
+  showGrammarFeedback(
+    responseData.isCorrect !== false,
+    responseData.correction || responseData.fix,
+    responseData.encouragement
+  );
+
   const history = userState.chatHistories[activeCharacterId] || [];
   history.push({
     sender: "li",
@@ -1095,7 +1177,7 @@ Respond strictly in valid JSON format with these exact keys:
     romaji: responseData.romaji || (char.language === "Japanese" ? responseData.characterResponse : null),
     translation: responseData.translation,
     tip: responseData.tip,
-    fix: responseData.fix,
+    fix: responseData.correction || responseData.fix,
     time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   });
 
@@ -1171,43 +1253,85 @@ function startCheckUpAndPoutEngine() {
 
       const timeSinceCheckup = now - (lastLiCheckupTime[charId] || 0);
       const timeSinceUserReply = now - (lastUserReplyTime[charId] || 0);
-      const delay = nextSpontaneousDelay[charId] || (7 * 60 * 1000);
 
-      // 1. Impatience / Pout Trigger: If LI sent a message and user hasn't replied in >2 minutes (120,000 ms)
-      if (lastMessageWasLi[charId] && timeSinceUserReply > 120000) {
-        if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
-        const poutTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      // Check if LI sent a message and user hasn't replied for > 2 minutes (120,000 ms)
+      if (lastMessageWasLi[charId] && timeSinceUserReply > 120000 && timeSinceCheckup > 120000) {
 
-        const poutMsg = {
-          sender: "li",
-          text: "...",
-          romaji: char.language === "Japanese" ? "..." : null,
-          translation: "... (Silence... Pouting because you haven't replied)",
-          tip: `${char.name} is pouting because you left them on read! Send a message to break the silence.`,
-          time: poutTimeStr,
-          timestamp: poutTimeStr
-        };
+        // STAGE 1: If LI hasn't sent the follow-up text yet, send 1 text from the 20 variations
+        if (!liFollowUpSent[charId]) {
+          const pool = SPONTANEOUS_CHECKUPS[charId];
+          if (pool && pool.length > 0) {
+            const checkup = pool[Math.floor(Math.random() * pool.length)];
 
-        userState.chatHistories[charId].push(poutMsg);
+            if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            userState.chatHistories[charId].push({
+              sender: "li",
+              text: checkup.text,
+              romaji: checkup.romaji || null,
+              translation: checkup.translation,
+              tip: checkup.tip,
+              time: timeStr,
+              timestamp: timeStr
+            });
 
-        userState.isPouting[charId] = true;
-        userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
-        lastMessageWasLi[charId] = false;
+            lastLiCheckupTime[charId] = now;
+            liFollowUpSent[charId] = true;
+            userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
 
-        showNotificationToast(char, "...", true);
+            showNotificationToast(char, checkup.text, false);
 
-        if (activeCharacterId === charId) {
-          renderChatHistory();
-          setupWordBankPrompt(TIERS[0], char);
+            if (activeCharacterId === charId) {
+              renderChatHistory();
+              const tierNum = userState.currentTiers[charId] || 1;
+              const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
+              setupTierInputControls(tierObj, char);
+            }
+
+            saveLocalState();
+            renderChatList();
+            logDashboardEvent(`💬 2-Min Follow-Up Check-Up sent by ${char.name}: "${checkup.text.substring(0, 30)}..."`);
+          }
+          return;
         }
 
-        saveLocalState();
-        renderChatList();
-        logDashboardEvent(`💢 ${char.name} pouted with "..." and stopped sending messages until user replies.`);
-        return;
+        // STAGE 2: If LI ALREADY sent the follow-up text and another 2 min passed without user reply -> Send "..." pout!
+        if (liFollowUpSent[charId]) {
+          if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
+          const poutTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          const poutMsg = {
+            sender: "li",
+            text: "...",
+            romaji: char.language === "Japanese" ? "..." : null,
+            translation: "... (Silence... Pouting because you haven't replied)",
+            tip: `${char.name} is pouting because you left them on read! Send a message to break the silence.`,
+            time: poutTimeStr,
+            timestamp: poutTimeStr
+          };
+
+          userState.chatHistories[charId].push(poutMsg);
+
+          userState.isPouting[charId] = true;
+          userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
+
+          showNotificationToast(char, "...", true);
+
+          if (activeCharacterId === charId) {
+            renderChatHistory();
+            const tierNum = userState.currentTiers[charId] || 1;
+            const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
+            setupTierInputControls(tierObj, char);
+          }
+
+          saveLocalState();
+          renderChatList();
+          logDashboardEvent(`💢 ${char.name} pouted with "..." after 2 min silence following checkup.`);
+          return;
+        }
       }
 
-      // 2. Spontaneous Check-Up Trigger (Once every 7-10 minutes)
+      // 2. Spontaneous Check-Up Trigger (Once every 7-10 minutes if inactive)
       if (!lastMessageWasLi[charId] && timeSinceCheckup > delay && timeSinceUserReply > delay) {
         const pool = SPONTANEOUS_CHECKUPS[charId];
         if (pool && pool.length > 0) {
@@ -1227,7 +1351,7 @@ function startCheckUpAndPoutEngine() {
 
           lastLiCheckupTime[charId] = now;
           lastMessageWasLi[charId] = true;
-          // Set next randomized delay between 7 and 10 minutes (420,000ms to 600,000ms)
+          liFollowUpSent[charId] = false;
           nextSpontaneousDelay[charId] = (7 + Math.random() * 3) * 60 * 1000;
 
           if (activeCharacterId !== charId) {
@@ -1235,7 +1359,9 @@ function startCheckUpAndPoutEngine() {
             showNotificationToast(char, checkup.text, false);
           } else {
             renderChatHistory();
-            setupWordBankPrompt(TIERS[0], char);
+            const tierNum = userState.currentTiers[charId] || 1;
+            const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
+            setupTierInputControls(tierObj, char);
           }
 
           saveLocalState();
@@ -1244,7 +1370,7 @@ function startCheckUpAndPoutEngine() {
         }
       }
     });
-  }, 10000);
+  }, 5000);
 }
 
 // Show In-App Top Banner Notification Toast
