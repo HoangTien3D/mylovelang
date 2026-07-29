@@ -1,7 +1,23 @@
 import { GoogleGenAI } from "@google/genai";
 
 // PASTE YOUR GOOGLE GEMINI API KEY HERE IF YOU WANT TO HARDCODE IT LOCALLY:
-const HARDCODED_GEMINI_API_KEY = "AQ.Ab8RN6KYcWkteA07ksbwOupV4kyF13LTs31aot5r60UdcmQPcQ";
+const HARDCODED_GEMINI_API_KEY = "AQ.Ab8RN6ItF-hxrmb__2PaM2zHKJL5TXK90KRwPejb2zji8QgLJg";
+
+function getEffectiveApiKey() {
+  const envKey = process.env.GEMINI_API_KEY?.trim();
+  if (envKey && envKey !== "MY_GEMINI_API_KEY" && envKey.length > 5) {
+    return envKey;
+  }
+  const hardcoded = HARDCODED_GEMINI_API_KEY?.trim();
+  if (hardcoded && hardcoded.length > 5) {
+    return hardcoded;
+  }
+  const openRouter = process.env.VITE_OPENROUTER_API_KEY?.trim();
+  if (openRouter && openRouter.length > 5) {
+    return openRouter;
+  }
+  return envKey || hardcoded || "";
+}
 
 const FREE_GEMINI_MODELS = [
   "gemini-3.6-flash",
@@ -9,17 +25,101 @@ const FREE_GEMINI_MODELS = [
   "gemini-flash-latest",
 ];
 
+async function generateGeminiContent(
+  apiKey: string,
+  modelName: string,
+  systemInstruction: string,
+  userText: string,
+  aiSDK: GoogleGenAI
+): Promise<string> {
+  const isBearerToken = apiKey.startsWith("AQ.") || apiKey.startsWith("ya29.");
+
+  if (isBearerToken) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        contents: [{ parts: [{ text: `User message: "${userText}"` }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.7,
+        },
+      }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Gemini API error (${res.status}): ${errText}`);
+    }
+
+    const json = await res.json();
+    const candidateText = json.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (candidateText) {
+      return candidateText;
+    }
+    throw new Error("No text content returned from Gemini REST API.");
+  }
+
+  try {
+    const response = await aiSDK.models.generateContent({
+      model: modelName,
+      contents: `User message: "${userText}"`,
+      config: {
+        systemInstruction,
+        responseMimeType: "application/json",
+        temperature: 0.7,
+      },
+    });
+
+    if (response && response.text) {
+      return response.text;
+    }
+    throw new Error("No response text from GoogleGenAI SDK.");
+  } catch (err: any) {
+    if (err?.message && (err.message.includes("UNAUTHENTICATED") || err.message.includes("OAuth 2"))) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemInstruction }] },
+          contents: [{ parts: [{ text: `User message: "${userText}"` }] }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.7,
+          },
+        }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        const candidateText = json.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (candidateText) return candidateText;
+      }
+    }
+    throw err;
+  }
+}
+
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
     return res.status(405).json({ success: false, error: "Method not allowed" });
   }
 
   try {
-    const apiKey = HARDCODED_GEMINI_API_KEY?.trim() || process.env.GEMINI_API_KEY || process.env.VITE_OPENROUTER_API_KEY;
+    const apiKey = getEffectiveApiKey();
     if (!apiKey) {
       return res.status(400).json({
         success: false,
-        error: "GEMINI_API_KEY is not configured on the server. Please set GEMINI_API_KEY environment variable in Vercel settings or hardcode it.",
+        error: "GEMINI_API_KEY is not configured on the server. Please set GEMINI_API_KEY environment variable in Vercel settings (starts with 'AIzaSy...').",
       });
     }
 
@@ -80,18 +180,9 @@ Return ONLY valid JSON matching this schema:
 
     for (const modelName of FREE_GEMINI_MODELS) {
       try {
-        const response = await ai.models.generateContent({
-          model: modelName,
-          contents: `User message: "${userText}"`,
-          config: {
-            systemInstruction,
-            responseMimeType: "application/json",
-            temperature: 0.7,
-          },
-        });
-
-        if (response && response.text) {
-          responseText = response.text;
+        const resText = await generateGeminiContent(apiKey, modelName, systemInstruction, userText, ai);
+        if (resText) {
+          responseText = resText;
           usedModel = modelName;
           break;
         }
@@ -118,9 +209,13 @@ Return ONLY valid JSON matching this schema:
       data: parsedData,
     });
   } catch (err: any) {
+    let errorMessage = err?.message || "Internal server error calling Gemini API";
+    if (typeof errorMessage === "string" && (errorMessage.includes("UNAUTHENTICATED") || errorMessage.includes("OAuth 2") || errorMessage.includes("API key not valid"))) {
+      errorMessage = "Invalid Gemini API Key: Please configure a valid Google Gemini API Key (starts with 'AIzaSy...') in Vercel environment variables or server configuration.";
+    }
     return res.status(500).json({
       success: false,
-      error: err?.message || "Internal server error calling Gemini API",
+      error: errorMessage,
     });
   }
 }
