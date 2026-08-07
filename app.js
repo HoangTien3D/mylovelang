@@ -5,6 +5,15 @@
  * Free Text Chat, Convex Sync & Telemetry Dashboard
  */
 
+import { inject } from "@vercel/analytics";
+
+// Initialize Vercel Analytics
+try {
+  inject();
+} catch (e) {
+  console.log("Vercel Analytics initialized", e);
+}
+
 // Global Configuration
 const CONVEX_HTTP_SITE = "https://wary-reindeer-174.convex.site";
 const OPENROUTER_MODEL = "google/gemma-4-26b-a4b-it:free";
