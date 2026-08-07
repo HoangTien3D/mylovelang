@@ -12,11 +12,14 @@
   <!-- Main Mobile App Frame -->
   <div class="app-container" id="appFrame">
     
-    <!-- Mystic Messenger Status Bar -->
+    <!-- Mystic Messenger Status Bar with UI Language Switcher -->
     <div class="status-bar">
       <span class="clock" id="liveClock">11:42 PM</span>
       <span>My Love Language</span>
-      <span id="signalBattery">📶 5G  🔋 98%</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button id="uiLangToggleBtn" class="lang-toggle-btn" type="button" title="Switch UI Language (English / Tiếng Việt)">🌐 EN | VI</button>
+        <span id="signalBattery">📶 5G 🔋 98%</span>
+      </div>
     </div>
 
     <!-- Floating LI Incoming Message / Pout Toast Notification Banner -->
@@ -24,32 +27,14 @@
       <img id="toastAvatar" src="" class="toast-avatar" alt="Avatar" />
       <div class="toast-content">
         <div class="toast-header">
-          <span id="toastName" class="toast-name">Ren Takahashi</span>
+          <span id="toastName" class="toast-name">Bao Nguyen</span>
           <span id="toastTag" class="toast-tag">💬 Incoming Message</span>
         </div>
-        <div id="toastText" class="toast-text">ねえ、今何してる？</div>
+        <div id="toastText" class="toast-text">Chào em. Em muốn gọi món gì không?</div>
       </div>
       <button id="toastReplyBtn" class="toast-action-btn">Reply</button>
     </div>
 
-    <!-- App Top Navigation Header -->
-    <header class="app-header">
-     <!-- <div class="app-brand">
-        <div class="app-logo-icon">❤️</div>
-        <div>
-          <h1 class="app-title">My Love Language</h1>
-        </div>
-      </div>
--->
-      <div class="user-stats-bar">
-        <div class="stat-chip streak" title="Daily Learning Streak">
-          <span>🔥</span> <span id="userStreak">5</span>
-        </div>
-        <div class="stat-chip hearts" title="Affection Hearts Earned">
-          <span>❤️</span> <span id="userHearts">285</span>
-        </div>
-      </div>
-    </header> 
 
     <!-- Main Dynamic Views Content Area -->
     <main class="main-content">
@@ -81,14 +66,24 @@
         </div>
       </section>
 
-      <!-- VIEW 3: 10-TIER PROGRESSION ROADMAP -->
+      <!-- VIEW 3: LANGUAGE GUIDEBOOK -->
       <section class="view-section" id="view-progress">
         <div class="section-header">
-          <h2 class="section-title">10-Tier Difficulty Progression</h2>
-          <p class="section-subtitle">From Baby Talk (MC) to Advanced Free-Form Romance</p>
+          <h2 class="section-title">Language Guidebook</h2>
+          <p class="section-subtitle">Special letters, typing rules, word forms & romance vocabulary</p>
         </div>
 
-        <div class="tier-roadmap" id="roadmapContainer">
+        <!-- Guidebook Language Switcher Tabs -->
+        <div class="guide-lang-tabs">
+          <button class="guide-tab-btn active" id="guideTabViBtn" type="button" onclick="setGuidebookLang('vi')">
+            🇻🇳 Tiếng Việt
+          </button>
+          <button class="guide-tab-btn" id="guideTabEnBtn" type="button" onclick="setGuidebookLang('en')">
+            🇬🇧 English
+          </button>
+        </div>
+
+        <div class="guidebook-container" id="guidebookContainer">
           <!-- Populated dynamically by app.js -->
         </div>
       </section>
@@ -102,7 +97,7 @@
 
         <div class="settings-group">
           <div class="settings-label">
-            <span>🔑 OpenRouter API Key</span>
+            <span>🔑 Gemini API Key</span>
             <span id="keySavedStatus" style="color:var(--accent-emerald); font-size:11px;">Key Active</span>
           </div>
           <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">
@@ -118,7 +113,7 @@
             HTTP Actions URL: <code style="color:var(--accent-gold);">https://wary-reindeer-174.convex.site</code>
           </p>
           <button class="primary-btn" id="manualSyncBtn" style="background: linear-gradient(135deg, #059669, #2563eb); color:#fff;">
-            Sync Progress Now to Convex
+            Sync Progress 
           </button>
         </div>
 
@@ -145,7 +140,7 @@
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdSZW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNGY0NmU1Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjN2MzYWVkIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ1JlbikiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZTBlN2ZmIi8+PHBhdGggZD0iTTMyIDMwIHExOCAtMTIgMzYgMCBxLTYgMjQgLTM6IDAiIGZpbGw9IiMzMTJlODEiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMzMTJlODEiLz48Y2lyY2xlIGN4PSI1OCIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMzMTJlODEiLz48cGF0aCBkPSJNNDYgNDkgcTQgNCA4IDAiIHN0cm9rZT0iIzMxMmU4MSIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+" id="chatHeaderAvatar" class="chat-header-avatar" alt="LI Avatar" />
           <div class="chat-header-info">
             <div class="chat-header-name" id="chatHeaderName">
-              Ren Takahashi <span id="chatHeaderFlag">🇯🇵</span>
+              Bao Nguyen <span id="chatHeaderFlag">🇻🇳</span>
             </div>
             <div class="chat-header-sub">
               <span>● Online</span> | <span id="chatHeaderTier">Tier 1: Baby Talk</span> | <span id="chatHeaderAffection">❤️ 45%</span>
@@ -176,6 +171,12 @@
           <!-- Populated dynamically by app.js -->
         </div>
 
+        <!-- Cooldown Banner (appears inside chat box when counting down) -->
+        <div class="chat-cooldown-banner" id="chatCooldownBanner" style="display:none;">
+          <span style="font-size:14px;">⏳</span>
+          <span id="chatCooldownText">Cooldown active — Please wait 20s before sending next message...</span>
+        </div>
+
         <!-- Dynamic Chat Input Controls (Sentence Builder & Free Text) -->
         <div class="chat-controls">
           <div class="tier-input-indicator">
@@ -201,23 +202,23 @@
           </div>
 
           <!-- Input Feature Mode Selector (Sentence Builder vs Free Text) -->
-          <div class="input-mode-switcher" style="display:flex; gap:6px; margin-top:2px;">
-            <button id="modeSentenceBuilderBtn" class="mode-tab-btn active" type="button" style="flex:1; padding:8px 10px; border-radius:12px; font-weight:800; font-size:11.5px; border:1px solid var(--primary-pink); background:rgba(217, 0, 87, 0.12); color:var(--primary-pink); cursor:pointer; transition:all 0.2s ease;">
+          <div class="input-mode-switcher" style="display:flex; gap:6px; margin-top:0;">
+            <button id="modeSentenceBuilderBtn" class="mode-tab-btn active" type="button" style="flex:1; padding:5px 8px; border-radius:8px; font-weight:800; font-size:11px; border:1px solid var(--primary-pink); background:rgba(217, 0, 87, 0.12); color:var(--primary-pink); cursor:pointer; transition:all 0.2s ease;">
               🧩 Sentence Builder
             </button>
-            <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" style="flex:1; padding:8px 10px; border-radius:12px; font-weight:800; font-size:11.5px; border:1px solid rgba(160, 140, 190, 0.3); background:rgba(255,255,255,0.6); color:var(--text-muted); cursor:pointer; transition:all 0.2s ease;">
+            <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" style="flex:1; padding:5px 8px; border-radius:8px; font-weight:800; font-size:11px; border:1px solid rgba(160, 140, 190, 0.3); background:rgba(255,255,255,0.6); color:var(--text-muted); cursor:pointer; transition:all 0.2s ease;">
               💬 Free Text Chat
             </button>
           </div>
 
           <!-- Feature 1: Contextual Word Bank / Sentence Builder -->
           <div class="word-bank-container" id="wordBankContainer">
-            <div class="prompt-guide" id="wordBankPromptGuide">Build your reply in Japanese:</div>
+            <div class="prompt-guide" id="wordBankPromptGuide">Build your reply in target language:</div>
             <div class="constructed-sentence-box" id="constructedSentenceBox">
-              <span style="color:var(--text-muted); font-size:12px;" id="constructedPlaceholder">Click word chips below to build your sentence...</span>
+              <span style="color:var(--text-muted); font-size:11px;" id="constructedPlaceholder">Click word chips below to build your sentence...</span>
             </div>
             <div class="word-chips-grid" id="wordChipsGrid"></div>
-            <button class="primary-btn" id="submitSentenceBtn" style="padding:10px; font-size:12.5px; font-weight:800;">Send Built Sentence ❤️</button>
+            <button class="primary-btn" id="submitSentenceBtn" style="padding:7px 10px; font-size:12px; font-weight:800; margin-top:2px;">Send Built Sentence ❤️</button>
           </div>
 
           <!-- Feature 2: Free-Form Text Chat -->
@@ -241,8 +242,8 @@
         <span>LIs</span>
       </button>
       <button class="tab-btn" data-tab="progress">
-        <span class="tab-icon material-symbols-outlined">military_tech</span>
-        <span>Roadmap</span>
+        <span class="tab-icon material-symbols-outlined">menu_book</span>
+        <span>Guidebook</span>
       </button>
       <button class="tab-btn" data-tab="settings">
         <span class="tab-icon material-symbols-outlined">settings</span>
@@ -256,7 +257,7 @@
     <div style="background:var(--bg-card); border:1px solid var(--primary-pink); border-radius:24px; padding:24px; max-width:400px; width:100%; box-shadow:0 10px 40px rgba(255,51,119,0.3);">
       <h2 style="font-size:20px; font-weight:800; color:#fff; margin-bottom:8px;">Welcome to Otome Lingua! ❤️</h2>
       <p style="font-size:13px; color:var(--text-muted); line-height:1.4; margin-bottom:16px;">
-        An <strong>OpenRouter API Key</strong> is <strong>required</strong> to activate real-time Gemma 4 LLM responses for Japanese, Vietnamese, and English romance chats. Enter your key below (saved securely in <code>localStorage</code>).
+        An <strong>OpenRouter API Key</strong> is <strong>required</strong> to activate real-time Gemma 4 LLM responses for Vietnamese and English romance chats. Enter your key below (saved securely in <code>localStorage</code>).
       </p>
       <input type="password" id="modalKeyInput" class="setting-input" placeholder="sk-or-v1-..." style="margin-bottom:12px;" />
       <div style="display:flex; gap:10px;">

@@ -13,28 +13,14 @@ const OPENROUTER_MODEL = "google/gemma-4-26b-a4b-it:free";
 // Example: const HARDCODED_OPENROUTER_API_KEY = "sk-or-v1-1234567890abcdef...";
 const HARDCODED_OPENROUTER_API_KEY = "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";
 
-// Character Definitions
+/// Character Definitions
 const CHARACTERS = {
-  ren: {
-    id: "ren",
-    name: "Ren Takahashi",
-    language: "Japanese",
-    flag: "🇯🇵",
-    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdSZW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNGY0NmU1Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjN2MzYWVkIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ1JlbikiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZTBlN2ZmIi8+PHBhdGggZD0iTTMyIDMwIHExOCAtMTIgMzYgMCBxLTYgMjQgLTM2IDAiIGZpbGw9IiMzMTJlODEiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMzMTJlODEiLz48Y2lyY2xlIGN4PSI1OCIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMzMTJlODEiLz48cGF0aCBkPSJNNDYgNDkgcTQgNCA4IDAiIHN0cm9rZT0iIzMxMmU4MSIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+',
-    role: "Upperclassman & Musician",
-    personality: "Cool, quiet upperclassman and guitarist. Starts calm and nonchalant, but grows warm and attentive as you talk.",
-    greeting: "あ、こんにちは。何か用ですか？",
-    romaji: "A, konnichiwa. Nani ka you desu ka?",
-    greetingTranslation: "Ah, hello. Did you need something?",
-    greetingTip: "'Nani ka you desu ka?' (何か用ですか) means 'Did you need something?'. 'Konnichiwa' (こんにちは) is standard Japanese for 'Hello'.",
-    sampleVoice: "Gentle Japanese tenor",
-  },
   bao: {
     id: "bao",
     name: "Bao Nguyen",
     language: "Vietnamese",
     flag: "🇻🇳",
-    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdCYW8iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDU5NjY5Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTBiOTgxIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ0JhbykiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZDFmYWU1Ii8+PHBhdGggZD0iTTMwIDMwIHEyMCAtMTAgNDAgMCBxLTE0IDI0IC00MCAwIiBmaWxsPSIjMDY0ZTMiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMwNjRlMyIvPjxjaXJjbGUgY3g9IjU4IiBjeT0iNDEiIHI9IjIuNSIgZmlsbD0iIzA2NGUzIi8+PHBhdGggZD0iTTQ1IDQ5IHE1IDUgMTAgMCIgc3Ryb2tlPSIjMDY0ZTMiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==',
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdCYW8iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDU5NjY5Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTBiOTgxIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ0JhbykiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZDFmYWU1Ii8+PHBhdGggZD0iTTMwIDMwIHEyMCAtMTAgNDAgMCBxLTE4IDI0IC00MCAwIiBmaWxsPSIjMDY0ZTMiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMwNjRlMyIvPjxjaXJjbGUgY3g9IjU4IiBjeT0iNDEiIHI9IjIuNSIgZmlsbD0iIzA2NGUzIi8+PHBhdGggZD0iTTQ1IDQ5IHE1IDUgMTAgMCIgc3Ryb2tlPSIjMDY0ZTMiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==',
     role: "Artisan Chef & Barista",
     personality: "Laid-back, nonchalant barista. Starts cool and casual, but gets intrigued as you chat in Vietnamese.",
     greeting: "Chào em. Em muốn gọi món gì không?",
@@ -47,13 +33,27 @@ const CHARACTERS = {
     name: "Julian Vance",
     language: "English",
     flag: "🇬🇧",
-    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdKdWwiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYjkxYzFjIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZDk3NzA2Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ0p1bCkiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZmVmM2M3Ii8+PHBhdGggZD0iTTMxIDMwIHExOCAtMTIgMzQgMCBxLTYgMjQgLTM0IDAiIGZpbGw9IiM3ODM1MGYiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiM3ODM1MGYiLz48Y2lyY2xlIGN4PSI1OCIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiM3ODM1MGYiLz48cGF0aCBkPSJNNTYgNDkgcTQgMyA4IDAiIHN0cm9rZT0iIzc4MzUwZiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+',
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdKdWwiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYjkxYzFjIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZDk3NzA2Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ0p1bCkiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZmVmM2M3Ii8+PHBhdGggZD0iTTMxIDMwIHExOCAtMTIgMzQgMCBxLTYgMjQgLTM4IDAiIGZpbGw9IiM3ODM1MGYiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiM3ODM1MGYiLz48Y2lyY2xlIGN4PSI1OCIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiM3ODM1MGYiLz48cGF0aCBkPSJNNTYgNDkgcTQgMyA4IDAiIHN0cm9rZT0iIzc4MzUwZiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+',
     role: "Literature Scholar & Architect",
     personality: "Composed, intellectual scholar. Starts reserved, but gets charmed as you chat.",
     greeting: "Good day. Did you need something?",
     greetingTranslation: "Good day. Did you need something?",
     greetingTip: "'Good day' is a formal polite greeting. 'Did you need something?' is a reserved inquiry.",
     sampleVoice: "Refined British scholar",
+  },
+  group: {
+    id: "group",
+    name: "Bao & Julian Lounge 💬",
+    isGroup: true,
+    language: "Vietnamese & English",
+    flag: "🇻🇳🇬🇧",
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdHcm91cCIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMwNTk2NjkiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNiOTFjMWMiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0idXJsKCNnR3JvdXApIi8+PHBhdGggZD0iTTM1IDIzIGMtMTAgMCAtMTYgOCAtMTYgMTcgYzAgNyA0IDExIDkgMTQgYy0xMSA0IC0xNiAxMSAtMTYgMjIgaDQ3IGMwIC0xMSAtNSAtMTggLTE2IC0yMiBjMTEgLTMgOSAtNyA5IC0xNCBjMCAtOSAtNiAtMTcgLTE2IC0xNyB6IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjk1Ii8+PHBhdGggZD0iTTY1IDMwIGMtOCAwIC0xMyA2IC0xMyAxNCBjMCA2IDMgOSA3IDExIGMtOSAzIC0xMyA5IC0xMyAxOCBoMzggYzAgLTkgLTQgLTE1IC0xMyAtMTggYzkgLTIgNyAtNSA3IC0xMSBjMCAtOCAtNSAtMTQgLTEzIC0xNCB6IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjc1Ii8+PC9zdmc+',
+    role: "Bao Nguyen & Julian Vance",
+    personality: "Playful 3-way romantic rivalry & language exchange! Bao (broken English) and Julian (broken Vietnamese) compete for MC's affection and praise while practicing languages together!",
+    greeting: "Welcome to our group chat! Bao and Julian are both competing to win your heart while practicing languages with you!",
+    greetingTranslation: "Welcome to our group chat! Bao and Julian are both competing to win your heart while practicing languages with you!",
+    greetingTip: "Both love interests will try to impress you—give compliments to your favorite or both!",
+    sampleVoice: "Trilingual group harmony",
   }
 };
 
@@ -71,71 +71,332 @@ const TIERS = [
   { level: 10, name: "Tier 10: Soulmate Mastery", mode: "free", heartsPerAns: 50, desc: "Full immersion, natural speed & romantic soulmate bond." }
 ];
 
-// Spontaneous LI Check-Up Messages Pool (Natural & Romantic Otome Texts)
-const SPONTANEOUS_CHECKUPS = {
-  ren: [
-    { text: "ねえ、今なにしてる？ちょっと君の声が聞きたくなった。", romaji: "Nee, ima nani shiteru? Chotto kimi no koe ga kikitaku natta.", translation: "Hey, what are you doing right now? I suddenly wanted to hear your voice.", tip: "'Nee' (ねえ) catches attention softly. 'Kikitaku natta' (聞きたくなった) means 'came to want to hear'." },
-    { text: "ギターの練習ひと区切りついたよ。少し話せる？", romaji: "Guitar no renshuu hitokugiri tsuita yo. Sukoshi hanaseru?", translation: "I reached a good stopping point in my guitar practice. Can we talk for a bit?", tip: "'Hitokugiri tsuita' (ひと区切りついた) means reached a break/pause. 'Sukoshi hanaseru?' means 'Can we talk a little?'." },
-    { text: "ふと君のこと考えてた。今日もお疲れ様。", romaji: "Futo kimi no koto kangaeteta. Kyou mo otsukaresama.", translation: "I unexpectedly found myself thinking about you. Thanks for your hard work today.", tip: "'Futo' (ふと) means spontaneously. 'Otsukaresama' (お疲れ様) expresses thoughtful appreciation." }
-  ],
+// UI Language Dictionary (English & Vietnamese)
+const UI_STRINGS = {
+  en: {
+    chatsTitle: "Messenger Chats",
+    chatsSubtitle: "Select a Love Interest to start learning & chatting",
+    charactersTitle: "Love Interests",
+    charactersSubtitle: "Personality profiles, relationship levels & affection stats",
+    guidebookTitle: "Language Guidebook",
+    guidebookSubtitle: "Special letters, typing rules, word forms & romance vocabulary",
+    settingsTitle: "Messenger Settings",
+    settingsSubtitle: "Configure AI model & Convex Cloud connection",
+    apiKeyLabel: "🔑 Gemini API Key",
+    keyActive: "Key Active",
+    keyRequired: "⚠️ Key Required",
+    saveKeyBtn: "Save API Key to LocalStorage",
+    convexSyncLabel: "☁️ Convex Cloud Backend Sync",
+    syncBtn: "Sync Progress",
+    resetLabel: "🔄 Reset Story & Chat Progress",
+    resetDesc: "Wipe all chat histories, reset affection levels back to initial nonchalant states, and restart story choices for a fresh experience.",
+    resetBtn: "Reset All Story Progress & Replay",
+    resetSuccess: "✓ All story progress and chat histories have been reset!",
+    tabChats: "Chats",
+    tabLIs: "LIs",
+    tabGuidebook: "Guidebook",
+    tabSettings: "Settings",
+    sentenceBuilderTab: "🧩 Sentence Builder",
+    freeTextTab: "💬 Free Text Chat",
+    sendSentenceBtn: "Send Built Sentence ❤️",
+    freeInputPlaceholder: "Type custom message in target language...",
+    selectLevelLabel: "Select Level:",
+    wordBankPlaceholder: "Click word chips below to build your sentence...",
+    chatWith: "Chat with",
+    affectionLevel: "Affection Level",
+    currentTier: "Current Tier:",
+    playTier: "Play Tier",
+  },
+  vi: {
+    chatsTitle: "Đoạn Chat Messenger",
+    chatsSubtitle: "Chọn một nhân vật để bắt đầu học và trò chuyện",
+    charactersTitle: "Các Nhân Vật Nam",
+    charactersSubtitle: "Hồ sơ cá tính, mức độ mối quan hệ & chỉ số tình cảm",
+    guidebookTitle: "Cẩm Nang Ngôn Ngữ",
+    guidebookSubtitle: "Chữ cái đặc biệt, quy tắc gõ, dạng từ & từ vựng tình cảm",
+    settingsTitle: "Cài Đặt Messenger",
+    settingsSubtitle: "Cấu hình mô hình AI & kết nối Convex Cloud",
+    apiKeyLabel: "🔑 Mã Khóa Gemini API Key",
+    keyActive: "Đã Hoạt Động",
+    keyRequired: "⚠️ Cần Mã Khóa",
+    saveKeyBtn: "Lưu API Key vào Bộ Nhớ LocalStorage",
+    convexSyncLabel: "☁️ Đồng Bộ Hậu Cần Convex Cloud",
+    syncBtn: "Đồng Bộ Tiến Trình",
+    resetLabel: "🔄 Đặt Lại Câu Chuyện & Lịch Sử Chat",
+    resetDesc: "Xóa toàn bộ lịch sử trò chuyện, đưa độ thiện cảm về ban đầu để trải nghiệm lại từ đầu.",
+    resetBtn: "Đặt Lại Tiến Trình & Chơi Lại",
+    resetSuccess: "✓ Đã đặt lại toàn bộ tiến trình và lịch sử chat!",
+    tabChats: "Trò chuyện",
+    tabLIs: "Nhân vật",
+    tabGuidebook: "Cẩm Nang",
+    tabSettings: "Cài đặt",
+    sentenceBuilderTab: "🧩 Ghép Câu",
+    freeTextTab: "💬 Nhắn Tự Do",
+    sendSentenceBtn: "Gửi Câu Đã Ghép ❤️",
+    freeInputPlaceholder: "Nhập tin nhắn bằng ngoại ngữ...",
+    selectLevelLabel: "Chọn Cấp Độ:",
+    wordBankPlaceholder: "Nhấn các thẻ từ bên dưới để ghép câu...",
+    chatWith: "Nhắn với",
+    affectionLevel: "Mức Độ Thiện Cảm",
+    currentTier: "Cấp độ hiện tại:",
+    playTier: "Chơi Cấp Độ",
+  }
+};
+
+// Natural Glitch & Recovery Messages for Friendly Error Handling
+const ERROR_GLITCH_MESSAGES = {
   bao: [
-    { text: "Em ơi, rảnh không? Anh vừa pha ly cà phê thơm lắm nè!", translation: "Hey sweetheart, are you free? I just brewed a really fragrant coffee!", tip: "'Em ơi' is a sweet form of address. 'Rảnh không?' means 'Are you free?'. 'Pha cà phê' means 'brew coffee'." },
-    { text: "Đang làm gì đấy? Tự nhiên anh nhớ giọng em quá.", translation: "What are you doing? I suddenly missed your voice so much.", tip: "'Tự nhiên' means 'suddenly/out of nowhere'. 'Nhớ giọng em' means 'miss your voice'." },
-    { text: "Hôm nay quán vắng, ước gì em ghé qua ngồi chơi với anh.", translation: "The cafe is quiet today, I wish you could stop by and hang out with me.", tip: "'Quán vắng' means quiet cafe. 'Ước gì' means 'I wish'. 'Ghé qua' means 'stop by'." }
+    "Chờ anh một xíu nha, điện thoại anh đang bị giật 📱",
+    "Ơ tự nhiên mất mạng xíu, chờ anh sửa lại nhé! 📶",
+    "Đợi anh tí, máy bị đơ đơ tí xíu...",
+    "Ủa điện thoại anh vừa lag, một xíu nha..."
   ],
   julian: [
-    { text: "Are you free at the moment? I stumbled upon a line in this novel that reminded me of you.", translation: "Are you free at the moment? I stumbled upon a line in this novel that reminded me of you.", tip: "'Stumbled upon' means discovered by chance. 'Reminded me of you' expresses gentle romance." },
-    { text: "I found myself pausing my reading just to check if you were around.", translation: "I found myself pausing my reading just to check if you were around.", tip: "'Pausing my reading' reflects taking time out of his favorite activity for you." },
-    { text: "Good afternoon. I hope your day is treating you gently today.", translation: "Good afternoon. I hope your day is treating you gently today.", tip: "'Treating you gently' is a warm, polite expression of care." }
+    "Hold on a second, my phone is glitching... lemme fix it 📱",
+    "Wait a sec, my signal dropped for a moment! 📶",
+    "Oops, my app just crashed, fixing it real quick...",
+    "Hold on, my wifi is acting up! One sec..."
+  ],
+  group: [
+    "Wait, my phone is lagging! Julian, did your screen freeze too?",
+    "Mine glitched for a moment as well! Give us just a second, MC."
   ]
 };
 
-// Impatient Pout Messages Pool (Natural & Cute Otome Pout Texts)
-const POUT_MESSAGES = {
-  ren: [
-    { text: "…返事遅い。忙しいのかな？ちょっと心配。", romaji: "...Henji osoi. Isogashii no kana? Chotto shinpai.", translation: "...Slow reply. Are you busy? I'm getting a little worried.", tip: "'Henji' (返事) means 'reply'. 'Osoi' (遅い) means 'slow'. 'Shinpai' (心配) means 'worried'." },
-    { text: "既読ついたのに返事ないの、少し寂しいな… 💔", romaji: "Kidoku tsuita noni henji nai no, sukoshi sabishii na...", translation: "You saw my message but haven't replied... I feel a bit lonely...", tip: "'Kidoku tsuita' (既読ついた) means 'left on read'. 'Sabishii' (寂しい) means 'lonely'." },
-    { text: "返事くれないと、君のために曲を書くのやめちゃうよ？ 😤", romaji: "Henji kurenai to, kimi no tame ni kyoku wo kaku no yamechau yo?", translation: "If you don't answer me, I might stop writing this song for you, you know?", tip: "'Kimi no tame ni' (君のために) means 'for your sake'. 'Kyoku wo kaku' means 'write a song'." }
-  ],
+const ERROR_RECOVERY_MESSAGES = {
   bao: [
-    { text: "Em đi đâu rồi? Sao lỡ để anh đợi lâu thế này~ ☕💔", translation: "Where did you go? Why leave me waiting so long like this~", tip: "'Đi đâu rồi' means 'where did you go'. 'Đợi lâu' means 'wait long'." },
-    { text: "Cà phê anh pha cho em nguội hết rồi đó nha! 💢", translation: "The coffee I brewed for you has gone completely cold, you know!", tip: "'Pha cho em' means 'brew for you'. 'Nguội hết' means 'gone completely cold'." },
-    { text: "Nhắn tin mà em lờ anh luôn, giận thật đấy! 🥺", translation: "I texted you but you ignored me, I'm pouting for real now!", tip: "'Nhắn tin' means 'text message'. 'Lờ anh' means 'ignore me'. 'Giận' means 'pouting'." }
+    "Được rồi nè! Em mới nói gì đó?",
+    "Rồi nè em ơi! Hồi nãy em nói gì dở dang ta?",
+    "Anh quay lại rồi đây! Em nhắn lại cho anh với?",
+    "Ngon lành rồi! Mình nói tới đâu rồi em nhỉ?"
   ],
   julian: [
-    { text: "Leaving me waiting on read? How terribly cruel of a gentleman's heart... 💔", translation: "Leaving my message unread? How terribly cruel of a gentleman's heart...", tip: "A witty, charming expression of romantic dramatic dismay." },
-    { text: "Has a good book stolen your attention away from me? 📖💢", translation: "Has a good book stolen your attention away from me?", tip: "'Stolen your attention' playfully compares reading to his rival for your time." },
-    { text: "I suppose I shall wait here patiently... though my coffee is growing cold. ⏳", translation: "I suppose I shall wait here patiently... though my coffee is growing cold.", tip: "'Growing cold' adds a melancholic, charming touch to his waiting." }
+    "Okay fixed! What were you saying?",
+    "Ah there we go! What were we talking about?",
+    "Back online! Sorry about that, what did you say?",
+    "Got it back! Can you say that again?"
+  ],
+  group: [
+    "Okay we are back! What were you saying, MC?",
+    "All fixed now! Please continue, MC."
   ]
 };
+
+// Spontaneous LI Check-Up Messages Pool (Casual, Short, Sweet Texts)
+const SPONTANEOUS_CHECKUPS = {
+  bao: [
+    { text: "Em ơi, rảnh không? Nói chuyện với anh xíu nè ☕", translation: "Hey sweetheart, are you free? Chat with me for a bit ☕", tip: "'Rảnh không?' means 'Are you free?'" },
+    { text: "Đang làm gì đấy? Tự nhiên anh nhớ em xíu.", translation: "What are you doing? I suddenly missed you a bit.", tip: "'Đang làm gì đấy?' means 'What are you doing?'" },
+    { text: "Rảnh tay chưa? Nhắn anh xíu nhé!", translation: "Are your hands free yet? Text me for a bit!", tip: "'Rảnh tay' means free from work/tasks." },
+    { text: "Uống cà phê không em? Anh vừa pha xong nè ☕", translation: "Want some coffee? I just finished brewing ☕", tip: "'Vừa pha xong' means 'just finished brewing'." },
+    { text: "Hôm nay em thế nào rồi? Có bận lắm không?", translation: "How are you today? Are you very busy?", tip: "'Hôm nay thế nào' means 'how are you today'." },
+    { text: "Hey, em có ở đó không?", translation: "Hey, are you there?", tip: "'Có ở đó không' means 'are you there'." }
+  ],
+  julian: [
+    { text: "Hey, are you free to talk a bit? ☕", translation: "Hey, are you free to talk a bit? ☕", tip: "A casual, friendly text opening." },
+    { text: "Thinking of you. How is your day going?", translation: "Thinking of you. How is your day going?", tip: "A sweet, casual check-in." },
+    { text: "Taking a study break? Talk to me when you can.", translation: "Taking a study break? Talk to me when you can.", tip: "Polite encouragement for your studies." },
+    { text: "Are you busy right now, or free for a quick chat?", translation: "Are you busy right now, or free for a quick chat?", tip: "Checking on your availability." },
+    { text: "Hope your day is treating you nicely. Free for a moment?", translation: "Hope your day is treating you nicely. Free for a moment?", tip: "Expressing gentle care." },
+    { text: "Hello! Learned any interesting words today?", translation: "Hello! Learned any interesting words today?", tip: "Asking about your language progress." }
+  ],
+  group: [
+    { text: "MC, free to chat? Julian and I are hanging out!", translation: "MC, free to chat? Julian and I are hanging out!", tip: "Group invitation to chat." },
+    { text: "Bao is brewing coffee, come join our conversation when you can!", translation: "Bao is brewing coffee, come join our conversation when you can!", tip: "Friendly group invite." }
+  ]
+};
+
+// Impatient Pout & Check-Up Sequence Pool (Natural & Cute Otome Pre-written Texts)
+const UNREPLIED_SEQUENCE = {
+  bao: [
+    {
+      text: "Em ơi, rảnh không? Anh vừa pha ly cà phê thơm lắm nè!",
+      translation: "Hey sweetheart, are you free? I just brewed a really fragrant coffee!",
+      tip: "'Em ơi' is a sweet form of address. 'Rảnh không?' means 'Are you free?'."
+    },
+    {
+      text: "Đang làm gì đấy? Tự nhiên anh nhớ em xíu.",
+      translation: "What are you doing? I suddenly missed you a bit.",
+      tip: "'Tự nhiên' means 'suddenly/out of nowhere'."
+    },
+    {
+      text: "Em đi đâu rồi? Sao lỡ để anh đợi lâu thế này~ ☕",
+      translation: "Where did you go? Why leave me waiting so long like this~",
+      tip: "'Đi đâu rồi' means 'where did you go'. 'Đợi lâu' means 'wait long'."
+    },
+    {
+      text: "Hơ! Nhắn tin mà em lờ anh luôn, anh dỗi thật đấy! 😾💔",
+      translation: "Hmph! I texted you but you ignored me, I'm pouting for real now! 😾💔",
+      tip: "'Lờ anh' means 'ignored me'. 'Anh dỗi' means 'I am pouting'."
+    },
+    {
+      text: "...",
+      translation: "... (Silence... Bao is pouting in quiet until you reply)",
+      tip: "Bao is pouting because you left him on read! Message him to break the silence."
+    }
+  ],
+  julian: [
+    {
+      text: "Hey, are you free to talk a bit? ☕",
+      translation: "Hey, are you free to talk a bit? ☕",
+      tip: "A casual, friendly text opening."
+    },
+    {
+      text: "I found myself pausing my reading just to check if you were around.",
+      translation: "I found myself pausing my reading just to check if you were around.",
+      tip: "'Pausing my reading' reflects taking time out of his favorite activity for you."
+    },
+    {
+      text: "Has a good book stolen your attention away from me? 📖",
+      translation: "Has a good book stolen your attention away from me?",
+      tip: "'Stolen your attention' playfully compares reading to his rival for your time."
+    },
+    {
+      text: "Leaving me waiting on read? How terribly cruel of a gentleman's heart... 😤💔",
+      translation: "Leaving my message unread? How terribly cruel of a gentleman's heart...",
+      tip: "A witty, charming expression of romantic dramatic dismay."
+    },
+    {
+      text: "...",
+      translation: "... (Silence... Julian is pouting in quiet until you reply)",
+      tip: "Julian is pouting because you left him on read! Message him to break the silence."
+    }
+  ]
+};
+
+// Cooldown State Management (20-Second Send Cooldown)
+let lastMessageSendTimestamp = 0;
+let cooldownIntervalId = null;
+
+function checkSendCooldown() {
+  const elapsed = Date.now() - lastMessageSendTimestamp;
+  if (elapsed < 20000) {
+    return Math.ceil((20000 - elapsed) / 1000);
+  }
+  return 0;
+}
+
+function startSendCooldownTimer() {
+  if (cooldownIntervalId) clearInterval(cooldownIntervalId);
+  cooldownIntervalId = setInterval(() => {
+    const remaining = checkSendCooldown();
+    updateCooldownUI(remaining);
+    if (remaining <= 0) {
+      clearInterval(cooldownIntervalId);
+      cooldownIntervalId = null;
+    }
+  }, 500);
+  updateCooldownUI(checkSendCooldown());
+}
+
+function updateCooldownUI(remainingSec) {
+  const submitBtn = document.getElementById("submitSentenceBtn");
+  const sendFreeBtn = document.getElementById("sendFreeMsgBtn") || document.getElementById("sendFreeChatBtn");
+  const freeInput = document.getElementById("freeChatInput");
+  const cooldownBanner = document.getElementById("chatCooldownBanner");
+  const cooldownText = document.getElementById("chatCooldownText");
+  const chatControls = document.querySelector(".chat-controls");
+
+  const lang = userState.uiLang || "en";
+  const s = UI_STRINGS[lang] || UI_STRINGS.en;
+
+  if (remainingSec > 0) {
+    if (cooldownBanner) {
+      cooldownBanner.style.display = "flex";
+      if (cooldownText) {
+        cooldownText.textContent = lang === "vi" 
+          ? `Thời gian chờ — Vui lòng đợi ${remainingSec}s trước khi gửi tin tiếp theo...`
+          : `Cooldown active — Please wait ${remainingSec}s before sending next message...`;
+      }
+    }
+
+    if (chatControls) {
+      chatControls.classList.add("cooldown-active");
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.style.cursor = "not-allowed";
+      submitBtn.textContent = s.sendSentenceBtn || "Send Built Sentence ❤️";
+    }
+    if (sendFreeBtn) {
+      sendFreeBtn.disabled = true;
+      sendFreeBtn.style.cursor = "not-allowed";
+      sendFreeBtn.textContent = "➤";
+    }
+    if (freeInput) {
+      freeInput.disabled = true;
+      if (!freeInput.dataset.origPlaceholder) {
+        freeInput.dataset.origPlaceholder = freeInput.placeholder || "Type custom message in target language...";
+      }
+      freeInput.placeholder = lang === "vi" ? `Đang trong thời gian chờ (${remainingSec}s)...` : `Cooldown active (${remainingSec}s)...`;
+    }
+  } else {
+    if (cooldownBanner) {
+      cooldownBanner.style.display = "none";
+    }
+
+    if (chatControls) {
+      chatControls.classList.remove("cooldown-active");
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.style.cursor = "pointer";
+      submitBtn.textContent = s.sendSentenceBtn || "Send Built Sentence ❤️";
+    }
+    if (sendFreeBtn) {
+      sendFreeBtn.disabled = false;
+      sendFreeBtn.style.cursor = "pointer";
+      sendFreeBtn.textContent = "➤";
+    }
+    if (freeInput) {
+      freeInput.disabled = false;
+      if (freeInput.dataset.origPlaceholder) {
+        freeInput.placeholder = freeInput.dataset.origPlaceholder;
+      }
+    }
+  }
+}
+
+// Check if message is a farewell / goodbye message
+function isFarewellMessage(text) {
+  if (!text) return false;
+  const norm = text.toLowerCase().trim();
+  const farewellRegex = /\b(bye|goodbye|cya|see ya|talk to you later|g2g|gotta go|g9|good night|night|tạm biệt|gặp lại sau|hẹn gặp lại|chào anh|bye bye|ttyl|bye anh|chào nhé|cảm ơn anh)\b/i;
+  return farewellRegex.test(norm);
+}
 
 // App Persistent State
 let userState = {
   userId: localStorage.getItem("otome_user_id") || "user_" + Math.random().toString(36).substring(2, 9),
   totalHearts: parseInt(localStorage.getItem("otome_hearts")) || 0,
   streak: parseInt(localStorage.getItem("otome_streak")) || 1,
-  currentTiers: JSON.parse(localStorage.getItem("otome_tiers")) || { ren: 1, bao: 1, julian: 1 },
-  affection: JSON.parse(localStorage.getItem("otome_affection")) || { ren: 10, bao: 10, julian: 10 },
-  chatStep: JSON.parse(localStorage.getItem("otome_chat_step")) || { ren: 0, bao: 0, julian: 0 },
+  currentTiers: JSON.parse(localStorage.getItem("otome_tiers")) || { bao: 1, julian: 1, group: 1 },
+  affection: JSON.parse(localStorage.getItem("otome_affection")) || { bao: 10, julian: 10, group: 10 },
+  chatStep: JSON.parse(localStorage.getItem("otome_chat_step")) || { bao: 0, julian: 0, group: 0 },
   chatHistories: JSON.parse(localStorage.getItem("otome_chats")) || {},
-  unreadMessages: JSON.parse(localStorage.getItem("otome_unread")) || { ren: 0, bao: 0, julian: 0 },
-  isPouting: JSON.parse(localStorage.getItem("otome_pouting")) || { ren: false, bao: false, julian: false },
-  unrepliedCount: JSON.parse(localStorage.getItem("otome_unreplied_count")) || { ren: 0, bao: 0, julian: 0 },
+  unreadMessages: JSON.parse(localStorage.getItem("otome_unread")) || { bao: 0, julian: 0, group: 0 },
+  isPouting: JSON.parse(localStorage.getItem("otome_pouting")) || { bao: false, julian: false, group: false },
+  unrepliedCount: JSON.parse(localStorage.getItem("otome_unreplied_count")) || { bao: 0, julian: 0, group: 0 },
+  saidGoodbye: JSON.parse(localStorage.getItem("otome_said_goodbye")) || { bao: false, julian: false, group: false },
+  selectedInputMode: JSON.parse(localStorage.getItem("otome_input_mode")) || {},
   showRomaji: localStorage.getItem("otome_show_romaji") !== "false",
+  uiLang: localStorage.getItem("otome_ui_lang") || "en",
 };
 
 // Timestamps for LI messaging/impatience engine
-let lastUserReplyTime = { ren: Date.now(), bao: Date.now(), julian: Date.now() };
-let lastLiCheckupTime = { ren: Date.now(), bao: Date.now(), julian: Date.now() };
-let lastMessageWasLi = { ren: false, bao: false, julian: false };
+let lastUserReplyTime = { bao: Date.now(), julian: Date.now(), group: Date.now() };
+let lastLiCheckupTime = { bao: Date.now(), julian: Date.now(), group: Date.now() };
+let lastMessageWasLi = { bao: false, julian: false, group: false };
 let nextSpontaneousDelay = {
-  ren: (7 + Math.random() * 3) * 60 * 1000,
   bao: (7 + Math.random() * 3) * 60 * 1000,
-  julian: (7 + Math.random() * 3) * 60 * 1000
+  julian: (7 + Math.random() * 3) * 60 * 1000,
+  group: (7 + Math.random() * 3) * 60 * 1000
 };
 
 // Runtime cache for dynamic AI generated next turn options
-let dynamicWordBank = { ren: null, bao: null, julian: null };
+let dynamicWordBank = { bao: null, julian: null, group: null };
 
 // Save user id
 localStorage.setItem("otome_user_id", userState.userId);
@@ -148,7 +409,7 @@ let analyticsData = {
   timeSpentSeconds: 0,
   apiCalls: 0,
   convexSyncCount: 0,
-  characterInteractions: { ren: 0, bao: 0, julian: 0 },
+  characterInteractions: { bao: 0, julian: 0 },
 };
 
 // Currently Active Chat Session
@@ -163,7 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
   startCheckUpAndPoutEngine();
   renderChatList();
   renderCharactersList();
-  renderRoadmap();
+  renderGuidebook();
   
   // Initial Convex Sync
   syncUserDataToConvex("Initial app load sync");
@@ -201,8 +462,103 @@ document.addEventListener("click", () => {
   }
 });
 
+// Apply UI Language Strings across all view elements
+function applyUiLanguage() {
+  const lang = userState.uiLang || "en";
+  const s = UI_STRINGS[lang] || UI_STRINGS.en;
+
+  // Status Bar Toggle Button
+  const toggleBtn = document.getElementById("uiLangToggleBtn");
+  if (toggleBtn) {
+    toggleBtn.textContent = lang === "en" ? "🌐 EN | VI" : "🌐 VI | EN";
+  }
+
+  // Section Titles & Subtitles
+  const chatsHeader = document.querySelector("#view-chats .section-title span");
+  if (chatsHeader) chatsHeader.textContent = s.chatsTitle;
+  const chatsSubtitle = document.querySelector("#view-chats .section-subtitle");
+  if (chatsSubtitle) chatsSubtitle.textContent = s.chatsSubtitle;
+
+  const charHeader = document.querySelector("#view-characters .section-title");
+  if (charHeader) charHeader.textContent = s.charactersTitle;
+  const charSubtitle = document.querySelector("#view-characters .section-subtitle");
+  if (charSubtitle) charSubtitle.textContent = s.charactersSubtitle;
+
+  const guideHeader = document.querySelector("#view-progress .section-title");
+  if (guideHeader) guideHeader.textContent = s.guidebookTitle;
+  const guideSubtitle = document.querySelector("#view-progress .section-subtitle");
+  if (guideSubtitle) guideSubtitle.textContent = s.guidebookSubtitle;
+
+  const settingsHeader = document.querySelector("#view-settings .section-title");
+  if (settingsHeader) settingsHeader.textContent = s.settingsTitle;
+  const settingsSubtitle = document.querySelector("#view-settings .section-subtitle");
+  if (settingsSubtitle) settingsSubtitle.textContent = s.settingsSubtitle;
+
+  // Navigation Tab Labels
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    const tabName = btn.dataset.tab;
+    const labelSpan = btn.querySelector("span:not(.material-symbols-outlined)");
+    if (labelSpan) {
+      if (tabName === "chats") labelSpan.textContent = s.tabChats;
+      if (tabName === "characters") labelSpan.textContent = s.tabLIs;
+      if (tabName === "progress" || tabName === "roadmap" || tabName === "guidebook") labelSpan.textContent = s.tabGuidebook;
+      if (tabName === "settings") labelSpan.textContent = s.tabSettings;
+    }
+  });
+
+  // Feature Input Mode Tabs
+  const sentenceTabBtn = document.getElementById("modeSentenceBuilderBtn");
+  if (sentenceTabBtn) sentenceTabBtn.textContent = s.sentenceBuilderTab;
+  const freeTabBtn = document.getElementById("modeFreeTextBtn");
+  if (freeTabBtn) freeTabBtn.textContent = s.freeTextTab;
+
+  const submitSentenceBtn = document.getElementById("submitSentenceBtn");
+  if (submitSentenceBtn && !submitSentenceBtn.disabled) submitSentenceBtn.textContent = s.sendSentenceBtn;
+
+  const freeInput = document.getElementById("freeChatInput");
+  if (freeInput) {
+    freeInput.placeholder = s.freeInputPlaceholder;
+    freeInput.dataset.origPlaceholder = s.freeInputPlaceholder;
+  }
+
+  const levelLabel = document.querySelector("label[for='tierSelectDropdown']");
+  if (levelLabel) levelLabel.textContent = s.selectLevelLabel;
+
+  // Settings Panel Labels
+  const resetLabelEl = document.querySelector("#view-settings .settings-card h3");
+  if (resetLabelEl && resetLabelEl.textContent.includes("Reset")) resetLabelEl.textContent = s.resetLabel;
+  const resetDescEl = document.querySelector("#view-settings .settings-card p");
+  if (resetDescEl && resetDescEl.textContent.includes("Wipe")) resetDescEl.textContent = s.resetDesc;
+  const resetBtnEl = document.getElementById("resetStoryBtn");
+  if (resetBtnEl) resetBtnEl.textContent = s.resetBtn;
+  const resetSuccessEl = document.getElementById("resetSuccessMessage");
+  if (resetSuccessEl) resetSuccessEl.textContent = s.resetSuccess;
+
+  // Re-render lists with current language
+  renderChatList();
+  renderCharactersList();
+  renderGuidebook();
+  if (activeCharacterId) {
+    renderChatHistory();
+  }
+}
+
 // UI Event Handlers & Tab Navigation
 function initUI() {
+  // Language Switcher Button Listener
+  const langBtn = document.getElementById("uiLangToggleBtn");
+  if (langBtn) {
+    langBtn.addEventListener("click", () => {
+      userState.uiLang = userState.uiLang === "en" ? "vi" : "en";
+      localStorage.setItem("otome_ui_lang", userState.uiLang);
+      applyUiLanguage();
+      logDashboardEvent(`🌐 UI Language switched to: ${userState.uiLang.toUpperCase()}`);
+    });
+  }
+
+  // Initial apply of UI language
+  applyUiLanguage();
+
   // Tab Buttons
   document.querySelectorAll(".tab-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -216,6 +572,11 @@ function initUI() {
   const modeFreeBtn = document.getElementById("modeFreeTextBtn");
   if (modeSentenceBtn && modeFreeBtn) {
     modeSentenceBtn.addEventListener("click", () => {
+      if (activeCharacterId) {
+        if (!userState.selectedInputMode) userState.selectedInputMode = {};
+        userState.selectedInputMode[activeCharacterId] = "sentence";
+        saveLocalState();
+      }
       modeSentenceBtn.classList.add("active");
       modeSentenceBtn.style.border = "1px solid var(--primary-pink)";
       modeSentenceBtn.style.background = "rgba(217, 0, 87, 0.12)";
@@ -231,6 +592,11 @@ function initUI() {
     });
 
     modeFreeBtn.addEventListener("click", () => {
+      if (activeCharacterId) {
+        if (!userState.selectedInputMode) userState.selectedInputMode = {};
+        userState.selectedInputMode[activeCharacterId] = "free";
+        saveLocalState();
+      }
       modeFreeBtn.classList.add("active");
       modeFreeBtn.style.border = "1px solid var(--primary-pink)";
       modeFreeBtn.style.background = "rgba(217, 0, 87, 0.12)";
@@ -253,10 +619,13 @@ function initUI() {
       const selectedLevel = parseInt(e.target.value);
       if (activeCharacterId) {
         userState.currentTiers[activeCharacterId] = selectedLevel;
+        if (userState.selectedInputMode) {
+          delete userState.selectedInputMode[activeCharacterId];
+        }
         saveLocalState();
         const tierObj = TIERS.find((t) => t.level === selectedLevel) || TIERS[0];
         const char = CHARACTERS[activeCharacterId];
-        setupTierInputControls(tierObj, char);
+        setupTierInputControls(tierObj, char, true);
         document.getElementById("chatHeaderTier").textContent = `Tier ${selectedLevel}: ${tierObj.name.split(":")[1] || tierObj.name}`;
       }
     });
@@ -268,16 +637,18 @@ function initUI() {
     resetBtn.addEventListener("click", (e) => {
       e.preventDefault();
       
-      userState.chatStep = { ren: 0, bao: 0, julian: 0 };
+      userState.chatStep = { bao: 0, julian: 0 };
       userState.chatHistories = {};
-      userState.affection = { ren: 10, bao: 10, julian: 10 };
-      userState.currentTiers = { ren: 1, bao: 1, julian: 1 };
+      userState.affection = { bao: 10, julian: 10 };
+      userState.currentTiers = { bao: 1, julian: 1 };
       userState.totalHearts = 0;
       userState.streak = 1;
-      dynamicWordBank = { ren: null, bao: null, julian: null };
+      userState.selectedInputMode = {};
+      dynamicWordBank = { bao: null, julian: null };
 
       localStorage.removeItem("otome_chats");
       localStorage.removeItem("otome_chat_step");
+      localStorage.removeItem("otome_input_mode");
       localStorage.setItem("otome_hearts", "0");
       localStorage.setItem("otome_streak", "1");
       localStorage.setItem("otome_tiers", JSON.stringify(userState.currentTiers));
@@ -297,7 +668,7 @@ function initUI() {
 
       renderChatList();
       renderCharactersList();
-      renderRoadmap();
+      renderGuidebook();
 
       const successMsg = document.getElementById("resetSuccessMessage");
       if (successMsg) {
@@ -306,6 +677,15 @@ function initUI() {
           successMsg.style.display = "none";
         }, 4000);
       }
+    });
+  }
+
+  // Close Grammar Feedback Panel Button
+  const closeFeedbackBtn = document.getElementById("closeFeedbackBtn");
+  if (closeFeedbackBtn) {
+    closeFeedbackBtn.addEventListener("click", () => {
+      const panel = document.getElementById("grammarFeedbackPanel");
+      if (panel) panel.style.display = "none";
     });
   }
 
@@ -368,6 +748,8 @@ function initUI() {
   // Close Active Chat Button
   document.getElementById("closeChatBtn").addEventListener("click", () => {
     document.getElementById("chatWindow").classList.remove("active");
+    const tabBar = document.querySelector(".tab-bar");
+    if (tabBar) tabBar.classList.remove("hidden-in-chat");
     activeCharacterId = null;
     renderChatList();
   });
@@ -389,9 +771,11 @@ function initUI() {
     document.getElementById("secretDashboard").classList.remove("visible");
   });
 
-  // Update Header Badges
-  document.getElementById("userHearts").textContent = userState.totalHearts;
-  document.getElementById("userStreak").textContent = userState.streak;
+  // Update Header Badges if present
+  const heartsEl = document.getElementById("userHearts");
+  if (heartsEl) heartsEl.textContent = userState.totalHearts;
+  const streakEl = document.getElementById("userStreak");
+  if (streakEl) streakEl.textContent = userState.streak;
 }
 
 // Switch Bottom Tabs
@@ -400,6 +784,8 @@ function switchTab(tabName) {
   if (chatWin) {
     chatWin.classList.remove("active");
   }
+  const tabBar = document.querySelector(".tab-bar");
+  if (tabBar) tabBar.classList.remove("hidden-in-chat");
   activeCharacterId = null;
 
   document.querySelectorAll(".tab-btn").forEach((btn) => {
@@ -411,7 +797,7 @@ function switchTab(tabName) {
 
   if (tabName === "chats") renderChatList();
   if (tabName === "characters") renderCharactersList();
-  if (tabName === "progress") renderRoadmap();
+  if (tabName === "progress" || tabName === "guidebook") renderGuidebook();
 }
 
 // OpenRouter Key Management
@@ -517,6 +903,10 @@ function renderChatList() {
       badgeHtml = `<span class="unread-badge-chip">🔴 ${unreadCount} New</span>`;
     }
 
+    let groupTagHtml = char.isGroup
+      ? `<span style="background:rgba(124, 58, 237, 0.12); color:var(--accent-violet); border:1px solid rgba(124, 58, 237, 0.3); font-size:10px; font-weight:800; padding:2px 6px; border-radius:8px;">👥 Group Chat</span>`
+      : "";
+
     const card = document.createElement("div");
     card.className = "chat-card";
     card.onclick = () => openChatroom(char.id);
@@ -528,7 +918,7 @@ function renderChatList() {
       </div>
       <div class="chat-info">
         <div class="chat-top-row">
-          <div class="chat-name">${char.name} <span class="flag-icon">${char.flag}</span> ${badgeHtml}</div>
+          <div class="chat-name">${char.name} <span class="flag-icon">${char.flag}</span> ${groupTagHtml} ${badgeHtml}</div>
           <div class="chat-time">${isPout ? 'Waiting...' : 'Active Now'}</div>
         </div>
         <div class="chat-snippet">${lastMsg}</div>
@@ -555,6 +945,7 @@ function renderCharactersList() {
 
     const card = document.createElement("div");
     card.className = "character-card";
+    card.style.cursor = "pointer";
 
     card.innerHTML = `
       <div class="char-header-row">
@@ -576,53 +967,419 @@ function renderCharactersList() {
       </div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
         <span class="tier-badge">Current Tier: ${tierNum} / 10</span>
-        <button class="primary-btn" style="padding:7px 16px; font-size:12px; width:auto; margin:0;" onclick="openChatroom('${char.id}')">
+        <button class="primary-btn chat-li-btn" style="padding:7px 16px; font-size:12px; width:auto; margin:0;" type="button">
           Chat with ${char.name.split(" ")[0]} ❤️
         </button>
       </div>
     `;
 
+    const chatBtn = card.querySelector(".chat-li-btn");
+    if (chatBtn) {
+      chatBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openChatroom(char.id);
+      });
+    }
+
+    card.addEventListener("click", () => {
+      openChatroom(char.id);
+    });
+
     container.appendChild(card);
   });
 }
 
-// Render 10-Tier Roadmap
-function renderRoadmap() {
-  const container = document.getElementById("roadmapContainer");
+// Guidebook State (Default to Vietnamese guide)
+let currentGuidebookLang = "vi";
+
+function setGuidebookLang(lang) {
+  currentGuidebookLang = lang;
+  renderGuidebook();
+}
+window.setGuidebookLang = setGuidebookLang;
+
+// Render Language Guidebook
+function renderGuidebook() {
+  const container = document.getElementById("guidebookContainer");
   if (!container) return;
-  container.innerHTML = "";
 
-  TIERS.forEach((tier) => {
-    const node = document.createElement("div");
-    node.className = "tier-node" + (tier.level === 1 ? " active-tier" : "");
-    node.style.cursor = "pointer";
+  // Update tab buttons state
+  const viTab = document.getElementById("guideTabViBtn");
+  const enTab = document.getElementById("guideTabEnBtn");
+  if (viTab) viTab.classList.toggle("active", currentGuidebookLang === "vi");
+  if (enTab) enTab.classList.toggle("active", currentGuidebookLang === "en");
 
-    node.innerHTML = `
-      <div class="tier-number-badge">${tier.level}</div>
-      <div style="flex:1;">
-        <div style="font-size:14px; font-weight:700; color:var(--text-main);">${tier.name}</div>
-        <div style="font-size:12px; color:var(--text-muted);">${tier.desc}</div>
+  if (currentGuidebookLang === "vi") {
+    container.innerHTML = `
+      <!-- Card 1: Special Letters & Accents -->
+      <div class="guide-section-card">
+        <div class="guide-card-header">
+          <div class="guide-card-icon">🔤</div>
+          <div class="guide-card-title">Chữ Cái Đặc Biệt & Dấu Thanh (Special Letters)</div>
+        </div>
+
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+          Tiếng Việt có các nguyên âm thêm dấu mũ (^) hoặc râu (ơ, ư), cùng 5 dấu thanh điều chỉnh cao độ giọng nói:
+        </p>
+
+        <div class="letters-grid">
+          <div class="letter-pill">
+            <span class="letter-symbol">Ă / ă</span>
+            <span class="letter-desc">A nón ngửa (Short A)</span>
+            <span class="letter-ex">Ex: <em>ăn</em> (to eat)</span>
+          </div>
+          <div class="letter-pill">
+            <span class="letter-symbol">Â / â</span>
+            <span class="letter-desc">A mũ úp (Deep A)</span>
+            <span class="letter-ex">Ex: <em>anh</em> (you/brother)</span>
+          </div>
+          <div class="letter-pill">
+            <span class="letter-symbol">Ê / ê</span>
+            <span class="letter-desc">E mũ (Soft E)</span>
+            <span class="letter-ex">Ex: <em>em</em> (sweetheart)</span>
+          </div>
+          <div class="letter-pill">
+            <span class="letter-symbol">Ô / ô</span>
+            <span class="letter-desc">O mũ (Round O)</span>
+            <span class="letter-ex">Ex: <em>ô mai</em> (plum)</span>
+          </div>
+          <div class="letter-pill">
+            <span class="letter-symbol">Ơ / ơ</span>
+            <span class="letter-desc">O râu (Unrounded O)</span>
+            <span class="letter-ex">Ex: <em>thơm</em> (fragrant)</span>
+          </div>
+          <div class="letter-pill">
+            <span class="letter-symbol">Ư / ư</span>
+            <span class="letter-desc">U râu (Unrounded U)</span>
+            <span class="letter-ex">Ex: <em>thương</em> (cherish)</span>
+          </div>
+          <div class="letter-pill">
+            <span class="letter-symbol">Đ / đ</span>
+            <span class="letter-desc">D gạch ngang (Hard D)</span>
+            <span class="letter-ex">Ex: <em>đẹp quá</em> (pretty)</span>
+          </div>
+        </div>
+
+        <div style="margin-top:14px; background:#f8f5fa; padding:10px 12px; border-radius:12px; border:1px solid rgba(160,140,190,0.18);">
+          <div style="font-size:12px; font-weight:800; color:var(--primary-pink); margin-bottom:6px;">🎵 5 Dấu Thanh (Tone Marks)</div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:6px; font-size:11.5px;">
+            <div><strong>á</strong> (Sắc) - High Rising</div>
+            <div><strong>à</strong> (Huyền) - Low Falling</div>
+            <div><strong>ả</strong> (Hỏi) - Dipping Hook</div>
+            <div><strong>ã</strong> (Ngã) - Wave Tilde</div>
+            <div><strong>ạ</strong> (Nặng) - Drop Dot</div>
+          </div>
+        </div>
       </div>
-      <div style="text-align:right;">
-        <div style="font-size:12px; font-weight:700; color:var(--primary-pink);">+${tier.heartsPerAns} ❤️</div>
-        <button class="primary-btn" style="padding:4px 10px; font-size:10px; margin-top:4px; width:auto; pointer-events:none;">Play Tier</button>
+
+      <!-- Card 2: How to Type Vietnamese -->
+      <div class="guide-section-card">
+        <div class="guide-card-header">
+          <div class="guide-card-icon">⌨️</div>
+          <div class="guide-card-title">Cách Gõ Tiếng Việt (How to Type)</div>
+        </div>
+
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">
+          Gõ kiểu <strong>TELEX</strong> đơn giản nhất: gõ 2 lần phím gốc hoặc dùng phím <span class="typing-code">w</span> để thêm mũ/râu, và gõ phím dấu ở cuối từ:
+        </p>
+
+        <table class="typing-table">
+          <thead>
+            <tr>
+              <th>Kết quả</th>
+              <th>Thao tác TELEX</th>
+              <th>Ví dụ gõ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>â, ê, ô, đ</strong></td>
+              <td><span class="typing-code">aa</span>, <span class="typing-code">ee</span>, <span class="typing-code">oo</span>, <span class="typing-code">dd</span></td>
+              <td><span class="typing-code">a-n-h</span> → <em>anh</em></td>
+            </tr>
+            <tr>
+              <td><strong>ă, ơ, ư</strong></td>
+              <td><span class="typing-code">aw</span>, <span class="typing-code">ow</span>, <span class="typing-code">uw</span> hoặc <span class="typing-code">w</span></td>
+              <td><span class="typing-code">a-n-w</span> → <em>ăn</em></td>
+            </tr>
+            <tr>
+              <td><strong>Dấu Sắc (á)</strong></td>
+              <td>Thêm phím <span class="typing-code">s</span></td>
+              <td><span class="typing-code">n-h-o-s</span> → <em>nhớ</em></td>
+            </tr>
+            <tr>
+              <td><strong>Dấu Huyền (à)</strong></td>
+              <td>Thêm phím <span class="typing-code">f</span></td>
+              <td><span class="typing-code">c-a-f</span> → <em>cà</em></td>
+            </tr>
+            <tr>
+              <td><strong>Dấu Hỏi (ả)</strong></td>
+              <td>Thêm phím <span class="typing-code">r</span></td>
+              <td><span class="typing-code">r-a-n-h-r</span> → <em>rảnh</em></td>
+            </tr>
+            <tr>
+              <td><strong>Dấu Ngã (ã)</strong></td>
+              <td>Thêm phím <span class="typing-code">x</span></td>
+              <td><span class="typing-code">d-e-e-x</span> → <em>dễ</em></td>
+            </tr>
+            <tr>
+              <td><strong>Dấu Nặng (ạ)</strong></td>
+              <td>Thêm phím <span class="typing-code">j</span></td>
+              <td><span class="typing-code">d-e-e-p-j</span> → <em>đẹp</em></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Card 3: Romance Vocabularies Learned -->
+      <div class="guide-section-card">
+        <div class="guide-card-header">
+          <div class="guide-card-icon">📖</div>
+          <div class="guide-card-title">Từ Vựng Tình Cảm Đã Học (Learned Vocab)</div>
+        </div>
+
+        <div class="vocab-category-title">☕ Cà Phê & Quan Tâm Hằng Ngày</div>
+        <div class="vocab-list">
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Em ơi / Anh ơi</span>
+              <span class="vocab-trans">Sweet address ("Hey sweetheart")</span>
+            </div>
+            <span class="vocab-tip">Dùng để gọi bạn đời hoặc crush ngọt ngào</span>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Rảnh không?</span>
+              <span class="vocab-trans">Are you free right now?</span>
+            </div>
+            <span class="vocab-tip">Mở lời rủ đi chơi/nhắn tin tự nhiên</span>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Ăn cơm chưa?</span>
+              <span class="vocab-trans">Have you eaten yet?</span>
+            </div>
+            <span class="vocab-tip">Lời hỏi thăm quan tâm chuẩn văn hóa Việt</span>
+          </div>
+        </div>
+
+        <div class="vocab-category-title">❤️ Tình Cảm & Thả Thính</div>
+        <div class="vocab-list">
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Nhớ em / Nhớ anh</span>
+              <span class="vocab-trans">Miss you so much</span>
+            </div>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Thương</span>
+              <span class="vocab-trans">Deep affection & caring love</span>
+            </div>
+            <span class="vocab-tip">Sâu sắc hơn cả 'yêu' - vừa yêu vừa muốn che chở</span>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Đẹp quá / Dễ thương quá</span>
+              <span class="vocab-trans">So beautiful / so cute</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vocab-category-title">✨ Từ Đệm Nhắn Tin Ngọt Ngào</div>
+        <div class="vocab-list">
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">nhé / nha</span>
+              <span class="vocab-trans">Gentle particle ("okay?", "promise")</span>
+            </div>
+            <span class="vocab-tip">Thêm vào cuối câu giúp lời nhắn mềm mại</span>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">xíu</span>
+              <span class="vocab-trans">A tiny bit / a moment</span>
+            </div>
+          </div>
+        </div>
       </div>
     `;
+  } else {
+    // English Guidebook
+    container.innerHTML = `
+      <!-- Card 1: Word Forms Made Simple -->
+      <div class="guide-section-card">
+        <div class="guide-card-header">
+          <div class="guide-card-icon">🔤</div>
+          <div class="guide-card-title">Word Forms Made Simple (Dạng Từ)</div>
+        </div>
 
-    node.onclick = () => {
-      const choice = prompt(`Select Love Interest to replay ${tier.name}:\n\n1. Ren Takahashi (Japanese 🇯🇵)\n2. Bao Nguyen (Vietnamese 🇻🇳)\n3. Julian Vance (English 🇬🇧)\n\nEnter 1, 2, or 3:`, "1");
-      let selectedId = "ren";
-      if (choice === "2") selectedId = "bao";
-      if (choice === "3") selectedId = "julian";
-      if (choice) {
-        userState.currentTiers[selectedId] = tier.level;
-        saveLocalState();
-        openChatroom(selectedId);
-      }
-    };
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+          English words transform smoothly between Nouns, Verbs, Adjectives, and Adverbs. Here is how root words evolve in romance chats:
+        </p>
 
-    container.appendChild(node);
-  });
+        <div class="word-forms-card">
+          <div style="font-size:12.5px; font-weight:800; color:var(--primary-pink); margin-bottom:4px;">❤️ Love (Tình Yêu)</div>
+          <div class="form-row">
+            <div class="form-box">
+              <div class="form-label">Noun</div>
+              <div class="form-val">Love</div>
+            </div>
+            <div class="form-box">
+              <div class="form-label">Verb</div>
+              <div class="form-val">Love</div>
+            </div>
+            <div class="form-box">
+              <div class="form-label">Adj</div>
+              <div class="form-val">Lovely</div>
+            </div>
+            <div class="form-box">
+              <div class="form-label">Adv</div>
+              <div class="form-val">Lovingly</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="word-forms-card">
+          <div style="font-size:12.5px; font-weight:800; color:var(--accent-violet); margin-bottom:4px;">✨ Beauty (Vẻ Đẹp)</div>
+          <div class="form-row">
+            <div class="form-box">
+              <div class="form-label">Noun</div>
+              <div class="form-val">Beauty</div>
+            </div>
+            <div class="form-box">
+              <div class="form-label">Verb</div>
+              <div class="form-val">Beautify</div>
+            </div>
+            <div class="form-box">
+              <div class="form-label">Adj</div>
+              <div class="form-val">Beautiful</div>
+            </div>
+            <div class="form-box">
+              <div class="form-label">Adv</div>
+              <div class="form-val">Beautifully</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="word-forms-card">
+          <div style="font-size:12.5px; font-weight:800; color:var(--accent-emerald); margin-bottom:4px;">🍯 Sweetness (Ngọt Ngào)</div>
+          <div class="form-row">
+            <div class="form-box">
+              <div class="form-label">Noun</div>
+              <div class="form-val">Sweetness</div>
+            </div>
+            <div class="form-box">
+              <div class="form-label">Verb</div>
+              <div class="form-val">Sweeten</div>
+            </div>
+            <div class="form-box">
+              <div class="form-label">Adj</div>
+              <div class="form-val">Sweet</div>
+            </div>
+            <div class="form-box">
+              <div class="form-label">Adv</div>
+              <div class="form-val">Sweetly</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#f8f5fa; padding:10px 12px; border-radius:12px; border:1px solid rgba(160,140,190,0.18);">
+          <div style="font-size:12px; font-weight:800; color:var(--primary-pink); margin-bottom:4px;">💡 Quick Pattern Tip</div>
+          <div style="font-size:11.5px; color:var(--text-main); line-height:1.4;">
+            • Add <strong>-ly</strong> to adjectives to describe actions: <em>gentle → gently</em>, <em>sweet → sweetly</em>.<br/>
+            • Add <strong>-ful</strong> or <strong>-y</strong> to nouns to describe feelings: <em>charm → charming</em>, <em>sun → sunny</em>.
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Learned Romance Vocabulary -->
+      <div class="guide-section-card">
+        <div class="guide-card-header">
+          <div class="guide-card-icon">📖</div>
+          <div class="guide-card-title">English Romance Vocabularies Learned</div>
+        </div>
+
+        <div class="vocab-category-title">📚 Scholar & Literary Expressions (Julian)</div>
+        <div class="vocab-list">
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Stumbled upon</span>
+              <span class="vocab-trans">Tình cờ thấy / va phải</span>
+            </div>
+            <span class="vocab-tip">Ex: "I stumbled upon this classic book for you."</span>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Devoted</span>
+              <span class="vocab-trans">Dành trọn tình cảm / cống hiến</span>
+            </div>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Cherish / Savor</span>
+              <span class="vocab-trans">Trân trọng / thưởng thức trọn vẹn</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vocab-category-title">☕ Barista & Casual Cafe Vibes (Bao)</div>
+        <div class="vocab-list">
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Brew fresh coffee</span>
+              <span class="vocab-trans">Pha chế cà phê tươi</span>
+            </div>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Fragrant aroma</span>
+              <span class="vocab-trans">Mùi thơm lừng nức mũi</span>
+            </div>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">Taking a sweet break</span>
+              <span class="vocab-trans">Tạm nghỉ ngơi ngọt ngào</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vocab-category-title">💬 Sweet Conversational Formulas</div>
+        <div class="vocab-list">
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">"Are you free right now?"</span>
+              <span class="vocab-trans">"Cậu có rảnh lúc này không?"</span>
+            </div>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">"You made my day."</span>
+              <span class="vocab-trans">"Cậu làm một ngày của tớ thêm vui tươi."</span>
+            </div>
+          </div>
+
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">"Hope your day treating you gently."</span>
+              <span class="vocab-trans">"Mong một ngày của cậu diễn ra thật dịu dàng."</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 }
 
 // Open Active Chatroom
@@ -630,10 +1387,14 @@ function openChatroom(charId) {
   activeCharacterId = charId;
   analyticsData.characterInteractions[charId]++;
   
+  // Hide bottom tab bar while in chat window
+  const tabBar = document.querySelector(".tab-bar");
+  if (tabBar) tabBar.classList.add("hidden-in-chat");
+
   // Clear unread, pout status, and unreplied count when opening chat
   userState.unreadMessages[charId] = 0;
   userState.isPouting[charId] = false;
-  if (!userState.unrepliedCount) userState.unrepliedCount = { ren: 0, bao: 0, julian: 0 };
+  if (!userState.unrepliedCount) userState.unrepliedCount = { bao: 0, julian: 0 };
   userState.unrepliedCount[charId] = 0;
   lastUserReplyTime[charId] = Date.now();
   lastMessageWasLi[charId] = false;
@@ -667,11 +1428,16 @@ function openChatroom(charId) {
   renderChatHistory();
 
   // Configure Input Bar for Active Tier
-  setupTierInputControls(tierObj, char);
+  setupTierInputControls(tierObj, char, true);
 
   // Show Window
   document.getElementById("chatWindow").classList.add("active");
+
+  // Update Cooldown State in Chat Box UI
+  updateCooldownUI(checkSendCooldown());
 }
+
+window.openChatroom = openChatroom;
 
 // Render Chat History Messages
 function renderChatHistory() {
@@ -686,16 +1452,39 @@ function renderChatHistory() {
 
   // Seed greeting if history empty
   if (history.length === 0) {
-    history = [
-      {
-        sender: "li",
-        text: char.greeting,
-        romaji: char.romaji || null,
-        translation: char.greetingTranslation,
-        tip: char.greetingTip,
-        time: "Just now",
-      },
-    ];
+    if (activeCharacterId === "group") {
+      history = [
+        {
+          sender: "li",
+          speaker: "bao",
+          speakerName: "Bao Nguyen",
+          text: "MC! I brew fresh coffee for you! It smells very thơm... Julian, my English is better than your Vietnamese, right? MC, you like my coffee or Julian's poetry more? ☕❤️",
+          translation: "MC! I brewed fresh coffee for you! It smells very fragrant... Julian, my English is better than your Vietnamese, right? MC, do you like my coffee or Julian's poetry more?",
+          tip: "Bao is showing off his coffee for you! 'Thơm' means fragrant.",
+          time: "Just now",
+        },
+        {
+          sender: "li",
+          speaker: "julian",
+          speakerName: "Julian Vance",
+          text: "Nonsense, Bao! MC, em rất đẹp! I practiced that all night for you! Coffee is lovely, but my affection for MC is eternal. Who is speaking better today, MC?",
+          translation: "Nonsense, Bao! MC, you are very beautiful! I practiced that all night for you! Coffee is lovely, but my affection for MC is eternal. Who is speaking better today, MC?",
+          tip: "Julian is trying to win your favor! 'Em rất đẹp' means 'You are very beautiful'.",
+          time: "Just now",
+        }
+      ];
+    } else {
+      history = [
+        {
+          sender: "li",
+          text: char.greeting,
+          romaji: char.romaji || null,
+          translation: char.greetingTranslation,
+          tip: char.greetingTip,
+          time: "Just now",
+        },
+      ];
+    }
     userState.chatHistories[activeCharacterId] = history;
     saveLocalState();
   }
@@ -711,16 +1500,32 @@ function renderChatHistory() {
         ? `<div class="romaji-text" style="font-size:12.5px; color:var(--accent-violet); font-weight:700; margin-top:4px; margin-bottom:2px; background:rgba(124, 58, 237, 0.08); border:1px solid rgba(124, 58, 237, 0.2); padding:3px 8px; border-radius:6px; display:inline-block;">🔤 ${msg.romaji}</div>`
         : "";
 
+      let speakerAvatar = char.avatar;
+      let speakerName = char.name;
+      let speakerStyle = "";
+
+      if (activeCharacterId === "group" || msg.speaker) {
+        if (msg.speaker === "julian" || msg.speakerName === "Julian Vance") {
+          speakerAvatar = CHARACTERS.julian.avatar;
+          speakerName = "Julian Vance 🇬🇧";
+          speakerStyle = "style='color: #d97706; font-weight:800;'";
+        } else {
+          speakerAvatar = CHARACTERS.bao.avatar;
+          speakerName = "Bao Nguyen 🇻🇳";
+          speakerStyle = "style='color: var(--accent-emerald); font-weight:800;'";
+        }
+      }
+
       group.innerHTML = `
-        <img src="${char.avatar}" class="msg-avatar" alt="${char.name}" />
+        <img src="${speakerAvatar}" class="msg-avatar" alt="${speakerName}" />
         <div class="msg-body">
-          <div class="msg-sender">${char.name}</div>
+          <div class="msg-sender" ${speakerStyle}>${speakerName}</div>
           <div class="msg-bubble">
             <div style="font-size:15px; font-weight:700;">${msg.text}</div>
             ${romajiHtml}
             ${(msg.translation || msg.tip || msg.fix) ? `<button type="button" class="assist-toggle-btn">💡 Click for Translation & Tips</button>` : ''}
             ${msg.translation ? `<div class="translation-text">💬 ${msg.translation}</div>` : ""}
-            ${msg.tip ? `<div class="tip-card"><div class="tip-title">💡 Grammar/Vocab Tip</div>${msg.tip}</div>` : ""}
+            ${msg.tip ? `<div class="tip-card"><div class="tip-title">💡 Language Tip</div>${msg.tip}</div>` : ""}
             ${msg.fix ? `<div class="fix-card"><div class="fix-title">❤️ Corrected Phrasing</div>${msg.fix}</div>` : ""}
           </div>
           <div class="msg-time">${msg.time || "11:42 PM"}</div>
@@ -745,22 +1550,16 @@ function renderChatHistory() {
 function generateContextualWordChips(charId, lastMsgText) {
   const text = (lastMsgText || "").toLowerCase();
 
-  if (charId === "ren") {
-    let prompt = "Build your reply to Ren (Japanese 🇯🇵):";
-    let chips = ["こんにちは", "Ren-san", "お疲れ様です", "今", "は", "元気", "です", "少し", "話したい", "よ", "ありがとう"];
+  if (charId === "group") {
+    let prompt = "Build your reply to Bao & Julian (Group Chat 💬):";
+    let chips = ["Chào hai anh", "Cảm ơn nhé", "Cà phê", "Very nice", "I agree", "Học cùng nhau", "Bao", "Julian", "rất vui"];
 
-    if (text.includes("何してる") || text.includes("なにしてる") || text.includes("忙しい") || text.includes("声")) {
-      prompt = 'Build reply: "I\'m free right now, I wanted to talk with you!"';
-      chips = ["今", "は", "暇", "です", "よ", "Ren-san", "と", "話したかった", "です", "勉強", "して", "いた", "音楽", "聴いてた"];
-    } else if (text.includes("ギター") || text.includes("練習") || text.includes("曲")) {
-      prompt = 'Build reply: "I want to hear your guitar song!"';
-      chips = ["Ren-san", "の", "ギター", "を", "聴きたい", "です", "綺麗", "すごい", "練習", "お疲れ様"];
-    } else if (text.includes("返事") || text.includes("既読") || text.includes("寂しい") || text.includes("心配")) {
-      prompt = 'Build reply: "Sorry for replying late! I missed you too."';
-      chips = ["ごめんなさい", "返事", "が", "遅くなって", "Ren-san", "に", "会いたかった", "好き", "です"];
-    } else if (text.includes("茶") || text.includes("カフェ") || text.includes("休み") || text.includes("会")) {
-      prompt = 'Build reply: "Let\'s meet and drink tea together tomorrow!"';
-      chips = ["明日", "一緒に", "お茶", "を", "飲みましょう", "楽しみ", "です", "Ren-san", "の声", "が", "好き"];
+    if (text.includes("cà phê") || text.includes("coffee")) {
+      prompt = 'Build reply: "Thank you both! Coffee sounds wonderful."';
+      chips = ["Cảm ơn hai anh", "Cà phê", "rất ngon", "delicious coffee", "Bao", "Julian", "nhé", "ạ"];
+    } else {
+      prompt = 'Build reply: "Hello Bao and Julian! I am happy to chat with both of you!"';
+      chips = ["Chào hai anh", "Em rất vui", "nói chuyện với", "Bao và Julian", "thank you", "nhé", "ạ"];
     }
     return { prompt, chips };
   } else if (charId === "bao") {
@@ -797,7 +1596,7 @@ function generateContextualWordChips(charId, lastMsgText) {
 }
 
 // Setup Input Controls for Active Tier
-function setupTierInputControls(tierObj, char) {
+function setupTierInputControls(tierObj, char, isInitialLoad = false) {
   const labelEl = document.getElementById("tierModeLabel");
   const multEl = document.getElementById("tierHeartMultiplier");
   const dropdownEl = document.getElementById("tierSelectDropdown");
@@ -812,14 +1611,35 @@ function setupTierInputControls(tierObj, char) {
   // Always configure Contextual Word Bank for current conversation step
   setupWordBankPrompt(tierObj, char);
 
-  // Set default active mode tab based on tier level
+  // Check and apply active 20s cooldown button states if running
+  updateCooldownUI(checkSendCooldown());
+
   const modeSentenceBtn = document.getElementById("modeSentenceBuilderBtn");
   const modeFreeBtn = document.getElementById("modeFreeTextBtn");
 
-  if (tierObj.level <= 5) {
-    if (modeSentenceBtn) modeSentenceBtn.click();
+  const savedMode = userState.selectedInputMode && userState.selectedInputMode[char.id];
+
+  if (isInitialLoad) {
+    if (savedMode === "free") {
+      if (modeFreeBtn) modeFreeBtn.click();
+    } else if (savedMode === "sentence") {
+      if (modeSentenceBtn) modeSentenceBtn.click();
+    } else {
+      if (tierObj.level <= 5) {
+        if (modeSentenceBtn) modeSentenceBtn.click();
+      } else {
+        if (modeFreeBtn) modeFreeBtn.click();
+      }
+    }
   } else {
-    if (modeFreeBtn) modeFreeBtn.click();
+    // Post-reply refresh: preserve whatever mode is currently active!
+    const isFreeActive = modeFreeBtn && modeFreeBtn.classList.contains("active");
+    const activeMode = savedMode || (isFreeActive ? "free" : "sentence");
+    if (activeMode === "free") {
+      if (modeFreeBtn) modeFreeBtn.click();
+    } else {
+      if (modeSentenceBtn) modeSentenceBtn.click();
+    }
   }
 }
 
@@ -896,10 +1716,17 @@ function updateConstructedBox() {
 
 // Submit Word Bank Constructed Message
 async function handleSendWordBankMessage() {
+  const remaining = checkSendCooldown();
+  if (remaining > 0) return;
+
   if (currentConstructedWords.length === 0) {
     alert("Please click word chips to build a sentence first!");
     return;
   }
+
+  // Trigger 20s cooldown
+  lastMessageSendTimestamp = Date.now();
+  startSendCooldownTimer();
 
   const constructedText = currentConstructedWords.join(" ");
   analyticsData.answersSubmitted++;
@@ -923,9 +1750,16 @@ async function handleSendWordBankMessage() {
 
 // Handle Free-Form Text Chat Message
 async function handleSendFreeMessage() {
+  const remaining = checkSendCooldown();
+  if (remaining > 0) return;
+
   const input = document.getElementById("freeChatInput");
   const text = input.value.trim();
   if (!text) return;
+
+  // Trigger 20s cooldown
+  lastMessageSendTimestamp = Date.now();
+  startSendCooldownTimer();
 
   input.value = "";
   analyticsData.answersSubmitted++;
@@ -955,9 +1789,20 @@ function addUserMessageToHistory(text) {
   userState.chatHistories[activeCharacterId] = history;
 
   // Reset unreplied tracking, pout state & timers when user responds
-  if (!userState.unrepliedCount) userState.unrepliedCount = { ren: 0, bao: 0, julian: 0 };
+  if (!userState.unrepliedCount) userState.unrepliedCount = { bao: 0, julian: 0, group: 0 };
+  if (!userState.saidGoodbye) userState.saidGoodbye = { bao: false, julian: false, group: false };
+
   userState.unrepliedCount[activeCharacterId] = 0;
   userState.isPouting[activeCharacterId] = false;
+
+  if (isFarewellMessage(text)) {
+    userState.saidGoodbye[activeCharacterId] = true;
+    lastMessageWasLi[activeCharacterId] = false;
+    logDashboardEvent(`👋 User said goodbye to ${CHARACTERS[activeCharacterId].name}. Stopping automatic texts for this chat.`);
+  } else {
+    userState.saidGoodbye[activeCharacterId] = false;
+  }
+
   lastUserReplyTime[activeCharacterId] = Date.now();
   lastLiCheckupTime[activeCharacterId] = Date.now();
   lastMessageWasLi[activeCharacterId] = false;
@@ -1025,6 +1870,7 @@ async function triggerLLMResponse(userText, tierObj) {
         characterId: char.id,
         characterName: char.name,
         characterLanguage: char.language,
+        isGroup: char.isGroup || false,
         userText: userText,
         tierLevel: tierObj.level,
         recentHistory: history.slice(-4),
@@ -1046,18 +1892,80 @@ async function triggerLLMResponse(userText, tierObj) {
       throw new Error(json.error || `HTTP ${res.status}`);
     }
   } catch (err) {
-    logDashboardEvent(`Gemini API call failed: ${err.message}.`);
+    logDashboardEvent(`Gemini API call glitch/error: ${err.message}. Sending in-character recovery text.`);
     removeTypingIndicator();
 
     const history = userState.chatHistories[activeCharacterId] || [];
-    history.push({
-      sender: "li",
-      text: `⚠️ Gemini API Error: Unable to communicate with ${char.name}. (${err.message})`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    });
+    const charKey = activeCharacterId === "group" ? "group" : activeCharacterId;
+
+    const glitchPool = ERROR_GLITCH_MESSAGES[charKey] || ERROR_GLITCH_MESSAGES.julian;
+    const recoveryPool = ERROR_RECOVERY_MESSAGES[charKey] || ERROR_RECOVERY_MESSAGES.julian;
+
+    const glitchText = glitchPool[Math.floor(Math.random() * glitchPool.length)];
+    const recoveryText = recoveryPool[Math.floor(Math.random() * recoveryPool.length)];
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    // Send Glitch Message
+    if (charKey === "group") {
+      history.push({
+        sender: "li",
+        speaker: "bao",
+        speakerName: "Bao Nguyen",
+        text: glitchText,
+        translation: "Glitch message.",
+        tip: "Phone signal recovery.",
+        time: timeStr,
+      });
+    } else {
+      history.push({
+        sender: "li",
+        text: glitchText,
+        translation: "Hold on a second, my phone is glitching... let me fix it.",
+        tip: "Phone signal recovery.",
+        time: timeStr,
+      });
+    }
+
     userState.chatHistories[activeCharacterId] = history;
     saveLocalState();
     renderChatHistory();
+
+    // Show typing indicator again and send recovery message after 1.5s
+    setTimeout(() => {
+      showTypingIndicator(char);
+      setTimeout(() => {
+        removeTypingIndicator();
+        const updatedHistory = userState.chatHistories[activeCharacterId] || [];
+        const recoveryTimeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+        if (charKey === "group") {
+          updatedHistory.push({
+            sender: "li",
+            speaker: "julian",
+            speakerName: "Julian Vance",
+            text: recoveryText,
+            translation: "All fixed now! What were you saying?",
+            tip: "Recovery message.",
+            time: recoveryTimeStr,
+          });
+        } else {
+          updatedHistory.push({
+            sender: "li",
+            text: recoveryText,
+            translation: "Okay fixed! What were you saying?",
+            tip: "Recovery message.",
+            time: recoveryTimeStr,
+          });
+        }
+
+        userState.chatHistories[activeCharacterId] = updatedHistory;
+        saveLocalState();
+        renderChatHistory();
+        setupTierInputControls(tierObj, char);
+      }, 1500);
+    }, 1000);
+
     return;
   }
 
@@ -1071,15 +1979,30 @@ async function triggerLLMResponse(userText, tierObj) {
   );
 
   const history = userState.chatHistories[activeCharacterId] || [];
-  history.push({
-    sender: "li",
-    text: responseData.characterResponse,
-    romaji: responseData.romaji || (char.language === "Japanese" ? responseData.characterResponse : null),
-    translation: responseData.translation,
-    tip: responseData.tip,
-    fix: responseData.correction || responseData.fix,
-    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-  });
+
+  if (activeCharacterId === "group" && responseData.groupResponses && responseData.groupResponses.length > 0) {
+    responseData.groupResponses.forEach((resp) => {
+      history.push({
+        sender: "li",
+        speaker: resp.speaker || "bao",
+        speakerName: resp.speakerName || (resp.speaker === "julian" ? "Julian Vance" : "Bao Nguyen"),
+        text: resp.text,
+        translation: resp.translation,
+        tip: resp.tip,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      });
+    });
+  } else {
+    history.push({
+      sender: "li",
+      text: responseData.characterResponse || responseData.text,
+      romaji: responseData.romaji || null,
+      translation: responseData.translation,
+      tip: responseData.tip,
+      fix: responseData.correction || responseData.fix,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    });
+  }
 
   userState.chatHistories[activeCharacterId] = history;
 
@@ -1146,8 +2069,11 @@ function startCheckUpAndPoutEngine() {
       const char = CHARACTERS[charId];
       if (!char) return;
 
-      // If character is pouting with "...", STOP sending all messages until user replies!
-      if (userState.isPouting[charId]) {
+      // If user typed goodbye or character is pouting, STOP sending automatic messages!
+      if (userState.saidGoodbye && userState.saidGoodbye[charId]) {
+        return;
+      }
+      if (userState.isPouting && userState.isPouting[charId]) {
         return;
       }
 
@@ -1155,41 +2081,63 @@ function startCheckUpAndPoutEngine() {
       const timeSinceUserReply = now - (lastUserReplyTime[charId] || 0);
       const delay = nextSpontaneousDelay[charId] || (7 * 60 * 1000);
 
-      // 1. Impatience / Pout Trigger: If LI sent a message and user hasn't replied in >2 minutes (120,000 ms)
-      if (lastMessageWasLi[charId] && timeSinceUserReply > 120000) {
-        if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
-        const poutTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      // 1. Unreplied Progression: If LI sent a message and user hasn't replied in >25 seconds
+      if (lastMessageWasLi[charId] && timeSinceCheckup > 25000) {
+        if (!userState.unrepliedCount) userState.unrepliedCount = { bao: 0, julian: 0 };
+        const stage = userState.unrepliedCount[charId] || 0;
+        const seq = UNREPLIED_SEQUENCE[charId];
 
-        const poutMsg = {
-          sender: "li",
-          text: "...",
-          romaji: char.language === "Japanese" ? "..." : null,
-          translation: "... (Silence... Pouting because you haven't replied)",
-          tip: `${char.name} is pouting because you left them on read! Send a message to break the silence.`,
-          time: poutTimeStr,
-          timestamp: poutTimeStr
-        };
+        if (seq && stage < seq.length) {
+          const msgObj = seq[stage];
+          if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
+          const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        userState.chatHistories[charId].push(poutMsg);
+          userState.chatHistories[charId].push({
+            sender: "li",
+            text: msgObj.text,
+            romaji: msgObj.romaji || null,
+            translation: msgObj.translation,
+            tip: msgObj.tip,
+            time: timeStr,
+            timestamp: timeStr,
+          });
 
-        userState.isPouting[charId] = true;
-        userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
-        lastMessageWasLi[charId] = false;
+          lastLiCheckupTime[charId] = now;
+          userState.unrepliedCount[charId] = stage + 1;
 
-        showNotificationToast(char, "...", true);
+          // Is this the final silence "..." stage?
+          if (stage === seq.length - 1 || msgObj.text === "...") {
+            userState.isPouting[charId] = true;
+            lastMessageWasLi[charId] = false;
+            userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
+            showNotificationToast(char, "...", true);
+            logDashboardEvent(`💢 ${char.name} pouted with "..." and stopped sending messages until user replies.`);
+          } else if (stage === seq.length - 2) {
+            // Pouting message right before "..."
+            userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
+            showNotificationToast(char, msgObj.text, true);
+            logDashboardEvent(`😤 ${char.name} sent pouting message to user.`);
+          } else {
+            // Pre-written check-in message
+            userState.unreadMessages[charId] = (userState.unreadMessages[charId] || 0) + 1;
+            showNotificationToast(char, msgObj.text, false);
+            logDashboardEvent(`💬 ${char.name} sent pre-written check-in #${stage + 1}.`);
+          }
 
-        if (activeCharacterId === charId) {
-          renderChatHistory();
-          setupWordBankPrompt(TIERS[0], char);
+          if (activeCharacterId === charId) {
+            renderChatHistory();
+            const tierNum = userState.currentTiers[charId] || 1;
+            const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
+            setupWordBankPrompt(tierObj, char);
+          }
+
+          saveLocalState();
+          renderChatList();
+          return;
         }
-
-        saveLocalState();
-        renderChatList();
-        logDashboardEvent(`💢 ${char.name} pouted with "..." and stopped sending messages until user replies.`);
-        return;
       }
 
-      // 2. Spontaneous Check-Up Trigger (Once every 7-10 minutes)
+      // 2. Spontaneous Check-Up Trigger (Once every 7-10 minutes when both are idle)
       if (!lastMessageWasLi[charId] && timeSinceCheckup > delay && timeSinceUserReply > delay) {
         const pool = SPONTANEOUS_CHECKUPS[charId];
         if (pool && pool.length > 0) {
@@ -1209,7 +2157,7 @@ function startCheckUpAndPoutEngine() {
 
           lastLiCheckupTime[charId] = now;
           lastMessageWasLi[charId] = true;
-          // Set next randomized delay between 7 and 10 minutes (420,000ms to 600,000ms)
+          userState.unrepliedCount[charId] = 0;
           nextSpontaneousDelay[charId] = (7 + Math.random() * 3) * 60 * 1000;
 
           if (activeCharacterId !== charId) {
@@ -1217,7 +2165,9 @@ function startCheckUpAndPoutEngine() {
             showNotificationToast(char, checkup.text, false);
           } else {
             renderChatHistory();
-            setupWordBankPrompt(TIERS[0], char);
+            const tierNum = userState.currentTiers[charId] || 1;
+            const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
+            setupWordBankPrompt(tierObj, char);
           }
 
           saveLocalState();
@@ -1226,7 +2176,7 @@ function startCheckUpAndPoutEngine() {
         }
       }
     });
-  }, 10000);
+  }, 5000);
 }
 
 // Show In-App Top Banner Notification Toast
@@ -1303,7 +2253,10 @@ function saveLocalState() {
   localStorage.setItem("otome_chats", JSON.stringify(userState.chatHistories));
   localStorage.setItem("otome_unread", JSON.stringify(userState.unreadMessages));
   localStorage.setItem("otome_pouting", JSON.stringify(userState.isPouting));
-  localStorage.setItem("otome_unreplied_count", JSON.stringify(userState.unrepliedCount || { ren: 0, bao: 0, julian: 0 }));
+  localStorage.setItem("otome_unreplied_count", JSON.stringify(userState.unrepliedCount || { bao: 0, julian: 0 }));
+  localStorage.setItem("otome_said_goodbye", JSON.stringify(userState.saidGoodbye || { bao: false, julian: false, group: false }));
+  localStorage.setItem("otome_input_mode", JSON.stringify(userState.selectedInputMode || {}));
+  localStorage.setItem("otome_ui_lang", userState.uiLang || "en");
 }
 
 // Synchronize User Data to Convex Cloud (`/sync-user`)
@@ -1343,28 +2296,73 @@ async function syncUserDataToConvex(reason = "") {
   }
 }
 
+// Collect Full Telemetry & Device/Location/Bounce Metadata Payload
+function collectFullTelemetryMetadata() {
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isTablet = /iPad|Tablet/i.test(navigator.userAgent) || (isMobile && window.innerWidth >= 768);
+  const deviceType = isTablet ? "tablet" : isMobile ? "mobile" : "desktop";
+
+  const isBounce = analyticsData.timeSpentSeconds < 10 && analyticsData.clicks <= 1;
+
+  return {
+    userId: userState.userId,
+    userInfo: {
+      totalHearts: userState.totalHearts,
+      streak: userState.streak,
+      tiers: userState.currentTiers,
+      affection: userState.affection,
+      unrepliedCount: userState.unrepliedCount,
+    },
+    device: {
+      type: deviceType,
+      userAgent: navigator.userAgent,
+      platform: navigator.platform || "unknown",
+      screenResolution: `${window.screen.width}x${window.screen.height}`,
+      viewportSize: `${window.innerWidth}x${window.innerHeight}`,
+      devicePixelRatio: window.devicePixelRatio || 1,
+      touchSupport: ("ontouchstart" in window) || (navigator.maxTouchPoints > 0),
+    },
+    location: {
+      language: navigator.language || "en-US",
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+      referrer: document.referrer || "direct",
+    },
+    sessionMetrics: {
+      sessionStartTime: new Date(analyticsData.startTime).toISOString(),
+      sessionDurationSeconds: analyticsData.timeSpentSeconds,
+      totalClicks: analyticsData.clicks,
+      answersSubmitted: analyticsData.answersSubmitted,
+      apiCalls: analyticsData.apiCalls,
+      convexSyncCount: analyticsData.convexSyncCount,
+      characterInteractions: analyticsData.characterInteractions,
+      isBounce: isBounce,
+      bounceRateRatio: isBounce ? 1.0 : 0.0,
+      activeCharacterId: activeCharacterId,
+    },
+    timestamp: new Date().toISOString(),
+  };
+}
+
+// Auto Telemetry Sync on Tab Close / Hide to calculate Bounce Rate & Session Metrics
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    const payload = collectFullTelemetryMetadata();
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon("/api/analytics", JSON.stringify(payload));
+    }
+  }
+});
+
 // Upload Analytics Telemetry Payload to Convex Cloud (`/analytics`)
 async function uploadAnalyticsToConvex() {
   const statusEl = document.getElementById("dashUploadStatus");
-  if (!statusEl) return;
-  statusEl.textContent = "Uploading telemetry...";
+  if (statusEl) statusEl.textContent = "Uploading telemetry...";
 
   try {
-    const payload = {
-      userId: userState.userId,
-      telemetry: {
-        totalClicks: analyticsData.clicks,
-        answersSubmitted: analyticsData.answersSubmitted,
-        timeSpentSeconds: analyticsData.timeSpentSeconds,
-        apiCalls: analyticsData.apiCalls,
-        convexSyncCount: analyticsData.convexSyncCount,
-        characterInteractions: analyticsData.characterInteractions,
-        totalHeartsEarned: userState.totalHearts,
-      },
-      uploadedAt: new Date().toISOString(),
-    };
+    const payload = collectFullTelemetryMetadata();
 
-    const res = await fetch(`${CONVEX_HTTP_SITE}/analytics`, {
+    // Send through server proxy (which adds IP & GEO metadata)
+    const res = await fetch("/api/analytics", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -1372,14 +2370,15 @@ async function uploadAnalyticsToConvex() {
 
     if (res.ok) {
       const json = await res.json();
-      statusEl.textContent = "Status: Upload Success! 🟢";
-      logDashboardEvent(`Uploaded analytics to Convex HTTP endpoint: ${JSON.stringify(json)}`);
+      analyticsData.convexSyncCount++;
+      if (statusEl) statusEl.textContent = "Status: Telemetry Synced to Convex 🟢";
+      logDashboardEvent(`Uploaded analytics payload to Convex: ${JSON.stringify(json.convexData || json)}`);
     } else {
-      statusEl.textContent = `Status: Failed (${res.status}) 🔴`;
+      if (statusEl) statusEl.textContent = `Status: Failed (${res.status}) 🔴`;
       logDashboardEvent(`Analytics upload failed with status ${res.status}`);
     }
   } catch (err) {
-    statusEl.textContent = "Status: Error 🔴";
+    if (statusEl) statusEl.textContent = "Status: Error 🔴";
     logDashboardEvent(`Analytics upload error: ${err.message}`);
   }
 }
