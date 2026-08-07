@@ -44,7 +44,6 @@
         <div class="section-header">
           <h2 class="section-title">
             <span>Messenger Chats</span>
-            <span style="font-size:12px; color:var(--accent-emerald);" id="convexSyncStatus">🟢 Convex Synced</span>
           </h2>
           <p class="section-subtitle">Select a Love Interest to start learning & chatting</p>
         </div>
@@ -81,6 +80,15 @@
           <button class="guide-tab-btn" id="guideTabEnBtn" type="button" onclick="setGuidebookLang('en')">
             🇬🇧 English
           </button>
+          <button class="guide-tab-btn" id="guideTabJaBtn" type="button" onclick="setGuidebookLang('ja')">
+            🇯🇵 日本語
+          </button>
+          <button class="guide-tab-btn" id="guideTabKoBtn" type="button" onclick="setGuidebookLang('ko')">
+            🇰🇷 한국어
+          </button>
+          <button class="guide-tab-btn" id="guideTabZhBtn" type="button" onclick="setGuidebookLang('zh')">
+            🇨🇳 中文
+          </button>
         </div>
 
         <div class="guidebook-container" id="guidebookContainer">
@@ -88,46 +96,112 @@
         </div>
       </section>
 
-      <!-- VIEW 4: SETTINGS & OPENROUTER API KEY -->
+      <!-- VIEW 4: SETTINGS -->
       <section class="view-section" id="view-settings">
         <div class="section-header">
-          <h2 class="section-title">Messenger Settings</h2>
-          <p class="section-subtitle">Configure AI model & Convex Cloud connection</p>
+          <h2 class="section-title">App Settings</h2>
+          <p class="section-subtitle">Customize theme, language preferences & story progress</p>
         </div>
 
+        <!-- User Profile Setting (How LIs Address You) -->
         <div class="settings-group">
+          <div class="settings-label">
+            <span>👤 User Profile (How LIs Address You)</span>
+            <span id="profileStatusBadge" class="status-chip-badge" style="background:rgba(217,0,87,0.12); color:var(--primary-pink); font-weight:800;">Saved</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
+            Set your name, pronouns, and age so Bao, Julian, and the group chat address you personally!
+          </p>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div>
+              <label for="settingsUserName" style="font-size:11.5px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Your Name / Preferred Nickname:</label>
+              <input type="text" id="settingsUserName" class="setting-input" placeholder="e.g. MC, Alex, Linh..." />
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div>
+                <label for="settingsUserPronouns" style="font-size:11.5px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Pronouns:</label>
+                <select id="settingsUserPronouns" class="setting-input" style="height:42px; cursor:pointer;">
+                  <option value="she/her">she/her</option>
+                  <option value="he/him">he/him</option>
+                  <option value="they/them">they/them</option>
+                  <option value="she/they">she/they</option>
+                  <option value="he/they">he/they</option>
+                  <option value="any/all">any/all</option>
+                </select>
+              </div>
+              <div>
+                <label for="settingsUserAge" style="font-size:11.5px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">Age:</label>
+                <input type="number" id="settingsUserAge" class="setting-input" placeholder="e.g. 21" min="13" max="100" />
+              </div>
+            </div>
+            <button class="primary-btn" id="saveProfileSettingsBtn" type="button" style="margin-top:4px;">
+              Save Profile Settings
+            </button>
+            <div id="profileSavedToast" class="reset-success-toast" style="display:none; background:rgba(16,185,129,0.15); color:var(--accent-emerald); border:1px solid rgba(16,185,129,0.3);">
+              ✓ Profile settings updated! Bao & Julian will now address you accordingly.
+            </div>
+          </div>
+        </div>
+
+        <!-- Language Preference Setting -->
+        <div class="settings-group">
+          <div class="settings-label">
+            <span>🌐 App Language / Ngôn Ngữ</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
+            Select your preferred interface language across all menus and guides:
+          </p>
+          <div class="setting-options-grid">
+            <button type="button" class="option-pill-btn active" id="settingLangEnBtn" onclick="setAppUiLanguage('en')">
+              🇬🇧 English
+            </button>
+            <button type="button" class="option-pill-btn" id="settingLangViBtn" onclick="setAppUiLanguage('vi')">
+              🇻🇳 Tiếng Việt
+            </button>
+          </div>
+        </div>
+
+        <!-- Dark Mode / Theme Setting -->
+        <div class="settings-group">
+          <div class="settings-label">
+            <span>🌙 Appearance & Theme</span>
+            <span id="themeStatusBadge" class="status-chip-badge">Light Mode</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
+            Toggle between bright crisp theme and dark romantic twilight theme:
+          </p>
+          <div class="setting-options-grid">
+            <button type="button" class="option-pill-btn active" id="themeLightBtn" onclick="setAppTheme('light')">
+              ☀️ Light Theme
+            </button>
+            <button type="button" class="option-pill-btn" id="themeDarkBtn" onclick="setAppTheme('dark')">
+              🌙 Dark Twilight Mode
+            </button>
+          </div>
+        </div>
+
+        <!-- Hidden Gemini API key block for system compatibility -->
+        <div class="settings-group" id="geminiApiKeyGroup" style="display:none;">
           <div class="settings-label">
             <span>🔑 Gemini API Key</span>
             <span id="keySavedStatus" style="color:var(--accent-emerald); font-size:11px;">Key Active</span>
           </div>
-          <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">
-            Uses model: <code style="color:var(--accent-emerald);">google/gemma-4-26b-a4b-it:free</code>
-          </p>
           <input type="password" id="openRouterKeyInput" class="setting-input" placeholder="sk-or-v1-..." />
-          <button class="primary-btn" id="saveKeyBtn">Save API Key to LocalStorage</button>
+          <button class="primary-btn" id="saveKeyBtn">Save API Key</button>
         </div>
 
-        <div class="settings-group">
-          <div class="settings-label">☁️ Convex Cloud Backend Sync</div>
-          <p style="font-size:11px; color:var(--text-muted);">
-            HTTP Actions URL: <code style="color:var(--accent-gold);">https://wary-reindeer-174.convex.site</code>
-          </p>
-          <button class="primary-btn" id="manualSyncBtn" style="background: linear-gradient(135deg, #059669, #2563eb); color:#fff;">
-            Sync Progress 
-          </button>
-        </div>
-
-        <div class="settings-group" style="border: 1px solid rgba(230, 0, 92, 0.35); background: rgba(230, 0, 92, 0.04);">
+        <!-- Reset Progress Setting -->
+        <div class="settings-group danger-group">
           <div class="settings-label" style="color: var(--primary-pink); display:flex; align-items:center; gap:6px;">
             <span>🔄 Reset Story & Chat Progress</span>
           </div>
-          <p style="font-size:11px; color:var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
             Wipe all chat histories, reset affection levels back to initial nonchalant states, and restart story choices for a fresh experience.
           </p>
-          <button class="primary-btn" id="resetStoryBtn" type="button" style="background: linear-gradient(135deg, #e6005c, #b30047); color:#fff;">
+          <button class="primary-btn reset-action-btn" id="resetStoryBtn" type="button">
             Reset All Story Progress & Replay
           </button>
-          <div id="resetSuccessMessage" style="display:none; margin-top:10px; padding:8px 12px; background:rgba(5, 150, 105, 0.1); border:1px solid rgba(5, 150, 105, 0.3); border-radius:10px; font-size:12px; font-weight:700; color:var(--accent-emerald); text-align:center;">
+          <div id="resetSuccessMessage" class="reset-success-toast" style="display:none;">
             ✓ All story progress and chat histories have been reset!
           </div>
         </div>
@@ -136,7 +210,10 @@
       <!-- ACTIVE CHATROOM OVERLAY SCREEN -->
       <div class="chat-window" id="chatWindow">
         <div class="chat-header">
-          <button class="back-btn" id="closeChatBtn">←</button>
+          <button class="back-btn" id="closeChatBtn" type="button" title="Back to Main Menu" onclick="closeActiveChat()">
+            <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+            <span>Menu</span>
+          </button>
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdSZW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNGY0NmU1Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjN2MzYWVkIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ1JlbikiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZTBlN2ZmIi8+PHBhdGggZD0iTTMyIDMwIHExOCAtMTIgMzYgMCBxLTYgMjQgLTM6IDAiIGZpbGw9IiMzMTJlODEiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMzMTJlODEiLz48Y2lyY2xlIGN4PSI1OCIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiMzMTJlODEiLz48cGF0aCBkPSJNNDYgNDkgcTQgNCA4IDAiIHN0cm9rZT0iIzMxMmU4MSIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+" id="chatHeaderAvatar" class="chat-header-avatar" alt="LI Avatar" />
           <div class="chat-header-info">
             <div class="chat-header-name" id="chatHeaderName">
@@ -146,7 +223,7 @@
               <span>● Online</span> | <span id="chatHeaderTier">Tier 1: Baby Talk</span> | <span id="chatHeaderAffection">❤️ 45%</span>
             </div>
           </div>
-          <button id="romajiToggleBtn" type="button" style="background: rgba(217, 0, 87, 0.08); border: 1px solid rgba(217, 0, 87, 0.3); color: var(--primary-pink); border-radius: 12px; padding: 5px 10px; font-size: 11px; font-weight: 800; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;">
+          <button id="romajiToggleBtn" type="button" style="background: rgba(217, 0, 87, 0.08); border: 1px solid rgba(217, 0, 87, 0.3); color: var(--primary-pink); border-radius: 12px; padding: 6px 10px; font-size: 11.5px; font-weight: 800; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;">
             🔤 Romaji: ON
           </button>
         </div>
@@ -202,11 +279,11 @@
           </div>
 
           <!-- Input Feature Mode Selector (Sentence Builder vs Free Text) -->
-          <div class="input-mode-switcher" style="display:flex; gap:6px; margin-top:0;">
-            <button id="modeSentenceBuilderBtn" class="mode-tab-btn active" type="button" style="flex:1; padding:5px 8px; border-radius:8px; font-weight:800; font-size:11px; border:1px solid var(--primary-pink); background:rgba(217, 0, 87, 0.12); color:var(--primary-pink); cursor:pointer; transition:all 0.2s ease;">
+          <div class="input-mode-switcher" style="display:flex; gap:8px; margin-top:2px;">
+            <button id="modeSentenceBuilderBtn" class="mode-tab-btn active" type="button" style="flex:1; padding:8px 12px; border-radius:10px; font-weight:800; font-size:12.5px; border:1px solid var(--primary-pink); background:rgba(217, 0, 87, 0.12); color:var(--primary-pink); cursor:pointer; transition:all 0.2s ease;">
               🧩 Sentence Builder
             </button>
-            <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" style="flex:1; padding:5px 8px; border-radius:8px; font-weight:800; font-size:11px; border:1px solid rgba(160, 140, 190, 0.3); background:rgba(255,255,255,0.6); color:var(--text-muted); cursor:pointer; transition:all 0.2s ease;">
+            <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" style="flex:1; padding:8px 12px; border-radius:10px; font-weight:800; font-size:12.5px; border:1px solid rgba(160, 140, 190, 0.3); background:rgba(255,255,255,0.6); color:var(--text-muted); cursor:pointer; transition:all 0.2s ease;">
               💬 Free Text Chat
             </button>
           </div>
@@ -215,16 +292,16 @@
           <div class="word-bank-container" id="wordBankContainer">
             <div class="prompt-guide" id="wordBankPromptGuide">Build your reply in target language:</div>
             <div class="constructed-sentence-box" id="constructedSentenceBox">
-              <span style="color:var(--text-muted); font-size:11px;" id="constructedPlaceholder">Click word chips below to build your sentence...</span>
+              <span style="color:var(--text-muted); font-size:13px;" id="constructedPlaceholder">Click word chips below to build your sentence...</span>
             </div>
             <div class="word-chips-grid" id="wordChipsGrid"></div>
-            <button class="primary-btn" id="submitSentenceBtn" style="padding:7px 10px; font-size:12px; font-weight:800; margin-top:2px;">Send Built Sentence ❤️</button>
+            <button class="primary-btn" id="submitSentenceBtn" style="padding:12px 18px; font-size:14px; font-weight:800; border-radius:14px; min-height:46px; margin-top:4px;">Send Built Sentence ❤️</button>
           </div>
 
           <!-- Feature 2: Free-Form Text Chat -->
           <div class="text-input-bar" id="freeInputContainer" style="display:none;">
             <input type="text" id="freeChatInput" class="chat-input" placeholder="Type custom message in target language..." />
-            <button class="send-btn" id="sendFreeMsgBtn">➤</button>
+            <button class="send-btn" id="sendFreeMsgBtn" type="button" title="Send Message">➤</button>
           </div>
         </div>
       </div>
@@ -233,23 +310,77 @@
 
     <!-- Bottom Tab Navigation Bar -->
     <nav class="tab-bar">
-      <button class="tab-btn active" data-tab="chats">
+      <button class="tab-btn active" data-tab="chats" onclick="switchTab('chats')">
         <span class="tab-icon material-symbols-outlined">forum</span>
         <span>Chats</span>
       </button>
-      <button class="tab-btn" data-tab="characters">
+      <button class="tab-btn" data-tab="characters" onclick="switchTab('characters')">
         <span class="tab-icon material-symbols-outlined">diversity_3</span>
         <span>LIs</span>
       </button>
-      <button class="tab-btn" data-tab="progress">
+      <button class="tab-btn" data-tab="progress" onclick="switchTab('progress')">
         <span class="tab-icon material-symbols-outlined">menu_book</span>
         <span>Guidebook</span>
       </button>
-      <button class="tab-btn" data-tab="settings">
+      <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">
         <span class="tab-icon material-symbols-outlined">settings</span>
         <span>Settings</span>
       </button>
     </nav>
+  </div>
+
+  <!-- NEW USER PROFILE SETUP MODAL -->
+  <div id="userProfileModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(10,5,20,0.85); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); display:none; align-items:center; justify-content:center; z-index:1050; padding:20px;">
+    <div style="background:var(--bg-card); border:1.5px solid rgba(217,0,87,0.35); border-radius:24px; padding:26px; max-width:420px; width:100%; box-shadow:0 20px 50px rgba(217,0,87,0.25), 0 8px 24px rgba(0,0,0,0.4); text-align:left;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <span style="font-size:32px;">💖</span>
+        <div>
+          <h2 style="font-size:19px; font-weight:800; color:var(--text-main); margin:0;">Welcome! What should we call you?</h2>
+          <p style="font-size:12px; color:var(--text-muted); margin:2px 0 0 0;">Help Bao, Julian & group chat address you personally!</p>
+        </div>
+      </div>
+
+      <form id="userProfileForm" onsubmit="event.preventDefault(); saveUserProfileFromModal();">
+        <div style="margin-bottom:12px;">
+          <label for="modalUserName" style="font-size:12px; font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">
+            Your Name / Nickname <span style="color:var(--primary-pink);">*</span>
+          </label>
+          <input type="text" id="modalUserName" class="setting-input" placeholder="e.g. Alex, MC, Linh..." required style="width:100%; height:44px; font-size:14px; font-weight:600;" />
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+          <div>
+            <label for="modalUserPronouns" style="font-size:12px; font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">
+              Pronouns
+            </label>
+            <select id="modalUserPronouns" class="setting-input" style="width:100%; height:44px; cursor:pointer; font-size:13px; font-weight:600;">
+              <option value="she/her">she/her</option>
+              <option value="he/him">he/him</option>
+              <option value="they/them">they/them</option>
+              <option value="she/they">she/they</option>
+              <option value="he/they">he/they</option>
+              <option value="any/all">any/all</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="modalUserAge" style="font-size:12px; font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">
+              Age
+            </label>
+            <input type="number" id="modalUserAge" class="setting-input" placeholder="e.g. 21" min="13" max="100" style="width:100%; height:44px; font-size:14px; font-weight:600;" />
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <button type="submit" class="primary-btn" id="saveProfileModalBtn" style="width:100%; height:46px; font-size:14px; font-weight:800; border-radius:14px; box-shadow:0 6px 18px rgba(217,0,87,0.3);">
+            Save Profile & Meet Your LIs ❤️
+          </button>
+          <button type="button" id="skipProfileModalBtn" style="background:transparent; border:none; color:var(--text-muted); font-size:12px; font-weight:600; padding:6px; cursor:pointer; text-decoration:underline;">
+            Skip for now (Defaults to MC)
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- API KEY INITIAL SETUP MODAL (API Key Required for LLM functionality) -->

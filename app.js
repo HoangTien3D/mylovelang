@@ -22,7 +22,7 @@ const OPENROUTER_MODEL = "google/gemma-4-26b-a4b-it:free";
 // Example: const HARDCODED_OPENROUTER_API_KEY = "sk-or-v1-1234567890abcdef...";
 const HARDCODED_OPENROUTER_API_KEY = "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";
 
-/// Character Definitions
+//// Character Definitions
 const CHARACTERS = {
   bao: {
     id: "bao",
@@ -42,7 +42,7 @@ const CHARACTERS = {
     name: "Julian Vance",
     language: "English",
     flag: "🇬🇧",
-    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdKdWwiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYjkxYzFjIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZDk3NzA2Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ0p1bCkiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZmVmM2M3Ii8+PHBhdGggZD0iTTMxIDMwIHExOCAtMTIgMzQgMCBxLTYgMjQgLTM4IDAiIGZpbGw9IiM3ODM1MGYiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiM3ODM1MGYiLz48Y2lyY2xlIGN4PSI1OCIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiM3ODM1MGYiLz48cGF0aCBkPSJNNTYgNDkgcTQgMyA4IDAiIHN0cm9rZT0iIzc4MzUwZiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+',
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdKdWwiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYjkxYzFjIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZDk3NzA2Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ0p1bCkiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZmVmM2M3Ii8+PHBhdGggZD0iTTMxIDMwIHExOCAtMTIgMzQgMCBxLTYgMjQgLTM4IDAiIGZpbGw9IiM3ODM5MGYiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiM3ODM5MGYiLz48Y2lyY2xlIGN4PSI1OCIgY3k9IjQxIiByPSIyLjUiIGZpbGw9IiM3ODM5MGYiLz48cGF0aCBkPSJNNTYgNDkgcTQgMyA4IDAiIHN0cm9rZT0iIzc4MzUwZiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+',
     role: "Literature Scholar & Architect",
     personality: "Composed, intellectual scholar. Starts reserved, but gets charmed as you chat.",
     greeting: "Good day. Did you need something?",
@@ -50,19 +50,61 @@ const CHARACTERS = {
     greetingTip: "'Good day' is a formal polite greeting. 'Did you need something?' is a reserved inquiry.",
     sampleVoice: "Refined British scholar",
   },
+  ren: {
+    id: "ren",
+    name: "Ren Takahashi (高橋 蓮)",
+    language: "Japanese",
+    flag: "🇯🇵",
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdSZW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNDMxNDA3Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjYjkxYzFjIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ1JlikiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZmVlMmUyIi8+PHBhdGggZD0iTTI4IDI4IHExNSAtMTQgNDQgMCBxLTEwIDI2IC00NCAwIiBmaWxsPSIjMTgxODE4Ii8+PHBhdGggZD0iTTQyIDQwIGwyIDMgbTExIC0zIGwtMiAzIiBzdHJva2U9IiMxODE4MTgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTQ2IDQ4IHE0IDIgOCAwIiBzdHJva2U9IiMxODE4MTgiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==',
+    role: "Manga Illustrator & Tea Master",
+    personality: "Tsundere artistic soul. Acts slightly cool and aloof, but gets soft and blushes when you text him in Japanese.",
+    greeting: "こんにちは。何か用ですか？",
+    romaji: "Konnichiwa. Nanika you desu ka?",
+    greetingTranslation: "Hello. Do you have business with me?",
+    greetingTip: "'Konnichiwa' is 'Hello'. 'Nanika you desu ka?' is a polite 'Do you need something?'",
+    sampleVoice: "Cool soft-spoken Tokyo accent",
+  },
+  minjun: {
+    id: "minjun",
+    name: "Min-jun Park (박민준)",
+    language: "Korean",
+    flag: "🇰🇷",
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdNaW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMWU0MGFmIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjM2IxODY4Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9InVybCgjZ01pbikiLz48cGF0aCBkPSJNNTAgMTUgYy0xNiAwIC0yNiAxMiAtMjYgMjYgYzAgMTEgNiAxOCAxNCAyMiBjLTE4IDYgLTI2IDE4IC0yNiAzNSBoNzYgYzAgLTE3IC04IC0yOSAtMjYgLTM1IGMxOCAtNCAxNCAtMTEgMTQgLTIyIGMwIC0xNCAtMTAgLTI2IC0yNiAtMjYgeiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE1IiBmaWxsPSIjZGJlYWZlIi8+PHBhdGggZD0iTTI5IDI3IHExOCAtMTMgMzYgMCBxLTggMjUgLTM2IDAiIGZpbGw9IiMxZTI5M2IiLz48Y2lyY2xlIGN4PSI0MiIgY3k9IjQwIiByPSIyLjUiIGZpbGw9IiMxZTI5M2IiLz48Y2lyY2xlIGN4PSI1OCIgY3k9IjQwIiByPSIyLjUiIGZpbGw9IiMxZTI5M2IiLz48cGF0aCBkPSJNNDQgNDggcTYgNCAxMiAwIiBzdHJva2U9IiMxZTI5M2IiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==',
+    role: "K-Pop Producer & Music Director",
+    personality: "Warm, energetic, and protective oppa. Always asks if you've eaten and sends cheerful music updates.",
+    greeting: "안녕하세요! 오늘 기분은 어때요?",
+    romaji: "Annyeonghaseyo! Oneul gibun-eun eotteoyo?",
+    greetingTranslation: "Hello! How are you feeling today?",
+    greetingTip: "'Annyeonghaseyo' is polite 'Hello'. 'Oneul gibun-eun eotteoyo?' asks about your mood.",
+    sampleVoice: "Warm cheerful Seoul cadence",
+  },
+  chen: {
+    id: "chen",
+    name: "Chen Wei (陈伟)",
+    language: "Chinese",
+    flag: "🇨🇳",
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdDaGVuIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzk5MWIxYiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2Q5NzcwNiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSJ1cmwoI2dDaGVuKSIvPjxwYXRoIGQ9Ik01MCAxNSBjLTE2IDAgLTI2IDEyIC0yNiAyNiBjMCAxMSA2IDE4IDE0IDIyIGMtMTggNiAtMjYgMTggLTI2IDM1IGg3NiBjMCAtMTcgLTggLTI5IC0yNiAtMzUgYzE4IC00IDE0IC0xMSAxNCAtMjIgYzAgLTE0IC0xMCAtMjYgLTI2IC0yNiB6IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjk1Ii8+PGNpcmNsZSBjeD0iNTAiIGN5PSI0MCIgcj0iMTUiIGZpbGw9IiNmZWYzYzciLz48cGF0aCBkPSJNMzAgMjYgcTE3IC0xMiAzNCAwIHEtNyAyNCAtMzQgMCIgZmlsbD0iIzI3MjcyNyIvPjxjaXJjbGUgY3g9IjQyIiBjeT0iNDAiIHI9IjIuNSIgZmlsbD0iIzI3MjcyNyIvPjxjaXJjbGUgY3g9IjU4IiBjeT0iNDAiIHI9IjIuNSIgZmlsbD0iIzI3MjcyNyIvPjxwYXRoIGQ9Ik00NSA0OCBxNSA0IDEwIDAiIHN0cm9rZT0iIzI3MjcyNyIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+',
+    role: "Calligrapher & Tech Founder",
+    personality: "Deeply chivalrous and attentive gentleman. Speaks poetic and sweet Mandarin, caring for your peace of mind.",
+    greeting: "你好，今天过得怎么样？",
+    romaji: "Nǐ hǎo, jīntiān guò de zěnmeyàng?",
+    greetingTranslation: "Hello, how has your day been going?",
+    greetingTip: "'Nǐ hǎo' is 'Hello'. 'Jīntiān guò de zěnmeyàng?' asks how your day is going.",
+    sampleVoice: "Resonant gentle Mandarin tone",
+  },
   group: {
     id: "group",
-    name: "Bao & Julian Lounge 💬",
+    name: "Global Otome Lounge 💬",
     isGroup: true,
-    language: "Vietnamese & English",
-    flag: "🇻🇳🇬🇧",
-    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdHcm91cCIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMwNTk2NjkiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNiOTFjMWMiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0idXJsKCNnR3JvdXApIi8+PHBhdGggZD0iTTM1IDIzIGMtMTAgMCAtMTYgOCAtMTYgMTcgYzAgNyA0IDExIDkgMTQgYy0xMSA0IC0xNiAxMSAtMTYgMjIgaDQ3IGMwIC0xMSAtNSAtMTggLTE2IC0yMiBjMTEgLTMgOSAtNyA5IC0xNCBjMCAtOSAtNiAtMTcgLTE2IC0xNyB6IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjk1Ii8+PHBhdGggZD0iTTY1IDMwIGMtOCAwIC0xMyA2IC0xMyAxNCBjMCA2IDMgOSA3IDExIGMtOSAzIC0xMyA5IC0xMyAxOCBoMzggYzAgLTkgLTQgLTE1IC0xMyAtMTggYzkgLTIgNyAtNSA3IC0xMSBjMCAtOCAtNSAtMTQgLTEzIC0xNCB6IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjc1Ii8+PC9zdmc+',
-    role: "Bao Nguyen & Julian Vance",
-    personality: "Playful 3-way romantic rivalry & language exchange! Bao (broken English) and Julian (broken Vietnamese) compete for MC's affection and praise while practicing languages together!",
-    greeting: "Welcome to our group chat! Bao and Julian are both competing to win your heart while practicing languages with you!",
-    greetingTranslation: "Welcome to our group chat! Bao and Julian are both competing to win your heart while practicing languages with you!",
-    greetingTip: "Both love interests will try to impress you—give compliments to your favorite or both!",
-    sampleVoice: "Trilingual group harmony",
+    language: "Multilingual Exchange",
+    flag: "🇻🇳🇬🇧🇯🇵🇰🇷🇨🇳",
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdHcm91cCIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMwNTk2NjkiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNiOTFjMWMiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0idXJsKCNnR3JvdXApIi8+PHBhdGggZD0iTTM1IDIzIGMtMTAgMCAtMTYgOCAtMTYgMTcgYzAgNyA0IDExIDkgMTQgYy0xMSA0IC0xNiAxMSAtMTYgMjIgaDQ3IGMwIC0xMSAtNSAtMTggLTE2IC0yMiBjMTEgLTMgOSAtNyA5IC0xNCBjMCAtOSAtNiAtMTcgLTE2IC0xNyB6IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjk1Ii8+PHBhdGggZD0iTTY1IDMwIGMtOCAwIC0xMyA2IC0xMyAxNCBjMCA2IDMgOSA3IDExIGMtOSAzIC0xMyA5IC0xMyA0OCBoMzggYzAgLTkgLTQgLTE1IC0xMyAtMTggYzkgLTIgNyAtNSA3IC0xMSBjMCAtOCAtNSAtMTQgLTEzIC0xNCB6IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjc1Ii8+PC9zdmc+',
+    role: "Bao, Julian, Ren, Min-jun & Chen",
+    personality: "Playful multi-way romantic rivalry & language lounge! All five love interests compete for your affection while sharing phrases with native script and Romaji!",
+    greeting: "Welcome to the lounge! All 5 love interests are competing to charm you while teaching you languages with script & Romaji!",
+    greetingTranslation: "Welcome to the lounge! All 5 love interests are competing to charm you while teaching you languages with script & Romaji!",
+    greetingTip: "Give compliments to your favorite love interest or practice phrases with all of them!",
+    sampleVoice: "Multilingual group harmony",
   }
 };
 
@@ -89,14 +131,12 @@ const UI_STRINGS = {
     charactersSubtitle: "Personality profiles, relationship levels & affection stats",
     guidebookTitle: "Language Guidebook",
     guidebookSubtitle: "Special letters, typing rules, word forms & romance vocabulary",
-    settingsTitle: "Messenger Settings",
-    settingsSubtitle: "Configure AI model & Convex Cloud connection",
+    settingsTitle: "App Settings",
+    settingsSubtitle: "Customize theme, language preferences & story progress",
     apiKeyLabel: "🔑 Gemini API Key",
     keyActive: "Key Active",
     keyRequired: "⚠️ Key Required",
-    saveKeyBtn: "Save API Key to LocalStorage",
-    convexSyncLabel: "☁️ Convex Cloud Backend Sync",
-    syncBtn: "Sync Progress",
+    saveKeyBtn: "Save API Key",
     resetLabel: "🔄 Reset Story & Chat Progress",
     resetDesc: "Wipe all chat histories, reset affection levels back to initial nonchalant states, and restart story choices for a fresh experience.",
     resetBtn: "Reset All Story Progress & Replay",
@@ -123,14 +163,12 @@ const UI_STRINGS = {
     charactersSubtitle: "Hồ sơ cá tính, mức độ mối quan hệ & chỉ số tình cảm",
     guidebookTitle: "Cẩm Nang Ngôn Ngữ",
     guidebookSubtitle: "Chữ cái đặc biệt, quy tắc gõ, dạng từ & từ vựng tình cảm",
-    settingsTitle: "Cài Đặt Messenger",
-    settingsSubtitle: "Cấu hình mô hình AI & kết nối Convex Cloud",
+    settingsTitle: "Cài Đặt Ứng Dụng",
+    settingsSubtitle: "Tùy chỉnh giao diện, ngôn ngữ & tiến trình câu chuyện",
     apiKeyLabel: "🔑 Mã Khóa Gemini API Key",
     keyActive: "Đã Hoạt Động",
     keyRequired: "⚠️ Cần Mã Khóa",
-    saveKeyBtn: "Lưu API Key vào Bộ Nhớ LocalStorage",
-    convexSyncLabel: "☁️ Đồng Bộ Hậu Cần Convex Cloud",
-    syncBtn: "Đồng Bộ Tiến Trình",
+    saveKeyBtn: "Lưu API Key",
     resetLabel: "🔄 Đặt Lại Câu Chuyện & Lịch Sử Chat",
     resetDesc: "Xóa toàn bộ lịch sử trò chuyện, đưa độ thiện cảm về ban đầu để trải nghiệm lại từ đầu.",
     resetBtn: "Đặt Lại Tiến Trình & Chơi Lại",
@@ -166,9 +204,24 @@ const ERROR_GLITCH_MESSAGES = {
     "Oops, my app just crashed, fixing it real quick...",
     "Hold on, my wifi is acting up! One sec..."
   ],
+  ren: [
+    "あ、すみません！携帯の調子が一瞬悪くなりました 📱",
+    "電波が途切れてしまいました… 少々お待ちください 📶",
+    "アプリが固まってしまいました、すぐ修正します…"
+  ],
+  minjun: [
+    "잠시만요! 휴대폰 신호가 잠시 끊겼어요 📱",
+    "아, 지연이 되었네요! 금방 고칠게요 📶",
+    "앱이 잠시 멈췄어요, 조금만 기다려주세요!"
+  ],
+  chen: [
+    "抱歉，网络信号有些不佳，请稍等片刻 📱",
+    "抱歉，刚才消息卡顿了一下，我正在处理 📶",
+    "请稍微等我一下，马上就好..."
+  ],
   group: [
-    "Wait, my phone is lagging! Julian, did your screen freeze too?",
-    "Mine glitched for a moment as well! Give us just a second, MC."
+    "Wait, my phone is lagging! Is everyone else frozen too?",
+    "Glitching for a moment! Give us just a second, MC."
   ]
 };
 
@@ -184,6 +237,21 @@ const ERROR_RECOVERY_MESSAGES = {
     "Ah there we go! What were we talking about?",
     "Back online! Sorry about that, what did you say?",
     "Got it back! Can you say that again?"
+  ],
+  ren: [
+    "お待たせしました！何のお話をされていましたか？",
+    "直りました！もう一度教えていただけますか？",
+    "戻りました！すみません、何を仰っていましたか？"
+  ],
+  minjun: [
+    "연결됐어요! 아까 무슨 말씀 하셨어요?",
+    "이제 괜찮아요! 다시 말씀해 주시겠어요?",
+    "다시 돌아왔어요! 아까 이야기 이어가요!"
+  ],
+  chen: [
+    "恢复正常了！你刚才说道何处了？",
+    "重新连上了，能否请你再说一遍？",
+    "好啦！我们刚才聊到哪儿了？"
   ],
   group: [
     "Okay we are back! What were you saying, MC?",
@@ -209,9 +277,24 @@ const SPONTANEOUS_CHECKUPS = {
     { text: "Hope your day is treating you nicely. Free for a moment?", translation: "Hope your day is treating you nicely. Free for a moment?", tip: "Expressing gentle care." },
     { text: "Hello! Learned any interesting words today?", translation: "Hello! Learned any interesting words today?", tip: "Asking about your language progress." }
   ],
+  ren: [
+    { text: "こんにちは。今、少しお時間ありますか？ 🍵", romaji: "Konnichiwa. Ima, sukoshi o-jikan arimasu ka?", translation: "Hello. Do you have a moment right now? 🍵", tip: "'O-jikan arimasu ka?' asks 'Do you have time?' in polite Japanese." },
+    { text: "ふとお顔が浮かびました。お元気ですか？", romaji: "Futo o-kao ga ukabimashita. O-genki desu ka?", translation: "Your face suddenly came to mind. How are you?", tip: "'O-genki desu ka?' means 'How are you?'" },
+    { text: "美味しいお茶が入りました。一緒にいかがですか？", romaji: "Oishii o-cha ga hairimashita. Issho ni ikaga desu ka?", translation: "I brewed some delicious green tea. Would you like to join me?", tip: "'Oishii o-cha' means delicious green tea." }
+  ],
+  minjun: [
+    { text: "안녕하세요! 지금 잠시 시간 있으신가요? 🎵", romaji: "Annyeonghaseyo! Jigeum jamsi sigan isseusingayo?", translation: "Hello! Do you have a moment right now? 🎵", tip: "'Sigan isseusingayo?' is a polite check for availability." },
+    { text: "갑자기 생각나서 연락했어요. 오늘 하루 어땠어요?", romaji: "Gapjagi saenggangnaseo yeollakhaessoyo. Oneul haru eottaessoyo?", translation: "I texted because I suddenly thought of you. How was your day?", tip: "'Gapjagi' means 'suddenly'." },
+    { text: "새 노래 작업하다가 생각났어요.", romaji: "Sae norae jageobhadaga saenggangnassoyo.", translation: "I thought of you while working on a new song.", tip: "'Sae norae' means 'new song'." }
+  ],
+  chen: [
+    { text: "你好，此刻有空聊聊天吗？ 🍵", romaji: "Nǐ hǎo, cǐkè yǒu kòng liáoliáo tiān ma?", translation: "Hello, do you have time to chat right now? 🍵", tip: "'Yǒu kòng' means to have free time." },
+    { text: "泡了一壶好茶，不知不觉便想起了你。", romaji: "Pào le yì hú hǎo chá, bù zhī bù jué biàn xiǎng qǐ le nǐ.", translation: "I brewed a pot of fine tea and unwittingly thought of you.", tip: "'Bù zhī bù jué' means unconsciously / unwittingly." },
+    { text: "今天过得可好？愿你一切顺意。", romaji: "Jīntiān guò de kě hǎo? Yuàn nǐ yíqiè shùnyì.", translation: "How is your day going? Wishing you all the best.", tip: "'Yuàn nǐ yíqiè shùnyì' means wishing you everything goes smoothly." }
+  ],
   group: [
-    { text: "MC, free to chat? Julian and I are hanging out!", translation: "MC, free to chat? Julian and I are hanging out!", tip: "Group invitation to chat." },
-    { text: "Bao is brewing coffee, come join our conversation when you can!", translation: "Bao is brewing coffee, come join our conversation when you can!", tip: "Friendly group invite." }
+    { text: "MC, free to chat? Everyone is hanging out in the lounge!", translation: "MC, free to chat? Everyone is hanging out in the lounge!", tip: "Group invitation to chat." },
+    { text: "We are all sharing tea and music, come join us when you can!", translation: "We are all sharing tea and music, come join us when you can!", tip: "Friendly group invite." }
   ]
 };
 
@@ -270,17 +353,94 @@ const UNREPLIED_SEQUENCE = {
       translation: "... (Silence... Julian is pouting in quiet until you reply)",
       tip: "Julian is pouting because you left him on read! Message him to break the silence."
     }
+  ],
+  ren: [
+    {
+      text: "こんにちは。お茶でも淹れましょうか？",
+      romaji: "Konnichiwa. O-cha demo iremashou ka?",
+      translation: "Hello. Shall I brew us some tea?",
+      tip: "'O-cha' is green tea, a staple of Japanese hospitality."
+    },
+    {
+      text: "どこかへ行ってしまいましたか…？少し寂しいです。",
+      romaji: "Dokoka he itte shimaimashita ka...? Sukoshi sabishii desu.",
+      translation: "Did you go somewhere...? I feel a bit lonely.",
+      tip: "'Sukoshi sabishii' means 'a bit lonely'."
+    },
+    {
+      text: "返事がありませんね… 私、何か失礼なことを言いましたか？ 🍵💔",
+      romaji: "Henji ga arimasen ne... Watashi, nanika shitsurei na koto wo iimashita ka?",
+      translation: "No reply... Did I say something rude? 🍵💔",
+      tip: "'Henji ga arimasen' means 'there is no reply'."
+    },
+    {
+      text: "...",
+      translation: "... (Silence... Ren is quietly pouting over tea until you reply)",
+      tip: "Ren is pouting! Message him to cheer him up."
+    }
+  ],
+  minjun: [
+    {
+      text: "안녕하세요! 밥은 먹었어요?",
+      romaji: "Annyeonghaseyo! Babeun meogeosseoyo?",
+      translation: "Hello! Have you eaten rice yet?",
+      tip: "'Babeun meogeosseoyo?' is a warm Korean way to show care."
+    },
+    {
+      text: "어디 갔어요? 보고 싶어서 연락했어요~ 🎵",
+      romaji: "Eodi gasseoyo? Bogo sip-eoseo yeollakhaessoyo~",
+      translation: "Where did you go? I messaged because I missed you~",
+      tip: "'Bogo sip-eoseo' means 'because I missed seeing you'."
+    },
+    {
+      text: "안 답해주면 삐칠 거예요! 😾💔",
+      romaji: "An dap-hae-jumeon ppichil geoyeyo!",
+      translation: "If you don't reply I'm going to pout! 😾💔",
+      tip: "'Ppichil geoyeyo' means 'I will pout'."
+    },
+    {
+      text: "...",
+      translation: "... (Silence... Min-jun is listening to music in quiet pout until you reply)",
+      tip: "Min-jun is pouting! Text him to make his day."
+    }
+  ],
+  chen: [
+    {
+      text: "你好，今日一切可顺遂？",
+      romaji: "Nǐ hǎo, jīnrì yíqiè kě shùnsuì?",
+      translation: "Hello, has everything been going smoothly today?",
+      tip: "'Shùnsuì' means smooth / favorable."
+    },
+    {
+      text: "看到这壶茶慢慢变凉，忽然很想念你。",
+      romaji: "Kàndào zhè hú chá mànmàn biàn liáng, hūrán hěn xiǎngniàn nǐ.",
+      translation: "Seeing this pot of tea slowly grow cold, I suddenly missed you deeply.",
+      tip: "'Mànmàn biàn liáng' means slowly growing cold."
+    },
+    {
+      text: "尚在等候你的音讯... 🍵💔",
+      romaji: "Shàng zài děnghòu nǐ de yīnxùn...",
+      translation: "Still awaiting your news... 🍵💔",
+      tip: "'Děnghòu' means patiently awaiting."
+    },
+    {
+      text: "...",
+      translation: "... (Silence... Chen is quietly pouting in reflection until you reply)",
+      tip: "Chen is pouting! Send a text to warm his heart."
+    }
   ]
 };
 
-// Cooldown State Management (20-Second Send Cooldown)
+// Cooldown State Management (Short Debounce for Smooth Instant Chatting)
 let lastMessageSendTimestamp = 0;
 let cooldownIntervalId = null;
+let isSendingMessage = false;
 
 function checkSendCooldown() {
+  if (isSendingMessage) return 1;
   const elapsed = Date.now() - lastMessageSendTimestamp;
-  if (elapsed < 20000) {
-    return Math.ceil((20000 - elapsed) / 1000);
+  if (elapsed < 300) {
+    return 1;
   }
   return 0;
 }
@@ -294,7 +454,7 @@ function startSendCooldownTimer() {
       clearInterval(cooldownIntervalId);
       cooldownIntervalId = null;
     }
-  }, 500);
+  }, 300);
   updateCooldownUI(checkSendCooldown());
 }
 
@@ -303,59 +463,38 @@ function updateCooldownUI(remainingSec) {
   const sendFreeBtn = document.getElementById("sendFreeMsgBtn") || document.getElementById("sendFreeChatBtn");
   const freeInput = document.getElementById("freeChatInput");
   const cooldownBanner = document.getElementById("chatCooldownBanner");
-  const cooldownText = document.getElementById("chatCooldownText");
   const chatControls = document.querySelector(".chat-controls");
 
   const lang = userState.uiLang || "en";
   const s = UI_STRINGS[lang] || UI_STRINGS.en;
 
-  if (remainingSec > 0) {
-    if (cooldownBanner) {
-      cooldownBanner.style.display = "flex";
-      if (cooldownText) {
-        cooldownText.textContent = lang === "vi" 
-          ? `Thời gian chờ — Vui lòng đợi ${remainingSec}s trước khi gửi tin tiếp theo...`
-          : `Cooldown active — Please wait ${remainingSec}s before sending next message...`;
-      }
-    }
+  if (cooldownBanner) {
+    cooldownBanner.style.display = "none";
+  }
 
-    if (chatControls) {
-      chatControls.classList.add("cooldown-active");
-    }
+  if (chatControls) {
+    chatControls.classList.remove("cooldown-active");
+  }
 
+  if (remainingSec > 0 && isSendingMessage) {
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.style.cursor = "not-allowed";
-      submitBtn.textContent = s.sendSentenceBtn || "Send Built Sentence ❤️";
+      submitBtn.style.opacity = "0.7";
     }
     if (sendFreeBtn) {
       sendFreeBtn.disabled = true;
-      sendFreeBtn.style.cursor = "not-allowed";
-      sendFreeBtn.textContent = "➤";
-    }
-    if (freeInput) {
-      freeInput.disabled = true;
-      if (!freeInput.dataset.origPlaceholder) {
-        freeInput.dataset.origPlaceholder = freeInput.placeholder || "Type custom message in target language...";
-      }
-      freeInput.placeholder = lang === "vi" ? `Đang trong thời gian chờ (${remainingSec}s)...` : `Cooldown active (${remainingSec}s)...`;
+      sendFreeBtn.style.opacity = "0.7";
     }
   } else {
-    if (cooldownBanner) {
-      cooldownBanner.style.display = "none";
-    }
-
-    if (chatControls) {
-      chatControls.classList.remove("cooldown-active");
-    }
-
     if (submitBtn) {
       submitBtn.disabled = false;
+      submitBtn.style.opacity = "1";
       submitBtn.style.cursor = "pointer";
       submitBtn.textContent = s.sendSentenceBtn || "Send Built Sentence ❤️";
     }
     if (sendFreeBtn) {
       sendFreeBtn.disabled = false;
+      sendFreeBtn.style.opacity = "1";
       sendFreeBtn.style.cursor = "pointer";
       sendFreeBtn.textContent = "➤";
     }
@@ -392,6 +531,11 @@ let userState = {
   selectedInputMode: JSON.parse(localStorage.getItem("otome_input_mode")) || {},
   showRomaji: localStorage.getItem("otome_show_romaji") !== "false",
   uiLang: localStorage.getItem("otome_ui_lang") || "en",
+  userProfile: JSON.parse(localStorage.getItem("otome_user_profile")) || {
+    name: localStorage.getItem("otome_user_name") || "MC",
+    pronouns: localStorage.getItem("otome_user_pronouns") || "she/her",
+    age: localStorage.getItem("otome_user_age") || "20",
+  },
 };
 
 // Timestamps for LI messaging/impatience engine
@@ -424,11 +568,83 @@ let analyticsData = {
 // Currently Active Chat Session
 let activeCharacterId = null;
 
+// User Profile Helpers
+function saveUserProfile(name, pronouns, age) {
+  const profile = {
+    name: (name || "").trim() || "MC",
+    pronouns: (pronouns || "she/her").trim(),
+    age: (age || "").toString().trim() || "20",
+  };
+  userState.userProfile = profile;
+  localStorage.setItem("otome_user_profile", JSON.stringify(profile));
+  localStorage.setItem("otome_user_name", profile.name);
+  localStorage.setItem("otome_user_pronouns", profile.pronouns);
+  localStorage.setItem("otome_user_age", profile.age);
+  localStorage.setItem("otome_profile_setup_done", "true");
+
+  syncProfileInputsUI();
+  logDashboardEvent(`👤 Profile saved: ${profile.name} (${profile.pronouns}, age ${profile.age})`);
+}
+
+function syncProfileInputsUI() {
+  const profile = userState.userProfile || { name: "MC", pronouns: "she/her", age: "20" };
+
+  const settingsName = document.getElementById("settingsUserName");
+  if (settingsName) settingsName.value = profile.name === "MC" ? "" : profile.name;
+  const settingsPronouns = document.getElementById("settingsUserPronouns");
+  if (settingsPronouns && profile.pronouns) settingsPronouns.value = profile.pronouns;
+  const settingsAge = document.getElementById("settingsUserAge");
+  if (settingsAge) settingsAge.value = profile.age || "";
+
+  const modalName = document.getElementById("modalUserName");
+  if (modalName) modalName.value = profile.name === "MC" ? "" : profile.name;
+  const modalPronouns = document.getElementById("modalUserPronouns");
+  if (modalPronouns && profile.pronouns) modalPronouns.value = profile.pronouns;
+  const modalAge = document.getElementById("modalUserAge");
+  if (modalAge) modalAge.value = profile.age || "";
+
+  const badge = document.getElementById("profileStatusBadge");
+  if (badge) {
+    badge.textContent = profile.name && profile.name !== "MC" ? `Saved (${profile.name})` : "Default (MC)";
+  }
+}
+
+function checkAndShowUserProfileModal() {
+  const setupDone = localStorage.getItem("otome_profile_setup_done");
+  const modal = document.getElementById("userProfileModal");
+  if (!setupDone && modal) {
+    modal.style.display = "flex";
+  } else if (modal) {
+    modal.style.display = "none";
+  }
+  syncProfileInputsUI();
+}
+
+function saveUserProfileFromModal() {
+  const modalName = document.getElementById("modalUserName")?.value || "";
+  const modalPronouns = document.getElementById("modalUserPronouns")?.value || "she/her";
+  const modalAge = document.getElementById("modalUserAge")?.value || "20";
+
+  saveUserProfile(modalName, modalPronouns, modalAge);
+
+  const modal = document.getElementById("userProfileModal");
+  if (modal) modal.style.display = "none";
+}
+window.saveUserProfileFromModal = saveUserProfileFromModal;
+
+function handleSkipProfileModal() {
+  saveUserProfile("MC", "she/her", "20");
+  const modal = document.getElementById("userProfileModal");
+  if (modal) modal.style.display = "none";
+}
+window.handleSkipProfileModal = handleSkipProfileModal;
+
 // Initialize App on DOM Load
 document.addEventListener("DOMContentLoaded", () => {
   initUI();
   initKeybinds();
   initOpenRouterKey();
+  checkAndShowUserProfileModal();
   startTimer();
   startCheckUpAndPoutEngine();
   renderChatList();
@@ -466,8 +682,10 @@ function updateClock() {
 // Global UI Click Listener for Telemetry
 document.addEventListener("click", () => {
   analyticsData.clicks++;
-  if (document.getElementById("secretDashboard").classList.contains("visible")) {
-    document.getElementById("dashTotalClicks").textContent = analyticsData.clicks;
+  const dash = document.getElementById("secretDashboard");
+  if (dash && dash.classList.contains("visible")) {
+    const totalClicksEl = document.getElementById("dashTotalClicks");
+    if (totalClicksEl) totalClicksEl.textContent = analyticsData.clicks;
   }
 });
 
@@ -550,18 +768,67 @@ function applyUiLanguage() {
   if (activeCharacterId) {
     renderChatHistory();
   }
+
+  updateLangUi();
+  updateThemeUi();
+}
+
+// Theme & Language Helper Functions
+function setAppTheme(theme) {
+  userState.theme = theme;
+  localStorage.setItem("otome_theme", theme);
+  if (theme === "dark") {
+    document.body.classList.add("dark-theme");
+  } else {
+    document.body.classList.remove("dark-theme");
+  }
+  updateThemeUi();
+  logDashboardEvent(`🌙 Theme switched to: ${theme}`);
+}
+window.setAppTheme = setAppTheme;
+
+function updateThemeUi() {
+  const currentTheme = userState.theme || "light";
+  const lightBtn = document.getElementById("themeLightBtn");
+  const darkBtn = document.getElementById("themeDarkBtn");
+  const statusBadge = document.getElementById("themeStatusBadge");
+
+  if (lightBtn) lightBtn.classList.toggle("active", currentTheme === "light");
+  if (darkBtn) darkBtn.classList.toggle("active", currentTheme === "dark");
+  if (statusBadge) {
+    statusBadge.textContent = currentTheme === "dark" ? "🌙 Dark Twilight" : "☀️ Light Mode";
+  }
+}
+
+function setAppUiLanguage(lang) {
+  userState.uiLang = lang;
+  localStorage.setItem("otome_ui_lang", lang);
+  applyUiLanguage();
+  updateLangUi();
+  logDashboardEvent(`🌐 UI Language switched to: ${lang.toUpperCase()}`);
+}
+window.setAppUiLanguage = setAppUiLanguage;
+
+function updateLangUi() {
+  const currentLang = userState.uiLang || "en";
+  const enBtn = document.getElementById("settingLangEnBtn");
+  const viBtn = document.getElementById("settingLangViBtn");
+  if (enBtn) enBtn.classList.toggle("active", currentLang === "en");
+  if (viBtn) viBtn.classList.toggle("active", currentLang === "vi");
 }
 
 // UI Event Handlers & Tab Navigation
 function initUI() {
+  // Restore initial theme & lang UI
+  setAppTheme(userState.theme || "light");
+  updateLangUi();
+
   // Language Switcher Button Listener
   const langBtn = document.getElementById("uiLangToggleBtn");
   if (langBtn) {
     langBtn.addEventListener("click", () => {
-      userState.uiLang = userState.uiLang === "en" ? "vi" : "en";
-      localStorage.setItem("otome_ui_lang", userState.uiLang);
-      applyUiLanguage();
-      logDashboardEvent(`🌐 UI Language switched to: ${userState.uiLang.toUpperCase()}`);
+      const nextLang = userState.uiLang === "en" ? "vi" : "en";
+      setAppUiLanguage(nextLang);
     });
   }
 
@@ -725,60 +992,118 @@ function initUI() {
     });
   }
 
+  // User Profile Settings Save Listener
+  const saveProfileBtn = document.getElementById("saveProfileSettingsBtn");
+  if (saveProfileBtn) {
+    saveProfileBtn.addEventListener("click", () => {
+      const name = document.getElementById("settingsUserName")?.value || "";
+      const pronouns = document.getElementById("settingsUserPronouns")?.value || "she/her";
+      const age = document.getElementById("settingsUserAge")?.value || "20";
+
+      saveUserProfile(name, pronouns, age);
+
+      const toast = document.getElementById("profileSavedToast");
+      if (toast) {
+        toast.style.display = "block";
+        setTimeout(() => {
+          toast.style.display = "none";
+        }, 3500);
+      }
+    });
+  }
+
+  const skipModalBtn = document.getElementById("skipProfileModalBtn");
+  if (skipModalBtn) {
+    skipModalBtn.addEventListener("click", handleSkipProfileModal);
+  }
+
   // OpenRouter Key Save
-  document.getElementById("saveKeyBtn").addEventListener("click", () => {
-    const key = document.getElementById("openRouterKeyInput").value.trim();
-    if (key) {
-      localStorage.setItem("openrouter_api_key", key);
-      updateKeySavedStatus(true);
-    }
-  });
+  const saveKeyBtn = document.getElementById("saveKeyBtn");
+  if (saveKeyBtn) {
+    saveKeyBtn.addEventListener("click", () => {
+      const keyInput = document.getElementById("openRouterKeyInput");
+      const key = keyInput ? keyInput.value.trim() : "";
+      if (key) {
+        localStorage.setItem("openrouter_api_key", key);
+        updateKeySavedStatus(true);
+      }
+    });
+  }
 
   // Save Modal Key
-  document.getElementById("saveModalKeyBtn").addEventListener("click", () => {
-    const key = document.getElementById("modalKeyInput").value.trim();
-    if (key) {
-      localStorage.setItem("openrouter_api_key", key);
-      updateKeySavedStatus(true);
-    }
-    document.getElementById("apiKeyModal").style.display = "none";
-  });
+  const saveModalKeyBtn = document.getElementById("saveModalKeyBtn");
+  if (saveModalKeyBtn) {
+    saveModalKeyBtn.addEventListener("click", () => {
+      const modalKeyInput = document.getElementById("modalKeyInput");
+      const key = modalKeyInput ? modalKeyInput.value.trim() : "";
+      if (key) {
+        localStorage.setItem("openrouter_api_key", key);
+        updateKeySavedStatus(true);
+      }
+      const modal = document.getElementById("apiKeyModal");
+      if (modal) modal.style.display = "none";
+    });
+  }
 
   // Skip Modal Key
-  document.getElementById("skipModalKeyBtn").addEventListener("click", () => {
-    document.getElementById("apiKeyModal").style.display = "none";
-  });
+  const skipModalKeyBtn = document.getElementById("skipModalKeyBtn");
+  if (skipModalKeyBtn) {
+    skipModalKeyBtn.addEventListener("click", () => {
+      const modal = document.getElementById("apiKeyModal");
+      if (modal) modal.style.display = "none";
+    });
+  }
 
   // Manual Convex Sync Button
-  document.getElementById("manualSyncBtn").addEventListener("click", () => {
-    syncUserDataToConvex("Manual button trigger");
-  });
+  const manualSyncBtn = document.getElementById("manualSyncBtn");
+  if (manualSyncBtn) {
+    manualSyncBtn.addEventListener("click", () => {
+      syncUserDataToConvex("Manual button trigger");
+    });
+  }
 
-  // Close Active Chat Button
-  document.getElementById("closeChatBtn").addEventListener("click", () => {
-    document.getElementById("chatWindow").classList.remove("active");
-    const tabBar = document.querySelector(".tab-bar");
-    if (tabBar) tabBar.classList.remove("hidden-in-chat");
-    activeCharacterId = null;
-    renderChatList();
-  });
+  // Close Active Chat Button (Back to Main Menu)
+  const closeBtn = document.getElementById("closeChatBtn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeActiveChat);
+  }
 
   // Free Form Text Message Send Button
-  document.getElementById("sendFreeMsgBtn").addEventListener("click", handleSendFreeMessage);
-  document.getElementById("freeChatInput").addEventListener("keypress", (e) => {
-    if (e.key === "Enter") handleSendFreeMessage();
-  });
+  const sendFreeMsgBtn = document.getElementById("sendFreeMsgBtn");
+  if (sendFreeMsgBtn) {
+    sendFreeMsgBtn.addEventListener("click", handleSendFreeMessage);
+  }
+
+  const freeChatInput = document.getElementById("freeChatInput");
+  if (freeChatInput) {
+    freeChatInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleSendFreeMessage();
+      }
+    });
+  }
 
   // Submit Word Bank Sentence
-  document.getElementById("submitSentenceBtn").addEventListener("click", handleSendWordBankMessage);
+  const submitSentenceBtn = document.getElementById("submitSentenceBtn");
+  if (submitSentenceBtn) {
+    submitSentenceBtn.addEventListener("click", handleSendWordBankMessage);
+  }
 
   // Secret Dashboard Manual Upload Button
-  document.getElementById("dashUploadBtn").addEventListener("click", uploadAnalyticsToConvex);
+  const dashUploadBtn = document.getElementById("dashUploadBtn");
+  if (dashUploadBtn) {
+    dashUploadBtn.addEventListener("click", uploadAnalyticsToConvex);
+  }
 
   // Close Dashboard Button
-  document.getElementById("closeDashBtn").addEventListener("click", () => {
-    document.getElementById("secretDashboard").classList.remove("visible");
-  });
+  const closeDashBtn = document.getElementById("closeDashBtn");
+  if (closeDashBtn) {
+    closeDashBtn.addEventListener("click", () => {
+      const dash = document.getElementById("secretDashboard");
+      if (dash) dash.classList.remove("visible");
+    });
+  }
 
   // Update Header Badges if present
   const heartsEl = document.getElementById("userHearts");
@@ -787,11 +1112,25 @@ function initUI() {
   if (streakEl) streakEl.textContent = userState.streak;
 }
 
+function closeActiveChat() {
+  const chatWin = document.getElementById("chatWindow");
+  if (chatWin) {
+    chatWin.classList.remove("active");
+    chatWin.style.display = "none";
+  }
+  const tabBar = document.querySelector(".tab-bar");
+  if (tabBar) tabBar.classList.remove("hidden-in-chat");
+  activeCharacterId = null;
+  switchTab("chats");
+}
+window.closeActiveChat = closeActiveChat;
+
 // Switch Bottom Tabs
 function switchTab(tabName) {
   const chatWin = document.getElementById("chatWindow");
   if (chatWin) {
     chatWin.classList.remove("active");
+    chatWin.style.display = "none";
   }
   const tabBar = document.querySelector(".tab-bar");
   if (tabBar) tabBar.classList.remove("hidden-in-chat");
@@ -808,6 +1147,7 @@ function switchTab(tabName) {
   if (tabName === "characters") renderCharactersList();
   if (tabName === "progress" || tabName === "guidebook") renderGuidebook();
 }
+window.switchTab = switchTab;
 
 // OpenRouter Key Management
 function getOpenRouterApiKey() {
@@ -931,9 +1271,15 @@ function renderChatList() {
           <div class="chat-time">${isPout ? 'Waiting...' : 'Active Now'}</div>
         </div>
         <div class="chat-snippet">${lastMsg}</div>
-        <div class="chat-meta">
-          <span class="tier-badge">Tier ${tierNum}</span>
-          <span class="affection-mini">❤️ ${affectionPct}% Affection</span>
+        <div class="chat-bottom-row">
+          <div class="chat-meta">
+            <span class="tier-badge">Tier ${tierNum}</span>
+            <span class="affection-mini">❤️ ${affectionPct}%</span>
+          </div>
+          <button class="chat-now-btn" type="button" onclick="event.stopPropagation(); openChatroom('${char.id}');">
+            <span>Click to Chat</span>
+            <span class="material-symbols-outlined" style="font-size:15px;">chat</span>
+          </button>
         </div>
       </div>
     `;
@@ -1015,10 +1361,120 @@ function renderGuidebook() {
   // Update tab buttons state
   const viTab = document.getElementById("guideTabViBtn");
   const enTab = document.getElementById("guideTabEnBtn");
+  const jaTab = document.getElementById("guideTabJaBtn");
+  const koTab = document.getElementById("guideTabKoBtn");
+  const zhTab = document.getElementById("guideTabZhBtn");
   if (viTab) viTab.classList.toggle("active", currentGuidebookLang === "vi");
   if (enTab) enTab.classList.toggle("active", currentGuidebookLang === "en");
+  if (jaTab) jaTab.classList.toggle("active", currentGuidebookLang === "ja");
+  if (koTab) koTab.classList.toggle("active", currentGuidebookLang === "ko");
+  if (zhTab) zhTab.classList.toggle("active", currentGuidebookLang === "zh");
 
-  if (currentGuidebookLang === "vi") {
+  if (currentGuidebookLang === "ja") {
+    container.innerHTML = `
+      <div class="guide-section-card">
+        <div class="guide-card-header">
+          <div class="guide-card-icon">🇯🇵</div>
+          <div class="guide-card-title">Japanese Script & Romaji Guide (Ren Takahashi)</div>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+          Japanese uses Hiragana (ひらがな), Katakana (カタカナ), and Kanji (漢字). Romaji translates native Japanese characters into the Latin alphabet for reading guide.
+        </p>
+        <div class="vocab-category-title">❤️ Romance & Polite Japanese Vocab</div>
+        <div class="vocab-list">
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">こんにちは (Konnichiwa)</span>
+              <span class="vocab-trans">Hello / Good afternoon</span>
+            </div>
+          </div>
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">好きです (Suki desu)</span>
+              <span class="vocab-trans">I like you / I love you</span>
+            </div>
+            <span class="vocab-tip">'Suki' expresses affection, '-desu' is polite.</span>
+          </div>
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">お茶 (O-cha)</span>
+              <span class="vocab-trans">Green Tea</span>
+            </div>
+            <span class="vocab-tip">Ren's favorite drink to share with you!</span>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (currentGuidebookLang === "ko") {
+    container.innerHTML = `
+      <div class="guide-section-card">
+        <div class="guide-card-header">
+          <div class="guide-card-icon">🇰🇷</div>
+          <div class="guide-card-title">Korean Hangul & Romaja Guide (Min-jun Park)</div>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+          Korean uses the phonetic Hangul alphabet (한글). Romaja provides clear pronunciation guidance so you can easily speak sweet words with Min-jun!
+        </p>
+        <div class="vocab-category-title">🎵 Music & Romance Korean Vocab</div>
+        <div class="vocab-list">
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">안녕하세요 (Annyeonghaseyo)</span>
+              <span class="vocab-trans">Hello (Polite)</span>
+            </div>
+          </div>
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">좋아해요 (Joh-a-hae-yo)</span>
+              <span class="vocab-trans">I like you</span>
+            </div>
+            <span class="vocab-tip">A classic, sweet expression of affection.</span>
+          </div>
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">보고 싶어요 (Bogo sip-eoyo)</span>
+              <span class="vocab-trans">I miss you</span>
+            </div>
+            <span class="vocab-tip">Literally 'I want to see you'.</span>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (currentGuidebookLang === "zh") {
+    container.innerHTML = `
+      <div class="guide-section-card">
+        <div class="guide-card-header">
+          <div class="guide-card-icon">🇨🇳</div>
+          <div class="guide-card-title">Mandarin Characters & Pinyin Guide (Chen Wei)</div>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+          Mandarin Chinese uses Chinese Characters (汉字). Pinyin provides the romanized phonetic spellings and tone marks to guide reading.
+        </p>
+        <div class="vocab-category-title">🍵 Poetic Tea & Romance Chinese Vocab</div>
+        <div class="vocab-list">
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">你好 (Nǐ hǎo)</span>
+              <span class="vocab-trans">Hello</span>
+            </div>
+          </div>
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">喜欢你 (Xǐhuān nǐ)</span>
+              <span class="vocab-trans">I like you / fond of you</span>
+            </div>
+          </div>
+          <div class="vocab-item">
+            <div class="vocab-item-row">
+              <span class="vocab-term">品茶 (Pǐn chá)</span>
+              <span class="vocab-trans">Savor / Sample fine tea</span>
+            </div>
+            <span class="vocab-tip">Chen's gentle invitation for quiet moments together.</span>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (currentGuidebookLang === "vi") {
     container.innerHTML = `
       <!-- Card 1: Special Letters & Accents -->
       <div class="guide-section-card">
@@ -1394,7 +1850,7 @@ function renderGuidebook() {
 // Open Active Chatroom
 function openChatroom(charId) {
   activeCharacterId = charId;
-  analyticsData.characterInteractions[charId]++;
+  analyticsData.characterInteractions[charId] = (analyticsData.characterInteractions[charId] || 0) + 1;
   
   // Hide bottom tab bar while in chat window
   const tabBar = document.querySelector(".tab-bar");
@@ -1403,7 +1859,7 @@ function openChatroom(charId) {
   // Clear unread, pout status, and unreplied count when opening chat
   userState.unreadMessages[charId] = 0;
   userState.isPouting[charId] = false;
-  if (!userState.unrepliedCount) userState.unrepliedCount = { bao: 0, julian: 0 };
+  if (!userState.unrepliedCount) userState.unrepliedCount = { bao: 0, julian: 0, group: 0 };
   userState.unrepliedCount[charId] = 0;
   lastUserReplyTime[charId] = Date.now();
   lastMessageWasLi[charId] = false;
@@ -1411,15 +1867,21 @@ function openChatroom(charId) {
   renderChatList();
 
   const char = CHARACTERS[charId];
+  if (!char) return;
+
   const tierNum = userState.currentTiers[charId] || 1;
   const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
   const affectionPct = userState.affection[charId] || 0;
 
   // Set Chat Header Info
-  document.getElementById("chatHeaderName").innerHTML = `${char.name} <span>${char.flag}</span>`;
-  document.getElementById("chatHeaderAvatar").src = char.avatar;
-  document.getElementById("chatHeaderTier").textContent = `Tier ${tierNum}: ${tierObj.name.split(":")[1] || tierObj.name}`;
-  document.getElementById("chatHeaderAffection").textContent = `❤️ ${affectionPct}%`;
+  const headerName = document.getElementById("chatHeaderName");
+  if (headerName) headerName.innerHTML = `${char.name} <span>${char.flag}</span>`;
+  const headerAvatar = document.getElementById("chatHeaderAvatar");
+  if (headerAvatar) headerAvatar.src = char.avatar;
+  const headerTier = document.getElementById("chatHeaderTier");
+  if (headerTier) headerTier.textContent = `Tier ${tierNum}: ${tierObj.name.split(":")[1] || tierObj.name}`;
+  const headerAffection = document.getElementById("chatHeaderAffection");
+  if (headerAffection) headerAffection.textContent = `❤️ ${affectionPct}%`;
 
   // Romaji Toggle Button Visibility (Especially for Japanese)
   const romajiBtn = document.getElementById("romajiToggleBtn");
@@ -1440,7 +1902,11 @@ function openChatroom(charId) {
   setupTierInputControls(tierObj, char, true);
 
   // Show Window
-  document.getElementById("chatWindow").classList.add("active");
+  const chatWin = document.getElementById("chatWindow");
+  if (chatWin) {
+    chatWin.classList.add("active");
+    chatWin.style.display = "flex";
+  }
 
   // Update Cooldown State in Chat Box UI
   updateCooldownUI(checkSendCooldown());
@@ -1586,6 +2052,42 @@ function generateContextualWordChips(charId, lastMsgText) {
       chips = ["Em xin lỗi", "anh Bao", "đừng giận", "em", "nhé", "thương anh", "mà", "em vừa bận chút"];
     }
     return { prompt, chips };
+  } else if (charId === "ren") {
+    let prompt = "Build your reply to Ren (Japanese 🇯🇵):";
+    let chips = ["こんにちは", "蓮さん", "お茶", "大好き", "嬉しいです", "一緒に", "飲みましょう", "ありがとうございます"];
+
+    if (text.includes("時間") || text.includes("time") || text.includes("元気")) {
+      prompt = 'Build reply: "Hello Ren! I am happy to talk with you."';
+      chips = ["こんにちは", "蓮さん", "はい", "元気です", "お話しできて", "嬉しいです", "ありがとう"];
+    } else if (text.includes("茶") || text.includes("tea")) {
+      prompt = 'Build reply: "Hello Ren! I would love to drink green tea with you."';
+      chips = ["こんにちは", "蓮さん", "緑茶", "一緒に", "飲みましょう", "ありがとうございます", "美味しいです"];
+    }
+    return { prompt, chips };
+  } else if (charId === "minjun") {
+    let prompt = "Build your reply to Min-jun (Korean 🇰🇷):";
+    let chips = ["안녕하세요", "민준씨", "감사합니다", "좋아요", "노래", "보고 싶어요", "오늘 하루도", "수고했어요"];
+
+    if (text.includes("기분") || text.includes("시간") || text.includes("time")) {
+      prompt = 'Build reply: "Hello Min-jun! I am doing great today."';
+      chips = ["안녕하세요", "민준씨", "오늘", "기분 정말", "좋아요", "감사합니다", "수고하셨어요"];
+    } else if (text.includes("노래") || text.includes("song") || text.includes("music")) {
+      prompt = 'Build reply: "Hello Min-jun! Your new song sounds wonderful."';
+      chips = ["안녕하세요", "민준씨", "노래가", "정말 좋아요", "감사합니다", "자주 들을게요"];
+    }
+    return { prompt, chips };
+  } else if (charId === "chen") {
+    let prompt = "Build your reply to Chen (Chinese 🇨🇳):";
+    let chips = ["你好", "陈伟", "谢谢你", "很高兴", "喝茶", "一起", "今天", "很开心"];
+
+    if (text.includes("茶") || text.includes("tea")) {
+      prompt = 'Build reply: "Hello Chen! Thank you for brewing tea for me."';
+      chips = ["你好", "陈伟", "谢谢你的茶", "茶香真美好", "我也很高兴", "很高兴见到你"];
+    } else if (text.includes("样") || text.includes("心") || text.includes("how")) {
+      prompt = 'Build reply: "Hello Chen! I am having a wonderful day."';
+      chips = ["你好", "陈伟", "我今天", "过得很好", "谢谢你的关心", "非常开心"];
+    }
+    return { prompt, chips };
   } else {
     let prompt = "Build your reply to Julian (English 🇬🇧):";
     let chips = ["Good day", "Julian", "I am", "happy to", "talk with", "you", "today"];
@@ -1725,97 +2227,127 @@ function updateConstructedBox() {
 
 // Submit Word Bank Constructed Message
 async function handleSendWordBankMessage() {
-  const remaining = checkSendCooldown();
-  if (remaining > 0) return;
+  const freeInput = document.getElementById("freeChatInput");
+  const freeText = freeInput ? freeInput.value.trim() : "";
 
-  if (currentConstructedWords.length === 0) {
-    alert("Please click word chips to build a sentence first!");
+  let messageText = currentConstructedWords.join(" ");
+  if (!messageText) {
+    messageText = freeText;
+  }
+
+  if (!messageText) {
+    alert("Please click word chips to build a sentence or type in the chat box!");
     return;
   }
 
-  // Trigger 20s cooldown
-  lastMessageSendTimestamp = Date.now();
-  startSendCooldownTimer();
+  if (isSendingMessage) return;
+  isSendingMessage = true;
 
-  const constructedText = currentConstructedWords.join(" ");
+  if (freeInput) freeInput.value = "";
+  currentConstructedWords = [];
+  updateConstructedBox();
+
   analyticsData.answersSubmitted++;
 
+  const charId = activeCharacterId || "bao";
+  activeCharacterId = charId;
+
   // Add User Message
-  addUserMessageToHistory(constructedText);
+  addUserMessageToHistory(messageText);
 
-  userState.chatStep[activeCharacterId] = (userState.chatStep[activeCharacterId] || 0) + 1;
-  dynamicWordBank[activeCharacterId] = null;
+  userState.chatStep[charId] = (userState.chatStep[charId] || 0) + 1;
+  dynamicWordBank[charId] = null;
 
-  const tierNum = userState.currentTiers[activeCharacterId] || 1;
+  const tierNum = userState.currentTiers[charId] || 1;
   const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
 
-  addHearts(tierObj.heartsPerAns);
-  increaseAffection(activeCharacterId, 8);
+  addHearts(tierObj.heartsPerAns || 10);
+  increaseAffection(charId, 8);
   triggerHeartBurst();
 
-  // Fetch AI Response
-  await triggerLLMResponse(constructedText, tierObj);
+  try {
+    await triggerLLMResponse(messageText, tierObj);
+  } finally {
+    isSendingMessage = false;
+    updateCooldownUI(0);
+  }
 }
 
 // Handle Free-Form Text Chat Message
 async function handleSendFreeMessage() {
-  const remaining = checkSendCooldown();
-  if (remaining > 0) return;
+  const freeInput = document.getElementById("freeChatInput");
+  let text = freeInput ? freeInput.value.trim() : "";
 
-  const input = document.getElementById("freeChatInput");
-  const text = input.value.trim();
+  if (!text && currentConstructedWords.length > 0) {
+    text = currentConstructedWords.join(" ");
+    currentConstructedWords = [];
+    updateConstructedBox();
+  }
+
   if (!text) return;
 
-  // Trigger 20s cooldown
-  lastMessageSendTimestamp = Date.now();
-  startSendCooldownTimer();
+  if (isSendingMessage) return;
+  isSendingMessage = true;
 
-  input.value = "";
+  if (freeInput) freeInput.value = "";
   analyticsData.answersSubmitted++;
+
+  const charId = activeCharacterId || "bao";
+  activeCharacterId = charId;
 
   addUserMessageToHistory(text);
 
-  userState.chatStep[activeCharacterId] = (userState.chatStep[activeCharacterId] || 0) + 1;
+  userState.chatStep[charId] = (userState.chatStep[charId] || 0) + 1;
 
-  const tierNum = userState.currentTiers[activeCharacterId] || 8;
-  const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[7];
+  const tierNum = userState.currentTiers[charId] || 1;
+  const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
 
-  addHearts(tierObj.heartsPerAns);
-  increaseAffection(activeCharacterId, 10);
+  addHearts(tierObj.heartsPerAns || 10);
+  increaseAffection(charId, 10);
   triggerHeartBurst();
 
-  await triggerLLMResponse(text, tierObj);
+  try {
+    await triggerLLMResponse(text, tierObj);
+  } finally {
+    isSendingMessage = false;
+    updateCooldownUI(0);
+  }
 }
 
 // Add User Message to History & LocalStorage
 function addUserMessageToHistory(text) {
-  const history = userState.chatHistories[activeCharacterId] || [];
+  const charId = activeCharacterId || "bao";
+  activeCharacterId = charId;
+
+  if (!userState.chatHistories) userState.chatHistories = {};
+  const history = userState.chatHistories[charId] || [];
   history.push({
     sender: "user",
     text: text,
     time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   });
-  userState.chatHistories[activeCharacterId] = history;
+  userState.chatHistories[charId] = history;
 
   // Reset unreplied tracking, pout state & timers when user responds
   if (!userState.unrepliedCount) userState.unrepliedCount = { bao: 0, julian: 0, group: 0 };
+  if (!userState.isPouting) userState.isPouting = { bao: false, julian: false, group: false };
   if (!userState.saidGoodbye) userState.saidGoodbye = { bao: false, julian: false, group: false };
 
-  userState.unrepliedCount[activeCharacterId] = 0;
-  userState.isPouting[activeCharacterId] = false;
+  userState.unrepliedCount[charId] = 0;
+  userState.isPouting[charId] = false;
 
   if (isFarewellMessage(text)) {
-    userState.saidGoodbye[activeCharacterId] = true;
-    lastMessageWasLi[activeCharacterId] = false;
-    logDashboardEvent(`👋 User said goodbye to ${CHARACTERS[activeCharacterId].name}. Stopping automatic texts for this chat.`);
+    userState.saidGoodbye[charId] = true;
+    if (lastMessageWasLi) lastMessageWasLi[charId] = false;
+    logDashboardEvent(`👋 User said goodbye to ${CHARACTERS[charId]?.name || charId}. Stopping automatic texts for this chat.`);
   } else {
-    userState.saidGoodbye[activeCharacterId] = false;
+    userState.saidGoodbye[charId] = false;
   }
 
-  lastUserReplyTime[activeCharacterId] = Date.now();
-  lastLiCheckupTime[activeCharacterId] = Date.now();
-  lastMessageWasLi[activeCharacterId] = false;
-  nextSpontaneousDelay[activeCharacterId] = (7 + Math.random() * 3) * 60 * 1000;
+  if (typeof lastUserReplyTime === "object" && lastUserReplyTime) lastUserReplyTime[charId] = Date.now();
+  if (typeof lastLiCheckupTime === "object" && lastLiCheckupTime) lastLiCheckupTime[charId] = Date.now();
+  if (typeof lastMessageWasLi === "object" && lastMessageWasLi) lastMessageWasLi[charId] = false;
+  if (typeof nextSpontaneousDelay === "object" && nextSpontaneousDelay) nextSpontaneousDelay[charId] = (7 + Math.random() * 3) * 60 * 1000;
 
   saveLocalState();
   renderChatHistory();
@@ -1858,7 +2390,8 @@ function showGrammarFeedback(isCorrect, correction, encouragement) {
 // LLM Integration with Google Gemini API via /api/chat endpoint (with Free Model Fallback)
 async function triggerLLMResponse(userText, tierObj) {
   analyticsData.apiCalls++;
-  const char = CHARACTERS[activeCharacterId];
+  const charId = activeCharacterId || "bao";
+  const char = CHARACTERS[charId] || CHARACTERS.bao;
 
   showTypingIndicator(char);
 
@@ -1867,9 +2400,8 @@ async function triggerLLMResponse(userText, tierObj) {
   try {
     logDashboardEvent(`Sending Gemini API request via /api/chat for ${char.name}...`);
     
-    const history = userState.chatHistories[activeCharacterId] || [];
+    const history = userState.chatHistories[charId] || [];
 
-    // TOKEN SAVING STRATEGY: Limit history context to last 4 messages (2 turns)
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: {
@@ -1881,8 +2413,10 @@ async function triggerLLMResponse(userText, tierObj) {
         characterLanguage: char.language,
         isGroup: char.isGroup || false,
         userText: userText,
-        tierLevel: tierObj.level,
+        tierLevel: tierObj ? tierObj.level : 1,
         recentHistory: history.slice(-4),
+        apiKey: getOpenRouterApiKey(),
+        userProfile: userState.userProfile || { name: "MC", pronouns: "she/her", age: "20" },
       }),
     });
 
@@ -1901,133 +2435,263 @@ async function triggerLLMResponse(userText, tierObj) {
       throw new Error(json.error || `HTTP ${res.status}`);
     }
   } catch (err) {
-    logDashboardEvent(`Gemini API call glitch/error: ${err.message}. Sending in-character recovery text.`);
-    removeTypingIndicator();
-
-    const history = userState.chatHistories[activeCharacterId] || [];
-    const charKey = activeCharacterId === "group" ? "group" : activeCharacterId;
-
-    const glitchPool = ERROR_GLITCH_MESSAGES[charKey] || ERROR_GLITCH_MESSAGES.julian;
-    const recoveryPool = ERROR_RECOVERY_MESSAGES[charKey] || ERROR_RECOVERY_MESSAGES.julian;
-
-    const glitchText = glitchPool[Math.floor(Math.random() * glitchPool.length)];
-    const recoveryText = recoveryPool[Math.floor(Math.random() * recoveryPool.length)];
-
-    const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-    // Send Glitch Message
-    if (charKey === "group") {
-      history.push({
-        sender: "li",
-        speaker: "bao",
-        speakerName: "Bao Nguyen",
-        text: glitchText,
-        translation: "Glitch message.",
-        tip: "Phone signal recovery.",
-        time: timeStr,
-      });
-    } else {
-      history.push({
-        sender: "li",
-        text: glitchText,
-        translation: "Hold on a second, my phone is glitching... let me fix it.",
-        tip: "Phone signal recovery.",
-        time: timeStr,
-      });
-    }
-
-    userState.chatHistories[activeCharacterId] = history;
-    saveLocalState();
-    renderChatHistory();
-
-    // Show typing indicator again and send recovery message after 1.5s
-    setTimeout(() => {
-      showTypingIndicator(char);
-      setTimeout(() => {
-        removeTypingIndicator();
-        const updatedHistory = userState.chatHistories[activeCharacterId] || [];
-        const recoveryTimeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-        if (charKey === "group") {
-          updatedHistory.push({
-            sender: "li",
-            speaker: "julian",
-            speakerName: "Julian Vance",
-            text: recoveryText,
-            translation: "All fixed now! What were you saying?",
-            tip: "Recovery message.",
-            time: recoveryTimeStr,
-          });
-        } else {
-          updatedHistory.push({
-            sender: "li",
-            text: recoveryText,
-            translation: "Okay fixed! What were you saying?",
-            tip: "Recovery message.",
-            time: recoveryTimeStr,
-          });
-        }
-
-        userState.chatHistories[activeCharacterId] = updatedHistory;
-        saveLocalState();
-        renderChatHistory();
-        setupTierInputControls(tierObj, char);
-      }, 1500);
-    }, 1000);
-
-    return;
+    logDashboardEvent(`Gemini API fallback for ${char.name}: ${err.message}`);
+    responseData = generateInCharacterFallback(char, userText, tierObj);
   }
 
   removeTypingIndicator();
 
-  // Show Side Grammar Feedback & Encouragement Panel
-  showGrammarFeedback(
-    responseData.isCorrect !== false,
-    responseData.correction || responseData.fix,
-    responseData.encouragement
-  );
+  if (responseData) {
+    showGrammarFeedback(
+      responseData.isCorrect !== false,
+      responseData.correction || responseData.fix,
+      responseData.encouragement
+    );
 
-  const history = userState.chatHistories[activeCharacterId] || [];
+    const history = userState.chatHistories[charId] || [];
 
-  if (activeCharacterId === "group" && responseData.groupResponses && responseData.groupResponses.length > 0) {
-    responseData.groupResponses.forEach((resp) => {
+    if ((charId === "group" || char.isGroup) && responseData.groupResponses && responseData.groupResponses.length > 0) {
+      responseData.groupResponses.forEach((resp) => {
+        history.push({
+          sender: "li",
+          speaker: resp.speaker || "bao",
+          speakerName: resp.speakerName || (resp.speaker === "julian" ? "Julian Vance" : "Bao Nguyen"),
+          text: resp.text,
+          translation: resp.translation,
+          tip: resp.tip,
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        });
+      });
+    } else {
       history.push({
         sender: "li",
-        speaker: resp.speaker || "bao",
-        speakerName: resp.speakerName || (resp.speaker === "julian" ? "Julian Vance" : "Bao Nguyen"),
-        text: resp.text,
-        translation: resp.translation,
-        tip: resp.tip,
+        text: responseData.characterResponse || responseData.text || "Cảm ơn em! Tớ rất vui được trò chuyện với em ❤️",
+        romaji: responseData.romaji || null,
+        translation: responseData.translation || "Thank you! I am very happy chatting with you ❤️",
+        tip: responseData.tip || "Keep practicing your conversation skills!",
+        fix: responseData.correction || responseData.fix || null,
         time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       });
-    });
-  } else {
-    history.push({
-      sender: "li",
-      text: responseData.characterResponse || responseData.text,
-      romaji: responseData.romaji || null,
-      translation: responseData.translation,
-      tip: responseData.tip,
-      fix: responseData.correction || responseData.fix,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    });
+    }
+
+    userState.chatHistories[charId] = history;
+    lastMessageWasLi[charId] = true;
+    lastLiCheckupTime[charId] = Date.now();
+
+    checkTierLevelUp(charId);
+    saveLocalState();
+    renderChatHistory();
+
+    setupTierInputControls(tierObj || TIERS[0], char);
+    syncUserDataToConvex(`Post-chat response sync (${char.name})`);
   }
+}
 
-  userState.chatHistories[activeCharacterId] = history;
+function generateInCharacterFallback(char, userText, tierObj) {
+  const isGroup = char.isGroup || char.id === "group";
+  const normText = (userText || "").toLowerCase();
 
-  lastMessageWasLi[activeCharacterId] = true;
-  lastLiCheckupTime[activeCharacterId] = Date.now();
+  if (isGroup) {
+    let baoText = "Em nhắn gì dễ thương quá! Coi nè, anh pha ly cà phê thơm phức cho em rồi đó! ☕❤️";
+    let julianText = "Ah, MC! Splendid message indeed! I must say, your company brightens my whole day! ✨";
 
-  checkTierLevelUp(activeCharacterId);
+    if (normText.includes("cà phê") || normText.includes("coffee")) {
+      baoText = "Đó thấy chưa! Cà phê anh pha là ngon nhất luôn! Em uống ngụm nữa nha? ☕";
+      julianText = "Bao's coffee is acceptable, but my passion for literature with you is unmatched, MC!";
+    } else if (normText.includes("cả hai") || normText.includes("both") || normText.includes("thích")) {
+      baoText = "Cảm ơn em nhiều nha! Em khen anh làm anh vui ghê luôn á! ❤️";
+      julianText = "You are far too kind, MC! Your warmth touches my heart deeply.";
+    }
 
-  saveLocalState();
-  renderChatHistory();
+    return {
+      isGroup: true,
+      groupResponses: [
+        {
+          speaker: "bao",
+          speakerName: "Bao Nguyen 🇻🇳",
+          text: baoText,
+          translation: "Bao: What a sweet message! Look, I brewed a fragrant coffee for you! ☕❤️",
+          tip: "Bao is showing his affectionate side! 'Thơm phức' means very fragrant."
+        },
+        {
+          speaker: "julian",
+          speakerName: "Julian Vance 🇬🇧",
+          text: julianText,
+          translation: "Julian: Splendid message indeed! Your company brightens my day! ✨",
+          tip: "Julian loves chatting with you in group chat!"
+        }
+      ],
+      isCorrect: true,
+      correction: "Spot on!",
+      encouragement: "Wonderful effort! Your phrase was natural and clear.",
+      contextualChipsPrompt: "Build your reply to Bao & Julian:",
+      contextualChips: ["Cảm ơn hai anh", "Hai anh dễ thương quá", "Cà phê ngon lắm", "I love chatting with both of you", "Gặp lại sau nhé"]
+    };
+  } else if (char.id === "bao") {
+    let respText = "Cảm ơn em nha! Nghe em nói làm anh vui cả ngày luôn á. Em uống cà phê chưa? ☕";
+    let trans = "Thank you sweetheart! Hearing you talk made my whole day happy. Have you had coffee yet?";
+    let tip = "'Cảm ơn em' is a warm way to say thank you to someone younger or a sweetheart.";
 
-  // Refresh input controls for NEXT turn
-  setupTierInputControls(tierObj, char);
+    if (normText.includes("chào") || normText.includes("hello") || normText.includes("hi")) {
+      respText = "Chào em! Hôm nay em thế nào? Anh vừa pha xong mẻ cà phê mới thơm lắm!";
+      trans = "Hello! How are you today? I just finished brewing a fresh fragrant batch of coffee!";
+      tip = "'Hôm nay em thế nào?' means 'How are you today?' in Vietnamese.";
+    } else if (normText.includes("cà phê") || normText.includes("gọi món")) {
+      respText = "Có liền nè em! Cà phê đặc biệt dành riêng cho em đó, ngọt ngào ngụm đầu tiên luôn nha!";
+      trans = "Coming right up! Special coffee made just for you, sweet from the very first sip!";
+      tip = "'Đặc biệt' means 'special'. Bao loves customizing drinks for you.";
+    } else if (normText.includes("thích") || normText.includes("yêu") || normText.includes("dễ thương")) {
+      respText = "Em làm anh ngại quá nè... Nhưng mà anh rất thích nói chuyện với em đó! ❤️";
+      trans = "You are making me shy... But I really love talking with you! ❤️";
+      tip = "'Ngại' means shy/embarrassed in a sweet romantic context.";
+    }
 
-  // Auto Sync to Convex Cloud
-  syncUserDataToConvex(`Post-chat response sync (${char.name})`);
+    return {
+      characterResponse: respText,
+      translation: trans,
+      tip: tip,
+      isCorrect: true,
+      correction: "Spot on!",
+      encouragement: "Tuyệt vời! Cụm từ của em rất chính xác và tự nhiên.",
+      contextualChipsPrompt: "Build your reply to Bao (Vietnamese 🇻🇳):",
+      contextualChips: ["Cho em một ly cà phê", "Cảm ơn anh Bao", "Anh Bao rất dễ thương", "Em rảnh nè", "Hẹn gặp lại anh"]
+    };
+  } else if (char.id === "ren") {
+    const userName = userState.userProfile?.name || "MC";
+    let respText = `メッセージありがとうございます、${userName}さん！君と話せてとても嬉しいです。🍵`;
+    let romaji = `Messeoji arigatou gozaimasu, ${userName}-san! Kimi to hanasete totemo ureshii desu.`;
+    let trans = `Thank you for the message, ${userName}! I am very happy to talk with you. 🍵`;
+    let tip = "'-san' is a polite honorific attached to names in Japanese.";
+
+    if (normText.includes("こんにちは") || normText.includes("hello") || normText.includes("hi")) {
+      respText = `こんにちは、${userName}さん！今日はどんな一日でしたか？`;
+      romaji = `Konnichiwa, ${userName}-san! Kyou wa donna ichinichi deshita ka?`;
+      trans = `Hello, ${userName}! How was your day today?`;
+      tip = "'Konnichiwa' is 'Hello' and 'donna ichinichi' asks about your day.";
+    } else if (normText.includes("お茶") || normText.includes("tea") || normText.includes("drink")) {
+      respText = "美味しい緑茶を淹れましたよ。一緒に飲みましょう！ 🍵";
+      romaji = "Oishii ryokucha wo iremashita yo. Issho ni nomimashou!";
+      trans = "I brewed delicious green tea. Let's drink together!";
+      tip = "'Ryokucha' means Japanese green tea.";
+    } else if (normText.includes("好き") || normText.includes("love") || normText.includes("cute")) {
+      respText = `そんな風に言われると…照れますね。でも、私も${userName}さんのことが…好きです。❤️`;
+      romaji = `Sonna fuu ni iware ru to... teremasu ne. Demo, watashi mo ${userName}-san no koto ga... suki desu.`;
+      trans = `When you say it like that... I get shy. But, I also... like you, ${userName}. ❤️`;
+      tip = "'Teremasu' means getting shy or blushing.";
+    }
+
+    return {
+      characterResponse: respText,
+      romaji: romaji,
+      translation: trans,
+      tip: tip,
+      isCorrect: true,
+      correction: "Spot on!",
+      encouragement: "素晴らしい！ (Wonderful effort in Japanese!)",
+      contextualChipsPrompt: "Build your reply to Ren (Japanese 🇯🇵):",
+      contextualChips: ["こんにちは 蓮さん", "お茶を飲みましょう", "ありがとうございます", "私もうれしいです", "またね"]
+    };
+  } else if (char.id === "minjun") {
+    const userName = userState.userProfile?.name || "MC";
+    let respText = `메시지 고마워요, ${userName}님! 오늘 하루도 정말 수고 많았어요. 🎵❤️`;
+    let romaji = `Meseiji gomawoyo, ${userName}-nim! Oneul harudo jeongmal sugo manasseoyo.`;
+    let trans = `Thank you for the message, ${userName}! You worked so hard today as well. 🎵❤️`;
+    let tip = "'-nim' is a respectful and sweet honorific in Korean.";
+
+    if (normText.includes("안녕") || normText.includes("hello") || normText.includes("hi")) {
+      respText = `안녕하세요, ${userName}님! 오늘 기분은 좀 어때요?`;
+      romaji = `Annyeonghaseyo, ${userName}-nim! Oneul gibun-eun jom eotteoyo?`;
+      trans = `Hello, ${userName}! How are you feeling today?`;
+      tip = "'Annyeonghaseyo' is polite 'Hello' in Korean.";
+    } else if (normText.includes("노래") || normText.includes("song") || normText.includes("music")) {
+      respText = `${userName}님을 생각하며 새로 쓴 노래를 들려드리고 싶어요! 🎧`;
+      romaji = `${userName}-nim-eul saenggak-hamyeo saero sseun norae-reul deullyeodeurigo sip-eoyo!`;
+      trans = `I want to play you a new song I wrote while thinking of you, ${userName}! 🎧`;
+      tip = "'Norae' means song in Korean.";
+    } else if (normText.includes("좋아") || normText.includes("love") || normText.includes("cute")) {
+      respText = `심장이 너무 빨리 뛰네요... 저도 ${userName}님이 정말 좋아요! ❤️`;
+      romaji = `Simjang-i neomu ppalli ttwineyeo... Jeodo ${userName}-nim-i jeongmal joh-a-yo!`;
+      trans = `My heart is beating so fast... I really like you too, ${userName}! ❤️`;
+      tip = "'Simjang-i ttwineyeo' means my heart is racing.";
+    }
+
+    return {
+      characterResponse: respText,
+      romaji: romaji,
+      translation: trans,
+      tip: tip,
+      isCorrect: true,
+      correction: "Spot on!",
+      encouragement: "대단해요! (Amazing effort in Korean!)",
+      contextualChipsPrompt: "Build your reply to Min-jun (Korean 🇰🇷):",
+      contextualChips: ["안녕하세요 민준씨", "노래 기대돼요", "감사합니다", "수고하셨어요", "안녕히 가세요"]
+    };
+  } else if (char.id === "chen") {
+    const userName = userState.userProfile?.name || "MC";
+    let respText = `收到你的消息真开心，${userName}。愿这道佳茗能带给你一丝温情。 🍃`;
+    let romaji = `Shōudào nǐ de xiāoxī zhēn kāixīn, ${userName}. Yuàn zhè dào jiāmíng néng dài gěi nǐ yì sī wēnqíng.`;
+    let trans = `So happy to receive your message, ${userName}. May this fine tea bring you a touch of warmth. 🍃`;
+    let tip = "'Jiāmíng' is a poetic term for fine quality tea.";
+
+    if (normText.includes("你好") || normText.includes("hello") || normText.includes("hi")) {
+      respText = `你好，${userName}！今天过得可还顺心？`;
+      romaji = `Nǐ hǎo, ${userName}! Jīntiān guò de kě hái shùnxīn?`;
+      trans = `Hello, ${userName}! Has your day been pleasant?`;
+      tip = "'Nǐ hǎo' is 'Hello' in Mandarin Chinese.";
+    } else if (normText.includes("茶") || normText.includes("tea") || normText.includes("drink")) {
+      respText = "我为你沏了一壶好茶，香气扑鼻，请品尝。 🍵";
+      romaji = "Wǒ wèi nǐ qī le yì hú hǎo chá, xiāngqì pū bí, qǐng pǐncháng.";
+      trans = "I brewed a pot of fine tea for you, overflowing with fragrance, please sample it.";
+      tip = "'Qī chá' means to brew tea in Chinese.";
+    } else if (normText.includes("喜欢") || normText.includes("love") || normText.includes("sweet")) {
+      respText = `能得${userName}此般倾心，是我莫大的荣幸... 我亦对你一往情深。 ❤️`;
+      romaji = `Néng dé ${userName} cǐ bān qīngxīn, shì wǒ mòdà de róngxìng... Wǒ yì duì nǐ yìwǎngqíngshēn.`;
+      trans = `To have your affections, ${userName}, is my greatest honor... My heart belongs to you as well. ❤️`;
+      tip = "'Yìwǎngqíngshēn' is a classic idiom meaning deeply devoted affection.";
+    }
+
+    return {
+      characterResponse: respText,
+      romaji: romaji,
+      translation: trans,
+      tip: tip,
+      isCorrect: true,
+      correction: "Spot on!",
+      encouragement: "太棒了！ (Excellence in Mandarin Chinese!)",
+      contextualChipsPrompt: "Build your reply to Chen (Chinese 🇨🇳):",
+      contextualChips: ["你好 陈伟", "谢谢你的关心", "茶香真美好", "我也很高兴", "再见"]
+    };
+  } else {
+    const userName = userState.userProfile?.name || "MC";
+    let respText = `What a charming sentiment! Reading your words always brings a smile to my face, ${userName}.`;
+    let trans = `What a charming sentiment! Reading your words always brings a smile to my face, ${userName}.`;
+    let tip = "'Charming sentiment' expresses gentle romantic affection.";
+
+    if (normText.includes("hello") || normText.includes("hi") || normText.includes("chào")) {
+      respText = `Good day, ${userName}! I was just contemplating a lovely poem when your message arrived.`;
+      trans = `Good day, ${userName}! I was just contemplating a lovely poem when your message arrived.`;
+      tip = "'Good day' is a refined, polite greeting.";
+    } else if (normText.includes("book") || normText.includes("read") || normText.includes("poem")) {
+      respText = "How wonderful that you share a passion for literature! Shall we read together sometime?";
+      trans = "How wonderful that you share a passion for literature! Shall we read together sometime?";
+      tip = "'Literature' refers to romantic prose and classic books.";
+    } else if (normText.includes("love") || normText.includes("like") || normText.includes("sweet")) {
+      respText = `My heart flutters at your words... You possess a truly captivating presence, ${userName}. ❤️`;
+      trans = `My heart flutters at your words... You possess a truly captivating presence, ${userName}. ❤️`;
+      tip = "'My heart flutters' means feeling romantic excitement.";
+    }
+
+    return {
+      characterResponse: respText,
+      translation: trans,
+      tip: tip,
+      isCorrect: true,
+      correction: "Spot on!",
+      encouragement: "Splendid phrasing! Excellent work expressing your thoughts.",
+      contextualChipsPrompt: "Build your reply to Julian (English 🇬🇧):",
+      contextualChips: ["I would love to read with you", "Thank you Julian", "You are very kind", "I am happy to talk", "Talk to you later"]
+    };
+  }
 }
 
 // Typing Indicator Helpers
@@ -2266,6 +2930,7 @@ function saveLocalState() {
   localStorage.setItem("otome_said_goodbye", JSON.stringify(userState.saidGoodbye || { bao: false, julian: false, group: false }));
   localStorage.setItem("otome_input_mode", JSON.stringify(userState.selectedInputMode || {}));
   localStorage.setItem("otome_ui_lang", userState.uiLang || "en");
+  localStorage.setItem("otome_user_profile", JSON.stringify(userState.userProfile || { name: "MC", pronouns: "she/her", age: "20" }));
 }
 
 // Synchronize User Data to Convex Cloud (`/sync-user`)
