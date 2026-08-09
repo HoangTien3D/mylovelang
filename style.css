@@ -1989,10 +1989,29 @@ body.dark-theme .chat-controls {
 }
 
 body.dark-theme .constructed-sentence-box,
-body.dark-theme .chat-input {
-  background: #120a20;
-  border-color: rgba(160, 140, 190, 0.25);
-  color: #f5f0ff;
+body.dark-theme .chat-input,
+body.dark-theme .setting-input,
+body.dark-theme input,
+body.dark-theme select,
+body.dark-theme textarea,
+body.dark-theme .tier-dropdown-select {
+  background-color: #120a20 !important;
+  border-color: rgba(255, 42, 122, 0.35) !important;
+  color: #f5f0ff !important;
+}
+
+body.dark-theme select option,
+body.dark-theme .setting-input option,
+body.dark-theme .tier-dropdown-select option {
+  background-color: #1a1228 !important;
+  color: #f5f0ff !important;
+}
+
+body.dark-theme #userProfileModal > div,
+body.dark-theme #apiKeyModal > div {
+  background-color: #1a1228 !important;
+  border-color: var(--primary-pink) !important;
+  color: #f5f0ff !important;
 }
 
 body.dark-theme .option-pill-btn {

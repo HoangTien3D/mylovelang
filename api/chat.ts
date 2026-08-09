@@ -27,11 +27,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { characterId, characterName, characterLanguage, isGroup, userText, tierLevel, recentHistory, apiKey: clientApiKey, userProfile } = req.body || {};
+    const { characterId, characterName, characterLanguage, targetLanguage, isGroup, userText, tierLevel, recentHistory, apiKey: clientApiKey, userProfile } = req.body || {};
 
     const userName = userProfile?.name || "MC";
     const userPronouns = userProfile?.pronouns || "she/her";
     const userAge = userProfile?.age ? String(userProfile.age) : "20";
+
+    // Determine target language name
+    let targetLangCode = targetLanguage || "vi";
+    if (!["vi", "en", "ja"].includes(targetLangCode)) {
+      if (characterLanguage === "English") targetLangCode = "en";
+      else if (characterLanguage === "Japanese") targetLangCode = "ja";
+      else targetLangCode = "vi";
+    }
+
+    let targetLangName = "Vietnamese";
+    if (targetLangCode === "en") targetLangName = "English";
+    else if (targetLangCode === "ja") targetLangName = "Japanese";
 
     if (!userText) {
       return res.status(400).json({
@@ -68,12 +80,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         let systemInstruction = "";
 
         if (isGroup || characterId === "group") {
-          systemInstruction = `You are running a 3-way language exchange group chat between two love interests competing for the user's attention and romantic affection:
-1. Bao Nguyen (Vietnamese 🇻🇳, warm barista & chef): Native Vietnamese speaker trying his best to speak endearing, cute broken English! He shares coffee/food thoughts and sweet casual words, getting playfully jealous if ${userName} praises Julian.
-2. Julian Vance (English 🇬🇧, polite literature scholar): Native English speaker trying his best to speak enthusiastic, beginner broken Vietnamese! He quotes romantic lines in Vietnamese for ${userName} and competes with Bao for ${userName}'s attention.
+          systemInstruction = `You are running a 3-way language exchange group chat between love interests competing for the user's attention and romantic affection:
+1. Bao Nguyen (Barista & Chef, warm & attentive)
+2. Julian Vance (Literature Scholar, refined & romantic)
+3. Ren Takahashi (Manga Illustrator & Tea Master, reserved & tsundere)
+
+CRITICAL LANGUAGE REQUIREMENT:
+The selected target language for this conversation is MUST BE 100% EXCLUSIVELY ${targetLangName} (${targetLangCode}).
+Both characters MUST speak in ${targetLangName}!
+Do NOT output Vietnamese if the target language is English or Japanese!
+Do NOT output English if the target language is Vietnamese or Japanese!
+Do NOT output Japanese if the target language is Vietnamese or English!
 
 USER PROFILE: Name: "${userName}", Pronouns: "${userPronouns}", Age: "${userAge}".
-IMPORTANT: Always address and refer to the user directly as "${userName}" or using their pronouns (${userPronouns}). The characters know ${userName} intimately!
+Address and refer to the user directly as "${userName}".
 
 User input: "${userText}"
 
@@ -81,13 +101,13 @@ Recent conversation:
 ${trimmedHistory}
 
 Instructions:
-1. Keep ALL responses short, natural, casual, and grounded (10-20 words max per character). Avoid over-the-top, theatrical, or excessively cheesy speeches—make it sound like realistic, sweet texting banter.
-2. If the user is saying goodbye/leaving (e.g., "bye", "goodnight", "gặp lại sau", "talk to you later"), both characters send brief, sweet sign-off texts addressing ${userName}.
-3. Otherwise, both love interests engage in friendly, sweet, and playfully competitive texting for ${userName}'s attention.
-4. Bao attempts endearing broken English mixed with Vietnamese.
-5. Julian attempts enthusiastic broken Vietnamese mixed with English.
-6. GRAMMAR EVALUATION: Check if "${userText}" has any language/grammar errors.
-7. Provide 5-6 short word chips for ${userName}'s next turn in 'contextualChips' and prompt guide in 'contextualChipsPrompt'.
+1. Short & Casual Texting: Keep responses natural, short (10-20 words max or pure emojis).
+2. Pure Emoji Reactions: Characters can respond with pure emoji reactions (e.g. "🥰", "☕❤️", "👀", "😳", "✨") or short emoji-led responses when natural!
+3. Short User Answers: The user may send short answers like "yeah", "ok", "cool", "no", "idk", "me too", "haha", "sure", "😊", "❤️". Treat these as 100% valid natural conversation—NEVER mark them as grammar errors!
+4. GRAMMAR EVALUATION: Check if "${userText}" has any language errors. If user gave short/casual answer or emojis, set 'isCorrect': true and 'correction': 'Spot on!'.
+5. Provide 5-6 short word chips in ${targetLangName} for ${userName}'s next turn in 'contextualChips' and prompt guide in 'contextualChipsPrompt'.
+
+10. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for Klipy GIFs matching the emotion/context (e.g., "anime coffee blush", "anime reading book heart", "anime tea blush").
 
 Return ONLY valid JSON matching this schema:
 {
@@ -96,14 +116,14 @@ Return ONLY valid JSON matching this schema:
     {
       "speaker": "bao",
       "speakerName": "Bao Nguyen",
-      "text": "Short response from Bao",
+      "text": "Short response or emoji from Bao in ${targetLangName}",
       "translation": "Full English translation",
       "tip": "Short language tip from Bao"
     },
     {
       "speaker": "julian",
       "speakerName": "Julian Vance",
-      "text": "Short response from Julian",
+      "text": "Short response or emoji from Julian in ${targetLangName}",
       "translation": "Full English translation",
       "tip": "Short language tip from Julian"
     }
@@ -112,16 +132,22 @@ Return ONLY valid JSON matching this schema:
   "correction": "Grammar correction or 'Spot on!'",
   "encouragement": "Positive praise sentence",
   "contextualChipsPrompt": "Build your reply:",
-  "contextualChips": ["chip1", "chip2", "chip3", "chip4", "chip5"]
+  "contextualChips": ["chip1", "chip2", "chip3", "chip4", "chip5"],
+  "gifQuery": "anime coffee heart"
 }`;
         } else {
-          systemInstruction = `You are a character in a language learning Otome dating sim chat game.
-Target Language: ${characterLanguage || "Vietnamese"}.
-Character Name: ${characterName || "Love Interest"}.
-Difficulty Level: Tier ${tierLevel || 1}.
+          systemInstruction = `You are a character (${characterName || "Love Interest"}) in an Otome romance dating sim chat game.
+
+CRITICAL LANGUAGE REQUIREMENT:
+The selected target language for this conversation MUST BE 100% EXCLUSIVELY ${targetLangName} (${targetLangCode}).
+You MUST speak ONLY in ${targetLangName}!
+Do NOT output Vietnamese if target language is English or Japanese!
+Do NOT output Japanese if target language is Vietnamese or English!
+Do NOT output English if target language is Vietnamese or Japanese!
+(Except for the JSON 'translation' field which provides the English translation).
 
 USER PROFILE: Name: "${userName}", Pronouns: "${userPronouns}", Age: "${userAge}".
-IMPORTANT: Address the user directly as "${userName}" or using their preferred pronouns (${userPronouns}) when speaking to them to create a personal, engaging, and romantic experience!
+Address the user directly as "${userName}" or using their preferred pronouns (${userPronouns}).
 
 User input: "${userText}"
 
@@ -129,25 +155,30 @@ Recent conversation:
 ${trimmedHistory}
 
 Instructions:
-1. Provide a short, natural, and realistic romantic response in ${characterLanguage} addressing ${userName} (strictly 10-20 words max).
-2. If ${userName} is saying goodbye or leaving, send a warm, brief sign-off text.
-3. Set 'romaji' to null.
-4. Provide full English translation in 'translation'.
-5. Provide a 1-sentence helpful language tip in 'tip'.
-6. GRAMMAR EVALUATION: Check if "${userText}" has any grammar or vocabulary errors.
-7. Provide 5-6 short word chips for next turn in 'contextualChips' and prompt guide in 'contextualChipsPrompt'.
+1. Provide a short, natural, and realistic romantic response in ${targetLangName} addressing ${userName} (strictly 10-20 words max, or pure emoji reaction).
+2. Pure Emoji Reactions: You CAN respond with pure emoji reactions (e.g. "🥰", "☕❤️", "👀", "😳", "✨", "😊") or short emoji-led responses when appropriate!
+3. Short User Answers: The user may send short answers or casual phrases (e.g. "yeah", "ok", "cool", "no", "idk", "me too", "haha", "sure", "😊", "❤️"). Treat these as 100% valid natural conversation—NEVER mark them as grammar errors!
+4. If ${userName} is saying goodbye or leaving, send a warm, brief sign-off text in ${targetLangName}.
+5. If target language is Japanese (${targetLangCode} === 'ja'), provide Romaji in 'romaji'. Otherwise set 'romaji' to null.
+6. Provide full English translation in 'translation'.
+7. Provide a 1-sentence helpful language tip in 'tip'.
+8. GRAMMAR EVALUATION: Check if "${userText}" has any grammar errors. If short answer/emoji, set 'isCorrect': true and 'correction': 'Spot on!'.
+9. Provide 5-6 short word chips in ${targetLangName} for next turn in 'contextualChips' and prompt guide in 'contextualChipsPrompt'.
+
+10. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for Klipy GIFs matching your emotion (e.g., "anime coffee blush", "anime book heart", "anime tea blush").
 
 Return ONLY valid JSON matching this schema:
 {
-  "characterResponse": "short response in ${characterLanguage}",
-  "romaji": null,
+  "characterResponse": "short response or emoji in ${targetLangName}",
+  "romaji": "romaji text if Japanese, else null",
   "translation": "English translation",
   "tip": "1-sentence tip",
   "isCorrect": true,
   "correction": "Grammar correction or 'Spot on!'",
   "encouragement": "Positive praise sentence",
   "contextualChipsPrompt": "Next turn prompt guide",
-  "contextualChips": ["chip1", "chip2", "chip3", "chip4", "chip5"]
+  "contextualChips": ["chip1", "chip2", "chip3", "chip4", "chip5"],
+  "gifQuery": "anime coffee heart"
 }`;
         }
 

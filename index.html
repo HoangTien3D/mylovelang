@@ -83,12 +83,6 @@
           <button class="guide-tab-btn" id="guideTabJaBtn" type="button" onclick="setGuidebookLang('ja')">
             🇯🇵 日本語
           </button>
-          <button class="guide-tab-btn" id="guideTabKoBtn" type="button" onclick="setGuidebookLang('ko')">
-            🇰🇷 한국어
-          </button>
-          <button class="guide-tab-btn" id="guideTabZhBtn" type="button" onclick="setGuidebookLang('zh')">
-            🇨🇳 中文
-          </button>
         </div>
 
         <div class="guidebook-container" id="guidebookContainer">
@@ -101,6 +95,28 @@
         <div class="section-header">
           <h2 class="section-title">App Settings</h2>
           <p class="section-subtitle">Customize theme, language preferences & story progress</p>
+        </div>
+
+        <!-- Target Learning Language Setting -->
+        <div class="settings-group">
+          <div class="settings-label">
+            <span>🎯 Target Learning Language</span>
+            <span id="targetLangStatusBadge" class="status-chip-badge">🇻🇳 Vietnamese</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
+            Select the language you want to learn with Bao, Julian & Ren across all chats, sentence builders, and guidebooks:
+          </p>
+          <div class="setting-options-grid">
+            <button type="button" class="option-pill-btn active" id="settingTargetViBtn" onclick="setAppTargetLanguage('vi')">
+              🇻🇳 Vietnamese (Tiếng Việt)
+            </button>
+            <button type="button" class="option-pill-btn" id="settingTargetEnBtn" onclick="setAppTargetLanguage('en')">
+              🇬🇧 English (English)
+            </button>
+            <button type="button" class="option-pill-btn" id="settingTargetJaBtn" onclick="setAppTargetLanguage('ja')">
+              🇯🇵 Japanese (日本語)
+            </button>
+          </div>
         </div>
 
         <!-- User Profile Setting (How LIs Address You) -->
@@ -278,13 +294,16 @@
             <span style="color:var(--primary-pink); font-size:11px;" id="tierHeartMultiplier">+10 ❤️ / answer</span>
           </div>
 
-          <!-- Input Feature Mode Selector (Sentence Builder vs Free Text) -->
+          <!-- Input Feature Mode Selector (Sentence Builder vs Free Text vs GIF) -->
           <div class="input-mode-switcher" style="display:flex; gap:8px; margin-top:2px;">
             <button id="modeSentenceBuilderBtn" class="mode-tab-btn active" type="button" style="flex:1; padding:8px 12px; border-radius:10px; font-weight:800; font-size:12.5px; border:1px solid var(--primary-pink); background:rgba(217, 0, 87, 0.12); color:var(--primary-pink); cursor:pointer; transition:all 0.2s ease;">
               🧩 Sentence Builder
             </button>
             <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" style="flex:1; padding:8px 12px; border-radius:10px; font-weight:800; font-size:12.5px; border:1px solid rgba(160, 140, 190, 0.3); background:rgba(255,255,255,0.6); color:var(--text-muted); cursor:pointer; transition:all 0.2s ease;">
               💬 Free Text Chat
+            </button>
+            <button id="openGifModalBtn" class="mode-tab-btn" type="button" onclick="openKlipyGifModal()" style="flex:1; padding:8px 12px; border-radius:10px; font-weight:800; font-size:12.5px; border:1px solid rgba(124, 58, 237, 0.4); background:rgba(124, 58, 237, 0.1); color:var(--accent-violet); cursor:pointer; transition:all 0.2s ease;">
+              🖼️ Send GIF
             </button>
           </div>
 
@@ -341,6 +360,23 @@
       </div>
 
       <form id="userProfileForm" onsubmit="event.preventDefault(); saveUserProfileFromModal();">
+        <div style="margin-bottom:14px;">
+          <label style="font-size:12px; font-weight:800; color:var(--text-main); display:block; margin-bottom:6px;">
+            🌐 Target Language to Learn <span style="color:var(--primary-pink);">*</span>
+          </label>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+            <button type="button" class="option-pill-btn active" id="modalTargetViBtn" onclick="selectModalTargetLang('vi')">
+              🇻🇳 Tiếng Việt
+            </button>
+            <button type="button" class="option-pill-btn" id="modalTargetEnBtn" onclick="selectModalTargetLang('en')">
+              🇬🇧 English
+            </button>
+            <button type="button" class="option-pill-btn" id="modalTargetJaBtn" onclick="selectModalTargetLang('ja')">
+              🇯🇵 日本語
+            </button>
+          </div>
+        </div>
+
         <div style="margin-bottom:12px;">
           <label for="modalUserName" style="font-size:12px; font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">
             Your Name / Nickname <span style="color:var(--primary-pink);">*</span>
@@ -453,6 +489,42 @@
     <div class="dash-log-box" id="dashLogBox">
       [SYSTEM] Secret Dashboard Initialized.<br/>
       [KEYBIND] CTRL + SHIFT + ALT active listener attached.<br/>
+    </div>
+  </div>
+
+  <!-- KLIPY GIF SEARCH & SELECTOR MODAL -->
+  <div id="klipyGifModal" class="profile-modal-backdrop" style="display:none; align-items:center; justify-content:center;">
+    <div class="profile-modal-content" style="max-width:540px; width:92%; max-height:85vh; display:flex; flex-direction:column; padding:20px; border-radius:20px; background:var(--bg-card); border:1px solid var(--border-color); box-shadow:0 20px 40px rgba(0,0,0,0.25);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:22px;">🖼️</span>
+          <h3 style="margin:0; font-size:18px; font-weight:800; color:var(--text-heading);">Klipy GIF Library</h3>
+        </div>
+        <button type="button" onclick="closeKlipyGifModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+        Search or pick a cute GIF powered by Klipy API to send to your love interest:
+      </p>
+
+      <!-- GIF Search Input & Quick Tags -->
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <input type="text" id="klipySearchInput" placeholder="Search Klipy GIFs (e.g., coffee, cute, blush)..." style="flex:1; padding:10px 14px; border-radius:12px; border:1px solid var(--border-color); background:var(--bg-main); color:var(--text-main); font-size:13px;" />
+        <button type="button" onclick="searchKlipyGifsInModal()" class="primary-btn" style="padding:10px 16px; margin:0; width:auto; font-size:13px; font-weight:700;">Search</button>
+      </div>
+
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;">
+        <button type="button" class="option-pill-btn" onclick="quickSearchKlipyGif('anime coffee')" style="padding:4px 10px; font-size:11px;">☕ Coffee</button>
+        <button type="button" class="option-pill-btn" onclick="quickSearchKlipyGif('anime cute blush')" style="padding:4px 10px; font-size:11px;">💖 Cute Blush</button>
+        <button type="button" class="option-pill-btn" onclick="quickSearchKlipyGif('anime reading book')" style="padding:4px 10px; font-size:11px;">📚 Books</button>
+        <button type="button" class="option-pill-btn" onclick="quickSearchKlipyGif('anime tea master')" style="padding:4px 10px; font-size:11px;">🍵 Tea Time</button>
+        <button type="button" class="option-pill-btn" onclick="quickSearchKlipyGif('anime hug love')" style="padding:4px 10px; font-size:11px;">🫂 Hug</button>
+        <button type="button" class="option-pill-btn" onclick="quickSearchKlipyGif('anime wave greeting')" style="padding:4px 10px; font-size:11px;">👋 Greeting</button>
+      </div>
+
+      <!-- GIF Results Grid -->
+      <div id="klipyGifGrid" style="flex:1; overflow-y:auto; display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:10px; min-height:220px; max-height:360px; padding:4px;">
+        <!-- Dynamically filled -->
+      </div>
     </div>
   </div>
 
