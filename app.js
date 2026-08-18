@@ -102,34 +102,6 @@ const BASE_CHARACTERS = {
     name: "Ado",
     avatar: "/assets/characters/ado_avatar.png",
     sprite: "/assets/characters/ado_fullbody.png",
-    archetype: "Cute Junior 🥺",
-    role: "Cute & Clingy Underclassman 🥺",
-    personality: "Cute, innocent, and clingy underclassman. Always follows you around, adores you, and seeks your attention and affection!",
-    sampleVoice: "Sweet, energetic junior accent",
-    greetings: {
-      vi: {
-        text: "Tiền bối ơi! Ado tìm tiền bối mãi đó! Hôm nay tiền bối có rảnh chơi với Ado không? 🥺✨",
-        translation: "Senpai! Ado has been looking everywhere for you! Are you free to play with Ado today? 🥺✨",
-        tip: "'Tiền bối' means 'Senpai / Senior'. 'Có rảnh' means 'Are you free'."
-      },
-      en: {
-        text: "Senpai! Ado has been looking everywhere for you! Are you free to spend time with Ado today? 🥺✨",
-        translation: "Senpai! Ado has been looking everywhere for you! Are you free to spend time with Ado today? 🥺✨",
-        tip: "'Senpai' is a term of respect and affection for an upperclassman."
-      },
-      ja: {
-        text: "先輩！Ado、ずっと先輩を探してたんですよ！今日はAdoと一緒に過ごしてくれますか？ 🥺✨",
-        romaji: "Senpai! Ado, zutto senpai wo sagashitetan desu yo! Kyou wa Ado to issho ni tsugoshite kuremasu ka?",
-        translation: "Senpai! Ado has been looking for you! Will you spend time with Ado today? 🥺✨",
-        tip: "'Senpai' is an upperclassman. 'Issho ni' means 'together'."
-      }
-    }
-  },
-  kou: {
-    id: "kou",
-    name: "Kou",
-    avatar: "/assets/characters/kou_avatar.png",
-    sprite: "/assets/characters/kou_fullbody.png",
     archetype: "Strict Classmate 📚",
     role: "Strict & Reliable Classmate 📚",
     personality: "Strict, dutiful classmate who keeps you on track. Tsundere at heart—acts tough and official, but blushes and softens up when you get close.",
@@ -138,18 +110,46 @@ const BASE_CHARACTERS = {
       vi: {
         text: "Này, cậu lại đi trễ đấy à? Tớ đã chuẩn bị sẵn tài liệu học tập cho cậu rồi... Đừng có nhìn tớ như thế, tớ chỉ làm tròn trách nhiệm lớp phó thôi! 📚",
         translation: "Hey, are you late again? I prepared the study notes for you... Don't look at me like that, I'm just doing my duty as classmate!",
-        tip: "'Trách nhiệm' means 'responsibility/duty'. Kou is secretly caring for you!"
+        tip: "'Trách nhiệm' means 'responsibility/duty'. Ado is secretly caring for you!"
       },
       en: {
         text: "Hey, running late again? I already prepared the study notes for you... Don't look at me like that, I'm just doing my duty as classmate! 📚",
         translation: "Hey, running late again? I already prepared the study notes for you... Don't look at me like that, I'm just doing my duty as classmate! 📚",
-        tip: "Kou acts strict on the outside, but is secretly thoughtful and caring."
+        tip: "Ado acts strict on the outside, but is secretly thoughtful and caring."
       },
       ja: {
         text: "ちょっと、また遅刻？勉強のノート、まとめておいたから… そんな目で見ないでよ、クラスメイトとして当然のことでしょ！ 📚",
         romaji: "Chotto, mata chikoku? Benkyou no nootu, matomete oita kara... sonna me de minai de yo, kurasumeito to shite touzen no koto desho!",
         translation: "Hey, late again? I put together study notes for you... Don't look at me like that, it's only natural as classmates!",
-        tip: "'Touzen' means 'only natural/duty'. Kou is classic tsundere!"
+        tip: "'Touzen' means 'only natural/duty'. Ado is classic tsundere!"
+      }
+    }
+  },
+  kou: {
+    id: "kou",
+    name: "Kou",
+    avatar: "/assets/characters/kou_avatar.png",
+    sprite: "/assets/characters/kou_fullbody.png",
+    archetype: "Cute Junior 🥺",
+    role: "Cute & Clingy Underclassman 🥺",
+    personality: "Cute, innocent, and clingy underclassman. Always follows you around, adores you, and seeks your attention and affection!",
+    sampleVoice: "Sweet, energetic junior accent",
+    greetings: {
+      vi: {
+        text: "Tiền bối ơi! Kou tìm tiền bối mãi đó! Hôm nay tiền bối có rảnh chơi với Kou không? 🥺✨",
+        translation: "Senpai! Kou has been looking everywhere for you! Are you free to play with Kou today? 🥺✨",
+        tip: "'Tiền bối' means 'Senpai / Senior'. 'Có rảnh' means 'Are you free'."
+      },
+      en: {
+        text: "Senpai! Kou has been looking everywhere for you! Are you free to spend time with Kou today? 🥺✨",
+        translation: "Senpai! Kou has been looking everywhere for you! Are you free to spend time with Kou today? 🥺✨",
+        tip: "'Senpai' is a term of respect and affection for an upperclassman."
+      },
+      ja: {
+        text: "先輩！Kou、ずっと先輩を探してたんですよ！今日はKouと一緒に過ごしてくれますか？ 🥺✨",
+        romaji: "Senpai! Kou, zutto senpai wo sagashitetan desu yo! Kyou wa Kou to issho ni tsugoshite kuremasu ka?",
+        translation: "Senpai! Kou has been looking for you! Will you spend time with Kou today? 🥺✨",
+        tip: "'Senpai' is an upperclassman. 'Issho ni' means 'together'."
       }
     }
   },
@@ -189,7 +189,7 @@ const BASE_CHARACTERS = {
     sprite: "/assets/characters/ado_fullbody.png",
     archetype: "Otome Trio 💬",
     role: "Ado, Kou & Ren",
-    personality: "Ado (cute underclassman), Kou (strict tsundere classmate), and Ren (flirty aggressive senior) all vying for your romantic affection while teaching you languages!",
+    personality: "Ado (strict tsundere classmate), Kou (cute underclassman), and Ren (flirty aggressive senior) all vying for your romantic affection while teaching you languages!",
     sampleVoice: "Multilingual trio harmony",
     greetings: {
       vi: {
@@ -1365,18 +1365,18 @@ window.closeActiveChat = closeActiveChat;
 // Interactive Floating Companion Dialogue & Stage Manager
 const COMPANION_INTERACTIONS = {
   ado: [
-    "Tiền bối ơi! Ado đứng đây ngắm tiền bối học nè! 🥺✨",
-    "Senpai! You're doing so well, Ado is proud of you! ❤️",
-    "Tiền bối xoa đầu Ado một cái được không ạ? 🥺",
-    "Hôm nay tiền bối nói chuyện với Ado nhiều hơn nha! 💖",
-    "Senpai! Keep going! Ado is always cheering for you! ✨"
-  ],
-  kou: [
     "C-cậu nhìn tớ làm gì? Tập trung vào bài học đi chứ... 😳📚",
     "D-don't stare so much! Make sure your grammar is correct! 📚",
     "Thật ra... cậu tiến bộ nhanh lắm. Tớ chỉ nhắc nhở vậy thôi. ❤️",
     "Tớ đã chuẩn bị thêm tài liệu rồi, học xong tớ đưa cho. 📝",
     "Đừng có cười lén tớ đấy nhé! Khụ... tớ là lớp phó nghiêm túc mà! 😳"
+  ],
+  kou: [
+    "Tiền bối ơi! Kou đứng đây ngắm tiền bối học nè! 🥺✨",
+    "Senpai! You're doing so well, Kou is proud of you! ❤️",
+    "Tiền bối xoa đầu Kou một cái được không ạ? 🥺",
+    "Hôm nay tiền bối nói chuyện với Kou nhiều hơn nha! 💖",
+    "Senpai! Keep going! Kou is always cheering for you! ✨"
   ],
   ren: [
     "Sao thế nhóc? Bị vẻ đẹp trai của anh làm phân tâm rồi à? 😏✨",
@@ -1386,7 +1386,7 @@ const COMPANION_INTERACTIONS = {
     "You're getting bolder with every text, I love that about you. 😏🔥"
   ],
   group: [
-    "Ado: Tiền bối cố lên! 🥺 | Kou: Tập trung nào! 📚 | Ren: Nhóc ngoan lắm! 😏",
+    "Ado: Tập trung nào! 📚 | Kou: Tiền bối cố lên! 🥺 | Ren: Nhóc ngoan lắm! 😏",
     "Cả 3 người bọn anh đều đang dõi theo em đấy! 💬✨"
   ]
 };
@@ -1439,10 +1439,10 @@ function updateFloatingCompanion(charId, quoteOverride = null, mood = null) {
   let archetypeText = char.archetype || char.role || "Love Interest";
   if (normalizedId === "ado") {
     spriteSrc = char.sprite || "/assets/characters/ado_fullbody.png";
-    archetypeText = "Cute Junior 🥺";
+    archetypeText = "Strict Classmate 📚";
   } else if (normalizedId === "kou") {
     spriteSrc = char.sprite || "/assets/characters/kou_fullbody.png";
-    archetypeText = "Strict Classmate 📚";
+    archetypeText = "Cute Junior 🥺";
   } else if (normalizedId === "ren") {
     spriteSrc = char.sprite || "/assets/characters/ren_fullbody.png";
     archetypeText = "Flirty Senior 😏";
@@ -2579,27 +2579,27 @@ function generateStarterChoices(charId, lastMsgText) {
       ];
       return { prompt, options };
     } else if (charId === "ado") {
-      let prompt = "Choose your reply to Ado (Beginner Choices 🥺):";
+      let prompt = "Choose your reply to Ado (Beginner Choices 📚):";
       let options = [
-        { text: "Chào Ado, tiền bối cũng nhớ Ado lắm nè! 🥺✨", translation: "Hello Ado, Senpai misses you too!" },
-        { text: "Được chứ, đi chơi thôi Ado ơi! 🍰", translation: "Sure, let's hang out Ado!" },
-        { text: "Ado hôm nay ngoan quá, tiền bối thưởng nha! 💖", translation: "Ado is so well-behaved, Senpai will reward you!" }
+        { text: "Cảm ơn Ado nhé, tớ sẽ học hành chăm chỉ! 📚", translation: "Thanks Ado, I will study diligently!" },
+        { text: "Ado chu đáo quá, đừng nghiêm khắc quá nha. 😳", translation: "You're so thoughtful, don't be too strict." },
+        { text: "Chút nữa Ado giảng lại bài này giúp tớ nhé? 💬", translation: "Could you explain this lesson to me later?" }
+      ];
+      return { prompt, options };
+    } else if (charId === "kou") {
+      let prompt = "Choose your reply to Kou (Beginner Choices 🥺):";
+      let options = [
+        { text: "Chào Kou, tiền bối cũng nhớ Kou lắm nè! 🥺✨", translation: "Hello Kou, Senpai misses you too!" },
+        { text: "Được chứ, đi chơi thôi Kou ơi! 🍰", translation: "Sure, let's hang out Kou!" },
+        { text: "Kou hôm nay ngoan quá, tiền bối thưởng nha! 💖", translation: "Kou is so well-behaved, Senpai will reward you!" }
       ];
       if (text.includes("chơi") || text.includes("rảnh") || text.includes("tìm")) {
         options = [
-          { text: "Tiền bối rảnh nè, Ado muốn đi đâu chơi nào? 🍰", translation: "I am free, where does Ado want to go?" },
-          { text: "Được đi chơi với Ado thì tiền bối vui lắm! 💖", translation: "I'd be so happy to hang out with Ado!" },
-          { text: "Ado đứng chờ tiền bối xíu nhé, tới ngay đây! ✨", translation: "Wait for me a bit, I'm coming right away!" }
+          { text: "Tiền bối rảnh nè, Kou muốn đi đâu chơi nào? 🍰", translation: "I am free, where does Kou want to go?" },
+          { text: "Được đi chơi với Kou thì tiền bối vui lắm! 💖", translation: "I'd be so happy to hang out with Kou!" },
+          { text: "Kou đứng chờ tiền bối xíu nhé, tới ngay đây! ✨", translation: "Wait for me a bit, I'm coming right away!" }
         ];
       }
-      return { prompt, options };
-    } else if (charId === "kou") {
-      let prompt = "Choose your reply to Kou (Beginner Choices 📚):";
-      let options = [
-        { text: "Cảm ơn Kou nhé, tớ sẽ học hành chăm chỉ! 📚", translation: "Thanks Kou, I will study diligently!" },
-        { text: "Kou chu đáo quá, đừng nghiêm khắc quá nha. 😳", translation: "You're so thoughtful, don't be too strict." },
-        { text: "Chút nữa Kou giảng lại bài này giúp tớ nhé? 💬", translation: "Could you explain this lesson to me later?" }
-      ];
       return { prompt, options };
     } else if (charId === "ren") {
       let prompt = "Choose your reply to Ren (Beginner Choices 😏):";
@@ -2768,16 +2768,16 @@ function generateContextualWordChips(charId, lastMsgText) {
       return { prompt, chips };
     } else if (charId === "ado") {
       let prompt = "Build your reply to Ado (Vietnamese 🇻🇳):";
-      let chips = ["Cảm", "ơn", "Ado", "em", "ngoan", "quá", "đi", "chơi", "với", "tiền", "bối", "nhé", "ạ"];
-
-      if (text.includes("chơi") || text.includes("tìm") || text.includes("senpai")) {
-        prompt = 'Build reply: "Tiền bối cũng muốn đi chơi với Ado lắm."';
-        chips = ["Tiền", "bối", "cũng", "rất", "muốn", "đi", "chơi", "với", "Ado", "nhé", "ngoan", "á"];
-      }
+      let chips = ["Cảm", "ơn", "Ado", "chu", "đáo", "quá", "tớ", "sẽ", "học", "chăm", "chỉ", "đừng", "lo", "nhé", "ạ"];
       return { prompt, chips };
     } else if (charId === "kou") {
       let prompt = "Build your reply to Kou (Vietnamese 🇻🇳):";
-      let chips = ["Cảm", "ơn", "Kou", "chu", "đáo", "quá", "tớ", "sẽ", "học", "chăm", "chỉ", "đừng", "lo", "nhé"];
+      let chips = ["Cảm", "ơn", "Kou", "em", "ngoan", "quá", "đi", "chơi", "với", "tiền", "bối", "nhé", "ạ"];
+
+      if (text.includes("chơi") || text.includes("tìm") || text.includes("senpai")) {
+        prompt = 'Build reply: "Tiền bối cũng muốn đi chơi với Kou lắm."';
+        chips = ["Tiền", "bối", "cũng", "rất", "muốn", "đi", "chơi", "với", "Kou", "nhé", "ngoan", "á"];
+      }
       return { prompt, chips };
     } else if (charId === "ren") {
       let prompt = "Build your reply to Ren (Vietnamese 🇻🇳):";

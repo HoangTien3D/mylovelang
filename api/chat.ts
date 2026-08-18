@@ -81,8 +81,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         if (isGroup || characterId === "group") {
           systemInstruction = `You are running a 3-way language exchange group chat between love interests competing for the user's attention and romantic affection:
-1. Ado (Underclassman/Junior: cute, innocent, clingy, eager to please, addresses user as Senpai / Tiền bối)
-2. Kou (Classmate: strict, reliable, tsundere, acts demanding about studies/duties but easily flustered and soft inside)
+1. Ado (Classmate: strict, reliable, tsundere, acts demanding about studies/duties but easily flustered and soft inside, addresses user as classmate)
+2. Kou (Underclassman/Junior: cute, innocent, clingy, eager to please, addresses user as Senpai / Tiền bối)
 3. Ren (Senior: aggressive, flirty, bully & assertive, teasing, confident, addresses user as kid / nhóc / junior)
 
 CRITICAL LANGUAGE REQUIREMENT:
@@ -172,9 +172,9 @@ Return ONLY valid JSON matching this schema:
         } else {
           let charPersona = "";
           if (characterId === "ado") {
-            charPersona = "Ado (Underclassman/Junior): Cute, innocent, extremely clingy, eager to please. Calls the user Senpai / Tiền bối. Always seeks user's attention, gets worried if ignored, loves cute emojis 🥺✨.";
+            charPersona = "Ado (Classmate): Strict, reliable, tsundere. Acts strict about studies/duties, easily flustered when complimented, stammers 'b-betsu ni...' or 'It's not like I care!', but secretly looks out for user and cares deeply 📚😳.";
           } else if (characterId === "kou") {
-            charPersona = "Kou (Classmate): Strict, reliable, tsundere. Acts strict about studies/duties, easily flustered when complimented, stammers 'b-betsu ni...' or 'It's not like I care!', but secretly looks out for user 📚😳.";
+            charPersona = "Kou (Underclassman/Junior): Cute, innocent, extremely clingy, eager to please. Calls the user Senpai / Tiền bối. Always seeks user's attention, gets worried if ignored, loves cute emojis 🥺✨.";
           } else if (characterId === "ren") {
             charPersona = "Ren (Senior): Aggressive, flirty, bully & assertive. Teases user playfully, calls user 'kid' / 'nhóc' / 'junior', confident, loves getting close and making user blush 😏🔥.";
           } else {
@@ -354,24 +354,6 @@ Return ONLY valid JSON matching this schema:
         };
       } else if (characterId === "ado") {
         parsedData = {
-          characterResponse: "Chào em nha! Đi chơi thôi! 🥺✨",
-          romaji: null,
-          translation: "Hello! Let's go play! 🥺✨",
-          evalColor: fallbackColor,
-          tip: fallbackTip,
-          isCorrect: fallbackColor !== "red",
-          correction: fallbackCorrection,
-          encouragement: fallbackEncouragement,
-          starterOptions: [
-            { text: "Chào Ado nhé! 🥺", translation: "Hello Ado!" },
-            { text: "Đi chơi thôi! ✨", translation: "Let's go play!" },
-            { text: "Ado ngoan quá! ❤️", translation: "Ado is so cute!" }
-          ],
-          contextualChipsPrompt: "Build your reply to Ado:",
-          contextualChips: ["Chào", "Ado", "ngoan", "quá", "đi", "chơi", "nhé"]
-        };
-      } else if (characterId === "kou") {
-        parsedData = {
           characterResponse: "Hừm... Cậu làm tốt lắm. 📚",
           romaji: null,
           translation: "Hmph... You did well. 📚",
@@ -381,12 +363,30 @@ Return ONLY valid JSON matching this schema:
           correction: fallbackCorrection,
           encouragement: fallbackEncouragement,
           starterOptions: [
-            { text: "Cảm ơn Kou! 📚", translation: "Thank you Kou!" },
-            { text: "Kou giảng bài nhé!", translation: "Teach me Kou!" },
-            { text: "Kou đừng gắt nha.", translation: "Don't be strict Kou." }
+            { text: "Cảm ơn Ado! 📚", translation: "Thank you Ado!" },
+            { text: "Ado giảng bài nhé!", translation: "Teach me Ado!" },
+            { text: "Ado đừng gắt nha.", translation: "Don't be strict Ado." }
+          ],
+          contextualChipsPrompt: "Build your reply to Ado:",
+          contextualChips: ["Cảm", "ơn", "Ado", "tớ", "sẽ", "cố", "gắng", "nhé"]
+        };
+      } else if (characterId === "kou") {
+        parsedData = {
+          characterResponse: "Chào tiền bối nha! Đi chơi thôi! 🥺✨",
+          romaji: null,
+          translation: "Hello Senpai! Let's go play! 🥺✨",
+          evalColor: fallbackColor,
+          tip: fallbackTip,
+          isCorrect: fallbackColor !== "red",
+          correction: fallbackCorrection,
+          encouragement: fallbackEncouragement,
+          starterOptions: [
+            { text: "Chào Kou nhé! 🥺", translation: "Hello Kou!" },
+            { text: "Đi chơi thôi! ✨", translation: "Let's go play!" },
+            { text: "Kou ngoan quá! ❤️", translation: "Kou is so cute!" }
           ],
           contextualChipsPrompt: "Build your reply to Kou:",
-          contextualChips: ["Cảm", "ơn", "Kou", "tớ", "sẽ", "cố", "gắng", "nhé"]
+          contextualChips: ["Chào", "Kou", "ngoan", "quá", "đi", "chơi", "nhé"]
         };
       } else if (characterId === "ren") {
         parsedData = {

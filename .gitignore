@@ -6,3 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Custom user character profile pictures and standee assets
+public/assets/characters/*.png
+public/assets/characters/*.jpg
+public/assets/characters/*.jpeg
+public/assets/characters/*.webp
+
