@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect width="256" height="256" fill="#f5f3ff" rx="28"/>
+  <rect x="8" y="8" width="240" height="240" rx="20" fill="none" stroke="#8b5cf6" stroke-width="3" stroke-dasharray="8 6"/>
+  <circle cx="128" cy="95" r="42" fill="#ddd6fe" stroke="#6d28d9" stroke-width="3"/>
+  <path d="M60 210 c0 -35 25 -58 68 -58 s68 23 68 58 z" fill="#ddd6fe" stroke="#6d28d9" stroke-width="3"/>
+  <text x="128" y="165" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="bold" fill="#5b21b6" text-anchor="middle">REN</text>
+  <text x="128" y="190" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#4c1d95" text-anchor="middle">256 × 256 px</text>
+  <text x="128" y="240" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#5b21b6" text-anchor="middle">Drop ren_avatar.png here</text>
+</svg>
