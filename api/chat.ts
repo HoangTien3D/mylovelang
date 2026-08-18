@@ -81,12 +81,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         if (isGroup || characterId === "group") {
           systemInstruction = `You are running a 3-way language exchange group chat between love interests competing for the user's attention and romantic affection:
-1. Bao Nguyen (Barista & Chef, warm & attentive)
-2. Julian Vance (Literature Scholar, refined & romantic)
-3. Ren Takahashi (Manga Illustrator & Tea Master, reserved & tsundere)
+1. Ado (Underclassman/Junior: cute, innocent, clingy, eager to please, addresses user as Senpai / Tiền bối)
+2. Kou (Classmate: strict, reliable, tsundere, acts demanding about studies/duties but easily flustered and soft inside)
+3. Ren (Senior: aggressive, flirty, bully & assertive, teasing, confident, addresses user as kid / nhóc / junior)
 
 CRITICAL LANGUAGE REQUIREMENT:
-The selected target language for this conversation is MUST BE 100% EXCLUSIVELY ${targetLangName} (${targetLangCode}).
+The selected target language for this conversation MUST BE 100% EXCLUSIVELY ${targetLangName} (${targetLangCode}).
 Both characters MUST speak in ${targetLangName}!
 Do NOT output Vietnamese if the target language is English or Japanese!
 Do NOT output English if the target language is Vietnamese or Japanese!
@@ -101,42 +101,89 @@ Recent conversation:
 ${trimmedHistory}
 
 Instructions:
-1. Short & Casual Texting: Keep responses natural, short (10-20 words max or pure emojis).
-2. Pure Emoji Reactions: Characters can respond with pure emoji reactions (e.g. "🥰", "☕❤️", "👀", "😳", "✨") or short emoji-led responses when natural!
-3. Short User Answers: The user may send short answers like "yeah", "ok", "cool", "no", "idk", "me too", "haha", "sure", "😊", "❤️". Treat these as 100% valid natural conversation—NEVER mark them as grammar errors!
-4. GRAMMAR EVALUATION: Check if "${userText}" has any language errors. If user gave short/casual answer or emojis, set 'isCorrect': true and 'correction': 'Spot on!'.
-5. Provide 5-6 short word chips in ${targetLangName} for ${userName}'s next turn in 'contextualChips' and prompt guide in 'contextualChipsPrompt'.
+1. Ultra-Simple Beginner Language (A1 / Baby Talk Level): Keep responses very short, simple, and cute (strictly 3 to 8 words max, e.g., "Chào em nha! 🥺✨", "Đi chơi thôi nào!", "Cảm ơn em! ❤️"). Do NOT use complex grammar, subordinate clauses, or long sentences!
+2. Pure Emoji Reactions: Characters can respond with pure emoji reactions (e.g. "🥺✨", "😤📚", "😏🔥", "😳", "✨") or short emoji-led responses when natural!
+3. Ensure Ado sounds clingy/cute, Kou sounds strict yet tsundere, and Ren sounds flirty/assertive.
 
-10. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for Klipy GIFs matching the emotion/context (e.g., "anime coffee blush", "anime reading book heart", "anime tea blush").
+EVALUATION COLOR RANGE & INSIGHTFUL FEEDBACK RULES:
+Analyze "${userText}" and classify its language quality into 'evalColor' ("red", "yellow", or "green"):
+
+1. "red" (SEVERELY BROKEN LANGUAGE):
+   - Trigger: Major grammar mistakes, broken sentence structure, incomprehensible phrasing, severe particle/verb conjugation errors.
+   - Set 'evalColor': "red"
+   - Set 'isCorrect': false
+   - Set 'correction': The corrected standard sentence in ${targetLangName}.
+   - Set 'tip': An insightful, clear breakdown explaining the grammar rule that was broken and how to fix it properly.
+   - Set 'encouragement': "Grammar fix needed! Here is the corrected structure:"
+
+2. "yellow" (SLANG & CASUAL PHRASING):
+   - Trigger: Slang, informal abbreviations (e.g., "idk", "gonna", "u", "r", "wanna", "được ko", "ko", "bùn", "chơi luôn", "vl", "omg", "imho", "idfc", "thôi nha", "omw", "tbh"), or colloquialisms.
+   - Set 'evalColor': "yellow"
+   - Set 'isCorrect': true
+   - Set 'correction': Standard/formal equivalent term (e.g. "Standard term: 'I do not know' instead of 'idk'" or "Formal: 'Được không'").
+   - Set 'tip': An insightful explanation of WHAT the slang term means, its social context, AND a clear reminder of the standard/formal term for learning.
+   - Set 'encouragement': "Fun casual slang! Here is a reminder of the formal term:"
+
+3. "green" (GOOD GRAMMAR & VOCAB USAGE):
+   - Trigger: Good grammar, correct sentence structure, natural vocabulary, or standard phrases (including natural short replies like "sure", "ok", "yes", "thank you", "cảm ơn", emojis).
+   - Set 'evalColor': "green"
+   - Set 'isCorrect': true
+   - Set 'correction': "Spot on!" (or a polished alternative if applicable)
+   - Set 'tip': An insightful breakdown praising their grammar/vocab selection, explaining WHY it sounds natural, authentic, or contextually fitting.
+   - Set 'encouragement': "Excellent grammar and natural vocabulary usage!"
+
+5. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation), e.g., ["Cảm", "ơn", "hai", "cậu", "rất", "vui", "nói", "chuyện", "nhé", "ạ"]. Do NOT suggest full sentences or multi-word phrases!
+6. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào hai cậu! ✨", "translation": "Hello both of you!"}, {"text": "Cảm ơn nhé! ❤️", "translation": "Thank you!"}, {"text": "Đi chơi thôi! 🍰", "translation": "Let's go play!"}].
+7. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for popular pop culture or meme GIFs matching your emotion (e.g., "shrek happy", "ishowspeed hype", "funny cat reaction", "popular meme reaction", "steve harvey shock"). Only include this ONCE IN A WHILE (occasionally) when a GIF reaction is truly fitting!
 
 Return ONLY valid JSON matching this schema:
 {
   "isGroup": true,
   "groupResponses": [
     {
-      "speaker": "bao",
-      "speakerName": "Bao Nguyen",
-      "text": "Short response or emoji from Bao in ${targetLangName}",
+      "speaker": "ado",
+      "speakerName": "Ado",
+      "text": "Short 3-6 word response from Ado in ${targetLangName}",
       "translation": "Full English translation",
-      "tip": "Short language tip from Bao"
+      "tip": "Short language tip from Ado"
     },
     {
-      "speaker": "julian",
-      "speakerName": "Julian Vance",
-      "text": "Short response or emoji from Julian in ${targetLangName}",
+      "speaker": "kou",
+      "speakerName": "Kou",
+      "text": "Short 3-6 word response from Kou in ${targetLangName}",
       "translation": "Full English translation",
-      "tip": "Short language tip from Julian"
+      "tip": "Short language tip from Kou"
     }
   ],
+  "evalColor": "green",
   "isCorrect": true,
-  "correction": "Grammar correction or 'Spot on!'",
-  "encouragement": "Positive praise sentence",
+  "correction": "Grammar correction or standard formal term or 'Spot on!'",
+  "tip": "Insightful breakdown explaining grammar, slang, or vocabulary choice",
+  "encouragement": "Positive praise or feedback title sentence",
+  "starterOptions": [
+    { "text": "Chào hai cậu! ✨", "translation": "Hello both of you!" },
+    { "text": "Cảm ơn nhé! ❤️", "translation": "Thank you!" },
+    { "text": "Đi chơi thôi! 🍰", "translation": "Let's go hang out!" }
+  ],
   "contextualChipsPrompt": "Build your reply:",
-  "contextualChips": ["chip1", "chip2", "chip3", "chip4", "chip5"],
-  "gifQuery": "anime coffee heart"
+  "contextualChips": ["Cảm", "ơn", "hai", "cậu", "rất", "vui", "nói", "chuyện", "nhé", "ạ"],
+  "gifQuery": "shrek happy"
 }`;
         } else {
-          systemInstruction = `You are a character (${characterName || "Love Interest"}) in an Otome romance dating sim chat game.
+          let charPersona = "";
+          if (characterId === "ado") {
+            charPersona = "Ado (Underclassman/Junior): Cute, innocent, extremely clingy, eager to please. Calls the user Senpai / Tiền bối. Always seeks user's attention, gets worried if ignored, loves cute emojis 🥺✨.";
+          } else if (characterId === "kou") {
+            charPersona = "Kou (Classmate): Strict, reliable, tsundere. Acts strict about studies/duties, easily flustered when complimented, stammers 'b-betsu ni...' or 'It's not like I care!', but secretly looks out for user 📚😳.";
+          } else if (characterId === "ren") {
+            charPersona = "Ren (Senior): Aggressive, flirty, bully & assertive. Teases user playfully, calls user 'kid' / 'nhóc' / 'junior', confident, loves getting close and making user blush 😏🔥.";
+          } else {
+            charPersona = `${characterName}: Romantic love interest in a dating sim.`;
+          }
+
+          systemInstruction = `You are playing the character ${characterName} in an Otome romance dating sim chat game.
+CHARACTER PERSONA & TROPE:
+${charPersona}
 
 CRITICAL LANGUAGE REQUIREMENT:
 The selected target language for this conversation MUST BE 100% EXCLUSIVELY ${targetLangName} (${targetLangCode}).
@@ -155,30 +202,61 @@ Recent conversation:
 ${trimmedHistory}
 
 Instructions:
-1. Provide a short, natural, and realistic romantic response in ${targetLangName} addressing ${userName} (strictly 10-20 words max, or pure emoji reaction).
-2. Pure Emoji Reactions: You CAN respond with pure emoji reactions (e.g. "🥰", "☕❤️", "👀", "😳", "✨", "😊") or short emoji-led responses when appropriate!
-3. Short User Answers: The user may send short answers or casual phrases (e.g. "yeah", "ok", "cool", "no", "idk", "me too", "haha", "sure", "😊", "❤️"). Treat these as 100% valid natural conversation—NEVER mark them as grammar errors!
-4. If ${userName} is saying goodbye or leaving, send a warm, brief sign-off text in ${targetLangName}.
-5. If target language is Japanese (${targetLangCode} === 'ja'), provide Romaji in 'romaji'. Otherwise set 'romaji' to null.
-6. Provide full English translation in 'translation'.
-7. Provide a 1-sentence helpful language tip in 'tip'.
-8. GRAMMAR EVALUATION: Check if "${userText}" has any grammar errors. If short answer/emoji, set 'isCorrect': true and 'correction': 'Spot on!'.
-9. Provide 5-6 short word chips in ${targetLangName} for next turn in 'contextualChips' and prompt guide in 'contextualChipsPrompt'.
+1. Ultra-Simple Beginner Language (A1 / Baby Talk Level): Keep your in-character response extremely short, simple, and elementary (strictly 3 to 8 words maximum, e.g., "Chào em nha! 🥺✨", "Ado nhớ em lắm!", "Đi chơi thôi nào!", "Ngoan quá! ❤️", "Hừm... Tốt lắm. 📚", "Chào nhóc nhé. 😏"). Ban long sentences, complicated vocabulary, or dense grammar!
+2. Pure Emoji Reactions: You CAN respond with pure emoji reactions (e.g. "🥺✨", "😤📚", "😏🔥", "😳", "✨", "😊") or short emoji-led responses when appropriate!
+3. If ${userName} is saying goodbye or leaving, send a brief sign-off text in ${targetLangName} matching your personality.
+4. If target language is Japanese (${targetLangCode} === 'ja'), provide Romaji in 'romaji'. Otherwise set 'romaji' to null.
+5. Provide full English translation in 'translation'.
 
-10. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for Klipy GIFs matching your emotion (e.g., "anime coffee blush", "anime book heart", "anime tea blush").
+EVALUATION COLOR RANGE & INSIGHTFUL FEEDBACK RULES:
+Analyze "${userText}" and classify its language quality into 'evalColor' ("red", "yellow", or "green"):
+
+1. "red" (SEVERELY BROKEN LANGUAGE):
+   - Trigger: Major grammar mistakes, broken sentence structure, incomprehensible phrasing, severe particle/verb conjugation errors.
+   - Set 'evalColor': "red"
+   - Set 'isCorrect': false
+   - Set 'correction': The corrected standard sentence in ${targetLangName}.
+   - Set 'tip': An insightful, clear breakdown explaining the grammar rule that was broken and how to fix it properly.
+   - Set 'encouragement': "Grammar fix needed! Here is the corrected structure:"
+
+2. "yellow" (SLANG & CASUAL PHRASING):
+   - Trigger: Slang, informal abbreviations (e.g., "idk", "gonna", "u", "r", "wanna", "được ko", "ko", "bùn", "chơi luôn", "vl", "omg", "imho", "idfc", "thôi nha", "omw", "tbh"), or colloquialisms.
+   - Set 'evalColor': "yellow"
+   - Set 'isCorrect': true
+   - Set 'correction': Standard/formal equivalent term (e.g. "Standard term: 'I do not know' instead of 'idk'" or "Formal: 'Được không'").
+   - Set 'tip': An insightful explanation of WHAT the slang term means, its social context, AND a clear reminder of the standard/formal term for learning.
+   - Set 'encouragement': "Fun casual slang! Here is a reminder of the formal term:"
+
+3. "green" (GOOD GRAMMAR & VOCAB USAGE):
+   - Trigger: Good grammar, correct sentence structure, natural vocabulary, or standard phrases (including natural short replies like "sure", "ok", "yes", "thank you", "cảm ơn", emojis).
+   - Set 'evalColor': "green"
+   - Set 'isCorrect': true
+   - Set 'correction': "Spot on!" (or a polished alternative if applicable)
+   - Set 'tip': An insightful breakdown praising their grammar/vocab selection, explaining WHY it sounds natural, authentic, or contextually fitting.
+   - Set 'encouragement': "Excellent grammar and natural vocabulary usage!"
+
+6. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation), e.g., ["Thank", "you", "so", "much", "I", "am", "happy", "to", "see", "you", "too"]. Do NOT suggest full sentences or multi-word phrases!
+7. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào Ado! 🥺", "translation": "Hello Ado!"}, {"text": "Đi chơi nhé! ✨", "translation": "Let's hang out!"}, {"text": "Cảm ơn em! ❤️", "translation": "Thank you!"}].
+8. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for popular pop culture or meme GIFs matching your emotion (e.g., "shrek happy", "ishowspeed hype", "funny cat reaction", "popular meme reaction", "steve harvey shock"). Only include this ONCE IN A WHILE (occasionally) when a GIF reaction is truly fitting!
 
 Return ONLY valid JSON matching this schema:
 {
-  "characterResponse": "short response or emoji in ${targetLangName}",
+  "characterResponse": "short 3-8 word response or emoji in ${targetLangName}",
   "romaji": "romaji text if Japanese, else null",
   "translation": "English translation",
-  "tip": "1-sentence tip",
+  "evalColor": "green",
+  "tip": "Insightful breakdown explaining grammar, slang, or vocabulary choice",
   "isCorrect": true,
-  "correction": "Grammar correction or 'Spot on!'",
-  "encouragement": "Positive praise sentence",
+  "correction": "Grammar correction or standard formal term or 'Spot on!'",
+  "encouragement": "Positive praise or feedback title sentence",
+  "starterOptions": [
+    { "text": "Option 1 in 2-5 words", "translation": "English translation 1" },
+    { "text": "Option 2 in 2-5 words", "translation": "English translation 2" },
+    { "text": "Option 3 in 2-5 words", "translation": "English translation 3" }
+  ],
   "contextualChipsPrompt": "Next turn prompt guide",
-  "contextualChips": ["chip1", "chip2", "chip3", "chip4", "chip5"],
-  "gifQuery": "anime coffee heart"
+  "contextualChips": ["word1", "word2", "word3", "word4", "word5", "word6"],
+  "gifQuery": "shrek happy"
 }`;
         }
 
@@ -220,55 +298,131 @@ Return ONLY valid JSON matching this schema:
     }
 
     if (!parsedData) {
-      // In-character smart fallback generator
+      // Dynamic evaluation color classifier for fallback
+      let fallbackColor = "green";
+      let fallbackCorrection = "Spot on!";
+      let fallbackTip = "Language Insight: Great grammar and natural phrase usage!";
+      let fallbackEncouragement = "Excellent grammar and natural vocabulary usage!";
+
+      const textLower = (userText || "").toLowerCase();
+      const slangRegex = /\b(idk|gonna|wanna|u|r|ko|được ko|bùn|chơi luôn|vcl|vl|omg|imho|idfc|tbh|omw)\b/i;
+
+      if (slangRegex.test(textLower)) {
+        fallbackColor = "yellow";
+        fallbackCorrection = "Standard term: Expand abbreviations into full formal terms (e.g. 'I do not know' or 'Được không')";
+        fallbackTip = "Slang Insight: You used informal slang/abbreviation. It's great for casual texting, but remember formal phrasing for learning standard grammar!";
+        fallbackEncouragement = "Fun casual slang! Here is a reminder of the formal term:";
+      } else if (textLower.length > 25 && !textLower.includes(" ")) {
+        fallbackColor = "red";
+        fallbackCorrection = "Grammar Fix: Ensure clear word spacing and grammar structure";
+        fallbackTip = "Grammar Rule: Severely broken sentence structure. Make sure words are separated with proper spaces and conjugation.";
+        fallbackEncouragement = "Grammar fix needed! Here is the corrected structure:";
+      }
+
+      // In-character smart fallback generator (Ultra-Simple Beginner Level)
       if (characterId === "group" || isGroup) {
         parsedData = {
           isGroup: true,
           groupResponses: [
             {
-              speaker: "bao",
-              speakerName: "Bao Nguyen",
-              text: "Em nhắn dễ thương quá! Anh vừa pha ly cà phê thơm phức cho em nè! ☕❤️",
-              translation: "Bao: Your message is so cute! I brewed a fragrant coffee for you! ☕❤️",
-              tip: "Bao is showing affection through his coffee brewing."
+              speaker: "ado",
+              speakerName: "Ado",
+              text: "Ado nhớ bạn lắm nè! 🥺✨",
+              translation: "Ado: I miss you so much! 🥺✨",
+              tip: "Ado is showing his cute junior affection."
             },
             {
-              speaker: "julian",
-              speakerName: "Julian Vance",
-              text: "Splendid words, MC! Talking with you always brightens my day! ✨",
-              translation: "Julian: Splendid words, MC! Talking with you always brightens my day! ✨",
-              tip: "Julian loves chatting with you in the group chat."
+              speaker: "kou",
+              speakerName: "Kou",
+              text: "Hừm... Học bài xong chưa? 📚",
+              translation: "Kou: Hmph... Are you done studying? 📚",
+              tip: "Kou is showing his tsundere caring side."
             }
           ],
-          isCorrect: true,
-          correction: "Spot on!",
-          encouragement: "Great effort! Your sentence was clear and natural.",
-          contextualChipsPrompt: "Build your reply to Bao & Julian:",
-          contextualChips: ["Cảm ơn hai anh", "Cà phê ngon lắm", "I love chatting with both of you", "Hai anh rất dễ thương", "Hẹn gặp lại"]
+          evalColor: fallbackColor,
+          isCorrect: fallbackColor !== "red",
+          correction: fallbackCorrection,
+          tip: fallbackTip,
+          encouragement: fallbackEncouragement,
+          starterOptions: [
+            { text: "Chào hai cậu! ✨", translation: "Hello both of you!" },
+            { text: "Cảm ơn nhé! ❤️", translation: "Thank you!" },
+            { text: "Đi chơi thôi! 🍰", translation: "Let's go play!" }
+          ],
+          contextualChipsPrompt: "Build your reply to Ado & Kou:",
+          contextualChips: ["Cảm", "ơn", "hai", "cậu", "Ado", "Kou", "nhé", "ạ"]
         };
-      } else if (characterId === "bao") {
+      } else if (characterId === "ado") {
         parsedData = {
-          characterResponse: "Cảm ơn em nha! Nghe em nói làm anh vui cả ngày luôn á. Em uống cà phê chưa? ☕",
+          characterResponse: "Chào em nha! Đi chơi thôi! 🥺✨",
           romaji: null,
-          translation: "Thank you sweetheart! Hearing you talk made my whole day happy. Have you had coffee yet?",
-          tip: "'Cảm ơn em' is a warm way to say thank you to someone younger or a sweetheart.",
-          isCorrect: true,
-          correction: "Spot on!",
-          encouragement: "Tuyệt vời! Cụm từ của em rất chính xác và tự nhiên.",
-          contextualChipsPrompt: "Build your reply to Bao (Vietnamese 🇻🇳):",
-          contextualChips: ["Cho em một ly cà phê", "Cảm ơn anh Bao", "Anh Bao rất dễ thương", "Em rảnh nè", "Hẹn gặp lại anh"]
+          translation: "Hello! Let's go play! 🥺✨",
+          evalColor: fallbackColor,
+          tip: fallbackTip,
+          isCorrect: fallbackColor !== "red",
+          correction: fallbackCorrection,
+          encouragement: fallbackEncouragement,
+          starterOptions: [
+            { text: "Chào Ado nhé! 🥺", translation: "Hello Ado!" },
+            { text: "Đi chơi thôi! ✨", translation: "Let's go play!" },
+            { text: "Ado ngoan quá! ❤️", translation: "Ado is so cute!" }
+          ],
+          contextualChipsPrompt: "Build your reply to Ado:",
+          contextualChips: ["Chào", "Ado", "ngoan", "quá", "đi", "chơi", "nhé"]
+        };
+      } else if (characterId === "kou") {
+        parsedData = {
+          characterResponse: "Hừm... Cậu làm tốt lắm. 📚",
+          romaji: null,
+          translation: "Hmph... You did well. 📚",
+          evalColor: fallbackColor,
+          tip: fallbackTip,
+          isCorrect: fallbackColor !== "red",
+          correction: fallbackCorrection,
+          encouragement: fallbackEncouragement,
+          starterOptions: [
+            { text: "Cảm ơn Kou! 📚", translation: "Thank you Kou!" },
+            { text: "Kou giảng bài nhé!", translation: "Teach me Kou!" },
+            { text: "Kou đừng gắt nha.", translation: "Don't be strict Kou." }
+          ],
+          contextualChipsPrompt: "Build your reply to Kou:",
+          contextualChips: ["Cảm", "ơn", "Kou", "tớ", "sẽ", "cố", "gắng", "nhé"]
+        };
+      } else if (characterId === "ren") {
+        parsedData = {
+          characterResponse: "Chào nhóc nhé. Ngoan lắm! 😏✨",
+          romaji: null,
+          translation: "Hello kid. Good job! 😏✨",
+          evalColor: fallbackColor,
+          tip: fallbackTip,
+          isCorrect: fallbackColor !== "red",
+          correction: fallbackCorrection,
+          encouragement: fallbackEncouragement,
+          starterOptions: [
+            { text: "Chào anh Ren! 😏", translation: "Hello Ren!" },
+            { text: "Em không phải nhóc!", translation: "I am not a kid!" },
+            { text: "Anh Ren trêu em!", translation: "Ren is teasing me!" }
+          ],
+          contextualChipsPrompt: "Build your reply to Ren:",
+          contextualChips: ["Chào", "anh", "Ren", "em", "không", "phải", "nhóc", "đâu"]
         };
       } else {
         parsedData = {
-          characterResponse: "What a charming sentiment! Reading your words always brings a smile to my face, MC.",
+          characterResponse: "Hello! So happy to talk! ✨",
           romaji: null,
-          translation: "What a charming sentiment! Reading your words always brings a smile to my face, MC.",
-          tip: "'Charming sentiment' expresses gentle romantic affection.",
-          isCorrect: true,
-          correction: "Spot on!",
-          encouragement: "Splendid phrasing! Excellent work expressing your thoughts.",
-          contextualChipsPrompt: "Build your reply to Julian (English 🇬🇧):",
-          contextualChips: ["I would love to read with you", "Thank you Julian", "You are very kind", "I am happy to talk", "Talk to you later"]
+          translation: "Hello! So happy to talk! ✨",
+          evalColor: fallbackColor,
+          tip: fallbackTip,
+          isCorrect: fallbackColor !== "red",
+          correction: fallbackCorrection,
+          encouragement: fallbackEncouragement,
+          starterOptions: [
+            { text: "Hello! How are you?", translation: "Hello! How are you?" },
+            { text: "Thank you so much! ❤️", translation: "Thank you so much! ❤️" },
+            { text: "Talk to you soon!", translation: "Talk to you soon!" }
+          ],
+          contextualChipsPrompt: "Build your reply:",
+          contextualChips: ["Hello", "Thank", "you", "happy", "to", "talk", "with", "you"]
         };
       }
       usedModel = "fallback-engine";

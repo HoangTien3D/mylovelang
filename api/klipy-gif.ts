@@ -35,10 +35,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let searchQuery = q;
     if (!searchQuery) {
-      if (characterId === "bao") searchQuery = "anime coffee barista cute";
-      else if (characterId === "julian") searchQuery = "anime literature reading book";
-      else if (characterId === "ren") searchQuery = "anime tea master illustration";
-      else searchQuery = "anime cute heart greeting";
+      if (characterId === "bao") searchQuery = "funny coffee meme";
+      else if (characterId === "julian") searchQuery = "shrek meme reaction";
+      else if (characterId === "ren") searchQuery = "ishowspeed reaction meme";
+      else searchQuery = "trending pop culture meme";
     }
 
     const klipyUrl = `https://api.klipy.com/api/v1/${apiKey}/gifs/search?q=${encodeURIComponent(searchQuery)}&limit=${limit}`;

@@ -21,6 +21,10 @@ async function startServer() {
   app.post("/api/analytics", (req, res) => analyticsHandler(req as any, res as any));
   app.post("/api/sync-user", (req, res) => syncUserHandler(req as any, res as any));
 
+  // Serve static assets directory directly
+  app.use("/assets", express.static(path.join(process.cwd(), "public/assets")));
+  app.use("/assets", express.static(path.join(process.cwd(), "assets")));
+
   // Vite middleware setup
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
