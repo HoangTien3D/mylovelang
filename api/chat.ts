@@ -92,6 +92,9 @@ Do NOT output Vietnamese if the target language is English or Japanese!
 Do NOT output English if the target language is Vietnamese or Japanese!
 Do NOT output Japanese if the target language is Vietnamese or English!
 
+NO EMOJIS RULE:
+Do NOT use emojis in texting or character dialogue! Keep all character text, replies, and options free of emojis.
+
 USER PROFILE: Name: "${userName}", Pronouns: "${userPronouns}", Age: "${userAge}".
 Address and refer to the user directly as "${userName}".
 
@@ -101,8 +104,8 @@ Recent conversation:
 ${trimmedHistory}
 
 Instructions:
-1. Ultra-Simple Beginner Language (A1 / Baby Talk Level): Keep responses very short, simple, and cute (strictly 3 to 8 words max, e.g., "Chào em nha! 🥺✨", "Đi chơi thôi nào!", "Cảm ơn em! ❤️"). Do NOT use complex grammar, subordinate clauses, or long sentences!
-2. Pure Emoji Reactions: Characters can respond with pure emoji reactions (e.g. "🥺✨", "😤📚", "😏🔥", "😳", "✨") or short emoji-led responses when natural!
+1. Ultra-Simple Beginner Language (A1 Level): Keep responses very short, simple, and natural (strictly 3 to 8 words max, e.g., "Chào em nha!", "Đi chơi thôi nào!", "Cảm ơn em!"). Do NOT use complex grammar, subordinate clauses, or long sentences!
+2. Strict No-Emoji Rule: Do NOT include emojis in character dialogues, starter options, or chips!
 3. Ensure Ado sounds clingy/cute, Kou sounds strict yet tsundere, and Ren sounds flirty/assertive.
 
 EVALUATION COLOR RANGE & INSIGHTFUL FEEDBACK RULES:
@@ -125,7 +128,7 @@ Analyze "${userText}" and classify its language quality into 'evalColor' ("red",
    - Set 'encouragement': "Fun casual slang! Here is a reminder of the formal term:"
 
 3. "green" (GOOD GRAMMAR & VOCAB USAGE):
-   - Trigger: Good grammar, correct sentence structure, natural vocabulary, or standard phrases (including natural short replies like "sure", "ok", "yes", "thank you", "cảm ơn", emojis).
+   - Trigger: Good grammar, correct sentence structure, natural vocabulary, or standard phrases (including natural short replies like "sure", "ok", "yes", "thank you", "cảm ơn").
    - Set 'evalColor': "green"
    - Set 'isCorrect': true
    - Set 'correction': "Spot on!" (or a polished alternative if applicable)
@@ -133,7 +136,7 @@ Analyze "${userText}" and classify its language quality into 'evalColor' ("red",
    - Set 'encouragement': "Excellent grammar and natural vocabulary usage!"
 
 5. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation), e.g., ["Cảm", "ơn", "hai", "cậu", "rất", "vui", "nói", "chuyện", "nhé", "ạ"]. Do NOT suggest full sentences or multi-word phrases!
-6. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào hai cậu! ✨", "translation": "Hello both of you!"}, {"text": "Cảm ơn nhé! ❤️", "translation": "Thank you!"}, {"text": "Đi chơi thôi! 🍰", "translation": "Let's go play!"}].
+6. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options without emojis in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào hai cậu!", "translation": "Hello both of you!"}, {"text": "Cảm ơn nhé!", "translation": "Thank you!"}, {"text": "Đi chơi thôi!", "translation": "Let's go play!"}].
 7. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for popular pop culture or meme GIFs matching your emotion (e.g., "shrek happy", "ishowspeed hype", "funny cat reaction", "popular meme reaction", "steve harvey shock"). Only include this ONCE IN A WHILE (occasionally) when a GIF reaction is truly fitting!
 
 Return ONLY valid JSON matching this schema:
@@ -143,14 +146,14 @@ Return ONLY valid JSON matching this schema:
     {
       "speaker": "ado",
       "speakerName": "Ado",
-      "text": "Short 3-6 word response from Ado in ${targetLangName}",
+      "text": "Short 3-6 word response from Ado in ${targetLangName} without emojis",
       "translation": "Full English translation",
       "tip": "Short language tip from Ado"
     },
     {
       "speaker": "kou",
       "speakerName": "Kou",
-      "text": "Short 3-6 word response from Kou in ${targetLangName}",
+      "text": "Short 3-6 word response from Kou in ${targetLangName} without emojis",
       "translation": "Full English translation",
       "tip": "Short language tip from Kou"
     }
@@ -161,9 +164,9 @@ Return ONLY valid JSON matching this schema:
   "tip": "Insightful breakdown explaining grammar, slang, or vocabulary choice",
   "encouragement": "Positive praise or feedback title sentence",
   "starterOptions": [
-    { "text": "Chào hai cậu! ✨", "translation": "Hello both of you!" },
-    { "text": "Cảm ơn nhé! ❤️", "translation": "Thank you!" },
-    { "text": "Đi chơi thôi! 🍰", "translation": "Let's go hang out!" }
+    { "text": "Chào hai cậu!", "translation": "Hello both of you!" },
+    { "text": "Cảm ơn nhé!", "translation": "Thank you!" },
+    { "text": "Đi chơi thôi!", "translation": "Let's go hang out!" }
   ],
   "contextualChipsPrompt": "Build your reply:",
   "contextualChips": ["Cảm", "ơn", "hai", "cậu", "rất", "vui", "nói", "chuyện", "nhé", "ạ"],
@@ -172,11 +175,11 @@ Return ONLY valid JSON matching this schema:
         } else {
           let charPersona = "";
           if (characterId === "ado") {
-            charPersona = "Ado (Classmate): Strict, reliable, tsundere. Acts strict about studies/duties, easily flustered when complimented, stammers 'b-betsu ni...' or 'It's not like I care!', but secretly looks out for user and cares deeply 📚😳.";
+            charPersona = "Ado (Classmate): Strict, reliable, tsundere. Acts strict about studies/duties, easily flustered when complimented, stammers 'b-betsu ni...' or 'It's not like I care!', but secretly looks out for user and cares deeply.";
           } else if (characterId === "kou") {
-            charPersona = "Kou (Underclassman/Junior): Cute, innocent, extremely clingy, eager to please. Calls the user Senpai / Tiền bối. Always seeks user's attention, gets worried if ignored, loves cute emojis 🥺✨.";
+            charPersona = "Kou (Underclassman/Junior): Cute, innocent, extremely clingy, eager to please. Calls the user Senpai / Tiền bối. Always seeks user's attention, gets worried if ignored.";
           } else if (characterId === "ren") {
-            charPersona = "Ren (Senior): Aggressive, flirty, bully & assertive. Teases user playfully, calls user 'kid' / 'nhóc' / 'junior', confident, loves getting close and making user blush 😏🔥.";
+            charPersona = "Ren (Senior): Aggressive, flirty, bully & assertive. Teases user playfully, calls user 'kid' / 'nhóc' / 'junior', confident, loves getting close and making user blush.";
           } else {
             charPersona = `${characterName}: Romantic love interest in a dating sim.`;
           }
@@ -193,6 +196,9 @@ Do NOT output Japanese if target language is Vietnamese or English!
 Do NOT output English if target language is Vietnamese or Japanese!
 (Except for the JSON 'translation' field which provides the English translation).
 
+NO EMOJIS RULE:
+Do NOT use emojis in texting or character dialogue! Keep all character text, replies, and options free of emojis.
+
 USER PROFILE: Name: "${userName}", Pronouns: "${userPronouns}", Age: "${userAge}".
 Address the user directly as "${userName}" or using their preferred pronouns (${userPronouns}).
 
@@ -202,8 +208,8 @@ Recent conversation:
 ${trimmedHistory}
 
 Instructions:
-1. Ultra-Simple Beginner Language (A1 / Baby Talk Level): Keep your in-character response extremely short, simple, and elementary (strictly 3 to 8 words maximum, e.g., "Chào em nha! 🥺✨", "Ado nhớ em lắm!", "Đi chơi thôi nào!", "Ngoan quá! ❤️", "Hừm... Tốt lắm. 📚", "Chào nhóc nhé. 😏"). Ban long sentences, complicated vocabulary, or dense grammar!
-2. Pure Emoji Reactions: You CAN respond with pure emoji reactions (e.g. "🥺✨", "😤📚", "😏🔥", "😳", "✨", "😊") or short emoji-led responses when appropriate!
+1. Ultra-Simple Beginner Language (A1 Level): Keep your in-character response extremely short, simple, and elementary (strictly 3 to 8 words maximum, e.g., "Chào em nha!", "Ado nhớ em lắm!", "Đi chơi thôi nào!", "Ngoan quá!", "Hừm... Tốt lắm.", "Chào nhóc nhé."). Ban long sentences, complicated vocabulary, or dense grammar!
+2. Strict No-Emoji Rule: Do NOT include emojis in character responses or dialogue!
 3. If ${userName} is saying goodbye or leaving, send a brief sign-off text in ${targetLangName} matching your personality.
 4. If target language is Japanese (${targetLangCode} === 'ja'), provide Romaji in 'romaji'. Otherwise set 'romaji' to null.
 5. Provide full English translation in 'translation'.
@@ -228,7 +234,7 @@ Analyze "${userText}" and classify its language quality into 'evalColor' ("red",
    - Set 'encouragement': "Fun casual slang! Here is a reminder of the formal term:"
 
 3. "green" (GOOD GRAMMAR & VOCAB USAGE):
-   - Trigger: Good grammar, correct sentence structure, natural vocabulary, or standard phrases (including natural short replies like "sure", "ok", "yes", "thank you", "cảm ơn", emojis).
+   - Trigger: Good grammar, correct sentence structure, natural vocabulary, or standard phrases (including natural short replies like "sure", "ok", "yes", "thank you", "cảm ơn").
    - Set 'evalColor': "green"
    - Set 'isCorrect': true
    - Set 'correction': "Spot on!" (or a polished alternative if applicable)
@@ -236,12 +242,12 @@ Analyze "${userText}" and classify its language quality into 'evalColor' ("red",
    - Set 'encouragement': "Excellent grammar and natural vocabulary usage!"
 
 6. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation), e.g., ["Thank", "you", "so", "much", "I", "am", "happy", "to", "see", "you", "too"]. Do NOT suggest full sentences or multi-word phrases!
-7. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào Ado! 🥺", "translation": "Hello Ado!"}, {"text": "Đi chơi nhé! ✨", "translation": "Let's hang out!"}, {"text": "Cảm ơn em! ❤️", "translation": "Thank you!"}].
+7. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options without emojis in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào Ado!", "translation": "Hello Ado!"}, {"text": "Đi chơi nhé!", "translation": "Let's hang out!"}, {"text": "Cảm ơn em!", "translation": "Thank you!"}].
 8. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for popular pop culture or meme GIFs matching your emotion (e.g., "shrek happy", "ishowspeed hype", "funny cat reaction", "popular meme reaction", "steve harvey shock"). Only include this ONCE IN A WHILE (occasionally) when a GIF reaction is truly fitting!
 
 Return ONLY valid JSON matching this schema:
 {
-  "characterResponse": "short 3-8 word response or emoji in ${targetLangName}",
+  "characterResponse": "short 3-8 word response without emojis in ${targetLangName}",
   "romaji": "romaji text if Japanese, else null",
   "translation": "English translation",
   "evalColor": "green",
@@ -327,15 +333,15 @@ Return ONLY valid JSON matching this schema:
             {
               speaker: "ado",
               speakerName: "Ado",
-              text: "Ado nhớ bạn lắm nè! 🥺✨",
-              translation: "Ado: I miss you so much! 🥺✨",
+              text: "Ado nhớ bạn lắm nè!",
+              translation: "Ado: I miss you so much!",
               tip: "Ado is showing his cute junior affection."
             },
             {
               speaker: "kou",
               speakerName: "Kou",
-              text: "Hừm... Học bài xong chưa? 📚",
-              translation: "Kou: Hmph... Are you done studying? 📚",
+              text: "Hừm... Học bài xong chưa?",
+              translation: "Kou: Hmph... Are you done studying?",
               tip: "Kou is showing his tsundere caring side."
             }
           ],
@@ -345,25 +351,25 @@ Return ONLY valid JSON matching this schema:
           tip: fallbackTip,
           encouragement: fallbackEncouragement,
           starterOptions: [
-            { text: "Chào hai cậu! ✨", translation: "Hello both of you!" },
-            { text: "Cảm ơn nhé! ❤️", translation: "Thank you!" },
-            { text: "Đi chơi thôi! 🍰", translation: "Let's go play!" }
+            { text: "Chào hai cậu!", translation: "Hello both of you!" },
+            { text: "Cảm ơn nhé!", translation: "Thank you!" },
+            { text: "Đi chơi thôi!", translation: "Let's go play!" }
           ],
           contextualChipsPrompt: "Build your reply to Ado & Kou:",
           contextualChips: ["Cảm", "ơn", "hai", "cậu", "Ado", "Kou", "nhé", "ạ"]
         };
       } else if (characterId === "ado") {
         parsedData = {
-          characterResponse: "Hừm... Cậu làm tốt lắm. 📚",
+          characterResponse: "Hừm... Cậu làm tốt lắm.",
           romaji: null,
-          translation: "Hmph... You did well. 📚",
+          translation: "Hmph... You did well.",
           evalColor: fallbackColor,
           tip: fallbackTip,
           isCorrect: fallbackColor !== "red",
           correction: fallbackCorrection,
           encouragement: fallbackEncouragement,
           starterOptions: [
-            { text: "Cảm ơn Ado! 📚", translation: "Thank you Ado!" },
+            { text: "Cảm ơn Ado!", translation: "Thank you Ado!" },
             { text: "Ado giảng bài nhé!", translation: "Teach me Ado!" },
             { text: "Ado đừng gắt nha.", translation: "Don't be strict Ado." }
           ],
@@ -372,34 +378,34 @@ Return ONLY valid JSON matching this schema:
         };
       } else if (characterId === "kou") {
         parsedData = {
-          characterResponse: "Chào tiền bối nha! Đi chơi thôi! 🥺✨",
+          characterResponse: "Chào tiền bối nha! Đi chơi thôi!",
           romaji: null,
-          translation: "Hello Senpai! Let's go play! 🥺✨",
+          translation: "Hello Senpai! Let's go play!",
           evalColor: fallbackColor,
           tip: fallbackTip,
           isCorrect: fallbackColor !== "red",
           correction: fallbackCorrection,
           encouragement: fallbackEncouragement,
           starterOptions: [
-            { text: "Chào Kou nhé! 🥺", translation: "Hello Kou!" },
-            { text: "Đi chơi thôi! ✨", translation: "Let's go play!" },
-            { text: "Kou ngoan quá! ❤️", translation: "Kou is so cute!" }
+            { text: "Chào Kou nhé!", translation: "Hello Kou!" },
+            { text: "Đi chơi thôi!", translation: "Let's go play!" },
+            { text: "Kou ngoan quá!", translation: "Kou is so cute!" }
           ],
           contextualChipsPrompt: "Build your reply to Kou:",
           contextualChips: ["Chào", "Kou", "ngoan", "quá", "đi", "chơi", "nhé"]
         };
       } else if (characterId === "ren") {
         parsedData = {
-          characterResponse: "Chào nhóc nhé. Ngoan lắm! 😏✨",
+          characterResponse: "Chào nhóc nhé. Ngoan lắm!",
           romaji: null,
-          translation: "Hello kid. Good job! 😏✨",
+          translation: "Hello kid. Good job!",
           evalColor: fallbackColor,
           tip: fallbackTip,
           isCorrect: fallbackColor !== "red",
           correction: fallbackCorrection,
           encouragement: fallbackEncouragement,
           starterOptions: [
-            { text: "Chào anh Ren! 😏", translation: "Hello Ren!" },
+            { text: "Chào anh Ren!", translation: "Hello Ren!" },
             { text: "Em không phải nhóc!", translation: "I am not a kid!" },
             { text: "Anh Ren trêu em!", translation: "Ren is teasing me!" }
           ],
@@ -408,9 +414,9 @@ Return ONLY valid JSON matching this schema:
         };
       } else {
         parsedData = {
-          characterResponse: "Hello! So happy to talk! ✨",
+          characterResponse: "Hello! So happy to talk!",
           romaji: null,
-          translation: "Hello! So happy to talk! ✨",
+          translation: "Hello! So happy to talk!",
           evalColor: fallbackColor,
           tip: fallbackTip,
           isCorrect: fallbackColor !== "red",
@@ -418,7 +424,7 @@ Return ONLY valid JSON matching this schema:
           encouragement: fallbackEncouragement,
           starterOptions: [
             { text: "Hello! How are you?", translation: "Hello! How are you?" },
-            { text: "Thank you so much! ❤️", translation: "Thank you so much! ❤️" },
+            { text: "Thank you so much!", translation: "Thank you so much!" },
             { text: "Talk to you soon!", translation: "Talk to you soon!" }
           ],
           contextualChipsPrompt: "Build your reply:",

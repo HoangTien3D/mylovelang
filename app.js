@@ -102,23 +102,23 @@ const BASE_CHARACTERS = {
     name: "Ado",
     avatar: "/assets/characters/ado_avatar.png",
     sprite: "/assets/characters/ado_fullbody.png",
-    archetype: "Strict Classmate 📚",
-    role: "Strict & Reliable Classmate 📚",
+    archetype: "Strict Classmate",
+    role: "Strict & Reliable Classmate",
     personality: "Strict, dutiful classmate who keeps you on track. Tsundere at heart—acts tough and official, but blushes and softens up when you get close.",
     sampleVoice: "Clear, composed classmate voice",
     greetings: {
       vi: {
-        text: "Này, cậu lại đi trễ đấy à? Tớ đã chuẩn bị sẵn tài liệu học tập cho cậu rồi... Đừng có nhìn tớ như thế, tớ chỉ làm tròn trách nhiệm lớp phó thôi! 📚",
+        text: "Này, cậu lại đi trễ đấy à? Tớ đã chuẩn bị sẵn tài liệu học tập cho cậu rồi... Đừng có nhìn tớ như thế, tớ chỉ làm tròn trách nhiệm lớp phó thôi!",
         translation: "Hey, are you late again? I prepared the study notes for you... Don't look at me like that, I'm just doing my duty as classmate!",
         tip: "'Trách nhiệm' means 'responsibility/duty'. Ado is secretly caring for you!"
       },
       en: {
-        text: "Hey, running late again? I already prepared the study notes for you... Don't look at me like that, I'm just doing my duty as classmate! 📚",
-        translation: "Hey, running late again? I already prepared the study notes for you... Don't look at me like that, I'm just doing my duty as classmate! 📚",
+        text: "Hey, running late again? I already prepared the study notes for you... Don't look at me like that, I'm just doing my duty as classmate!",
+        translation: "Hey, running late again? I already prepared the study notes for you... Don't look at me like that, I'm just doing my duty as classmate!",
         tip: "Ado acts strict on the outside, but is secretly thoughtful and caring."
       },
       ja: {
-        text: "ちょっと、また遅刻？勉強のノート、まとめておいたから… そんな目で見ないでよ、クラスメイトとして当然のことでしょ！ 📚",
+        text: "ちょっと、また遅刻？勉強のノート、まとめておいたから… そんな目で見ないでよ、クラスメイトとして当然のことでしょ！",
         romaji: "Chotto, mata chikoku? Benkyou no nootu, matomete oita kara... sonna me de minai de yo, kurasumeito to shite touzen no koto desho!",
         translation: "Hey, late again? I put together study notes for you... Don't look at me like that, it's only natural as classmates!",
         tip: "'Touzen' means 'only natural/duty'. Ado is classic tsundere!"
@@ -130,25 +130,25 @@ const BASE_CHARACTERS = {
     name: "Kou",
     avatar: "/assets/characters/kou_avatar.png",
     sprite: "/assets/characters/kou_fullbody.png",
-    archetype: "Cute Junior 🥺",
-    role: "Cute & Clingy Underclassman 🥺",
+    archetype: "Cute Junior",
+    role: "Cute & Clingy Underclassman",
     personality: "Cute, innocent, and clingy underclassman. Always follows you around, adores you, and seeks your attention and affection!",
     sampleVoice: "Sweet, energetic junior accent",
     greetings: {
       vi: {
-        text: "Tiền bối ơi! Kou tìm tiền bối mãi đó! Hôm nay tiền bối có rảnh chơi với Kou không? 🥺✨",
-        translation: "Senpai! Kou has been looking everywhere for you! Are you free to play with Kou today? 🥺✨",
+        text: "Tiền bối ơi! Kou tìm tiền bối mãi đó! Hôm nay tiền bối có rảnh chơi với Kou không?",
+        translation: "Senpai! Kou has been looking everywhere for you! Are you free to play with Kou today?",
         tip: "'Tiền bối' means 'Senpai / Senior'. 'Có rảnh' means 'Are you free'."
       },
       en: {
-        text: "Senpai! Kou has been looking everywhere for you! Are you free to spend time with Kou today? 🥺✨",
-        translation: "Senpai! Kou has been looking everywhere for you! Are you free to spend time with Kou today? 🥺✨",
+        text: "Senpai! Kou has been looking everywhere for you! Are you free to spend time with Kou today?",
+        translation: "Senpai! Kou has been looking everywhere for you! Are you free to spend time with Kou today?",
         tip: "'Senpai' is a term of respect and affection for an upperclassman."
       },
       ja: {
-        text: "先輩！Kou、ずっと先輩を探してたんですよ！今日はKouと一緒に過ごしてくれますか？ 🥺✨",
+        text: "先輩！Kou、ずっと先輩を探してたんですよ！今日はKouと一緒に過ごしてくれますか？",
         romaji: "Senpai! Kou, zutto senpai wo sagashitetan desu yo! Kyou wa Kou to issho ni tsugoshite kuremasu ka?",
-        translation: "Senpai! Kou has been looking for you! Will you spend time with Kou today? 🥺✨",
+        translation: "Senpai! Kou has been looking for you! Will you spend time with Kou today?",
         tip: "'Senpai' is an upperclassman. 'Issho ni' means 'together'."
       }
     }
@@ -158,52 +158,52 @@ const BASE_CHARACTERS = {
     name: "Ren",
     avatar: "/assets/characters/ren_avatar.png",
     sprite: "/assets/characters/ren_fullbody.png",
-    archetype: "Flirty Senior 😏",
-    role: "Flirty & Assertive Senior 😏",
+    archetype: "Flirty Senior",
+    role: "Flirty & Assertive Senior",
     personality: "Aggressive, flirty, teasing senior (senpai). Loves to bully and tease you playfully, asserting his charm whenever you're around.",
     sampleVoice: "Sultry, confident senior accent",
     greetings: {
       vi: {
-        text: "Thấy anh mà không chào sao, nhóc? Lại đây ngồi gần anh nào... Để xem hôm nay em ngoan tới đâu. 😏✨",
-        translation: "Not even gonna greet me when you see me? Come sit close to me... Let's see how good you'll be today, kid. 😏✨",
+        text: "Thấy anh mà không chào sao, nhóc? Lại đây ngồi gần anh nào... Để xem hôm nay em ngoan tới đâu.",
+        translation: "Not even gonna greet me when you see me? Come sit close to me... Let's see how good you'll be today, kid.",
         tip: "'Nhóc' is a playful term for a younger person. Ren loves teasing you."
       },
       en: {
-        text: "Not even gonna greet me when you see me? Come sit close to me... Let's see how good you'll be today, kid. 😏✨",
-        translation: "Not even gonna greet me when you see me? Come sit close to me... Let's see how good you'll be today, kid. 😏✨",
+        text: "Not even gonna greet me when you see me? Come sit close to me... Let's see how good you'll be today, kid.",
+        translation: "Not even gonna greet me when you see me? Come sit close to me... Let's see how good you'll be today, kid.",
         tip: "Ren is an assertive, flirty senior who loves teasing you playfully."
       },
       ja: {
-        text: "俺を見かけたのに挨拶もなしか？こっち来て隣に座れよ… 今日はどこまで聞き分けがいいか試してやる。 😏✨",
+        text: "俺を見かけたのに挨拶もなしか？こっち来て隣に座れよ… 今日はどこまで聞き分けがいいか試してやる。",
         romaji: "Ore wo mikakata noni aisatsu mo nashi ka? Kocchi kite tonari ni suware yo... Kyou wa doko made kikiwake ga ii ka tameshite yaru.",
-        translation: "Not even greeting me when you spot me? Come over here and sit next to me... Let me test how good you are today. 😏✨",
+        translation: "Not even greeting me when you spot me? Come over here and sit next to me... Let me test how good you are today.",
         tip: "'Ore' is confident male 'I' in Japanese. Ren is bold and assertive."
       }
     }
   },
   group: {
     id: "group",
-    name: "Global Otome Lounge 💬",
+    name: "Global Otome Lounge",
     isGroup: true,
     avatar: "/assets/characters/ado_avatar.png",
     sprite: "/assets/characters/ado_fullbody.png",
-    archetype: "Otome Trio 💬",
+    archetype: "Otome Trio",
     role: "Ado, Kou & Ren",
     personality: "Ado (strict tsundere classmate), Kou (cute underclassman), and Ren (flirty aggressive senior) all vying for your romantic affection while teaching you languages!",
     sampleVoice: "Multilingual trio harmony",
     greetings: {
       vi: {
-        text: "Chào em! Ado, Kou và Ren đang ở sảnh chờ nhắn tin cùng em đó! 💬",
+        text: "Chào em! Ado, Kou và Ren đang ở sảnh chờ nhắn tin cùng em đó!",
         translation: "Hello! Ado, Kou, and Ren are in the lounge waiting to text you!",
         tip: "Chat with all 3 love interests in Vietnamese!"
       },
       en: {
-        text: "Welcome! Ado, Kou, and Ren are waiting to chat with you in English! 💬",
+        text: "Welcome! Ado, Kou, and Ren are waiting to chat with you in English!",
         translation: "Welcome! Ado, Kou, and Ren are waiting to chat with you in English!",
         tip: "Chat with all 3 love interests in English!"
       },
       ja: {
-        text: "ようこそ！Ado、Kou、Renの3人がラウンジで待っていますよ！ 💬",
+        text: "ようこそ！Ado、Kou、Renの3人がラウンジで待っていますよ！",
         romaji: "Youkoso! Ado, Kou, Ren no 3-nin ga raunji de matte imasu yo!",
         translation: "Welcome! Ado, Kou, and Ren are waiting in the lounge!",
         tip: "Chat with all 3 love interests in Japanese!"
@@ -783,6 +783,10 @@ function setAppTargetLanguage(lang) {
   userState.targetLanguage = lang;
   localStorage.setItem("otome_target_lang", lang);
 
+  // Clear stale dynamic starter choices and word banks so they immediately reflect the new target language
+  dynamicStarterChoices = {};
+  dynamicWordBank = {};
+
   updateTargetLangUI();
 
   currentGuidebookLang = lang;
@@ -791,8 +795,8 @@ function setAppTargetLanguage(lang) {
   renderCharactersList();
   renderGuidebook();
 
-  if (activeCharacterId && BASE_CHARACTERS[activeCharacterId]) {
-    const char = CHARACTERS[activeCharacterId];
+  if (activeCharacterId && (BASE_CHARACTERS[activeCharacterId] || CHARACTERS[activeCharacterId])) {
+    const char = CHARACTERS[activeCharacterId] || BASE_CHARACTERS[activeCharacterId];
     const tierNum = userState.currentTiers[activeCharacterId] || 1;
     const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
     setupTierInputControls(tierObj, char, true);
@@ -807,6 +811,14 @@ function setAppTargetLanguage(lang) {
   }
 }
 window.setAppTargetLanguage = setAppTargetLanguage;
+
+function cycleChatTargetLang() {
+  const current = userState.targetLanguage || "vi";
+  const order = ["vi", "ja", "en"];
+  const nextIdx = (order.indexOf(current) + 1) % order.length;
+  setAppTargetLanguage(order[nextIdx]);
+}
+window.cycleChatTargetLang = cycleChatTargetLang;
 
 function updateTargetLangUI() {
   const lang = userState.targetLanguage || "vi";
@@ -824,6 +836,21 @@ function updateTargetLangUI() {
     if (lang === "vi") badge.textContent = "🇻🇳 Vietnamese";
     else if (lang === "en") badge.textContent = "🇬🇧 English";
     else if (lang === "ja") badge.textContent = "🇯🇵 Japanese";
+  }
+
+  const vnLangFlagIcon = document.getElementById("vnLangFlagIcon");
+  const vnLangCodeText = document.getElementById("vnLangCodeText");
+  if (vnLangFlagIcon && vnLangCodeText) {
+    if (lang === "vi") {
+      vnLangFlagIcon.textContent = "🇻🇳";
+      vnLangCodeText.textContent = "VI";
+    } else if (lang === "ja") {
+      vnLangFlagIcon.textContent = "🇯🇵";
+      vnLangCodeText.textContent = "JA";
+    } else if (lang === "en") {
+      vnLangFlagIcon.textContent = "🇬🇧";
+      vnLangCodeText.textContent = "EN";
+    }
   }
 }
 
@@ -1204,7 +1231,7 @@ function initUI() {
     romajiBtn.addEventListener("click", () => {
       userState.showRomaji = !userState.showRomaji;
       localStorage.setItem("otome_show_romaji", userState.showRomaji);
-      romajiBtn.textContent = `🔤 Romaji: ${userState.showRomaji ? "ON" : "OFF"}`;
+      romajiBtn.title = `Romaji: ${userState.showRomaji ? "ON" : "OFF"}`;
       romajiBtn.style.opacity = userState.showRomaji ? "1" : "0.6";
       renderChatHistory();
     });
@@ -1408,6 +1435,7 @@ function updateFloatingCompanion(charId, quoteOverride = null, mood = null) {
   const inChatName = document.getElementById("companionNameTag");
   const inChatBubble = document.getElementById("companionSpeechBubble");
   const inChatBubbleText = document.getElementById("companionSpeechText");
+  const inChatSpeakerName = document.getElementById("companionSpeakerName");
   const inChatBadge = document.getElementById("companionHeartBadge");
   const inChatCompanion = document.getElementById("chatFloatingCompanion");
 
@@ -1421,6 +1449,7 @@ function updateFloatingCompanion(charId, quoteOverride = null, mood = null) {
     inChatAvatar.src = avatarSrc;
   }
   if (inChatName) inChatName.textContent = char.name.split(" ")[0];
+  if (inChatSpeakerName) inChatSpeakerName.textContent = char.name.split(" ")[0];
   if (inChatBadge) inChatBadge.textContent = `${affectionPct}%`;
   if (inChatCompanion) inChatCompanion.style.display = "flex";
 
@@ -1465,7 +1494,7 @@ function updateFloatingCompanion(charId, quoteOverride = null, mood = null) {
   if (desktopAffBar) desktopAffBar.style.width = `${Math.min(100, Math.max(0, affectionPct))}%`;
   if (desktopAffText) desktopAffText.textContent = `${affectionPct}%`;
   if (desktopStatusMood) desktopStatusMood.textContent = mood || "Listening to you attentively... 💖";
-  if (desktopStage) desktopStage.style.display = "flex";
+  if (desktopStage) desktopStage.style.display = "none";
 
   // Speech bubble quote
   let quote = quoteOverride;
@@ -1477,9 +1506,9 @@ function updateFloatingCompanion(charId, quoteOverride = null, mood = null) {
   if (inChatBubbleText) inChatBubbleText.textContent = quote;
   if (stageBubbleText) stageBubbleText.textContent = quote;
 
-  // Show speech bubble with smooth pop
+  // Show speech bubble on top of character (persists until next message)
   if (inChatBubble) {
-    inChatBubble.style.display = "block";
+    inChatBubble.style.display = "flex";
     inChatBubble.classList.remove("pop-anim");
     void inChatBubble.offsetWidth;
     inChatBubble.classList.add("pop-anim");
@@ -1491,10 +1520,10 @@ function updateFloatingCompanion(charId, quoteOverride = null, mood = null) {
     stageBubble.classList.add("pop-anim");
   }
 
-  if (companionQuoteTimeout) clearTimeout(companionQuoteTimeout);
-  companionQuoteTimeout = setTimeout(() => {
-    if (inChatBubble) inChatBubble.style.display = "none";
-  }, 6500);
+  if (companionQuoteTimeout) {
+    clearTimeout(companionQuoteTimeout);
+    companionQuoteTimeout = null;
+  }
 }
 window.updateFloatingCompanion = updateFloatingCompanion;
 
@@ -1646,7 +1675,6 @@ function renderChatList() {
   container.innerHTML = "";
 
   Object.values(CHARACTERS).forEach((char) => {
-    const tierNum = userState.currentTiers[char.id] || 1;
     const affectionPct = userState.affection[char.id] || 0;
     const unreadCount = userState.unreadMessages[char.id] || 0;
     const isPout = userState.isPouting[char.id] || false;
@@ -1656,37 +1684,54 @@ function renderChatList() {
 
     let badgeHtml = "";
     if (isPout) {
-      badgeHtml = `<span class="pout-badge-chip">💢 Pouting!</span>`;
+      badgeHtml = `<span class="square-pout-badge">💢 Pouting</span>`;
     } else if (unreadCount > 0) {
-      badgeHtml = `<span class="unread-badge-chip">🔴 ${unreadCount} New</span>`;
+      badgeHtml = `<span class="square-unread-badge">🔴 ${unreadCount}</span>`;
     }
 
-    let groupTagHtml = char.isGroup
-      ? `<span style="background:rgba(124, 58, 237, 0.12); color:var(--accent-violet); border:1px solid rgba(124, 58, 237, 0.3); font-size:10px; font-weight:800; padding:2px 6px; border-radius:8px;">👥 Group Chat</span>`
-      : "";
+    let pfpCoverHtml = "";
+    if (char.isGroup) {
+      pfpCoverHtml = `
+        <div class="square-trio-avatars">
+          <img src="/assets/characters/ado_avatar.png" class="trio-avatar trio-ado" alt="Ado" />
+          <img src="/assets/characters/kou_avatar.png" class="trio-avatar trio-kou" alt="Kou" />
+          <img src="/assets/characters/ren_avatar.png" class="trio-avatar trio-ren" alt="Ren" />
+        </div>
+      `;
+    } else {
+      pfpCoverHtml = `
+        <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.svg';" />
+      `;
+    }
 
     const card = document.createElement("div");
-    card.className = "chat-card";
+    card.className = "chat-card square-char-card";
     card.onclick = () => openChatroom(char.id);
 
     card.innerHTML = `
-      <div class="chat-avatar-wrapper">
-        <img src="${char.avatar}" class="chat-avatar" alt="${char.name}" />
-        <div class="online-badge"></div>
+      <div class="square-pfp-bg-wrap">
+        ${pfpCoverHtml}
+        <div class="square-card-scrim"></div>
       </div>
-      <div class="chat-info">
-        <div class="chat-top-row">
-          <div class="chat-name">${char.name} <span class="flag-icon">${char.flag}</span> ${groupTagHtml} ${badgeHtml}</div>
-          <div class="chat-time">${isPout ? 'Waiting...' : 'Active Now'}</div>
+
+      <div class="square-card-top-badges">
+        <div class="square-status-badge">
+          <span class="square-online-dot ${isPout ? 'pout-dot' : ''}"></span>
+          <span>${isPout ? 'Waiting' : 'Online'}</span>
         </div>
-        <div class="chat-snippet">${lastMsg}</div>
-        <div class="chat-bottom-row">
-          <div class="chat-meta">
-            <span class="affection-mini">❤️ ${affectionPct}%</span>
-          </div>
-          <button class="chat-now-btn" type="button" onclick="event.stopPropagation(); openChatroom('${char.id}');">
-            <span>Click to Chat</span>
-            <span class="material-symbols-outlined" style="font-size:15px;">chat</span>
+        ${badgeHtml ? badgeHtml : `<span class="square-affection-pill"><span class="material-symbols-outlined" style="font-size:12px; color:var(--primary-pink);">favorite</span> ${affectionPct}%</span>`}
+      </div>
+
+      <div class="square-card-bottom-info">
+        <div class="square-char-name">
+          <span>${char.name}</span>
+          <span class="flag-icon">${char.flag}</span>
+        </div>
+        <div class="square-char-role">${char.archetype || char.role}</div>
+        <div class="square-action-row">
+          <span class="square-snippet">${isPout ? 'Waiting for reply...' : (lastMsg || 'Tap to chat')}</span>
+          <button class="square-chat-btn" type="button" aria-label="Chat with ${char.name}" onclick="event.stopPropagation(); openChatroom('${char.id}');">
+            <span class="material-symbols-outlined">chat</span>
           </button>
         </div>
       </div>
@@ -1705,46 +1750,59 @@ function renderCharactersList() {
   Object.values(CHARACTERS).forEach((char) => {
     const affectionPct = userState.affection[char.id] || 0;
 
-    const card = document.createElement("div");
-    card.className = "character-card";
-    card.style.cursor = "pointer";
-
-    card.innerHTML = `
-      <div class="char-header-row">
-        <img src="${char.avatar}" class="char-img" alt="${char.name}" />
-        <div class="char-details">
-          <h3>${char.name} ${char.flag}</h3>
-          <div class="char-tagline">${char.role} (${char.language})</div>
-          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">"${char.personality}"</div>
+    let pfpCoverHtml = "";
+    if (char.isGroup) {
+      pfpCoverHtml = `
+        <div class="square-trio-avatars">
+          <img src="/assets/characters/ado_avatar.png" class="trio-avatar trio-ado" alt="Ado" />
+          <img src="/assets/characters/kou_avatar.png" class="trio-avatar trio-kou" alt="Kou" />
+          <img src="/assets/characters/ren_avatar.png" class="trio-avatar trio-ren" alt="Ren" />
         </div>
-      </div>
-      <div>
-        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--primary-pink);">
-          <span>Affection Level</span>
-          <span>❤️ ${affectionPct}%</span>
-        </div>
-        <div class="affection-progress-bar">
-          <div class="affection-fill" style="width: ${affectionPct}%;"></div>
-        </div>
-      </div>
-      <div style="display:flex; justify-content:flex-end; align-items:center; margin-top:10px;">
-        <button class="primary-btn chat-li-btn" style="padding:7px 16px; font-size:12px; width:auto; margin:0;" type="button">
-          Chat with ${char.name.split(" ")[0]} ❤️
-        </button>
-      </div>
-    `;
-
-    const chatBtn = card.querySelector(".chat-li-btn");
-    if (chatBtn) {
-      chatBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        openChatroom(char.id);
-      });
+      `;
+    } else {
+      pfpCoverHtml = `
+        <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.svg';" />
+      `;
     }
 
-    card.addEventListener("click", () => {
-      openChatroom(char.id);
-    });
+    const card = document.createElement("div");
+    card.className = "character-card square-char-card";
+    card.onclick = () => openChatroom(char.id);
+
+    card.innerHTML = `
+      <div class="square-pfp-bg-wrap">
+        ${pfpCoverHtml}
+        <div class="square-card-scrim"></div>
+      </div>
+
+      <div class="square-card-top-badges">
+        <span class="square-status-badge">
+          <span class="square-online-dot"></span>
+          <span>${char.language || 'Multi'}</span>
+        </span>
+        <span class="square-affection-pill">
+          <span class="material-symbols-outlined" style="font-size:12px; color:var(--primary-pink);">favorite</span>
+          ${affectionPct}%
+        </span>
+      </div>
+
+      <div class="square-card-bottom-info">
+        <div class="square-char-name">
+          <span>${char.name}</span>
+          <span class="flag-icon">${char.flag}</span>
+        </div>
+        <div class="square-char-role">${char.role}</div>
+        <div class="square-char-desc">${char.personality}</div>
+        <div class="square-action-row" style="margin-top:6px;">
+          <div class="square-aff-bar-wrap">
+            <div class="square-aff-bar-fill" style="width: ${affectionPct}%;"></div>
+          </div>
+          <button class="square-chat-btn" type="button" aria-label="Chat with ${char.name}" onclick="event.stopPropagation(); openChatroom('${char.id}');">
+            <span class="material-symbols-outlined">chat</span>
+          </button>
+        </div>
+      </div>
+    `;
 
     container.appendChild(card);
   });
@@ -2301,14 +2359,14 @@ function openChatroom(charId) {
   const headerAvatar = document.getElementById("chatHeaderAvatar");
   if (headerAvatar) headerAvatar.src = char.avatar;
   const headerAffection = document.getElementById("chatHeaderAffection");
-  if (headerAffection) headerAffection.textContent = `❤️ ${affectionPct}%`;
+  if (headerAffection) headerAffection.textContent = "❤️";
 
   // Romaji Toggle Button Visibility (Especially for Japanese)
   const romajiBtn = document.getElementById("romajiToggleBtn");
   if (romajiBtn) {
     if (char.language === "Japanese") {
-      romajiBtn.style.display = "inline-block";
-      romajiBtn.textContent = `🔤 Romaji: ${userState.showRomaji !== false ? "ON" : "OFF"}`;
+      romajiBtn.style.display = "inline-flex";
+      romajiBtn.title = `Romaji: ${userState.showRomaji !== false ? "ON" : "OFF"}`;
       romajiBtn.style.opacity = userState.showRomaji !== false ? "1" : "0.6";
     } else {
       romajiBtn.style.display = "none";
@@ -2367,6 +2425,203 @@ async function fetchKlipyGif(query, characterId) {
 window.fetchKlipyGif = fetchKlipyGif;
 
 // Render Chat History Messages
+let currentVnSpeechText = "";
+let currentVnSpeechLang = "vi-VN";
+
+function updateVnDialogueBox(latestLiMsg, char) {
+  // 1. Floating Speech Bubble on Top of the Love Interest
+  const bubbleEl = document.getElementById("companionSpeechBubble");
+  const speakerNameEl = document.getElementById("companionSpeakerName");
+  const speechTextEl = document.getElementById("companionSpeechText");
+  const bubbleRomajiEl = document.getElementById("companionSpeechRomaji");
+  const bubbleGifWrapperEl = document.getElementById("companionSpeechGifWrapper");
+  const bubbleGifImgEl = document.getElementById("companionSpeechGif");
+
+  // 2. Dedicated Language Insight Box (Roomy & Clean)
+  const insightBoxEl = document.getElementById("vnDialogueBox");
+  const insightTitleEl = document.getElementById("vnInsightTitle");
+  const insightStatusTagEl = document.getElementById("vnInsightStatusTag");
+  const grammarTipEl = document.getElementById("vnGrammarTip");
+  const grammarCorrCardEl = document.getElementById("vnGrammarCorrectionCard");
+  const grammarCorrEl = document.getElementById("vnGrammarCorrection");
+  const centerSprite = document.getElementById("vnCenterGuySprite");
+  const spriteWrapper = document.getElementById("vnSpriteWrapper");
+
+  if (!char) char = CHARACTERS[activeCharacterId] || CHARACTERS.ado;
+  let charId = char.id || activeCharacterId || "ado";
+
+  // Determine active speaker (in single vs group chat)
+  let speakerId = charId;
+  let speakerName = char.name.split(" ")[0];
+  if (latestLiMsg && latestLiMsg.speaker) {
+    speakerId = latestLiMsg.speaker;
+    if (speakerId === "ren") speakerName = "Ren";
+    else if (speakerId === "kou" || speakerId === "julian") speakerName = "Kou";
+    else speakerName = "Ado";
+  }
+
+  // Update center floating guy sprite in background!
+  if (centerSprite) {
+    let spriteSrc = `/assets/characters/${speakerId}_fullbody.png`;
+    centerSprite.onerror = function() {
+      if (this.src.endsWith("_fullbody.png")) {
+        const capName = speakerId.charAt(0).toUpperCase() + speakerId.slice(1);
+        this.src = `/assets/characters/${capName}.png`;
+      } else if (this.src.endsWith(".png")) {
+        this.src = `/assets/characters/${speakerId}_fullbody.svg`;
+      }
+    };
+    centerSprite.src = spriteSrc;
+  }
+
+  // Group side sprites
+  const sideLeft = document.getElementById("vnGroupSideLeft");
+  const sideRight = document.getElementById("vnGroupSideRight");
+  if (charId === "group") {
+    if (sideLeft) sideLeft.style.display = "block";
+    if (sideRight) sideRight.style.display = "block";
+  } else {
+    if (sideLeft) sideLeft.style.display = "none";
+    if (sideRight) sideRight.style.display = "none";
+  }
+
+  // Speech text setup for bubble & TTS
+  let text = latestLiMsg ? latestLiMsg.text : char.greeting;
+  currentVnSpeechText = text || "";
+  
+  const targetLang = userState.targetLanguage || "vi";
+  if (targetLang === "ja") currentVnSpeechLang = "ja-JP";
+  else if (targetLang === "en") currentVnSpeechLang = "en-US";
+  else currentVnSpeechLang = "vi-VN";
+
+  // Render dialogue onto speech bubble on top of the Love Interest
+  if (speakerNameEl) speakerNameEl.textContent = speakerName;
+  if (speechTextEl) speechTextEl.textContent = text || "";
+
+  // Romaji on speech bubble
+  const showRomaji = userState.showRomaji !== false;
+  if (bubbleRomajiEl) {
+    if (latestLiMsg && latestLiMsg.romaji && showRomaji) {
+      bubbleRomajiEl.textContent = `🔤 ${latestLiMsg.romaji}`;
+      bubbleRomajiEl.style.display = "inline-block";
+    } else {
+      bubbleRomajiEl.style.display = "none";
+    }
+  }
+
+  // GIF inside speech bubble
+  if (bubbleGifWrapperEl && bubbleGifImgEl) {
+    if (latestLiMsg && latestLiMsg.gifUrl) {
+      bubbleGifImgEl.src = latestLiMsg.gifUrl;
+      bubbleGifWrapperEl.style.display = "block";
+    } else {
+      bubbleGifWrapperEl.style.display = "none";
+    }
+  }
+
+  // Ensure speech bubble is visible and stays until next message!
+  if (bubbleEl) {
+    bubbleEl.style.display = "flex";
+  }
+
+  // Populate Dedicated Language Insight Box
+  const tip = latestLiMsg ? latestLiMsg.tip : (char.greetingTip || "Practice your conversational phrases! Ado loves friendly and natural responses.");
+  const fix = latestLiMsg ? latestLiMsg.fix : null;
+  const colorClass = latestLiMsg ? (latestLiMsg.evalColor || "green") : "green";
+
+  if (insightBoxEl) {
+    insightBoxEl.className = `vn-insight-box ${colorClass}`;
+  }
+
+  if (insightTitleEl) {
+    if (colorClass === "yellow") insightTitleEl.textContent = "Slang & Casual Reminder";
+    else if (colorClass === "red") insightTitleEl.textContent = "Grammar Rule & Correction";
+    else insightTitleEl.textContent = "Language Insight";
+  }
+
+  if (insightStatusTagEl) {
+    if (colorClass === "yellow") insightStatusTagEl.textContent = "Casual / Slang";
+    else if (colorClass === "red") insightStatusTagEl.textContent = "Revision Needed";
+    else insightStatusTagEl.textContent = "Natural & Fluent";
+  }
+
+  if (grammarTipEl) {
+    grammarTipEl.textContent = tip || "Great conversational effort! Keep practicing to build affection and unlock new modes.";
+  }
+
+  if (grammarCorrCardEl && grammarCorrEl) {
+    if (fix && fix !== "Spot on!" && !fix.startsWith("Spot")) {
+      grammarCorrEl.textContent = fix;
+      grammarCorrCardEl.style.display = "flex";
+    } else {
+      grammarCorrCardEl.style.display = "none";
+    }
+  }
+
+  // Trigger slight animation bounce on character when speaking
+  if (spriteWrapper) {
+    spriteWrapper.classList.remove("vn-talk-bounce");
+    void spriteWrapper.offsetWidth;
+    spriteWrapper.classList.add("vn-talk-bounce");
+  }
+}
+window.updateVnDialogueBox = updateVnDialogueBox;
+
+function toggleVnBacklog(forceState) {
+  const drawer = document.getElementById("vnBacklogDrawer");
+  if (!drawer) return;
+  if (typeof forceState === "boolean") {
+    drawer.style.display = forceState ? "flex" : "none";
+  } else {
+    drawer.style.display = (drawer.style.display === "none" || !drawer.style.display) ? "flex" : "none";
+  }
+}
+window.toggleVnBacklog = toggleVnBacklog;
+
+function toggleVnTranslation() {
+  const transRow = document.getElementById("vnTranslationRow");
+  if (transRow) {
+    transRow.style.display = transRow.style.display === "none" ? "block" : "none";
+  }
+}
+window.toggleVnTranslation = toggleVnTranslation;
+
+function speakCurrentVnDialogue() {
+  if (!("speechSynthesis" in window)) {
+    console.warn("Speech synthesis not supported.");
+    return;
+  }
+  if (!currentVnSpeechText) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(currentVnSpeechText);
+  utterance.lang = currentVnSpeechLang || "vi-VN";
+  utterance.rate = 0.95;
+  window.speechSynthesis.speak(utterance);
+}
+window.speakCurrentVnDialogue = speakCurrentVnDialogue;
+
+function toggleRomajiSetting() {
+  userState.showRomaji = !userState.showRomaji;
+  localStorage.setItem("otome_show_romaji", userState.showRomaji);
+  const romajiBtn = document.getElementById("romajiToggleBtn");
+  if (romajiBtn) {
+    romajiBtn.title = `Romaji: ${userState.showRomaji ? "ON" : "OFF"}`;
+    romajiBtn.style.opacity = userState.showRomaji ? "1" : "0.6";
+  }
+  renderChatHistory();
+}
+window.toggleRomajiSetting = toggleRomajiSetting;
+
+function setChatMode(modeNum) {
+  const modeStarterBtn = document.getElementById("modeStarterChoiceBtn");
+  const modeSentenceBtn = document.getElementById("modeSentenceBuilderBtn");
+  const modeFreeBtn = document.getElementById("modeFreeTextBtn");
+  if (modeNum === 1 && modeStarterBtn) modeStarterBtn.click();
+  else if (modeNum === 2 && modeSentenceBtn) modeSentenceBtn.click();
+  else if (modeNum === 3 && modeFreeBtn) modeFreeBtn.click();
+}
+window.setChatMode = setChatMode;
+
 function renderChatHistory() {
   const container = document.getElementById("chatHistory");
   if (!container) return;
@@ -2383,20 +2638,20 @@ function renderChatHistory() {
       history = [
         {
           sender: "li",
-          speaker: "bao",
-          speakerName: "Bao Nguyen",
-          text: "MC! I brew fresh coffee for you! It smells very thơm... Julian, my English is better than your Vietnamese, right? MC, you like my coffee or Julian's poetry more? ☕❤️",
-          translation: "MC! I brewed fresh coffee for you! It smells very fragrant... Julian, my English is better than your Vietnamese, right? MC, do you like my coffee or Julian's poetry more?",
-          tip: "Bao is showing off his coffee for you! 'Thơm' means fragrant.",
+          speaker: "ado",
+          speakerName: "Ado",
+          text: "MC! I prepared fresh notes for our study session today... What would you like to practice?",
+          translation: "MC! I prepared fresh notes for our study session today... What would you like to practice?",
+          tip: "Ado is eager to study with you.",
           time: "Just now",
         },
         {
           sender: "li",
-          speaker: "julian",
-          speakerName: "Julian Vance",
-          text: "Nonsense, Bao! MC, em rất đẹp! I practiced that all night for you! Coffee is lovely, but my affection for MC is eternal. Who is speaking better today, MC?",
-          translation: "Nonsense, Bao! MC, you are very beautiful! I practiced that all night for you! Coffee is lovely, but my affection for MC is eternal. Who is speaking better today, MC?",
-          tip: "Julian is trying to win your favor! 'Em rất đẹp' means 'You are very beautiful'.",
+          speaker: "kou",
+          speakerName: "Kou",
+          text: "Senpai, I wanted to practice speaking with you too today! Are you ready?",
+          translation: "Senpai, I wanted to practice speaking with you too today! Are you ready?",
+          tip: "Kou is happy to practice speaking together.",
           time: "Just now",
         }
       ];
@@ -2430,15 +2685,15 @@ function renderChatHistory() {
       if (activeCharacterId === "group" || msg.speaker) {
         if (msg.speaker === "ren" || msg.speakerName === "Ren") {
           speakerAvatar = CHARACTERS.ren.avatar;
-          speakerName = "Ren 😏";
+          speakerName = "Ren";
           speakerStyle = "style='color: #7c3aed; font-weight:800;'";
         } else if (msg.speaker === "kou" || msg.speaker === "julian" || msg.speakerName === "Kou" || msg.speakerName === "Julian Vance") {
           speakerAvatar = CHARACTERS.kou.avatar;
-          speakerName = "Kou 📚";
+          speakerName = "Kou";
           speakerStyle = "style='color: #d97706; font-weight:800;'";
         } else {
           speakerAvatar = CHARACTERS.ado.avatar;
-          speakerName = "Ado 🥺";
+          speakerName = "Ado";
           speakerStyle = "style='color: var(--accent-emerald); font-weight:800;'";
         }
       }
@@ -2464,14 +2719,14 @@ function renderChatHistory() {
 
         const colorClass = msg.evalColor || (msg.fix && !msg.fix.startsWith("Spot") ? "red" : "green");
 
-        let tipTitleText = "🟢 Language Insight";
-        let fixTitleText = "❤️ Correction";
+        let tipTitleText = "Language Insight";
+        let fixTitleText = "Correction";
         if (colorClass === "yellow") {
-          tipTitleText = "🟡 Slang Meaning & Context";
-          fixTitleText = "🟡 Standard / Formal Term";
+          tipTitleText = "Slang Meaning & Context";
+          fixTitleText = "Standard / Formal Term";
         } else if (colorClass === "red") {
-          tipTitleText = "🔴 Grammar Rule Insight";
-          fixTitleText = "🔴 Corrected Phrasing";
+          tipTitleText = "Grammar Rule Insight";
+          fixTitleText = "Corrected Phrasing";
         }
 
         group.innerHTML = `
@@ -2482,8 +2737,8 @@ function renderChatHistory() {
               <div style="font-size:15px; font-weight:700;">${msg.text}</div>
               ${gifHtml}
               ${romajiHtml}
-              ${(msg.translation || msg.tip || msg.fix) ? `<button type="button" class="assist-toggle-btn">💡 Click for Translation & Tips</button>` : ''}
-              ${msg.translation ? `<div class="translation-text">💬 ${msg.translation}</div>` : ""}
+              ${(msg.translation || msg.tip || msg.fix) ? `<button type="button" class="assist-toggle-btn">💡 Translation & Tips</button>` : ''}
+              ${msg.translation ? `<div class="translation-text">${msg.translation}</div>` : ""}
               ${msg.tip ? `<div class="tip-card ${colorClass}"><div class="tip-title ${colorClass}">${tipTitleText}</div>${msg.tip}</div>` : ""}
               ${msg.fix ? `<div class="fix-card ${colorClass}"><div class="fix-title ${colorClass}">${fixTitleText}</div>${msg.fix}</div>` : ""}
             </div>
@@ -2521,6 +2776,16 @@ function renderChatHistory() {
   });
 
   container.scrollTop = container.scrollHeight;
+
+  // Find latest LI message to update Visual Novel dialogue box
+  let latestLiMsg = null;
+  for (let i = history.length - 1; i >= 0; i--) {
+    if (history[i].sender === "li") {
+      latestLiMsg = history[i];
+      break;
+    }
+  }
+  updateVnDialogueBox(latestLiMsg, char);
 }
 
 // Starter Options Generator (3 Premade Multiple-Choice Options for Beginners)
@@ -2811,87 +3076,37 @@ function setupTierInputControls(tierObj, char, isInitialLoad = false) {
   // Check and apply active cooldown button states if running
   updateCooldownUI(checkSendCooldown());
 
-  const unlockedMode = (userState.unlockedModes && userState.unlockedModes[char.id]) || 1;
-  const progressCount = (userState.modeProgress && userState.modeProgress[char.id]) || 0;
-  const targetRequired = 3;
-
   const progBar = document.getElementById("modeProgressionBar");
-  const stageIcon = document.getElementById("modeStageIcon");
-  const stageTitle = document.getElementById("modeStageTitle");
-  const progressCountEl = document.getElementById("modeProgressCount");
-  const unlockHint = document.getElementById("modeUnlockHint");
+  if (progBar) progBar.style.display = "none";
+
   const modeSwitcher = document.getElementById("inputModeSwitcher");
+  if (modeSwitcher) modeSwitcher.style.display = "flex";
 
   const modeStarterBtn = document.getElementById("modeStarterChoiceBtn");
   const modeSentenceBtn = document.getElementById("modeSentenceBuilderBtn");
   const modeFreeBtn = document.getElementById("modeFreeTextBtn");
 
-  if (unlockedMode === 1) {
-    if (progBar) progBar.style.display = "flex";
-    if (stageIcon) stageIcon.textContent = "🌱";
-    if (stageTitle) stageTitle.textContent = "Mode 1: Starter Options (Beginner)";
-    if (progressCountEl) progressCountEl.textContent = `${progressCount}/${targetRequired}`;
-    if (unlockHint) unlockHint.textContent = "replies to unlock Sentence Builder 🔓";
-    if (modeSwitcher) modeSwitcher.style.display = "none";
+  const savedMode = userState.selectedInputMode && userState.selectedInputMode[char.id];
+  const isFreeActive = modeFreeBtn && modeFreeBtn.classList.contains("active");
+  const isSentenceActive = modeSentenceBtn && modeSentenceBtn.classList.contains("active");
+  const isStarterActive = modeStarterBtn && modeStarterBtn.classList.contains("active");
 
+  const currentMode = isInitialLoad
+    ? (savedMode || "starter")
+    : (isStarterActive ? "starter" : (isSentenceActive ? "sentence" : "free"));
+
+  if (currentMode === "starter") {
     if (modeStarterBtn) modeStarterBtn.click();
-  } else if (unlockedMode === 2) {
-    if (progBar) progBar.style.display = "flex";
-    if (stageIcon) stageIcon.textContent = "🧩";
-    if (stageTitle) stageTitle.textContent = "Mode 2: Sentence Builder (Words)";
-    if (progressCountEl) progressCountEl.textContent = `${progressCount}/${targetRequired}`;
-    if (unlockHint) unlockHint.textContent = "replies to unlock Free Chat 🔓";
-    if (modeSwitcher) modeSwitcher.style.display = "none";
-
+  } else if (currentMode === "sentence") {
     if (modeSentenceBtn) modeSentenceBtn.click();
   } else {
-    // Mode 3: All modes unlocked!
-    if (progBar) progBar.style.display = "flex";
-    if (stageIcon) stageIcon.textContent = "🏆";
-    if (stageTitle) stageTitle.textContent = "Master Level: Free Chat Unlocked!";
-    if (progressCountEl) progressCountEl.textContent = "3/3 ✓";
-    if (unlockHint) unlockHint.textContent = "Freely switch between all 3 modes below ✨";
-    if (modeSwitcher) modeSwitcher.style.display = "flex";
-
-    const savedMode = userState.selectedInputMode && userState.selectedInputMode[char.id];
-    const isFreeActive = modeFreeBtn && modeFreeBtn.classList.contains("active");
-    const isSentenceActive = modeSentenceBtn && modeSentenceBtn.classList.contains("active");
-    const currentMode = isInitialLoad ? (savedMode || "free") : (isFreeActive ? "free" : (isSentenceActive ? "sentence" : (savedMode || "free")));
-
-    if (currentMode === "starter") {
-      if (modeStarterBtn) modeStarterBtn.click();
-    } else if (currentMode === "sentence") {
-      if (modeSentenceBtn) modeSentenceBtn.click();
-    } else {
-      if (modeFreeBtn) modeFreeBtn.click();
-    }
+    if (modeFreeBtn) modeFreeBtn.click();
   }
 }
 
-// Mode Progression Engine (Locked progression until free chat is unlocked)
+// Mode Progression Engine
 function checkModeProgression(charId, currentStepMode) {
-  if (!userState.unlockedModes) userState.unlockedModes = { ado: 1, kou: 1, ren: 1, group: 1 };
-  if (!userState.modeProgress) userState.modeProgress = { ado: 0, kou: 0, ren: 0, group: 0 };
-
-  const currentUnlocked = userState.unlockedModes[charId] || 1;
-
-  if (currentUnlocked === currentStepMode && currentUnlocked < 3) {
-    userState.modeProgress[charId] = (userState.modeProgress[charId] || 0) + 1;
-    if (userState.modeProgress[charId] >= 3) {
-      userState.unlockedModes[charId] = currentUnlocked + 1;
-      userState.modeProgress[charId] = 0;
-      if (!userState.selectedInputMode) userState.selectedInputMode = {};
-
-      if (userState.unlockedModes[charId] === 2) {
-        userState.selectedInputMode[charId] = "sentence";
-        showModeUnlockBanner("🎉 Level Up! Starter Options mastered! 🧩 Sentence Builder Mode Unlocked!");
-      } else if (userState.unlockedModes[charId] === 3) {
-        userState.selectedInputMode[charId] = "free";
-        showModeUnlockBanner("🏆 Level Up! 💬 Free Chat Mode Unlocked! You can now freely pick any mode!");
-      }
-    }
-    saveLocalState();
-  }
+  // Free mode selection enabled directly across all chats
 }
 
 function showModeUnlockBanner(text) {
@@ -3379,15 +3594,15 @@ function generateInCharacterFallback(char, userText, tierObj) {
   }
 
   if (isGroup) {
-    let adoText = "Ado nhớ bạn lắm nè! 🥺✨";
-    let kouText = "Hừm... Học bài xong chưa? 📚";
+    let adoText = "Ado nhớ bạn lắm nè!";
+    let kouText = "Hừm... Học bài xong chưa?";
 
     if (targetLang === "en") {
-      adoText = "Ado missed you so much! 🥺✨";
-      kouText = "Hmph... Did you finish studying? 📚";
+      adoText = "Ado missed you so much!";
+      kouText = "Hmph... Did you finish studying?";
     } else if (targetLang === "ja") {
-      adoText = "会いたかったです、先輩！ 🥺✨";
-      kouText = "勉強は終わったのか？ 📚";
+      adoText = "会いたかったです、先輩！";
+      kouText = "勉強は終わったのか？";
     }
 
     return {
@@ -3397,14 +3612,14 @@ function generateInCharacterFallback(char, userText, tierObj) {
           speaker: "ado",
           speakerName: "Ado",
           text: adoText,
-          translation: "Ado: I missed you so much! 🥺✨",
+          translation: "Ado: I missed you so much!",
           tip: "Ado speaks enthusiastically and clings to you."
         },
         {
           speaker: "kou",
           speakerName: "Kou",
           text: kouText,
-          translation: "Kou: Hmph... Did you finish studying? 📚",
+          translation: "Kou: Hmph... Did you finish studying?",
           tip: "Kou checks on your study progress with a cool demeanor."
         }
       ],
@@ -3414,25 +3629,25 @@ function generateInCharacterFallback(char, userText, tierObj) {
       tip: fallbackTip,
       encouragement: fallbackEncouragement,
       starterOptions: [
-        { text: "Chào hai cậu, tớ vào nói chuyện nè! ✨", translation: "Hello both of you, I'm here to chat!" },
-        { text: "Cảm ơn hai cậu rất nhiều nhé! ❤️", translation: "Thank you both so much!" },
-        { text: "Tớ học xong rồi nè Kou ơi! 📚", translation: "I finished studying, Kou!" }
+        { text: "Chào hai cậu, tớ vào nói chuyện nè!", translation: "Hello both of you, I'm here to chat!" },
+        { text: "Cảm ơn hai cậu rất nhiều nhé!", translation: "Thank you both so much!" },
+        { text: "Tớ học xong rồi nè Kou ơi!", translation: "I finished studying, Kou!" }
       ],
       contextualChipsPrompt: "Build your reply to Ado & Kou:",
       contextualChips: ["Chào", "hai", "cậu", "Cảm", "ơn", "Ado", "Kou", "nhé", "học", "chăm", "chỉ", "ạ"]
     };
   } else if (char.id === "ado") {
-    let respText = "Chào tiền bối nha! Đi chơi thôi! 🥺✨";
-    let trans = "Hello Senpai! Let's go hang out! 🥺✨";
+    let respText = "Chào tiền bối nha! Đi chơi thôi!";
+    let trans = "Hello Senpai! Let's go hang out!";
     let tip = "'Chào tiền bối' is a sweet greeting to an upperclassman.";
 
     if (targetLang === "en") {
-      respText = "Hello Senpai! Let's hang out together! 🥺✨";
-      trans = "Hello Senpai! Let's hang out together! 🥺✨";
+      respText = "Hello Senpai! Let's hang out together!";
+      trans = "Hello Senpai! Let's hang out together!";
       tip = "Ado loves spending time with Senpai.";
     } else if (targetLang === "ja") {
-      respText = "先輩！一緒にお出かけしましょう！ 🥺✨";
-      trans = "Senpai! Let's go out together! 🥺✨";
+      respText = "先輩！一緒にお出かけしましょう！";
+      trans = "Senpai! Let's go out together!";
       tip = "'Senpai' is how Ado addresses you affectionately.";
     }
 
@@ -3445,25 +3660,25 @@ function generateInCharacterFallback(char, userText, tierObj) {
       correction: fallbackFix,
       encouragement: fallbackEncouragement,
       starterOptions: [
-        { text: "Chào Ado, tiền bối cũng nhớ Ado! 🥺✨", translation: "Hello Ado, I miss you too!" },
-        { text: "Được chứ, đi chơi thôi Ado ơi! 🍰", translation: "Sure, let's hang out Ado!" },
-        { text: "Ado hôm nay ngoan quá nha! 💖", translation: "Ado is so well-behaved today!" }
+        { text: "Chào Ado, tiền bối cũng nhớ Ado!", translation: "Hello Ado, I miss you too!" },
+        { text: "Được chứ, đi chơi thôi Ado ơi!", translation: "Sure, let's hang out Ado!" },
+        { text: "Ado hôm nay ngoan quá nha!", translation: "Ado is so well-behaved today!" }
       ],
       contextualChipsPrompt: `Build your reply to Ado:`,
       contextualChips: ["Chào", "Ado", "tiền", "bối", "cũng", "nhớ", "em", "đi", "chơi", "ngoan", "quá", "nhé"]
     };
   } else if (char.id === "kou") {
-    let respText = "Hừm... Cậu làm tốt lắm. 📚";
-    let trans = "Hmph... You did very well. 📚";
+    let respText = "Hừm... Cậu làm tốt lắm.";
+    let trans = "Hmph... You did very well.";
     let tip = "Kou is strict, but gives subtle praise!";
 
     if (targetLang === "en") {
-      respText = "Hmph... You did quite well. 📚";
-      trans = "Hmph... You did quite well. 📚";
+      respText = "Hmph... You did quite well.";
+      trans = "Hmph... You did quite well.";
       tip = "Kou is a tsundere classmate who secretly cares.";
     } else if (targetLang === "ja") {
-      respText = "ふん… よく出来てるじゃない。 📚";
-      trans = "Hmph... You did quite well. 📚";
+      respText = "ふん… よく出来てるじゃない。";
+      trans = "Hmph... You did quite well.";
       tip = "Classic tsundere expression of praise.";
     }
 
@@ -3476,25 +3691,25 @@ function generateInCharacterFallback(char, userText, tierObj) {
       correction: fallbackFix,
       encouragement: fallbackEncouragement,
       starterOptions: [
-        { text: "Cảm ơn Kou nhé, tớ sẽ cố gắng! 📚", translation: "Thanks Kou, I will do my best!" },
-        { text: "Kou chu đáo quá, đừng ngại nha. 😳", translation: "You're so thoughtful, don't be shy." },
-        { text: "Kou giảng bài giúp tớ nhé? 💬", translation: "Could you help explain the lesson?" }
+        { text: "Cảm ơn Kou nhé, tớ sẽ cố gắng!", translation: "Thanks Kou, I will do my best!" },
+        { text: "Kou chu đáo quá, đừng ngại nha.", translation: "You're so thoughtful, don't be shy." },
+        { text: "Kou giảng bài giúp tớ nhé?", translation: "Could you help explain the lesson?" }
       ],
       contextualChipsPrompt: `Build your reply to Kou:`,
       contextualChips: ["Cảm", "ơn", "Kou", "tớ", "sẽ", "học", "chăm", "chỉ", "giúp", "bài", "nhé"]
     };
   } else if (char.id === "ren") {
-    let respText = "Chào nhóc nhé. Ngoan lắm! 😏✨";
-    let trans = "Hello kid. Good job! 😏✨";
+    let respText = "Chào nhóc nhé. Ngoan lắm!";
+    let trans = "Hello kid. Good job!";
     let tip = "Ren is an assertive senior who loves teasing you.";
 
     if (targetLang === "en") {
-      respText = "Hey there kid. Good job! 😏✨";
-      trans = "Hey there kid. Good job! 😏✨";
+      respText = "Hey there kid. Good job!";
+      trans = "Hey there kid. Good job!";
       tip = "Ren loves teasing you playfully.";
     } else if (targetLang === "ja") {
-      respText = "ほら、いい子にしてたな、後輩。 😏✨";
-      trans = "See? You were a good kid, junior. 😏✨";
+      respText = "ほら、いい子にしてたな、後輩。";
+      trans = "See? You were a good kid, junior.";
       tip = "Ren's teasing tone.";
     }
 
@@ -3507,26 +3722,26 @@ function generateInCharacterFallback(char, userText, tierObj) {
       correction: fallbackFix,
       encouragement: fallbackEncouragement,
       starterOptions: [
-        { text: "Em chào anh Ren nhé! 😏✨", translation: "Hello Ren!" },
-        { text: "Em không phải là nhóc đâu! 🔥", translation: "I am not a kid!" },
-        { text: "Anh Ren lại trêu em rồi! 💖", translation: "Ren is teasing me again!" }
+        { text: "Em chào anh Ren nhé!", translation: "Hello Ren!" },
+        { text: "Em không phải là nhóc đâu!", translation: "I am not a kid!" },
+        { text: "Anh Ren lại trêu em rồi!", translation: "Ren is teasing me again!" }
       ],
       contextualChipsPrompt: `Build your reply to Ren:`,
       contextualChips: ["Chào", "anh", "Ren", "em", "không", "phải", "nhóc", "con", "đâu", "nhé", "ạ"]
     };
   } else {
     return {
-      characterResponse: "Chào bạn nhé! Rất vui được gặp! ❤️",
-      translation: "Hello! So happy to meet you! ❤️",
+      characterResponse: "Chào bạn nhé! Rất vui được gặp!",
+      translation: "Hello! So happy to meet you!",
       tip: fallbackTip,
       evalColor: evalColor,
       isCorrect: true,
       correction: "Spot on!",
       encouragement: fallbackEncouragement,
       starterOptions: [
-        { text: "Cảm ơn bạn rất nhiều nhé! ❤️", translation: "Thank you so much!" },
-        { text: "Rất vui được nói chuyện với bạn! ✨", translation: "Nice talking with you!" },
-        { text: "Hôm nay bạn thế nào? 💬", translation: "How are you today?" }
+        { text: "Cảm ơn bạn rất nhiều nhé!", translation: "Thank you so much!" },
+        { text: "Rất vui được nói chuyện với bạn!", translation: "Nice talking with you!" },
+        { text: "Hôm nay bạn thế nào?", translation: "How are you today?" }
       ],
       contextualChipsPrompt: `Build your reply:`,
       contextualChips: ["Cảm", "ơn", "rất", "vui", "được", "nói", "chuyện", "cùng", "bạn", "nhé"]
@@ -3536,6 +3751,13 @@ function generateInCharacterFallback(char, userText, tierObj) {
 
 // Typing Indicator Helpers
 function showTypingIndicator(char) {
+  const vnTyping = document.getElementById("vnTypingIndicator");
+  const vnTypingName = document.getElementById("vnTypingName");
+  if (vnTyping) {
+    if (vnTypingName) vnTypingName.textContent = `${char.name.split(" ")[0]} is thinking...`;
+    vnTyping.style.display = "flex";
+  }
+
   const container = document.getElementById("chatHistory");
   if (!container) return;
   const indicator = document.createElement("div");
@@ -3545,7 +3767,7 @@ function showTypingIndicator(char) {
     <img src="${char.avatar}" class="msg-avatar" alt="${char.name}" />
     <div class="msg-body">
       <div class="msg-bubble" style="font-style:italic; color:var(--accent-emerald);">
-        ${char.name} is typing... 💬
+        ${char.name} is typing...
       </div>
     </div>
   `;
@@ -3554,6 +3776,9 @@ function showTypingIndicator(char) {
 }
 
 function removeTypingIndicator() {
+  const vnTyping = document.getElementById("vnTypingIndicator");
+  if (vnTyping) vnTyping.style.display = "none";
+
   const el = document.getElementById("typingIndicator");
   if (el) el.remove();
 }
