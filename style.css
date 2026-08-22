@@ -637,7 +637,7 @@ body {
 .square-char-card {
   position: relative;
   aspect-ratio: 1 / 1;
-  border-radius: 8px;
+  border-radius: 15px;
   overflow: hidden;
   background: #ffffff69;
   border: 1.5px solid rgba(160, 140, 190, 0.25);
@@ -692,10 +692,10 @@ body {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(15, 10, 26, 0.45) 0%,
-    rgba(15, 10, 26, 0.08) 28%,
-    rgba(15, 10, 26, 0.52) 60%,
-    rgba(15, 10, 26, 0.94) 100%
+    rgba(227, 214, 255, 0.45) 0%,
+    rgba(157, 111, 255, 0.08) 28%,
+    rgba(200, 174, 255, 0.52) 60%,
+    rgba(151, 103, 255, 0.94) 100%
   );
   pointer-events: none;
   transition: all 0.25s ease;
@@ -704,10 +704,10 @@ body {
 .square-char-card:hover .square-card-scrim {
   background: linear-gradient(
     180deg,
-    rgba(15, 10, 26, 0.5) 0%,
-    rgba(15, 10, 26, 0.04) 22%,
-    rgba(15, 10, 26, 0.6) 55%,
-    rgba(15, 10, 26, 0.98) 100%
+    rgba(150, 101, 255, 0.5) 0%,
+    rgba(147, 98, 255, 0.04) 22%,
+    rgba(151, 102, 255, 0.6) 55%,
+    rgba(148, 98, 255, 0.98) 100%
   );
 }
 
@@ -826,16 +826,18 @@ body {
   gap: 3px;
 }
 
-.square-char-name {
-  font-size: 17px;
-  font-weight: 800;
+.square-char-name,
+.square-card-name {
+  font-family: var(--font-heading), 'Darumadrop One', cursive, sans-serif;
+  font-size: 24px;
+  font-weight: 400;
   color: #ffffff;
   display: flex;
   align-items: center;
   gap: 6px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-  letter-spacing: -0.2px;
-  line-height: 1.25;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.5px;
+  line-height: 1.15;
 }
 
 .square-char-role {
