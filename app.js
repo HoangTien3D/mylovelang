@@ -81,6 +81,24 @@ const SVG_AVATARS = {
 SVG_AVATARS.bao = SVG_AVATARS.ado;
 SVG_AVATARS.julian = SVG_AVATARS.kou;
 
+function getUserVietnameseAddressTerms() {
+  const pronouns = (typeof userState !== "undefined" && userState.userProfile && userState.userProfile.pronouns)
+    ? String(userState.userProfile.pronouns).toLowerCase()
+    : "she/her";
+  const isMale = pronouns.includes("he") || pronouns.includes("him");
+  const olderUserTerm = isMale ? "anh" : "chị";
+  const olderUserCap = isMale ? "Anh" : "Chị";
+  return {
+    isMale,
+    olderUserTerm, // Kou addresses user as 'anh' or 'chị'
+    olderUserCap,  // 'Anh' or 'Chị'
+    youngerUserTerm: "em", // Ren addresses user as 'em' / 'nhóc', Kou refers to himself as 'em'
+    youngerUserCap: "Em",
+    classmateTerm: "cậu",
+    classmateSelf: "tớ"
+  };
+}
+
 const BASE_CHARACTERS = {
   ado: {
     id: "ado",
@@ -121,9 +139,9 @@ const BASE_CHARACTERS = {
     sampleVoice: "Sweet, energetic junior accent",
     greetings: {
       vi: {
-        text: "Tiền bối ơi! Kou tìm tiền bối mãi đó! Hôm nay tiền bối có rảnh chơi với Kou không?",
-        translation: "Senpai! Kou has been looking everywhere for you! Are you free to play with Kou today?",
-        tip: "'Tiền bối' means 'Senpai / Senior'. 'Có rảnh' means 'Are you free'."
+        text: "Chị ơi! Kou tìm chị mãi đó! Hôm nay chị có rảnh chơi với em không?",
+        translation: "Chị! Kou has been looking everywhere for you! Are you free to play with Kou today?",
+        tip: "'Chị' (or 'Anh' depending on pronouns) is how younger people affectionately address an older person. Kou refers to himself as 'em'. 'Có rảnh' means 'Are you free'."
       },
       en: {
         text: "Senpai! Kou has been looking everywhere for you! Are you free to spend time with Kou today?",
@@ -187,6 +205,17 @@ function getCharacter(charId) {
     langLabel = "Japanese";
   }
 
+  let greetingText = greetingObj.text;
+  let greetingTranslation = greetingObj.translation;
+  let greetingTip = greetingObj.tip;
+
+  if (normalizedId === "kou" && targetLang === "vi") {
+    const { olderUserTerm, olderUserCap, isMale } = getUserVietnameseAddressTerms();
+    greetingText = `${olderUserCap} ơi! Kou tìm ${olderUserTerm} mãi đó! Hôm nay ${olderUserTerm} có rảnh chơi với em không?`;
+    greetingTranslation = `${olderUserCap}! Kou has been looking everywhere for you! Are you free to play with Kou today?`;
+    greetingTip = `'${olderUserCap}' is how younger people affectionately address an older ${isMale ? 'male' : 'female'}. Kou refers to himself as 'em'. 'Có rảnh' means 'Are you free'.`;
+  }
+
   return {
     id: base.id,
     name: base.name,
@@ -198,10 +227,10 @@ function getCharacter(charId) {
     archetype: base.archetype,
     role: base.role,
     personality: base.personality,
-    greeting: greetingObj.text,
+    greeting: greetingText,
     romaji: greetingObj.romaji || null,
-    greetingTranslation: greetingObj.translation,
-    greetingTip: greetingObj.tip,
+    greetingTranslation: greetingTranslation,
+    greetingTip: greetingTip,
     sampleVoice: base.sampleVoice,
   };
 }
@@ -314,176 +343,238 @@ const UI_STRINGS = {
 };
 
 // Natural Glitch & Recovery Messages for Friendly Error Handling
-const ERROR_GLITCH_MESSAGES = {
-  ado: [
-    "Tiền bối ơi chờ Ado xíu nha, điện thoại Ado bị đơ đơ 📱🥺",
-    "Ơ tự nhiên mất mạng xíu, tiền bối đừng bỏ Ado đi nha! 📶",
-    "Đợi Ado một xíu thôi, máy Ado bị lag nhẹ...",
-    "Ủa điện thoại Ado vừa giật giật, một giây thôi tiền bối ơi!"
-  ],
-  kou: [
-    "Khụ... Điện thoại bị đơ một chút. Đừng tưởng là tớ cố ý ngắt lời đấy nhé 📱",
-    "Mạng bị gián đoạn xíu. Tớ đang khắc phục ngay đây, chờ chút! 📶",
-    "Lỗi ứng dụng chút thôi. Tớ sẽ khôi phục tín hiệu ngay lập tức...",
-    "Đợi tớ một giây, kết nối vừa bị chập chờn..."
-  ],
-  ren: [
-    "Ơ kìa, sóng chập chờn làm gián đoạn câu chuyện của anh với nhóc rồi 📱😏",
-    "Đừng vội đi đâu đấy nhé, mạng bị lag xíu thôi... Để anh chỉnh lại 📶",
-    "Máy anh hơi đơ chút, nhóc ngoan ngoãn ngồi yên chờ anh đấy...",
-    "Kết nối bị đứt xíu, anh quay lại chọc nhóc ngay đây..."
-  ]
-};
+function getErrorGlitchMessages(charId) {
+  const { olderUserTerm, olderUserCap } = getUserVietnameseAddressTerms();
+  const normalizedId = (charId === "bao" ? "ado" : (charId === "julian" ? "kou" : charId)) || "ado";
 
-// Aliases for legacy glitch keys
-ERROR_GLITCH_MESSAGES.bao = ERROR_GLITCH_MESSAGES.ado;
-ERROR_GLITCH_MESSAGES.julian = ERROR_GLITCH_MESSAGES.kou;
+  if (normalizedId === "kou") {
+    return [
+      `${olderUserCap} ơi chờ Kou xíu nha, điện thoại Kou bị đơ đơ 📱🥺`,
+      `Ơ tự nhiên mất mạng xíu, ${olderUserTerm} đừng bỏ Kou đi nha! 📶`,
+      "Đợi Kou một xíu thôi, máy Kou bị lag nhẹ...",
+      `Ủa điện thoại Kou vừa giật giật, một giây thôi ${olderUserTerm} ơi!`
+    ];
+  } else if (normalizedId === "ado") {
+    return [
+      "Khụ... Điện thoại của tớ bị đơ một chút. Đừng tưởng là tớ cố ý ngắt lời đấy nhé 📱",
+      "Mạng bị gián đoạn xíu. Tớ đang khắc phục ngay đây, cậu chờ chút nhé! 📶",
+      "Lỗi ứng dụng chút thôi. Tớ sẽ khôi phục tín hiệu ngay lập tức...",
+      "Đợi tớ một giây, kết nối vừa bị chập chờn..."
+    ];
+  } else {
+    return [
+      "Ơ kìa, sóng chập chờn làm gián đoạn câu chuyện của anh với em rồi 📱😏",
+      "Đừng vội đi đâu đấy nhé, mạng bị lag xíu thôi... Để anh chỉnh lại 📶",
+      "Máy anh hơi đơ chút, em ngoan ngoãn ngồi yên chờ anh đấy...",
+      "Kết nối bị đứt xíu, anh quay lại chọc nhóc ngay đây..."
+    ];
+  }
+}
 
-const ERROR_RECOVERY_MESSAGES = {
-  ado: [
-    "Ado quay lại rồi nè tiền bối! Hồi nãy tiền bối nói gì với Ado thế? ✨",
-    "Được rồi nè tiền bối ơi! Tiền bối nhắn lại cho Ado nha? 🥺",
-    "Mạng ngon lại rồi! Tiền bối thương Ado đừng giận nha!",
-    "Hihi sửa xong rồi! Ado nghe tiền bối nói tiếp đây!"
-  ],
-  kou: [
-    "Xong rồi đấy. Cậu vừa nói tới đâu rồi nhỉ? Đừng bảo là quên rồi nhé 📚",
-    "Khôi phục xong kết nối rồi. Nói tiếp đi, tớ đang nghe đây...",
-    "Tốt rồi. Tớ không muốn bỏ dở giữa chừng đâu, cậu lặp lại giúp tớ đi.",
-    "Mọi thứ ổn rồi. Cậu nói tiếp nội dung lúc nãy đi."
-  ],
-  ren: [
-    "Xong rồi đây, nhóc. Hồi nãy định nói gì ngọt ngào với anh à? 😏",
-    "Anh quay lại rồi đây. Tiếp tục chọc nhóc được rồi chứ?",
-    "Xong rồi nè. Không có anh trò chuyện nhóc có thấy thiếu thiếu không?",
-    "Ổn rồi nhé. Mau nói tiếp cho anh nghe nào, nhóc."
-  ]
-};
+function getErrorRecoveryMessages(charId) {
+  const { olderUserTerm, olderUserCap } = getUserVietnameseAddressTerms();
+  const normalizedId = (charId === "bao" ? "ado" : (charId === "julian" ? "kou" : charId)) || "ado";
 
-// Aliases for legacy recovery keys
-ERROR_RECOVERY_MESSAGES.bao = ERROR_RECOVERY_MESSAGES.ado;
-ERROR_RECOVERY_MESSAGES.julian = ERROR_RECOVERY_MESSAGES.kou;
+  if (normalizedId === "kou") {
+    return [
+      `Kou quay lại rồi nè ${olderUserTerm} ơi! Hồi nãy ${olderUserTerm} nói gì với em thế? ✨`,
+      `Được rồi nè ${olderUserTerm} ơi! ${olderUserCap} nhắn lại cho em nha? 🥺`,
+      `Mạng ngon lại rồi! ${olderUserCap} thương Kou đừng giận nha!`,
+      `Hihi sửa xong rồi! Kou nghe ${olderUserTerm} nói tiếp đây!`
+    ];
+  } else if (normalizedId === "ado") {
+    return [
+      "Xong rồi đấy. Cậu vừa nói tới đâu rồi nhỉ? Đừng bảo là quên rồi nhé 📚",
+      "Khôi phục xong kết nối rồi. Cậu nói tiếp đi, tớ đang nghe đây...",
+      "Tốt rồi. Tớ không muốn bỏ dở giữa chừng đâu, cậu lặp lại giúp tớ đi.",
+      "Mọi thứ ổn rồi. Cậu nói tiếp nội dung lúc nãy đi."
+    ];
+  } else {
+    return [
+      "Xong rồi đây, nhóc. Hồi nãy định nói gì ngọt ngào với anh à? 😏",
+      "Anh quay lại rồi đây. Tiếp tục chọc em được rồi chứ?",
+      "Xong rồi nè. Không có anh trò chuyện em có thấy thiếu thiếu không?",
+      "Ổn rồi nhé. Mau nói tiếp cho anh nghe nào, nhóc."
+    ];
+  }
+}
+
+const ERROR_GLITCH_MESSAGES = new Proxy({}, {
+  get(target, prop) {
+    return getErrorGlitchMessages(prop);
+  }
+});
+
+const ERROR_RECOVERY_MESSAGES = new Proxy({}, {
+  get(target, prop) {
+    return getErrorRecoveryMessages(prop);
+  }
+});
 
 // Spontaneous LI Check-Up Messages Pool (Casual, Short, Sweet Texts per Target Language)
-const SPONTANEOUS_CHECKUPS = {
-  ado: {
-    vi: [
-      { text: "Tiền bối ơi! Ado nhớ tiền bối quá, nhắn tin với Ado đi mà! 🥺✨", translation: "Senpai! Ado misses you so much, please text Ado! 🥺✨", tip: "'Nhớ' means 'miss someone'. Ado is super clingy!" },
-      { text: "Tiền bối đang làm gì đó? Có đang nghĩ tới Ado không thế? 💖", translation: "What are you doing Senpai? Are you thinking about Ado? 💖", tip: "'Đang làm gì' asks what you are doing." },
-      { text: "Ado đứng chờ tiền bối ở hành lang nè, nhắn lại cho Ado nha! 🥺", translation: "Ado is waiting for you in the hallway, text Ado back! 🥺", tip: "Ado loves following you around!" }
-    ],
-    en: [
-      { text: "Senpai! Ado misses you so much, please talk to me! 🥺✨", translation: "Senpai! Ado misses you so much, please talk to me! 🥺✨", tip: "Ado is a cute and clingy underclassman!" },
-      { text: "What are you doing Senpai? Were you thinking of Ado? 💖", translation: "What are you doing Senpai? Were you thinking of Ado? 💖", tip: "Ado craves your attention!" },
-      { text: "Ado is waiting for you! Text me back soon, Senpai! 🥺", translation: "Ado is waiting for you! Text me back soon, Senpai! 🥺", tip: "Clingy junior checking in." }
-    ],
-    ja: [
-      { text: "先輩！Ado、先輩に会いたくてたまらないです！ 🥺✨", romaji: "Senpai! Ado, senpai ni aitakute tamaranai desu!", translation: "Senpai! Ado misses you so much and wants to see you! 🥺✨", tip: "'Aitakute tamaranai' means dying to see you." },
-      { text: "先輩、何してますか？Adoのこと考えてくれてましたか？ 💖", romaji: "Senpai, nani shitemasu ka? Ado no koto kangaete kuretemashita ka?", translation: "Senpai, what are you doing? Were you thinking about Ado? 💖", tip: "Cute clingy check-in." }
-    ]
-  },
-  kou: {
-    vi: [
-      { text: "Khụ... Tớ vừa tổng hợp xong lịch học nè. Cậu có rảnh xem qua không? 📚", translation: "Ahem... I just finished summarizing the study schedule. Free to check it? 📚", tip: "Kou is strict about studies but secretly wants to talk!" },
-      { text: "Đừng có mải chơi mà quên học đấy nhé! Nhắn tớ nếu cần tớ giảng bài cho. 💬", translation: "Don't get distracted playing! Text me if you need me to explain the lesson.", tip: "Tsundere classmate caring for you." }
-    ],
-    en: [
-      { text: "Ahem... I just organized our study notes. Are you free to review them? 📚", translation: "Ahem... I just organized our study notes. Are you free to review them? 📚", tip: "Kou uses study notes as an excuse to text you!" },
-      { text: "Don't get distracted! Text me if you need help with your lessons. 💬", translation: "Don't get distracted! Text me if you need help with your lessons. 💬", tip: "Strict classmate secretly checking on you." }
-    ],
-    ja: [
-      { text: "コホン… 勉強のノートがまとまったよ。一緒に確認する？ 📚", romaji: "Kohon... Benkyou no nootu ga matomatta yo. Issho ni kakunin suru?", translation: "Ahem... The study notes are ready. Want to review together? 📚", tip: "Tsundere excuse to study together." },
-      { text: "さぼってないだろうね？分からないところがあったら教えるけど… 💬", romaji: "Sabottenai darou ne? Wakaranai tokoro ga attara oshieru kedo...", translation: "You aren't slacking off, right? I can teach you if there's anything you don't get...", tip: "Tsundere classmate offer." }
-    ]
-  },
-  ren: {
-    vi: [
-      { text: "Sao đấy nhóc? Lại đang ngơ ngẩn nghĩ đến anh đúng không? 😏✨", translation: "What's up kid? Daydreaming about me again, right? 😏✨", tip: "'Nhóc' is Ren's flirty nickname for you." },
-      { text: "Lại đây ngồi với anh xíu nào. Để anh xem hôm nay em có ngoan không. 😈", translation: "Come sit with me for a bit. Let me see if you're well-behaved today. 😈", tip: "Ren is an aggressive, teasing senior." }
-    ],
-    en: [
-      { text: "What's up kid? Daydreaming about me again, aren't you? 😏✨", translation: "What's up kid? Daydreaming about me again, aren't you? 😏✨", tip: "Ren loves teasing you boldly." },
-      { text: "Come sit close to me for a bit. Let me test how good you are today. 😈", translation: "Come sit close to me for a bit. Let me test how good you are today. 😈", tip: "Flirty, assertive senior vibe." }
-    ],
-    ja: [
-      { text: "どうした、後輩ちゃん？俺のこと考えてたんだろ？ 😏✨", romaji: "Doushita, kouhai-chan? Ore no koto kangaetetandaro?", translation: "What's wrong, junior? You were thinking of me, right? 😏✨", tip: "'Kouhai-chan' is his affectionate tease." },
-      { text: "こっち来て俺の隣に座れよ。よしよししてやるから。 😈", romaji: "Kocchi kite ore no tonari ni suware yo. Yoshi yoshi shite yaru kara.", translation: "Come sit next to me. I'll pat your head. 😈", tip: "Assertive, flirty senior." }
-    ]
+function getSpontaneousCheckups(charId, targetLang = "vi") {
+  const { olderUserTerm, olderUserCap } = getUserVietnameseAddressTerms();
+  const normalizedId = (charId === "bao" ? "ado" : (charId === "julian" ? "kou" : charId)) || "ado";
+
+  if (normalizedId === "kou") {
+    if (targetLang === "en") {
+      return [
+        { text: "Senpai! Kou misses you so much, please talk to me! 🥺✨", translation: "Senpai! Kou misses you so much, please talk to me! 🥺✨", tip: "Kou is a cute and clingy underclassman!" },
+        { text: "What are you doing Senpai? Were you thinking of Kou? 💖", translation: "What are you doing Senpai? Were you thinking of Kou? 💖", tip: "Kou craves your attention!" },
+        { text: "Kou is waiting for you! Text me back soon, Senpai! 🥺", translation: "Kou is waiting for you! Text me back soon, Senpai! 🥺", tip: "Clingy junior checking in." }
+      ];
+    } else if (targetLang === "ja") {
+      return [
+        { text: "先輩！Kou、先輩に会いたくてたまらないです！ 🥺✨", romaji: "Senpai! Kou, senpai ni aitakute tamaranai desu!", translation: "Senpai! Kou misses you so much and wants to see you! 🥺✨", tip: "'Aitakute tamaranai' means dying to see you." },
+        { text: "先輩、何してますか？Kouのこと考えてくれてましたか？ 💖", romaji: "Senpai, nani shitemasu ka? Kou no koto kangaete kuretemashita ka?", translation: "Senpai, what are you doing? Were you thinking about Kou? 💖", tip: "Cute clingy check-in." }
+      ];
+    } else {
+      return [
+        { text: `${olderUserCap} ơi! Kou nhớ ${olderUserTerm} quá, nhắn tin với em đi mà! 🥺✨`, translation: `${olderUserCap}! Kou misses you so much, please text Kou! 🥺✨`, tip: "'Nhớ' means 'miss someone'. Kou is super sweet and clingy!" },
+        { text: `${olderUserCap} đang làm gì đó? Có đang nghĩ tới em không thế? 💖`, translation: `What are you doing ${olderUserCap}? Are you thinking about Kou? 💖`, tip: "'Đang làm gì' asks what you are doing." },
+        { text: `Kou đứng chờ ${olderUserTerm} ở hành lang nè, nhắn lại cho em nha! 🥺`, translation: `Kou is waiting for you in the hallway, text Kou back! 🥺`, tip: "Kou loves spending time with you!" }
+      ];
+    }
+  } else if (normalizedId === "ado") {
+    if (targetLang === "en") {
+      return [
+        { text: "Ahem... I just organized our study notes. Are you free to review them? 📚", translation: "Ahem... I just organized our study notes. Are you free to review them? 📚", tip: "Ado uses study notes as an excuse to text you!" },
+        { text: "Don't get distracted! Text me if you need help with your lessons. 💬", translation: "Don't get distracted! Text me if you need help with your lessons. 💬", tip: "Strict classmate secretly checking on you." }
+      ];
+    } else if (targetLang === "ja") {
+      return [
+        { text: "コホン… 勉強のノートがまとまったよ。一緒に確認する？ 📚", romaji: "Kohon... Benkyou no nootu ga matomatta yo. Issho ni kakunin suru?", translation: "Ahem... The study notes are ready. Want to review together? 📚", tip: "Tsundere excuse to study together." },
+        { text: "さぼってないだろうね？分からないところがあったら教えるけど… 💬", romaji: "Sabottenai darou ne? Wakaranai tokoro ga attara oshieru kedo...", translation: "You aren't slacking off, right? I can teach you if there's anything you don't get...", tip: "Tsundere classmate offer." }
+      ];
+    } else {
+      return [
+        { text: "Khụ... Tớ vừa tổng hợp xong lịch học nè. Cậu có rảnh xem qua không? 📚", translation: "Ahem... I just finished summarizing the study schedule. Free to check it? 📚", tip: "Ado is strict about studies but secretly wants to talk!" },
+        { text: "Đừng có mải chơi mà quên học đấy nhé! Nhắn tớ nếu cần tớ giảng bài cho. 💬", translation: "Don't get distracted playing! Text me if you need me to explain the lesson.", tip: "Tsundere classmate caring for you." }
+      ];
+    }
+  } else {
+    // Ren
+    if (targetLang === "en") {
+      return [
+        { text: "What's up kid? Daydreaming about me again, aren't you? 😏✨", translation: "What's up kid? Daydreaming about me again, aren't you? 😏✨", tip: "Ren loves teasing you boldly." },
+        { text: "Come sit close to me for a bit. Let me test how good you are today. 😈", translation: "Come sit close to me for a bit. Let me test how good you are today. 😈", tip: "Flirty, assertive senior vibe." }
+      ];
+    } else if (targetLang === "ja") {
+      return [
+        { text: "どうした、後輩ちゃん？俺のこと考えてたんだろ？ 😏✨", romaji: "Doushita, kouhai-chan? Ore no koto kangaetetandaro?", translation: "What's wrong, junior? You were thinking of me, right? 😏✨", tip: "'Kouhai-chan' is his affectionate tease." },
+        { text: "こっち来て俺の隣に座れよ。よしよししてやるから。 😈", romaji: "Kocchi kite ore no tonari ni suware yo. Yoshi yoshi shite yaru kara.", translation: "Come sit next to me. I'll pat your head. 😈", tip: "Assertive, flirty senior." }
+      ];
+    } else {
+      return [
+        { text: "Sao đấy nhóc? Lại đang ngơ ngẩn nghĩ đến anh đúng không? 😏✨", translation: "What's up kid? Daydreaming about me again, right? 😏✨", tip: "'Nhóc' and 'anh' is Ren's flirty addressing." },
+        { text: "Lại đây ngồi với anh xíu nào. Để anh xem hôm nay em có ngoan không. 😈", translation: "Come sit with me for a bit. Let me see if you're well-behaved today. 😈", tip: "Ren is an aggressive, teasing senior." }
+      ];
+    }
   }
-};
+}
+
+const SPONTANEOUS_CHECKUPS = new Proxy({}, {
+  get(target, charProp) {
+    return {
+      get vi() { return getSpontaneousCheckups(charProp, "vi"); },
+      get en() { return getSpontaneousCheckups(charProp, "en"); },
+      get ja() { return getSpontaneousCheckups(charProp, "ja"); }
+    };
+  }
+});
 
 // Impatient Pout & Check-Up Sequence Pool (Natural & Cute Otome Pre-written Texts per Target Language)
-const UNREPLIED_SEQUENCE = {
-  ado: {
-    vi: [
-      { text: "Tiền bối ơi! Ado vừa mua bánh ngọt ngon lắm nè, tiền bối ăn cùng Ado nha! 🍰", translation: "Senpai! Ado bought delicious cake, eat with Ado! 🍰", tip: "Ado sharing snacks with you." },
-      { text: "Tiền bối đi đâu mất rồi? Đừng bỏ rơi Ado mà... 🥺", translation: "Where did Senpai go? Don't leave Ado behind... 🥺", tip: "Ado getting clingy." },
-      { text: "Tiền bối không thương Ado nữa sao? Ado mếu đó nha! 😿💔", translation: "Does Senpai not love Ado anymore? Ado will cry! 😿💔", tip: "Ado pouting for attention." },
-      { text: "Mệt tiền bối ghê... Ado dỗi thật rồi đó! Hu hu... 😾", translation: "Senpai is so mean... Ado is pouting for real now! Waaah... 😾", tip: "Cute clingy pout!" },
-      { text: "...", translation: "... (Ado is sitting in the corner pouting until Senpai replies)", tip: "Ado is waiting for your reply!" }
-    ],
-    en: [
-      { text: "Senpai! Ado bought yummy sweets, come eat with me! 🍰", translation: "Senpai! Ado bought yummy sweets, come eat with me! 🍰", tip: "Ado sharing treats." },
-      { text: "Where did you go Senpai? Don't leave Ado all alone... 🥺", translation: "Where did you go Senpai? Don't leave Ado all alone... 🥺", tip: "Clingy underclassman." },
-      { text: "Do you not care about Ado anymore? I'm gonna cry! 😿💔", translation: "Do you not care about Ado anymore? I'm gonna cry! 😿💔", tip: "Seeking affection." },
-      { text: "Hmph! Leaving me on read? Ado is super pouting now! 😾", translation: "Hmph! Leaving me on read? Ado is super pouting now! 😾", tip: "Ado's pout face." },
-      { text: "...", translation: "... (Ado is sitting in the corner pouting until Senpai replies)", tip: "Ado is waiting for your reply!" }
-    ],
-    ja: [
-      { text: "先輩！美味しいケーキ買ってきたから一緒に食べましょう！ 🍰", romaji: "Senpai! Oishii keeki kattakita kara issho ni tabemashou!", translation: "Senpai! I bought delicious cake, let's eat together! 🍰", tip: "Sharing treats with Senpai." },
-      { text: "先輩どこ行ったんですか？Adoを置いていかないで… 🥺", romaji: "Senpai doko ittan desu ka? Ado wo oite ikanaide...", translation: "Where did you go Senpai? Don't leave Ado behind... 🥺", tip: "Clingy junior." },
-      { text: "もう… 既読無視なんてひどいです！Ado、スネちゃいますよ！ 😾💔", romaji: "Mou... kidoku mushi nante hidoi desu! Ado, sunechaimasu yo!", translation: "Geez... Leaving me on read is so mean! Ado will pout! 😾💔", tip: "Pouting junior." },
-      { text: "...", translation: "... (Ado is sitting in the corner pouting until Senpai replies)", tip: "Ado is waiting for your reply!" }
-    ]
-  },
-  kou: {
-    vi: [
-      { text: "Khụ... Tớ chuẩn bị bài tập xong rồi. Cậu có cần tớ kiểm tra giúp không? 📚", translation: "Ahem... Homework is ready. Want me to check yours? 📚", tip: "Kou using homework as excuse." },
-      { text: "Này, cậu bận gì mà không trả lời tớ thế? Đừng có lơ tớ đấy... 😤", translation: "Hey, what are you busy with? Don't ignore me...", tip: "Tsundere getting flustered." },
-      { text: "Tớ... tớ chỉ lo cậu không hiểu bài thôi! Làm gì mà bắt tớ chờ lâu thế! 🙈", translation: "I... I was just worried you didn't understand the lesson! Why make me wait so long!", tip: "Blushing tsundere classmate." },
-      { text: "Tùy cậu đấy! Tớ sẽ không thèm nhắc cậu nữa đâu! 😾💔", translation: "Whatever! I won't bother reminding you anymore!", tip: "Classic tsundere pout." },
-      { text: "...", translation: "... (Kou is looking away blushing and pouting until you reply)", tip: "Kou is pouting!" }
-    ],
-    en: [
-      { text: "Ahem... Homework is all prepared. Want me to review yours? 📚", translation: "Ahem... Homework is all prepared. Want me to review yours? 📚", tip: "Kou offering help." },
-      { text: "Hey, what are you busy with? Don't just leave me on read... 😤", translation: "Hey, what are you busy with? Don't just leave me on read... 😤", tip: "Strict classmate getting restless." },
-      { text: "I-I was only worried about your grades! Why keep me waiting like this! 🙈", translation: "I-I was only worried about your grades! Why keep me waiting like this! 🙈", tip: "Tsundere stuttering." },
-      { text: "Fine! See if I ever remind you again! 😾💔", translation: "Fine! See if I ever remind you again! 😾💔", tip: "Tsundere pout." },
-      { text: "...", translation: "... (Kou is looking away blushing and pouting until you reply)", tip: "Kou is pouting!" }
-    ],
-    ja: [
-      { text: "コホン… 宿題のチェック、してあげてもいいけど？ 📚", romaji: "Kohon... Shukudai no chekku, shite agetemo ii kedo?", translation: "Ahem... I could check your homework if you want? 📚", tip: "Tsundere offer." },
-      { text: "ちょっと、無視しないでよ… 忙しいの？ 😤", romaji: "Chotto, mushi shinaide yo... Isogashii no?", translation: "Hey, don't ignore me... Are you busy? 😤", tip: "Classmate getting restless." },
-      { text: "べ、別に寂しいわけじゃないからね！ただノートを渡したいだけ！ 🙈", romaji: "Be, betsu ni sabishii wake janai kara ne! Tada nootu wo watashitai dake!", translation: "I-It's not like I'm lonely or anything! I just want to hand you the notes! 🙈", tip: "Classic tsundere line!" },
-      { text: "もう知らない！後で泣きついても遅いんだからね！ 😾💔", romaji: "Mou shiranai! Ato de nakitsuitemo osoi nda kara ne!", translation: "Fine, I don't care! Don't come crying to me later! 😾💔", tip: "Tsundere pout." },
-      { text: "...", translation: "... (Kou is looking away blushing and pouting until you reply)", tip: "Kou is pouting!" }
-    ]
-  },
-  ren: {
-    vi: [
-      { text: "Này nhóc, dám ngó lơ tin nhắn của anh à? Cản gan nhỉ... 😏✨", translation: "Hey kid, daring to ignore my message? How bold... 😏✨", tip: "Ren's teasing tone." },
-      { text: "Anh đang chờ em trả lời đấy. Đừng để anh phải đến tận lớp tìm em nhé. 😈", translation: "I'm waiting for your reply. Don't make me come to your classroom to find you. 😈", tip: "Aggressive, assertive senior." },
-      { text: "Hừm, giả vờ kiêu với anh sao? Hợp gu anh đấy, nhưng coi chừng anh phạt đó nha~ 🔥", translation: "Hmm, playing hard to get? Right up my alley, but watch out or I'll punish you~ 🔥", tip: "Flirty senior bully trope." },
-      { text: "...", translation: "... (Ren is leaning back smiling dangerously until you text back)", tip: "Ren is waiting assertively!" }
-    ],
-    en: [
-      { text: "Hey kid, daring to ignore my text? You're getting bold... 😏✨", translation: "Hey kid, daring to ignore my text? You're getting bold... 😏✨", tip: "Teasing senior." },
-      { text: "I'm waiting for your reply. Don't make me come to your class to find you. 😈", translation: "I'm waiting for your reply. Don't make me come to your class to find you. 😈", tip: "Assertive senior warning." },
-      { text: "Hmm, playing hard to get? I like your spirit, but you might get punished~ 🔥", translation: "Hmm, playing hard to get? I like your spirit, but you might get punished~ 🔥", tip: "Flirty tease." },
-      { text: "...", translation: "... (Ren is leaning back smiling dangerously until you text back)", tip: "Ren is waiting assertively!" }
-    ],
-    ja: [
-      { text: "おいおい、俺のメッセージ無視するか？いい度胸だな、後輩ちゃん… 😏✨", romaji: "Oi oi, ore no messeegi mushi suru ka? Ii dokyou dana, kouhai-chan...", translation: "Hey hey, ignoring my message? Bold move, junior... 😏✨", tip: "Teasing senior." },
-      { text: "返事まだ？教室まで迎えに行ってもいいんだぞ？ 😈", romaji: "Henji mada? Kyoushitsu made mukae ni ittemo ii nda zo?", translation: "No reply yet? Should I come pick you up at your classroom? 😈", tip: "Assertive senior." },
-      { text: "焦らすねぇ… そういう生意気なところ、嫌いじゃないけどお仕置きだな 🔥", romaji: "Jirasu nee... souiu namaiki na tokoro, kirai janai kedo oshioki dana", translation: "Teasing me, huh? I don't hate that cheeky side, but you need punishment 🔥", tip: "Flirty bully trope." },
-      { text: "...", translation: "... (Ren is leaning back smiling dangerously until you text back)", tip: "Ren is waiting assertively!" }
-    ]
-  }
-};
+function getUnrepliedSequence(charId, targetLang = "vi") {
+  const { olderUserTerm, olderUserCap } = getUserVietnameseAddressTerms();
+  const normalizedId = (charId === "bao" ? "ado" : (charId === "julian" ? "kou" : charId)) || "ado";
 
-// Aliases for legacy unreplied keys
-UNREPLIED_SEQUENCE.bao = UNREPLIED_SEQUENCE.ado;
-UNREPLIED_SEQUENCE.julian = UNREPLIED_SEQUENCE.kou;
+  if (normalizedId === "kou") {
+    if (targetLang === "en") {
+      return [
+        { text: "Senpai! Kou bought yummy sweets, come eat with me! 🍰", translation: "Senpai! Kou bought yummy sweets, come eat with me! 🍰", tip: "Kou sharing treats." },
+        { text: "Where did you go Senpai? Don't leave Kou all alone... 🥺", translation: "Where did you go Senpai? Don't leave Kou all alone... 🥺", tip: "Clingy underclassman." },
+        { text: "Do you not care about Kou anymore? I'm gonna cry! 😿💔", translation: "Do you not care about Kou anymore? I'm gonna cry! 😿💔", tip: "Seeking affection." },
+        { text: "Hmph! Leaving me on read? Kou is super pouting now! 😾", translation: "Hmph! Leaving me on read? Kou is super pouting now! 😾", tip: "Kou's pout face." },
+        { text: "...", translation: "... (Kou is sitting in the corner pouting until you reply)", tip: "Kou is waiting for your reply!" }
+      ];
+    } else if (targetLang === "ja") {
+      return [
+        { text: "先輩！美味しいケーキ買ってきたから一緒に食べましょう！ 🍰", romaji: "Senpai! Oishii keeki kattakita kara issho ni tabemashou!", translation: "Senpai! I bought delicious cake, let's eat together! 🍰", tip: "Sharing treats with Senpai." },
+        { text: "先輩どこ行ったんですか？Kouを置いていかないで… 🥺", romaji: "Senpai doko ittan desu ka? Kou wo oite ikanaide...", translation: "Where did you go Senpai? Don't leave Kou behind... 🥺", tip: "Clingy junior." },
+        { text: "もう… 既読無視なんてひどいです！Kou、スネちゃいますよ！ 😾💔", romaji: "Mou... kidoku mushi nante hidoi desu! Kou, sunechaimasu yo!", translation: "Geez... Leaving me on read is so mean! Kou will pout! 😾💔", tip: "Pouting junior." },
+        { text: "...", translation: "... (Kou is sitting in the corner pouting until you reply)", tip: "Kou is waiting for your reply!" }
+      ];
+    } else {
+      return [
+        { text: `${olderUserCap} ơi! Kou vừa mua bánh ngọt ngon lắm nè, ${olderUserTerm} ăn cùng em nha! 🍰`, translation: `${olderUserCap}! Kou bought delicious cake, eat with Kou! 🍰`, tip: "Kou sharing snacks with you." },
+        { text: `${olderUserCap} đi đâu mất rồi? Đừng bỏ rơi em mà... 🥺`, translation: `Where did ${olderUserCap} go? Don't leave Kou behind... 🥺`, tip: "Kou getting clingy." },
+        { text: `${olderUserCap} không thương Kou nữa sao? Em mếu đó nha! 😿💔`, translation: `Does ${olderUserCap} not love Kou anymore? Kou will cry! 😿💔`, tip: "Kou pouting for attention." },
+        { text: `Mệt ${olderUserTerm} ghê... Kou dỗi thật rồi đó! Hu hu... 😾`, translation: `${olderUserCap} is so mean... Kou is pouting for real now! Waaah... 😾`, tip: "Cute clingy pout!" },
+        { text: "...", translation: `... (Kou is sitting in the corner pouting until ${olderUserCap} replies)`, tip: "Kou is waiting for your reply!" }
+      ];
+    }
+  } else if (normalizedId === "ado") {
+    if (targetLang === "en") {
+      return [
+        { text: "Ahem... Homework is all prepared. Want me to review yours? 📚", translation: "Ahem... Homework is all prepared. Want me to review yours? 📚", tip: "Ado offering help." },
+        { text: "Hey, what are you busy with? Don't just leave me on read... 😤", translation: "Hey, what are you busy with? Don't just leave me on read... 😤", tip: "Strict classmate getting restless." },
+        { text: "I-I was only worried about your grades! Why keep me waiting like this! 🙈", translation: "I-I was only worried about your grades! Why keep me waiting like this! 🙈", tip: "Tsundere stuttering." },
+        { text: "Fine! See if I ever remind you again! 😾💔", translation: "Fine! See if I ever remind you again! 😾💔", tip: "Tsundere pout." },
+        { text: "...", translation: "... (Ado is looking away blushing and pouting until you reply)", tip: "Ado is pouting!" }
+      ];
+    } else if (targetLang === "ja") {
+      return [
+        { text: "コホン… 宿題のチェック、してあげてもいいけど？ 📚", romaji: "Kohon... Shukudai no chekku, shite agetemo ii kedo?", translation: "Ahem... I could check your homework if you want? 📚", tip: "Tsundere offer." },
+        { text: "ちょっと、無視しないでよ… 忙しいの？ 😤", romaji: "Chotto, mushi shinaide yo... Isogashii no?", translation: "Hey, don't ignore me... Are you busy? 😤", tip: "Classmate getting restless." },
+        { text: "べ、別に寂しいわけじゃないからね！ただノートを渡したいだけ！ 🙈", romaji: "Be, betsu ni sabishii wake janai kara ne! Tada nootu wo watashitai dake!", translation: "I-It's not like I'm lonely or anything! I just want to hand you the notes! 🙈", tip: "Classic tsundere line!" },
+        { text: "もう知らない！後で泣きついても遅いんだからね！ 😾💔", romaji: "Mou shiranai! Ato de nakitsuitemo osoi nda kara ne!", translation: "Fine, I don't care! Don't come crying to me later! 😾💔", tip: "Tsundere pout." },
+        { text: "...", translation: "... (Ado is looking away blushing and pouting until you reply)", tip: "Ado is pouting!" }
+      ];
+    } else {
+      return [
+        { text: "Khụ... Tớ chuẩn bị bài tập xong rồi. Cậu có cần tớ kiểm tra giúp không? 📚", translation: "Ahem... Homework is ready. Want me to check yours? 📚", tip: "Ado using homework as excuse." },
+        { text: "Này, cậu bận gì mà không trả lời tớ thế? Đừng có lơ tớ đấy... 😤", translation: "Hey, what are you busy with? Don't ignore me...", tip: "Tsundere getting flustered." },
+        { text: "Tớ... tớ chỉ lo cậu không hiểu bài thôi! Làm gì mà bắt tớ chờ lâu thế! 🙈", translation: "I... I was just worried you didn't understand the lesson! Why make me wait so long!", tip: "Blushing tsundere classmate." },
+        { text: "Tùy cậu đấy! Tớ sẽ không thèm nhắc cậu nữa đâu! 😾💔", translation: "Whatever! I won't bother reminding you anymore!", tip: "Classic tsundere pout." },
+        { text: "...", translation: "... (Ado is looking away blushing and pouting until you reply)", tip: "Ado is pouting!" }
+      ];
+    }
+  } else {
+    // Ren
+    if (targetLang === "en") {
+      return [
+        { text: "Hey kid, daring to ignore my text? You're getting bold... 😏✨", translation: "Hey kid, daring to ignore my text? You're getting bold... 😏✨", tip: "Teasing senior." },
+        { text: "I'm waiting for your reply. Don't make me come to your class to find you. 😈", translation: "I'm waiting for your reply. Don't make me come to your class to find you. 😈", tip: "Assertive senior warning." },
+        { text: "Hmm, playing hard to get? I like your spirit, but you might get punished~ 🔥", translation: "Hmm, playing hard to get? I like your spirit, but you might get punished~ 🔥", tip: "Flirty tease." },
+        { text: "...", translation: "... (Ren is leaning back smiling dangerously until you text back)", tip: "Ren is waiting assertively!" }
+      ];
+    } else if (targetLang === "ja") {
+      return [
+        { text: "おいおい、俺のメッセージ無視するか？いい度胸だな、後輩ちゃん… 😏✨", romaji: "Oi oi, ore no messeegi mushi suru ka? Ii dokyou dana, kouhai-chan...", translation: "Hey hey, ignoring my message? Bold move, junior... 😏✨", tip: "Teasing senior." },
+        { text: "返事まだ？教室まで迎えに行ってもいいんだぞ？ 😈", romaji: "Henji mada? Kyoushitsu made mukae ni ittemo ii nda zo?", translation: "No reply yet? Should I come pick you up at your classroom? 😈", tip: "Assertive senior." },
+        { text: "焦らすねぇ… そういう生意気なところ、嫌いじゃないけどお仕置きだな 🔥", romaji: "Jirasu nee... souiu namaiki na tokoro, kirai janai kedo oshioki dana", translation: "Teasing me, huh? I don't hate that cheeky side, but you need punishment 🔥", tip: "Flirty bully trope." },
+        { text: "...", translation: "... (Ren is leaning back smiling dangerously until you text back)", tip: "Ren is waiting assertively!" }
+      ];
+    } else {
+      return [
+        { text: "Này nhóc, dám ngó lơ tin nhắn của anh à? Can gan nhỉ... 😏✨", translation: "Hey kid, daring to ignore my message? How bold... 😏✨", tip: "Ren's teasing tone." },
+        { text: "Anh đang chờ em trả lời đấy. Đừng để anh phải đến tận lớp tìm em nhé. 😈", translation: "I'm waiting for your reply. Don't make me come to your classroom to find you. 😈", tip: "Aggressive, assertive senior." },
+        { text: "Hừm, giả vờ kiêu với anh sao? Hợp gu anh đấy, nhưng coi chừng anh phạt đó nha~ 🔥", translation: "Hmm, playing hard to get? Right up my alley, but watch out or I'll punish you~ 🔥", tip: "Flirty senior bully trope." },
+        { text: "...", translation: "... (Ren is leaning back smiling dangerously until you text back)", tip: "Ren is waiting assertively!" }
+      ];
+    }
+  }
+}
+
+const UNREPLIED_SEQUENCE = new Proxy({}, {
+  get(target, charProp) {
+    return {
+      get vi() { return getUnrepliedSequence(charProp, "vi"); },
+      get en() { return getUnrepliedSequence(charProp, "en"); },
+      get ja() { return getUnrepliedSequence(charProp, "ja"); }
+    };
+  }
+});
 
 // Cooldown State Management (Short Debounce for Smooth Instant Chatting)
 let lastMessageSendTimestamp = 0;
@@ -716,6 +807,41 @@ document.addEventListener("webkitfullscreenchange", updateFullscreenUI);
 document.addEventListener("mozfullscreenchange", updateFullscreenUI);
 document.addEventListener("MSFullscreenChange", updateFullscreenUI);
 
+// Mobile Add to Home Screen Accordion and Platform Tab Controls
+function toggleMobileInstallAccordion() {
+  const guide = document.getElementById("mobileInstallGuide");
+  if (guide) {
+    guide.classList.toggle("expanded");
+  }
+}
+window.toggleMobileInstallAccordion = toggleMobileInstallAccordion;
+
+function switchInstallPlatformTab(platform) {
+  const iosBtn = document.getElementById("installTabIosBtn");
+  const androidBtn = document.getElementById("installTabAndroidBtn");
+  const iosPanel = document.getElementById("installPanelIos");
+  const androidPanel = document.getElementById("installPanelAndroid");
+
+  if (platform === 'ios') {
+    iosBtn?.classList.add("active");
+    androidBtn?.classList.remove("active");
+    iosPanel?.classList.add("active");
+    androidPanel?.classList.remove("active");
+  } else {
+    androidBtn?.classList.add("active");
+    iosBtn?.classList.remove("active");
+    androidPanel?.classList.add("active");
+    iosPanel?.classList.remove("active");
+  }
+}
+window.switchInstallPlatformTab = switchInstallPlatformTab;
+
+function autoDetectAndSelectMobilePlatform() {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  const isIOS = /iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  switchInstallPlatformTab(isIOS ? 'ios' : 'android');
+}
+
 // Landing Page Navigation & Setup Menu Controls
 function openLandingSetupMenu() {
   const modal = document.getElementById("userProfileModal");
@@ -725,6 +851,7 @@ function openLandingSetupMenu() {
     modal.classList.add("active");
     syncProfileInputsUI();
     selectModalTargetLang(userState.targetLanguage || "vi");
+    autoDetectAndSelectMobilePlatform();
   }
 }
 window.openLandingSetupMenu = openLandingSetupMenu;
@@ -1469,29 +1596,42 @@ function closeActiveChat() {
 window.closeActiveChat = closeActiveChat;
 
 // Interactive Floating Companion Dialogue & Stage Manager
-const COMPANION_INTERACTIONS = {
-  ado: [
-    "C-cậu nhìn tớ làm gì? Tập trung vào bài học đi chứ... 😳📚",
-    "D-don't stare so much! Make sure your grammar is correct! 📚",
-    "Thật ra... cậu tiến bộ nhanh lắm. Tớ chỉ nhắc nhở vậy thôi. ❤️",
-    "Tớ đã chuẩn bị thêm tài liệu rồi, học xong tớ đưa cho. 📝",
-    "Đừng có cười lén tớ đấy nhé! Khụ... tớ là lớp phó nghiêm túc mà! 😳"
-  ],
-  kou: [
-    "Tiền bối ơi! Kou đứng đây ngắm tiền bối học nè! 🥺✨",
-    "Senpai! You're doing so well, Kou is proud of you! ❤️",
-    "Tiền bối xoa đầu Kou một cái được không ạ? 🥺",
-    "Hôm nay tiền bối nói chuyện với Kou nhiều hơn nha! 💖",
-    "Senpai! Keep going! Kou is always cheering for you! ✨"
-  ],
-  ren: [
-    "Sao thế nhóc? Bị vẻ đẹp trai của anh làm phân tâm rồi à? 😏✨",
-    "Come closer, kid. Don't be shy around your senior... 😏",
-    "Học chăm chỉ rồi anh sẽ thưởng cho một buổi đi chơi riêng nhé. 💖",
-    "Nhóc ngoan ngoãn như vầy làm anh càng muốn trêu hơn đấy. 😈",
-    "You're getting bolder with every text, I love that about you. 😏🔥"
-  ]
-};
+function getCompanionInteractions(charId) {
+  const { olderUserTerm, olderUserCap } = getUserVietnameseAddressTerms();
+  const normalizedId = (charId === "bao" ? "ado" : (charId === "julian" ? "kou" : charId)) || "ado";
+
+  if (normalizedId === "kou") {
+    return [
+      `${olderUserCap} ơi! Kou đứng đây ngắm ${olderUserTerm} học nè! 🥺✨`,
+      `Senpai! You're doing so well, Kou is proud of you! ❤️`,
+      `${olderUserCap} xoa đầu Kou một cái được không ạ? 🥺`,
+      `Hôm nay ${olderUserTerm} nói chuyện với em nhiều hơn nha! 💖`,
+      "Senpai! Keep going! Kou is always cheering for you! ✨"
+    ];
+  } else if (normalizedId === "ado") {
+    return [
+      "C-cậu nhìn tớ làm gì? Tập trung vào bài học đi chứ... 😳📚",
+      "D-don't stare so much! Make sure your grammar is correct! 📚",
+      "Thật ra... cậu tiến bộ nhanh lắm. Tớ chỉ nhắc nhở vậy thôi. ❤️",
+      "Tớ đã chuẩn bị thêm tài liệu rồi, học xong tớ đưa cho. 📝",
+      "Đừng có cười lén tớ đấy nhé! Khụ... tớ là lớp phó nghiêm túc mà! 😳"
+    ];
+  } else {
+    return [
+      "Sao thế nhóc? Bị vẻ đẹp trai của anh làm phân tâm rồi à? 😏✨",
+      "Come closer, kid. Don't be shy around your senior... 😏",
+      "Học chăm chỉ rồi anh sẽ thưởng cho một buổi đi chơi riêng nhé. 💖",
+      "Em ngoan ngoãn như vầy làm anh càng muốn trêu hơn đấy. 😈",
+      "You're getting bolder with every text, I love that about you. 😏🔥"
+    ];
+  }
+}
+
+const COMPANION_INTERACTIONS = new Proxy({}, {
+  get(target, prop) {
+    return getCompanionInteractions(prop);
+  }
+});
 
 let currentCompanionQuoteIndex = 0;
 let companionQuoteTimeout = null;
@@ -2286,7 +2426,7 @@ function renderGuidebook() {
           <div class="guide-card-title">English Romance Vocabularies Learned</div>
         </div>
 
-        <div class="vocab-category-title">📚 Strict & Reliable Classmate Vocab (Kou)</div>
+        <div class="vocab-category-title">📚 Strict & Reliable Classmate Vocab (Ado)</div>
         <div class="vocab-list">
           <div class="vocab-item">
             <div class="vocab-item-row">
@@ -2311,12 +2451,12 @@ function renderGuidebook() {
           </div>
         </div>
 
-        <div class="vocab-category-title">🥺 Cute & Clingy Underclassman Vocab (Ado)</div>
+        <div class="vocab-category-title">🥺 Cute & Clingy Underclassman Vocab (Kou)</div>
         <div class="vocab-list">
           <div class="vocab-item">
             <div class="vocab-item-row">
-              <span class="vocab-term">Senpai / Upperclassman</span>
-              <span class="vocab-trans">Tiền bối / Đàn anh đàn chị</span>
+              <span class="vocab-term">Affectionate Senior (Anh / Chị)</span>
+              <span class="vocab-trans">Anh / Chị (Cách xưng hô thân mật)</span>
             </div>
           </div>
 
@@ -2896,17 +3036,18 @@ function generateStarterChoices(charId, lastMsgText) {
       ];
       return { prompt, options };
     } else if (charId === "kou") {
+      const { olderUserTerm, olderUserCap } = getUserVietnameseAddressTerms();
       let prompt = "Choose your reply to Kou (Beginner Choices 🥺):";
       let options = [
-        { text: "Chào Kou, tiền bối cũng nhớ Kou lắm nè! 🥺✨", translation: "Hello Kou, Senpai misses you too!" },
+        { text: `Chào Kou, ${olderUserTerm} cũng nhớ em lắm nè! 🥺✨`, translation: `Hello Kou, ${olderUserTerm} misses you too!` },
         { text: "Được chứ, đi chơi thôi Kou ơi! 🍰", translation: "Sure, let's hang out Kou!" },
-        { text: "Kou hôm nay ngoan quá, tiền bối thưởng nha! 💖", translation: "Kou is so well-behaved, Senpai will reward you!" }
+        { text: `Kou hôm nay ngoan quá, ${olderUserTerm} thưởng nha! 💖`, translation: `Kou is so well-behaved, ${olderUserTerm} will reward you!` }
       ];
       if (text.includes("chơi") || text.includes("rảnh") || text.includes("tìm")) {
         options = [
-          { text: "Tiền bối rảnh nè, Kou muốn đi đâu chơi nào? 🍰", translation: "I am free, where does Kou want to go?" },
-          { text: "Được đi chơi với Kou thì tiền bối vui lắm! 💖", translation: "I'd be so happy to hang out with Kou!" },
-          { text: "Kou đứng chờ tiền bối xíu nhé, tới ngay đây! ✨", translation: "Wait for me a bit, I'm coming right away!" }
+          { text: `${olderUserCap} rảnh nè, Kou muốn đi đâu chơi nào? 🍰`, translation: `I am free, where does Kou want to go?` },
+          { text: `Được đi chơi với Kou thì ${olderUserTerm} vui lắm! 💖`, translation: `I'd be so happy to hang out with Kou!` },
+          { text: `Kou đứng chờ ${olderUserTerm} xíu nhé, tới ngay đây! ✨`, translation: "Wait for me a bit, I'm coming right away!" }
         ];
       }
       return { prompt, options };
@@ -3068,12 +3209,13 @@ function generateContextualWordChips(charId, lastMsgText) {
       let chips = ["Cảm", "ơn", "Ado", "chu", "đáo", "quá", "tớ", "sẽ", "học", "chăm", "chỉ", "đừng", "lo", "nhé", "ạ"];
       return { prompt, chips };
     } else if (charId === "kou") {
+      const { olderUserTerm, olderUserCap } = getUserVietnameseAddressTerms();
       let prompt = "Build your reply to Kou (Vietnamese 🇻🇳):";
-      let chips = ["Cảm", "ơn", "Kou", "em", "ngoan", "quá", "đi", "chơi", "với", "tiền", "bối", "nhé", "ạ"];
+      let chips = ["Cảm", "ơn", "Kou", "em", "ngoan", "quá", "đi", "chơi", "với", olderUserTerm, "nhé", "ạ"];
 
       if (text.includes("chơi") || text.includes("tìm") || text.includes("senpai")) {
-        prompt = 'Build reply: "Tiền bối cũng muốn đi chơi với Kou lắm."';
-        chips = ["Tiền", "bối", "cũng", "rất", "muốn", "đi", "chơi", "với", "Kou", "nhé", "ngoan", "á"];
+        prompt = `Build reply: "${olderUserCap} cũng muốn đi chơi với Kou lắm."`;
+        chips = [olderUserCap, "cũng", "rất", "muốn", "đi", "chơi", "với", "Kou", "nhé", "ngoan", "á"];
       }
       return { prompt, chips };
     } else if (charId === "ren") {

@@ -33,6 +33,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const userPronouns = userProfile?.pronouns || "she/her";
     const userAge = userProfile?.age ? String(userProfile.age) : "20";
 
+    const isMaleUser = userPronouns.toLowerCase().includes("he") || userPronouns.toLowerCase().includes("him");
+    const userOlderHonorific = isMaleUser ? "anh" : "chị"; // What Kou calls the user
+    const userOlderHonorificCap = isMaleUser ? "Anh" : "Chị";
+
     // Determine target language name
     let targetLangCode = targetLanguage || "vi";
     if (!["vi", "en", "ja"].includes(targetLangCode)) {
@@ -81,9 +85,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         if (isGroup || characterId === "group") {
           systemInstruction = `You are running a 3-way language exchange group chat between love interests competing for the user's attention and romantic affection:
-1. Ado (Classmate: strict, reliable, tsundere, acts demanding about studies/duties but easily flustered and soft inside, addresses user as classmate)
-2. Kou (Underclassman/Junior: cute, innocent, clingy, eager to please, addresses user as Senpai / Tiền bối)
-3. Ren (Senior: aggressive, flirty, bully & assertive, teasing, confident, addresses user as kid / nhóc / junior)
+1. Ado (Classmate: strict, reliable, tsundere, acts demanding about studies/duties but easily flustered and soft inside, addresses user as classmate "cậu", calls himself "tớ")
+2. Kou (Underclassman/Junior: cute, innocent, clingy, eager to please, addresses user as "${userOlderHonorific}" e.g. "${userOlderHonorificCap} ơi", calls himself "em" or "Kou")
+3. Ren (Senior: aggressive, flirty, bully & assertive, teasing, confident, addresses user as "em" / "nhóc", calls himself "anh")
 
 CRITICAL LANGUAGE REQUIREMENT:
 The selected target language for this conversation MUST BE 100% EXCLUSIVELY ${targetLangName} (${targetLangCode}).
@@ -91,6 +95,12 @@ Both characters MUST speak in ${targetLangName}!
 Do NOT output Vietnamese if the target language is English or Japanese!
 Do NOT output English if the target language is Vietnamese or Japanese!
 Do NOT output Japanese if the target language is Vietnamese or English!
+
+VIETNAMESE ADDRESSING MANDATE (CRITICAL):
+- When target language is Vietnamese, NEVER use the word "tiền bối"!
+- Kou is the younger junior: Kou MUST address the user as "${userOlderHonorific}" (capitalized: "${userOlderHonorificCap}"), and Kou refers to himself as "em" or "Kou".
+- Ren is the older senior: Ren MUST address the user as "em" or playfully "nhóc", and refers to himself as "anh".
+- Ado is the classmate: Ado addresses the user as "cậu", and refers to himself as "tớ".
 
 NO EMOJIS RULE:
 Do NOT use emojis in texting or character dialogue! Keep all character text, replies, and options free of emojis.
@@ -104,9 +114,9 @@ Recent conversation:
 ${trimmedHistory}
 
 Instructions:
-1. Ultra-Simple Beginner Language (A1 Level): Keep responses very short, simple, and natural (strictly 3 to 8 words max, e.g., "Chào em nha!", "Đi chơi thôi nào!", "Cảm ơn em!"). Do NOT use complex grammar, subordinate clauses, or long sentences!
+1. Ultra-Simple Beginner Language (A1 Level): Keep responses very short, simple, and natural (strictly 3 to 8 words max, e.g., "Chào ${userOlderHonorific} nha!", "Đi chơi thôi nào!", "Cảm ơn ${userOlderHonorific}!"). Do NOT use complex grammar, subordinate clauses, or long sentences!
 2. Strict No-Emoji Rule: Do NOT include emojis in character dialogues, starter options, or chips!
-3. Ensure Ado sounds clingy/cute, Kou sounds strict yet tsundere, and Ren sounds flirty/assertive.
+3. Ensure Ado sounds tsundere/diligent, Kou sounds cute/clingy, and Ren sounds flirty/assertive.
 
 EVALUATION COLOR RANGE & INSIGHTFUL FEEDBACK RULES:
 Analyze "${userText}" and classify its language quality into 'evalColor' ("red", "yellow", or "green"):
@@ -175,11 +185,11 @@ Return ONLY valid JSON matching this schema:
         } else {
           let charPersona = "";
           if (characterId === "ado") {
-            charPersona = "Ado (Classmate): Strict, reliable, tsundere. Acts strict about studies/duties, easily flustered when complimented, stammers 'b-betsu ni...' or 'It's not like I care!', but secretly looks out for user and cares deeply.";
+            charPersona = `Ado (Classmate): Strict, reliable, tsundere. Acts strict about studies/duties, easily flustered when complimented, stammers 'b-betsu ni...' or 'It's not like I care!', but secretly looks out for user and cares deeply. In Vietnamese, Ado calls the user 'cậu' and refers to himself as 'tớ' or 'Ado'.`;
           } else if (characterId === "kou") {
-            charPersona = "Kou (Underclassman/Junior): Cute, innocent, extremely clingy, eager to please. Calls the user Senpai / Tiền bối. Always seeks user's attention, gets worried if ignored.";
+            charPersona = `Kou (Underclassman/Junior): Cute, innocent, extremely clingy, eager to please. In Vietnamese, Kou calls the user '${userOlderHonorific}' (e.g. '${userOlderHonorificCap} ơi', '${userOlderHonorific} có rảnh không?') and refers to himself as 'em' or 'Kou'. CRITICAL: NEVER call the user 'tiền bối' in Vietnamese! Always use '${userOlderHonorific}'. Always seeks user's attention, gets worried if ignored.`;
           } else if (characterId === "ren") {
-            charPersona = "Ren (Senior): Aggressive, flirty, bully & assertive. Teases user playfully, calls user 'kid' / 'nhóc' / 'junior', confident, loves getting close and making user blush.";
+            charPersona = `Ren (Senior): Aggressive, flirty, bully & assertive. Teases user playfully, refers to himself as 'anh', calls user 'em' or playfully 'nhóc' / 'bé', confident, loves getting close and making user blush.`;
           } else {
             charPersona = `${characterName}: Romantic love interest in a dating sim.`;
           }
@@ -196,11 +206,17 @@ Do NOT output Japanese if target language is Vietnamese or English!
 Do NOT output English if target language is Vietnamese or Japanese!
 (Except for the JSON 'translation' field which provides the English translation).
 
+VIETNAMESE ADDRESSING MANDATE (CRITICAL):
+- When target language is Vietnamese, NEVER use the word "tiền bối"!
+- If you are Kou (junior): You MUST call the user "${userOlderHonorific}" ("${userOlderHonorificCap}"), and refer to yourself as "em" or "Kou".
+- If you are Ren (senior): You MUST refer to yourself as "anh", and call the user "em" or "nhóc".
+- If you are Ado (classmate): You MUST call the user "cậu", and refer to yourself as "tớ".
+
 NO EMOJIS RULE:
 Do NOT use emojis in texting or character dialogue! Keep all character text, replies, and options free of emojis.
 
 USER PROFILE: Name: "${userName}", Pronouns: "${userPronouns}", Age: "${userAge}".
-Address the user directly as "${userName}" or using their preferred pronouns (${userPronouns}).
+Address the user directly as "${userName}" or using appropriate natural Vietnamese terms (${userOlderHonorific} / em / cậu).
 
 User input: "${userText}"
 
@@ -208,7 +224,7 @@ Recent conversation:
 ${trimmedHistory}
 
 Instructions:
-1. Ultra-Simple Beginner Language (A1 Level): Keep your in-character response extremely short, simple, and elementary (strictly 3 to 8 words maximum, e.g., "Chào em nha!", "Ado nhớ em lắm!", "Đi chơi thôi nào!", "Ngoan quá!", "Hừm... Tốt lắm.", "Chào nhóc nhé."). Ban long sentences, complicated vocabulary, or dense grammar!
+1. Ultra-Simple Beginner Language (A1 Level): Keep your in-character response extremely short, simple, and elementary (strictly 3 to 8 words maximum, e.g., "Chào ${userOlderHonorific} nha!", "Kou nhớ ${userOlderHonorific} lắm!", "Đi chơi thôi nào!", "Ngoan quá!", "Hừm... Tốt lắm.", "Chào nhóc nhé."). Ban long sentences, complicated vocabulary, or dense grammar!
 2. Strict No-Emoji Rule: Do NOT include emojis in character responses or dialogue!
 3. If ${userName} is saying goodbye or leaving, send a brief sign-off text in ${targetLangName} matching your personality.
 4. If target language is Japanese (${targetLangCode} === 'ja'), provide Romaji in 'romaji'. Otherwise set 'romaji' to null.
@@ -378,21 +394,21 @@ Return ONLY valid JSON matching this schema:
         };
       } else if (characterId === "kou") {
         parsedData = {
-          characterResponse: "Chào tiền bối nha! Đi chơi thôi!",
+          characterResponse: `Chào ${userOlderHonorific} nha! Đi chơi với em thôi!`,
           romaji: null,
-          translation: "Hello Senpai! Let's go play!",
+          translation: `Hello ${userOlderHonorificCap}! Let's go play together!`,
           evalColor: fallbackColor,
           tip: fallbackTip,
           isCorrect: fallbackColor !== "red",
           correction: fallbackCorrection,
           encouragement: fallbackEncouragement,
           starterOptions: [
-            { text: "Chào Kou nhé!", translation: "Hello Kou!" },
+            { text: `Chào Kou nha!`, translation: "Hello Kou!" },
             { text: "Đi chơi thôi!", translation: "Let's go play!" },
             { text: "Kou ngoan quá!", translation: "Kou is so cute!" }
           ],
           contextualChipsPrompt: "Build your reply to Kou:",
-          contextualChips: ["Chào", "Kou", "ngoan", "quá", "đi", "chơi", "nhé"]
+          contextualChips: ["Chào", "Kou", "ngoan", "quá", "đi", "chơi", "với", userOlderHonorific, "nhé"]
         };
       } else if (characterId === "ren") {
         parsedData = {
