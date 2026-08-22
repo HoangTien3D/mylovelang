@@ -1,0 +1,19 @@
+{
+  "name": "Otome Lingua - My Love Language",
+  "short_name": "OtomeLingua",
+  "description": "Learn romance, vocabulary & real-world conversations with charming love interests",
+  "start_url": "/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "background_color": "#455A9F",
+  "theme_color": "#455A9F",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/landing_hero.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

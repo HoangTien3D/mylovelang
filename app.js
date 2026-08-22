@@ -639,6 +639,83 @@ let analyticsData = {
 // Currently Active Chat Session
 let activeCharacterId = null;
 
+// Mobile Fullscreen & Hide Browser Bar Engine
+function isAppFullscreen() {
+  return !!(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement ||
+    (window.navigator && window.navigator.standalone === true) ||
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+    (window.matchMedia && window.matchMedia('(display-mode: fullscreen)').matches)
+  );
+}
+
+function updateFullscreenUI() {
+  const isFull = isAppFullscreen();
+  const badge = document.getElementById("fullscreenStatusBadge");
+  const settingsIcon = document.getElementById("settingsFullscreenIcon");
+  const settingsText = document.getElementById("settingsFullscreenText");
+  const vnIcon = document.getElementById("vnFullscreenIcon");
+
+  if (badge) {
+    badge.textContent = isFull ? "Fullscreen Active" : "Standard View";
+    badge.style.background = isFull ? "rgba(5, 150, 105, 0.12)" : "";
+    badge.style.color = isFull ? "var(--accent-emerald)" : "";
+  }
+  if (settingsIcon) {
+    settingsIcon.textContent = isFull ? "fullscreen_exit" : "fullscreen";
+  }
+  if (settingsText) {
+    settingsText.textContent = isFull ? "Exit Fullscreen Mode" : "Expand to Full Screen";
+  }
+  if (vnIcon) {
+    vnIcon.textContent = isFull ? "fullscreen_exit" : "fullscreen";
+  }
+}
+
+async function toggleAppFullscreen() {
+  try {
+    const docEl = document.documentElement;
+    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+      if (docEl.requestFullscreen) {
+        await docEl.requestFullscreen();
+      } else if (docEl.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen();
+      } else if (docEl.mozRequestFullScreen) {
+        docEl.mozRequestFullScreen();
+      } else if (docEl.msRequestFullscreen) {
+        docEl.msRequestFullscreen();
+      } else {
+        // Fallback for iOS Safari
+        window.scrollTo(0, 1);
+      }
+    } else {
+      if (document.exitFullscreen) {
+        await document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  } catch (err) {
+    console.warn("Fullscreen request warning:", err);
+  }
+  setTimeout(updateFullscreenUI, 300);
+}
+window.toggleAppFullscreen = toggleAppFullscreen;
+window.isAppFullscreen = isAppFullscreen;
+window.updateFullscreenUI = updateFullscreenUI;
+
+document.addEventListener("fullscreenchange", updateFullscreenUI);
+document.addEventListener("webkitfullscreenchange", updateFullscreenUI);
+document.addEventListener("mozfullscreenchange", updateFullscreenUI);
+document.addEventListener("MSFullscreenChange", updateFullscreenUI);
+
 // Landing Page Navigation & Setup Menu Controls
 function openLandingSetupMenu() {
   const modal = document.getElementById("userProfileModal");

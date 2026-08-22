@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Otome Lingua" />
+  <meta name="theme-color" content="#455A9F" />
+  <link rel="manifest" href="/manifest.webmanifest" />
   <title>Otome | My Love Language</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -195,6 +201,24 @@
           </div>
         </div>
 
+        <!-- Mobile Fullscreen & Display Setting -->
+        <div class="settings-group">
+          <div class="settings-label">
+            <span>📱 Mobile Fullscreen (Hide Browser Bar)</span>
+            <span id="fullscreenStatusBadge" class="status-chip-badge">Standard</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
+            Hide the mobile address and navigation bars to expand Otome Lingua into a true edge-to-edge full screen visual novel:
+          </p>
+          <button class="primary-btn" id="toggleFullscreenSettingsBtn" type="button" onclick="toggleAppFullscreen()" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; height:46px; font-weight:800; font-size:14px; background:linear-gradient(135deg, #d90057 0%, #7c3aed 100%);">
+            <span class="material-symbols-outlined" id="settingsFullscreenIcon" style="font-size:20px;">fullscreen</span>
+            <span id="settingsFullscreenText">Toggle Fullscreen Mode</span>
+          </button>
+          <div style="margin-top:10px; padding:10px 12px; background:rgba(69,90,159,0.08); border-radius:12px; border:1px solid rgba(69,90,159,0.2); font-size:12px; color:var(--text-main); line-height:1.45;">
+            <strong>💡 iPhone / iPad tip:</strong> In Safari, tap the <strong>Share</strong> button (⎋) and select <strong>"Add to Home Screen"</strong> (⊞) to run Otome Lingua as a standalone full screen app with zero browser bars!
+          </div>
+        </div>
+
         <!-- Return to Landing / Title Screen -->
         <div class="settings-group">
           <div class="settings-label">
@@ -261,6 +285,9 @@
             <button id="romajiToggleBtn" type="button" class="vn-romaji-toggle-btn" onclick="toggleRomajiSetting()" title="Toggle Romaji">
               <span class="material-symbols-outlined" style="font-size:17px;">translate</span>
             </button>
+            <button id="vnFullscreenBtn" type="button" class="vn-backlog-btn" title="Fullscreen / Hide Browser Bar" onclick="toggleAppFullscreen()">
+              <span class="material-symbols-outlined" style="font-size:17px;" id="vnFullscreenIcon">fullscreen</span>
+            </button>
             <button id="toggleBacklogBtn" type="button" class="vn-backlog-btn" title="Message History" onclick="toggleVnBacklog()">
               <span class="material-symbols-outlined" style="font-size:17px;">history</span>
             </button>
@@ -269,13 +296,6 @@
 
         <!-- Visual Novel Stage Area (The guy standing in the background) -->
         <div class="vn-stage-container" id="vnStageContainer">
-          <!-- Ambient Romantic Particles & Glow -->
-          <div class="vn-ambient-particles" aria-hidden="true">
-            <span class="vn-particle p1">✨</span>
-            <span class="vn-particle p2">🌸</span>
-            <span class="vn-particle p3">💖</span>
-            <span class="vn-particle p4">✨</span>
-          </div>
 
           <!-- Group Chat Side Characters (if in Trio mode) -->
           <div class="vn-group-side-left" id="vnGroupSideLeft" style="display:none;">

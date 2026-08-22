@@ -39,6 +39,14 @@ h1, h2, h3, h4, h5, h6 {
   user-select: none;
 }
 
+html {
+  height: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  overflow: hidden;
+}
+
 body {
   background-color: #455A9F;
   background-image: 
@@ -52,14 +60,23 @@ body {
   font-family: var(--font-family);
   font-size: 16px;
   line-height: 1.6;
-  min-height: 100vh;
+  height: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
   width: 100vw;
   margin: 0;
   padding: 0;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
   display: flex;
   justify-content: center;
   align-items: stretch;
   overflow: hidden;
+  overscroll-behavior-y: none;
+  touch-action: manipulation;
 }
 
 /* Landing Page (Main Title Screen) */
@@ -69,13 +86,17 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  min-height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
+  padding-top: calc(24px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   overflow-y: auto;
   background-color: #455A9F;
   background-image: 
@@ -129,10 +150,7 @@ body {
   justify-content: center;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 48px rgba(20, 10, 45, 0.35), 0 0 35px rgba(255, 51, 119, 0.2);
-  background: rgba(212, 195, 255, 0.178);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: rgba(212, 195, 255, 0);
 }
 
 .landing-graphic-img {
@@ -213,11 +231,25 @@ body {
 }
 
 /* Full Screen App Frame Container */
+.app-layout-wrapper {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  overflow: hidden;
+}
+
 .app-container {
   width: 100%;
   max-width: 100%;
   height: 100vh;
-  max-height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
   background-color: #455A9F;
   background-image: 
     radial-gradient(circle, rgba(255, 255, 255, 0.35) 3px, transparent 3px),
@@ -238,7 +270,8 @@ body {
   .app-container {
     max-width: 100%;
     height: 100vh;
-    max-height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
     border-radius: 0;
     border: none;
   }
@@ -1064,34 +1097,36 @@ body {
   align-items: center;
 }
 
-/* Ambient Particles */
-.vn-ambient-particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 5;
-  overflow: hidden;
-}
-
+/* Ambient Particles - Removed per user request */
+.vn-ambient-particles,
 .vn-particle {
-  position: absolute;
-  font-size: 16px;
-  opacity: 0.6;
-  animation: vn-float-particle 6s infinite ease-in-out;
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
-.vn-particle.p1 { top: 15%; left: 12%; animation-delay: 0s; }
-.vn-particle.p2 { top: 35%; right: 15%; animation-delay: 1.8s; font-size: 14px; }
-.vn-particle.p3 { top: 55%; left: 8%; animation-delay: 3.2s; font-size: 13px; }
-.vn-particle.p4 { top: 22%; right: 28%; animation-delay: 4.5s; font-size: 15px; }
+.header-fullscreen-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(160, 140, 190, 0.3);
+  border-radius: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
 
-@keyframes vn-float-particle {
-  0% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
-  50% { transform: translateY(-25px) rotate(15deg); opacity: 0.8; }
-  100% { transform: translateY(-50px) rotate(30deg); opacity: 0; }
+.header-fullscreen-btn:hover {
+  background: #ffffff;
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
+  transform: translateY(-1px);
 }
 
 /* CENTER FLOATING GUY SPRITE STAGE */
