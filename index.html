@@ -33,7 +33,7 @@
       </p>
 
       <!-- Play Now Button -->
-      <button type="button" class="landing-play-btn" id="landingPlayBtn" onclick="enterAppFromLanding()">
+      <button type="button" class="landing-play-btn" id="landingPlayBtn" onclick="openLandingSetupMenu()">
         <span class="landing-play-icon">▶</span>
         <span class="landing-play-text">Play Now</span>
       </button>
@@ -148,6 +148,9 @@
             </div>
             <button class="primary-btn" id="saveProfileSettingsBtn" type="button" style="margin-top:4px;">
               Save Profile Settings
+            </button>
+            <button class="option-pill-btn" type="button" onclick="openLandingSetupMenu()" style="width:100%; margin-top:4px; border:1.5px solid rgba(217,0,87,0.3); font-weight:800; color:var(--primary-pink); background:rgba(217,0,87,0.06);">
+              ✨ Open Full Language &amp; Character Setup Menu
             </button>
             <div id="profileSavedToast" class="reset-success-toast" style="display:none; background:rgba(16,185,129,0.15); color:var(--accent-emerald); border:1px solid rgba(16,185,129,0.3);">
               ✓ Profile settings updated! Ado, Kou & Ren will now address you accordingly.
@@ -426,78 +429,114 @@
       </button>
     </nav>
   </div>
+  </div> <!-- Close app-layout-wrapper -->
 
-  <!-- NEW USER PROFILE SETUP MODAL -->
-  <div id="userProfileModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(10,5,20,0.85); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); display:none; align-items:center; justify-content:center; z-index:1050; padding:20px;">
-    <div style="background:var(--bg-card); border:1.5px solid rgba(217,0,87,0.35); border-radius:24px; padding:26px; max-width:420px; width:100%; box-shadow:0 20px 50px rgba(217,0,87,0.25), 0 8px 24px rgba(0,0,0,0.4); text-align:left;">
-      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-        <span style="font-size:32px;">💖</span>
-        <div>
-          <h2 style="font-size:19px; font-weight:800; color:var(--text-main); margin:0;">Welcome! What should we call you?</h2>
-          <p style="font-size:12px; color:var(--text-muted); margin:2px 0 0 0;">Help Bao, Julian & group chat address you personally!</p>
+  <!-- ONBOARDING & TARGET LANGUAGE SETUP MENU MODAL -->
+  <div id="userProfileModal" class="setup-modal-backdrop" style="display:none;">
+    <div class="setup-modal-card">
+      <div class="setup-modal-header">
+        <div class="setup-modal-badge">
+          <span>🌸 STORY &amp; LANGUAGE SETUP</span>
         </div>
+        <button type="button" class="setup-modal-close-btn" onclick="closeLandingSetupMenu()" title="Close">
+          <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+        </button>
+      </div>
+
+      <div class="setup-modal-intro">
+        <h2 class="setup-modal-title">Personalize Your Romance 💕</h2>
+        <p class="setup-modal-subtitle">Choose your target learning language, pronouns, and age so Ado, Kou &amp; Ren address you personally!</p>
       </div>
 
       <form id="userProfileForm" onsubmit="event.preventDefault(); saveUserProfileFromModal();">
-        <div style="margin-bottom:14px;">
-          <label style="font-size:12px; font-weight:800; color:var(--text-main); display:block; margin-bottom:6px;">
-            🌐 Target Language to Learn <span style="color:var(--primary-pink);">*</span>
+        <!-- 1. TARGET LEARNING LANGUAGE -->
+        <div class="setup-field-group">
+          <label class="setup-field-label">
+            <span>🌐 Targeted Language to Learn</span>
+            <span class="setup-required-star">*</span>
           </label>
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-            <button type="button" class="option-pill-btn active" id="modalTargetViBtn" onclick="selectModalTargetLang('vi')">
-              🇻🇳 Tiếng Việt
+          <div class="setup-target-lang-grid">
+            <button type="button" class="setup-lang-card active" id="modalTargetViBtn" onclick="selectModalTargetLang('vi')">
+              <span class="setup-lang-flag">🇻🇳</span>
+              <div class="setup-lang-info">
+                <span class="setup-lang-name">Tiếng Việt (Vietnamese)</span>
+                <span class="setup-lang-sub">Romantic Vietnamese phrases, daily banter &amp; natural slang</span>
+              </div>
+              <span class="setup-lang-check">✓</span>
             </button>
-            <button type="button" class="option-pill-btn" id="modalTargetEnBtn" onclick="selectModalTargetLang('en')">
-              🇬🇧 English
+            <button type="button" class="setup-lang-card" id="modalTargetEnBtn" onclick="selectModalTargetLang('en')">
+              <span class="setup-lang-flag">🇬🇧</span>
+              <div class="setup-lang-info">
+                <span class="setup-lang-name">English</span>
+                <span class="setup-lang-sub">Conversational English romance dialogue, idioms &amp; compliments</span>
+              </div>
+              <span class="setup-lang-check">✓</span>
             </button>
-            <button type="button" class="option-pill-btn" id="modalTargetJaBtn" onclick="selectModalTargetLang('ja')">
-              🇯🇵 日本語
+            <button type="button" class="setup-lang-card" id="modalTargetJaBtn" onclick="selectModalTargetLang('ja')">
+              <span class="setup-lang-flag">🇯🇵</span>
+              <div class="setup-lang-info">
+                <span class="setup-lang-name">日本語 (Japanese)</span>
+                <span class="setup-lang-sub">Japanese anime romance tropes, honorifics &amp; romaji guide</span>
+              </div>
+              <span class="setup-lang-check">✓</span>
             </button>
           </div>
         </div>
 
-        <div style="margin-bottom:12px;">
-          <label for="modalUserName" style="font-size:12px; font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">
-            Your Name / Nickname <span style="color:var(--primary-pink);">*</span>
+        <!-- 2. NAME / NICKNAME -->
+        <div class="setup-field-group">
+          <label for="modalUserName" class="setup-field-label">
+            <span>👤 Your Name / Nickname</span>
+            <span class="setup-required-star">*</span>
           </label>
-          <input type="text" id="modalUserName" class="setting-input" placeholder="e.g. Alex, MC, Linh..." required style="width:100%; height:44px; font-size:14px; font-weight:600;" />
+          <div class="setup-input-wrapper">
+            <input type="text" id="modalUserName" class="setup-input" placeholder="e.g. Alex, MC, Linh..." value="MC" required />
+            <div class="setup-quick-chips">
+              <span class="setup-chip" onclick="document.getElementById('modalUserName').value='MC'">MC</span>
+              <span class="setup-chip" onclick="document.getElementById('modalUserName').value='Alex'">Alex</span>
+              <span class="setup-chip" onclick="document.getElementById('modalUserName').value='Linh'">Linh</span>
+              <span class="setup-chip" onclick="document.getElementById('modalUserName').value='Y/N'">Y/N</span>
+            </div>
+          </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
-          <div>
-            <label for="modalUserPronouns" style="font-size:12px; font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">
-              Pronouns
+        <!-- 3. PRONOUNS & AGE (2-COLUMN GRID) -->
+        <div class="setup-two-col-grid">
+          <div class="setup-field-group">
+            <label for="modalUserPronouns" class="setup-field-label">
+              <span>✨ Pronouns</span>
             </label>
-            <select id="modalUserPronouns" class="setting-input" style="width:100%; height:44px; cursor:pointer; font-size:13px; font-weight:600;">
-              <option value="she/her">she/her</option>
-              <option value="he/him">he/him</option>
-              <option value="they/them">they/them</option>
-              <option value="she/they">she/they</option>
-              <option value="he/they">he/they</option>
-              <option value="any/all">any/all</option>
+            <select id="modalUserPronouns" class="setup-select">
+              <option value="she/her">she / her</option>
+              <option value="he/him">he / him</option>
+              <option value="they/them">they / them</option>
+              <option value="she/they">she / they</option>
+              <option value="he/they">he / they</option>
+              <option value="any/all">any / all</option>
             </select>
           </div>
 
-          <div>
-            <label for="modalUserAge" style="font-size:12px; font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">
-              Age
+          <div class="setup-field-group">
+            <label for="modalUserAge" class="setup-field-label">
+              <span>🎂 Age</span>
             </label>
-            <input type="number" id="modalUserAge" class="setting-input" placeholder="e.g. 21" min="13" max="100" style="width:100%; height:44px; font-size:14px; font-weight:600;" />
+            <input type="number" id="modalUserAge" class="setup-input" placeholder="e.g. 20" value="20" min="13" max="100" />
           </div>
         </div>
 
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <button type="submit" class="primary-btn" id="saveProfileModalBtn" style="width:100%; height:46px; font-size:14px; font-weight:800; border-radius:14px; box-shadow:0 6px 18px rgba(217,0,87,0.3);">
-            Save Profile & Meet Your LIs ❤️
+        <!-- ACTION BUTTONS -->
+        <div class="setup-actions-group">
+          <button type="submit" class="setup-start-btn" id="saveProfileModalBtn">
+            <span>Start Story &amp; Meet LIs</span>
+            <span class="material-symbols-outlined" style="font-size:20px;">favorite</span>
           </button>
-          <button type="button" id="skipProfileModalBtn" style="background:transparent; border:none; color:var(--text-muted); font-size:12px; font-weight:600; padding:6px; cursor:pointer; text-decoration:underline;">
-            Skip for now (Defaults to MC)
+          <button type="button" class="setup-skip-btn" id="skipProfileModalBtn" onclick="handleSkipProfileModal()">
+            ⚡ Quick Play (Use Defaults)
           </button>
         </div>
       </form>
     </div>
   </div>
-  </div> <!-- Close app-layout-wrapper -->
 
   <!-- API KEY INITIAL SETUP MODAL (API Key Required for LLM functionality) -->
   <div id="apiKeyModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(10,5,20,0.88); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:1000; padding:20px;">

@@ -639,7 +639,31 @@ let analyticsData = {
 // Currently Active Chat Session
 let activeCharacterId = null;
 
-// Landing Page Navigation Controls
+// Landing Page Navigation & Setup Menu Controls
+function openLandingSetupMenu() {
+  const modal = document.getElementById("userProfileModal");
+  if (modal) {
+    modal.style.display = "flex";
+    void modal.offsetWidth;
+    modal.classList.add("active");
+    syncProfileInputsUI();
+    selectModalTargetLang(userState.targetLanguage || "vi");
+  }
+}
+window.openLandingSetupMenu = openLandingSetupMenu;
+window.openUserProfileModal = openLandingSetupMenu;
+
+function closeLandingSetupMenu() {
+  const modal = document.getElementById("userProfileModal");
+  if (modal) {
+    modal.classList.remove("active");
+    setTimeout(() => {
+      modal.style.display = "none";
+    }, 250);
+  }
+}
+window.closeLandingSetupMenu = closeLandingSetupMenu;
+
 function enterAppFromLanding() {
   const landing = document.getElementById("landingPage");
   const appLayout = document.getElementById("appLayoutWrapper");
@@ -659,8 +683,6 @@ function enterAppFromLanding() {
     appLayout.classList.add("active");
   }
 
-  // Check if profile modal should show now that user is entering the app
-  checkAndShowUserProfileModal();
   renderChatList();
   renderCharactersList();
   renderGuidebook();
@@ -838,17 +860,19 @@ function saveUserProfileFromModal() {
   const modalAge = document.getElementById("modalUserAge")?.value || "20";
 
   saveUserProfile(modalName, modalPronouns, modalAge);
-  setAppTargetLanguage(modalSelectedTargetLang);
+  setAppTargetLanguage(modalSelectedTargetLang || "vi");
 
-  const modal = document.getElementById("userProfileModal");
-  if (modal) modal.style.display = "none";
+  closeLandingSetupMenu();
+  enterAppFromLanding();
 }
 window.saveUserProfileFromModal = saveUserProfileFromModal;
 
 function handleSkipProfileModal() {
-  saveUserProfile("MC", "she/her", "20");
-  const modal = document.getElementById("userProfileModal");
-  if (modal) modal.style.display = "none";
+  const currentProfile = userState.userProfile || { name: "MC", pronouns: "she/her", age: "20" };
+  saveUserProfile(currentProfile.name || "MC", currentProfile.pronouns || "she/her", currentProfile.age || "20");
+  setAppTargetLanguage(modalSelectedTargetLang || userState.targetLanguage || "vi");
+  closeLandingSetupMenu();
+  enterAppFromLanding();
 }
 window.handleSkipProfileModal = handleSkipProfileModal;
 
