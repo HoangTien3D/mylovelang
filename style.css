@@ -1278,9 +1278,9 @@ body {
   width: calc(100% - 20px);
   max-width: 680px;
   margin: 0 auto 8px auto;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.63);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   border: 1.5px solid rgba(5, 150, 105, 0.35);
   border-radius: 14px;
   padding: 10px 16px;
