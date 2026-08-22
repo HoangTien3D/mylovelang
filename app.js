@@ -85,8 +85,8 @@ const BASE_CHARACTERS = {
   ado: {
     id: "ado",
     name: "Ado",
-    avatar: "/assets/characters/ado_avatar.svg",
-    sprite: "/assets/characters/ado_fullbody.svg",
+    avatar: "/assets/characters/ado_avatar.png",
+    sprite: "/assets/characters/ado_fullbody.png",
     archetype: "Strict Classmate",
     role: "Strict & Reliable Classmate",
     personality: "Strict, dutiful classmate who keeps you on track. Tsundere at heart—acts tough and official, but blushes and softens up when you get close.",
@@ -113,8 +113,8 @@ const BASE_CHARACTERS = {
   kou: {
     id: "kou",
     name: "Kou",
-    avatar: "/assets/characters/kou_avatar.svg",
-    sprite: "/assets/characters/kou_fullbody.svg",
+    avatar: "/assets/characters/kou_avatar.png",
+    sprite: "/assets/characters/kou_fullbody.png",
     archetype: "Cute Junior",
     role: "Cute & Clingy Underclassman",
     personality: "Cute, innocent, and clingy underclassman. Always follows you around, adores you, and seeks your attention and affection!",
@@ -141,8 +141,8 @@ const BASE_CHARACTERS = {
   ren: {
     id: "ren",
     name: "Ren",
-    avatar: "/assets/characters/ren_avatar.svg",
-    sprite: "/assets/characters/ren_fullbody.svg",
+    avatar: "/assets/characters/ren_avatar.png",
+    sprite: "/assets/characters/ren_fullbody.png",
     archetype: "Flirty Senior",
     role: "Flirty & Assertive Senior",
     personality: "Aggressive, flirty, teasing senior (senpai). Loves to bully and tease you playfully, asserting his charm whenever you're around.",
@@ -1663,7 +1663,7 @@ function renderChatList() {
     }
 
     let pfpCoverHtml = `
-      <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.svg';" />
+      <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.png';" />
     `;
 
     const card = document.createElement("div");
@@ -1713,7 +1713,7 @@ function renderCharactersList() {
     const affectionPct = userState.affection[char.id] || 0;
 
     let pfpCoverHtml = `
-      <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.svg';" />
+      <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.png';" />
     `;
 
     const card = document.createElement("div");
