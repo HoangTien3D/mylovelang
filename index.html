@@ -5,11 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Otome | My Love Language</title>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&family=Hina+Mincho:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-  <div class="app-layout-wrapper" id="appLayoutWrapper">
+  <!-- LANDING PAGE (MAIN TITLE SCREEN) -->
+  <div class="landing-page-wrapper active" id="landingPage">
+    <div class="landing-content-card">
+      <!-- 752x547 Hero Graphic Placeholder Container (Replace /assets/landing_hero.svg with your SVG) -->
+      <div class="landing-graphic-container" id="landingGraphicContainer">
+        <img
+          id="landingHeroGraphic"
+          src="/assets/landing_hero.svg"
+          alt="Otome Lingua Hero Graphic (752x547)"
+          width="752"
+          height="547"
+          class="landing-graphic-img"
+          onerror="this.onerror=null; this.src='/public/assets/landing_hero.svg';"
+        />
+      </div>
+
+      <!-- Subtitle Below Graphic -->
+      <p class="landing-subtitle" id="landingSubtitle">
+        Learn romance, vocabulary &amp; real-world conversations with charming love interests
+      </p>
+
+      <!-- Play Now Button -->
+      <button type="button" class="landing-play-btn" id="landingPlayBtn" onclick="enterAppFromLanding()">
+        <span class="landing-play-icon">▶</span>
+        <span class="landing-play-text">Play Now</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="app-layout-wrapper" id="appLayoutWrapper" style="display:none;">
     <!-- Main Mobile App Frame -->
     <div class="app-container" id="appFrame">
 
@@ -30,19 +61,7 @@
         </div>
       </section>
 
-      <!-- VIEW 2: CHARACTERS PROFILES -->
-      <section class="view-section" id="view-characters">
-        <div class="section-header">
-          <h2 class="section-title">Love Interests</h2>
-          <p class="section-subtitle">Personality profiles, relationship levels & affection stats</p>
-        </div>
-
-        <div id="charactersListContainer">
-          <!-- Populated dynamically by app.js -->
-        </div>
-      </section>
-
-      <!-- VIEW 3: LANGUAGE GUIDEBOOK -->
+      <!-- VIEW 2: LANGUAGE GUIDEBOOK -->
       <section class="view-section" id="view-progress">
         <div class="section-header">
           <h2 class="section-title">Language Guidebook</h2>
@@ -103,7 +122,7 @@
             <span id="profileStatusBadge" class="status-chip-badge" style="background:rgba(217,0,87,0.12); color:var(--primary-pink); font-weight:800;">Saved</span>
           </div>
           <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
-            Set your name, pronouns, and age so Ado, Kou, Ren, and the group chat address you personally!
+            Set your name, pronouns, and age so Ado, Kou, and Ren address you personally!
           </p>
           <div style="display:flex; flex-direction:column; gap:10px;">
             <div>
@@ -171,6 +190,19 @@
               🌙 Dark Twilight Mode
             </button>
           </div>
+        </div>
+
+        <!-- Return to Landing / Title Screen -->
+        <div class="settings-group">
+          <div class="settings-label">
+            <span>🏠 Title &amp; Landing Screen</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
+            Return to the main landing page and hero graphic:
+          </p>
+          <button class="primary-btn" id="returnToTitleBtn" type="button" onclick="returnToLandingPage()" style="background:linear-gradient(135deg, #7000d9 0%, #455A9F 100%);">
+            🏠 Return to Title Screen
+          </button>
         </div>
 
         <!-- Hidden Gemini API key block for system compatibility -->
@@ -383,10 +415,6 @@
       <button class="tab-btn active" data-tab="chats" onclick="switchTab('chats')">
         <span class="tab-icon material-symbols-outlined">forum</span>
         <span>Chats</span>
-      </button>
-      <button class="tab-btn" data-tab="characters" onclick="switchTab('characters')">
-        <span class="tab-icon material-symbols-outlined">diversity_3</span>
-        <span>LIs</span>
       </button>
       <button class="tab-btn" data-tab="progress" onclick="switchTab('progress')">
         <span class="tab-icon material-symbols-outlined">menu_book</span>

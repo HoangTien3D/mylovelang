@@ -74,21 +74,6 @@ const SVG_AVATARS = {
     <circle cx="42" cy="41" r="2.5" fill="#1e1b4b"/>
     <circle cx="58" cy="41" r="2.5" fill="#1e1b4b"/>
     <path d="M46 48 q4 3 8 0" stroke="#1e1b4b" stroke-width="2" fill="none"/>
-  </svg>`),
-
-  group: svgDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <defs>
-      <linearGradient id="gGrp" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#ec4899"/>
-        <stop offset="50%" stop-color="#2563eb"/>
-        <stop offset="100%" stop-color="#7c3aed"/>
-      </linearGradient>
-    </defs>
-    <circle cx="50" cy="50" r="50" fill="url(#gGrp)"/>
-    <circle cx="35" cy="40" r="14" fill="#ffffff" opacity="0.9"/>
-    <circle cx="65" cy="40" r="14" fill="#ffffff" opacity="0.9"/>
-    <circle cx="50" cy="38" r="16" fill="#ffffff"/>
-    <path d="M25 75 c0 -12 6 -18 15 -20 c2 -8 18 -8 20 0 c9 2 15 8 15 20 z" fill="#ffffff" opacity="0.85"/>
   </svg>`)
 };
 
@@ -100,8 +85,8 @@ const BASE_CHARACTERS = {
   ado: {
     id: "ado",
     name: "Ado",
-    avatar: "/assets/characters/ado_avatar.png",
-    sprite: "/assets/characters/ado_fullbody.png",
+    avatar: "/assets/characters/ado_avatar.svg",
+    sprite: "/assets/characters/ado_fullbody.svg",
     archetype: "Strict Classmate",
     role: "Strict & Reliable Classmate",
     personality: "Strict, dutiful classmate who keeps you on track. Tsundere at heart—acts tough and official, but blushes and softens up when you get close.",
@@ -128,8 +113,8 @@ const BASE_CHARACTERS = {
   kou: {
     id: "kou",
     name: "Kou",
-    avatar: "/assets/characters/kou_avatar.png",
-    sprite: "/assets/characters/kou_fullbody.png",
+    avatar: "/assets/characters/kou_avatar.svg",
+    sprite: "/assets/characters/kou_fullbody.svg",
     archetype: "Cute Junior",
     role: "Cute & Clingy Underclassman",
     personality: "Cute, innocent, and clingy underclassman. Always follows you around, adores you, and seeks your attention and affection!",
@@ -156,8 +141,8 @@ const BASE_CHARACTERS = {
   ren: {
     id: "ren",
     name: "Ren",
-    avatar: "/assets/characters/ren_avatar.png",
-    sprite: "/assets/characters/ren_fullbody.png",
+    avatar: "/assets/characters/ren_avatar.svg",
+    sprite: "/assets/characters/ren_fullbody.svg",
     archetype: "Flirty Senior",
     role: "Flirty & Assertive Senior",
     personality: "Aggressive, flirty, teasing senior (senpai). Loves to bully and tease you playfully, asserting his charm whenever you're around.",
@@ -178,35 +163,6 @@ const BASE_CHARACTERS = {
         romaji: "Ore wo mikakata noni aisatsu mo nashi ka? Kocchi kite tonari ni suware yo... Kyou wa doko made kikiwake ga ii ka tameshite yaru.",
         translation: "Not even greeting me when you spot me? Come over here and sit next to me... Let me test how good you are today.",
         tip: "'Ore' is confident male 'I' in Japanese. Ren is bold and assertive."
-      }
-    }
-  },
-  group: {
-    id: "group",
-    name: "Global Otome Lounge",
-    isGroup: true,
-    avatar: "/assets/characters/ado_avatar.png",
-    sprite: "/assets/characters/ado_fullbody.png",
-    archetype: "Otome Trio",
-    role: "Ado, Kou & Ren",
-    personality: "Ado (strict tsundere classmate), Kou (cute underclassman), and Ren (flirty aggressive senior) all vying for your romantic affection while teaching you languages!",
-    sampleVoice: "Multilingual trio harmony",
-    greetings: {
-      vi: {
-        text: "Chào em! Ado, Kou và Ren đang ở sảnh chờ nhắn tin cùng em đó!",
-        translation: "Hello! Ado, Kou, and Ren are in the lounge waiting to text you!",
-        tip: "Chat with all 3 love interests in Vietnamese!"
-      },
-      en: {
-        text: "Welcome! Ado, Kou, and Ren are waiting to chat with you in English!",
-        translation: "Welcome! Ado, Kou, and Ren are waiting to chat with you in English!",
-        tip: "Chat with all 3 love interests in English!"
-      },
-      ja: {
-        text: "ようこそ！Ado、Kou、Renの3人がラウンジで待っていますよ！",
-        romaji: "Youkoso! Ado, Kou, Ren no 3-nin ga raunji de matte imasu yo!",
-        translation: "Welcome! Ado, Kou, and Ren are waiting in the lounge!",
-        tip: "Chat with all 3 love interests in Japanese!"
       }
     }
   }
@@ -376,10 +332,6 @@ const ERROR_GLITCH_MESSAGES = {
     "Đừng vội đi đâu đấy nhé, mạng bị lag xíu thôi... Để anh chỉnh lại 📶",
     "Máy anh hơi đơ chút, nhóc ngoan ngoãn ngồi yên chờ anh đấy...",
     "Kết nối bị đứt xíu, anh quay lại chọc nhóc ngay đây..."
-  ],
-  group: [
-    "Chờ chút nhé MC! Ado, Kou và Ren đang bị đơ máy xíu 📱💬",
-    "Mạng sảnh chờ bị chập chờn một xíu! Tụi anh quay lại ngay đây!"
   ]
 };
 
@@ -405,10 +357,6 @@ const ERROR_RECOVERY_MESSAGES = {
     "Anh quay lại rồi đây. Tiếp tục chọc nhóc được rồi chứ?",
     "Xong rồi nè. Không có anh trò chuyện nhóc có thấy thiếu thiếu không?",
     "Ổn rồi nhé. Mau nói tiếp cho anh nghe nào, nhóc."
-  ],
-  group: [
-    "Sảnh chờ đã hoạt động lại rồi nè! Tiếp tục trò chuyện thôi MC ơi! 💬",
-    "Mọi người quay lại rồi! MC nhắn tiếp đi nào!"
   ]
 };
 
@@ -460,17 +408,6 @@ const SPONTANEOUS_CHECKUPS = {
     ja: [
       { text: "どうした、後輩ちゃん？俺のこと考えてたんだろ？ 😏✨", romaji: "Doushita, kouhai-chan? Ore no koto kangaetetandaro?", translation: "What's wrong, junior? You were thinking of me, right? 😏✨", tip: "'Kouhai-chan' is his affectionate tease." },
       { text: "こっち来て俺の隣に座れよ。よしよししてやるから。 😈", romaji: "Kocchi kite ore no tonari ni suware yo. Yoshi yoshi shite yaru kara.", translation: "Come sit next to me. I'll pat your head. 😈", tip: "Assertive, flirty senior." }
-    ]
-  },
-  group: {
-    vi: [
-      { text: "Ado & Kou & Ren đang ở sảnh chờ tin nhắn từ em đó! Vào trò chuyện thôi nào! 💬", translation: "Ado, Kou & Ren are in the lounge waiting for your message! Come chat! 💬", tip: "Group lounge invitation." }
-    ],
-    en: [
-      { text: "Ado, Kou & Ren are waiting for you in the lounge! Come join us! 💬", translation: "Ado, Kou & Ren are waiting for you in the lounge! Come join us! 💬", tip: "Group lounge invitation." }
-    ],
-    ja: [
-      { text: "Ado、Kou、Renの3人がラウンジで待っていますよ！一緒に話しましょう！ 💬", romaji: "Ado, Kou, Ren no 3-nin ga raunji de matte imasu yo! Issho ni hanashimashou!", translation: "Ado, Kou, and Ren are waiting in the lounge! Let's talk together! 💬", tip: "Group lounge invitation." }
     ]
   }
 };
@@ -540,19 +477,6 @@ const UNREPLIED_SEQUENCE = {
       { text: "返事まだ？教室まで迎えに行ってもいいんだぞ？ 😈", romaji: "Henji mada? Kyoushitsu made mukae ni ittemo ii nda zo?", translation: "No reply yet? Should I come pick you up at your classroom? 😈", tip: "Assertive senior." },
       { text: "焦らすねぇ… そういう生意気なところ、嫌いじゃないけどお仕置きだな 🔥", romaji: "Jirasu nee... souiu namaiki na tokoro, kirai janai kedo oshioki dana", translation: "Teasing me, huh? I don't hate that cheeky side, but you need punishment 🔥", tip: "Flirty bully trope." },
       { text: "...", translation: "... (Ren is leaning back smiling dangerously until you text back)", tip: "Ren is waiting assertively!" }
-    ]
-  },
-  group: {
-    vi: [
-      { text: "Ado & Kou & Ren: MC ơi! Cả ba bọn anh đang đợi tin nhắn của em ở sảnh đó! 💬", translation: "Ado & Kou & Ren: MC! All three of us are waiting for your message in the lounge! 💬", tip: "Group waiting." },
-      { text: "...", translation: "... (Silence in the lounge...)", tip: "All three love interests are waiting for your reply!" }
-    ],
-    en: [
-      { text: "Ado, Kou & Ren: MC! All three of us are waiting for your message in the lounge! 💬", translation: "Ado, Kou & Ren: MC! All three of us are waiting for your message in the lounge! 💬", tip: "Group waiting." },
-      { text: "...", translation: "... (Silence in the lounge...)", tip: "All three love interests are waiting for your reply!" }
-    ],
-    ja: [
-      { text: "Ado、Kou、Ren: MCちゃん！3人全員でラウンジで待ってるよ！ 💬", romaji: "Ado, Kou, Ren: MC-chan! 3-nin zen'in de raunji de matteru yo!", translation: "Ado, Kou, Ren: MC! All three of us are waiting in the lounge! 💬", tip: "Group waiting." }
     ]
   }
 };
@@ -715,6 +639,54 @@ let analyticsData = {
 // Currently Active Chat Session
 let activeCharacterId = null;
 
+// Landing Page Navigation Controls
+function enterAppFromLanding() {
+  const landing = document.getElementById("landingPage");
+  const appLayout = document.getElementById("appLayoutWrapper");
+
+  if (landing) {
+    landing.classList.remove("active");
+    landing.style.opacity = "0";
+    landing.style.transform = "scale(0.96)";
+    landing.style.pointerEvents = "none";
+    setTimeout(() => {
+      landing.style.display = "none";
+    }, 400);
+  }
+
+  if (appLayout) {
+    appLayout.style.display = "flex";
+    appLayout.classList.add("active");
+  }
+
+  // Check if profile modal should show now that user is entering the app
+  checkAndShowUserProfileModal();
+  renderChatList();
+  renderCharactersList();
+  renderGuidebook();
+}
+window.enterAppFromLanding = enterAppFromLanding;
+
+function returnToLandingPage() {
+  const landing = document.getElementById("landingPage");
+  const appLayout = document.getElementById("appLayoutWrapper");
+
+  if (landing) {
+    landing.style.display = "flex";
+    landing.style.pointerEvents = "auto";
+    void landing.offsetWidth;
+    landing.classList.add("active");
+    landing.style.opacity = "1";
+    landing.style.transform = "scale(1)";
+  }
+
+  if (appLayout) {
+    appLayout.style.display = "none";
+    appLayout.classList.remove("active");
+  }
+}
+window.returnToLandingPage = returnToLandingPage;
+
 // User Profile Helpers
 function saveUserProfile(name, pronouns, age) {
   const profile = {
@@ -757,6 +729,12 @@ function syncProfileInputsUI() {
 }
 
 function checkAndShowUserProfileModal() {
+  const landing = document.getElementById("landingPage");
+  if (landing && landing.classList.contains("active") && landing.style.display !== "none") {
+    const modal = document.getElementById("userProfileModal");
+    if (modal) modal.style.display = "none";
+    return;
+  }
   const setupDone = localStorage.getItem("otome_profile_setup_done");
   const modal = document.getElementById("userProfileModal");
   if (!setupDone && modal) {
@@ -1411,10 +1389,6 @@ const COMPANION_INTERACTIONS = {
     "Học chăm chỉ rồi anh sẽ thưởng cho một buổi đi chơi riêng nhé. 💖",
     "Nhóc ngoan ngoãn như vầy làm anh càng muốn trêu hơn đấy. 😈",
     "You're getting bolder with every text, I love that about you. 😏🔥"
-  ],
-  group: [
-    "Ado: Tập trung nào! 📚 | Kou: Tiền bối cố lên! 🥺 | Ren: Nhóc ngoan lắm! 😏",
-    "Cả 3 người bọn anh đều đang dõi theo em đấy! 💬✨"
   ]
 };
 
@@ -1582,7 +1556,6 @@ function switchTab(tabName) {
   });
 
   if (tabName === "chats") renderChatList();
-  if (tabName === "characters") renderCharactersList();
   if (tabName === "progress" || tabName === "guidebook") renderGuidebook();
 }
 window.switchTab = switchTab;
@@ -1689,20 +1662,9 @@ function renderChatList() {
       badgeHtml = `<span class="square-unread-badge">🔴 ${unreadCount}</span>`;
     }
 
-    let pfpCoverHtml = "";
-    if (char.isGroup) {
-      pfpCoverHtml = `
-        <div class="square-trio-avatars">
-          <img src="/assets/characters/ado_avatar.png" class="trio-avatar trio-ado" alt="Ado" />
-          <img src="/assets/characters/kou_avatar.png" class="trio-avatar trio-kou" alt="Kou" />
-          <img src="/assets/characters/ren_avatar.png" class="trio-avatar trio-ren" alt="Ren" />
-        </div>
-      `;
-    } else {
-      pfpCoverHtml = `
-        <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.svg';" />
-      `;
-    }
+    let pfpCoverHtml = `
+      <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.svg';" />
+    `;
 
     const card = document.createElement("div");
     card.className = "chat-card square-char-card";
@@ -1750,20 +1712,9 @@ function renderCharactersList() {
   Object.values(CHARACTERS).forEach((char) => {
     const affectionPct = userState.affection[char.id] || 0;
 
-    let pfpCoverHtml = "";
-    if (char.isGroup) {
-      pfpCoverHtml = `
-        <div class="square-trio-avatars">
-          <img src="/assets/characters/ado_avatar.png" class="trio-avatar trio-ado" alt="Ado" />
-          <img src="/assets/characters/kou_avatar.png" class="trio-avatar trio-kou" alt="Kou" />
-          <img src="/assets/characters/ren_avatar.png" class="trio-avatar trio-ren" alt="Ren" />
-        </div>
-      `;
-    } else {
-      pfpCoverHtml = `
-        <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.svg';" />
-      `;
-    }
+    let pfpCoverHtml = `
+      <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.svg';" />
+    `;
 
     const card = document.createElement("div");
     card.className = "character-card square-char-card";
@@ -2835,15 +2786,7 @@ function generateStarterChoices(charId, lastMsgText) {
     return { prompt, options };
   } else {
     // Default Vietnamese
-    if (charId === "group") {
-      let prompt = "Choose your reply to Ado & Kou (Beginner Choices 💬):";
-      let options = [
-        { text: "Chào hai cậu, tớ vào trò chuyện cùng nè! ✨", translation: "Hello both of you, I'm here to chat!" },
-        { text: "Cảm ơn hai cậu rất nhiều nhé! ❤️", translation: "Thank you both so much!" },
-        { text: "Hai cậu đang bàn chuyện gì vui thế? 💬", translation: "What fun thing are you two discussing?" }
-      ];
-      return { prompt, options };
-    } else if (charId === "ado") {
+    if (charId === "ado") {
       let prompt = "Choose your reply to Ado (Beginner Choices 📚):";
       let options = [
         { text: "Cảm ơn Ado nhé, tớ sẽ học hành chăm chỉ! 📚", translation: "Thanks Ado, I will study diligently!" },
@@ -3019,19 +2962,7 @@ function generateContextualWordChips(charId, lastMsgText) {
     return { prompt, chips };
   } else {
     // Default Vietnamese
-    if (charId === "group") {
-      let prompt = "Build your reply to Ado & Kou (Group Chat 💬):";
-      let chips = ["Chào", "hai", "cậu", "Cảm", "ơn", "nhé", "Ado", "Kou", "rất", "vui", "được", "nói", "chuyện"];
-
-      if (text.includes("chơi") || text.includes("học")) {
-        prompt = 'Build reply: "Cảm ơn hai cậu! Tớ rất muốn đi cùng."';
-        chips = ["Cảm", "ơn", "hai", "cậu", "tớ", "rất", "muốn", "đi", "cùng", "Ado", "Kou", "nhé", "ạ"];
-      } else {
-        prompt = 'Build reply: "Chào Ado và Kou! Tớ rất vui được nói chuyện với hai cậu!"';
-        chips = ["Chào", "Ado", "và", "Kou", "tớ", "rất", "vui", "được", "nói", "chuyện", "cùng", "hai", "cậu"];
-      }
-      return { prompt, chips };
-    } else if (charId === "ado") {
+    if (charId === "ado") {
       let prompt = "Build your reply to Ado (Vietnamese 🇻🇳):";
       let chips = ["Cảm", "ơn", "Ado", "chu", "đáo", "quá", "tớ", "sẽ", "học", "chăm", "chỉ", "đừng", "lo", "nhé", "ạ"];
       return { prompt, chips };
@@ -3316,9 +3247,9 @@ function addUserMessageToHistory(text) {
   userState.chatHistories[charId] = history;
 
   // Reset unreplied tracking, pout state & timers when user responds
-  if (!userState.unrepliedCount) userState.unrepliedCount = { ado: 0, kou: 0, ren: 0, group: 0 };
-  if (!userState.isPouting) userState.isPouting = { ado: false, kou: false, ren: false, group: false };
-  if (!userState.saidGoodbye) userState.saidGoodbye = { ado: false, kou: false, ren: false, group: false };
+  if (!userState.unrepliedCount) userState.unrepliedCount = { ado: 0, kou: 0, ren: 0 };
+  if (!userState.isPouting) userState.isPouting = { ado: false, kou: false, ren: false };
+  if (!userState.saidGoodbye) userState.saidGoodbye = { ado: false, kou: false, ren: false };
 
   userState.unrepliedCount[charId] = 0;
   userState.isPouting[charId] = false;
@@ -3504,53 +3435,25 @@ async function triggerLLMResponse(userText, tierObj) {
 
     const history = userState.chatHistories[charId] || [];
 
-    if ((charId === "group" || char.isGroup) && responseData.groupResponses && responseData.groupResponses.length > 0) {
-      responseData.groupResponses.forEach((resp) => {
-        history.push({
-          sender: "li",
-          speaker: resp.speaker || "ado",
-          speakerName: resp.speakerName || (resp.speaker === "kou" ? "Kou" : "Ado"),
-          text: resp.text,
-          translation: resp.translation,
-          tip: resp.tip,
-          fix: responseData.correction || responseData.fix || null,
-          evalColor: responseData.evalColor || "green",
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        });
-      });
+    history.push({
+      sender: "li",
+      text: responseData.characterResponse || responseData.text || "Chào bạn nha! Rất vui được gặp! ❤️",
+      romaji: responseData.romaji || null,
+      translation: responseData.translation || "Hello! So happy to talk with you! ❤️",
+      tip: responseData.tip || "Keep practicing your conversation skills!",
+      fix: responseData.correction || responseData.fix || null,
+      evalColor: responseData.evalColor || "green",
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    });
 
-      // Send GIF as a SEPARATE message entry if triggered
-      if (responseGifUrl) {
-        history.push({
-          sender: "li",
-          speaker: "ado",
-          speakerName: "Ado",
-          isGifOnly: true,
-          gifUrl: responseGifUrl,
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        });
-      }
-    } else {
+    // Send GIF as a SEPARATE message entry if triggered
+    if (responseGifUrl) {
       history.push({
         sender: "li",
-        text: responseData.characterResponse || responseData.text || "Chào bạn nha! Rất vui được gặp! ❤️",
-        romaji: responseData.romaji || null,
-        translation: responseData.translation || "Hello! So happy to talk with you! ❤️",
-        tip: responseData.tip || "Keep practicing your conversation skills!",
-        fix: responseData.correction || responseData.fix || null,
-        evalColor: responseData.evalColor || "green",
+        isGifOnly: true,
+        gifUrl: responseGifUrl,
         time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       });
-
-      // Send GIF as a SEPARATE message entry if triggered
-      if (responseGifUrl) {
-        history.push({
-          sender: "li",
-          isGifOnly: true,
-          gifUrl: responseGifUrl,
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        });
-      }
     }
 
     userState.chatHistories[charId] = history;
@@ -3562,7 +3465,7 @@ async function triggerLLMResponse(userText, tierObj) {
     renderChatHistory();
 
     // Update Floating Companion with recent response & mood
-    const companionQuote = responseData.characterResponse || (responseData.groupResponses && responseData.groupResponses[0]?.text) || null;
+    const companionQuote = responseData.characterResponse || null;
     updateFloatingCompanion(charId, companionQuote, responseData.evalColor === "green" ? "Blushing & Impressed 💕" : "Observing carefully ✨");
 
     setupTierInputControls(tierObj || TIERS[0], char);
@@ -3571,7 +3474,6 @@ async function triggerLLMResponse(userText, tierObj) {
 }
 
 function generateInCharacterFallback(char, userText, tierObj) {
-  const isGroup = char.isGroup || char.id === "group";
   const normText = (userText || "").toLowerCase();
   const targetLang = userState.targetLanguage || "vi";
 
@@ -3593,50 +3495,7 @@ function generateInCharacterFallback(char, userText, tierObj) {
     fallbackEncouragement = "Grammar fix needed! Here is the corrected structure:";
   }
 
-  if (isGroup) {
-    let adoText = "Ado nhớ bạn lắm nè!";
-    let kouText = "Hừm... Học bài xong chưa?";
-
-    if (targetLang === "en") {
-      adoText = "Ado missed you so much!";
-      kouText = "Hmph... Did you finish studying?";
-    } else if (targetLang === "ja") {
-      adoText = "会いたかったです、先輩！";
-      kouText = "勉強は終わったのか？";
-    }
-
-    return {
-      isGroup: true,
-      groupResponses: [
-        {
-          speaker: "ado",
-          speakerName: "Ado",
-          text: adoText,
-          translation: "Ado: I missed you so much!",
-          tip: "Ado speaks enthusiastically and clings to you."
-        },
-        {
-          speaker: "kou",
-          speakerName: "Kou",
-          text: kouText,
-          translation: "Kou: Hmph... Did you finish studying?",
-          tip: "Kou checks on your study progress with a cool demeanor."
-        }
-      ],
-      evalColor: evalColor,
-      isCorrect: evalColor !== "red",
-      correction: fallbackFix,
-      tip: fallbackTip,
-      encouragement: fallbackEncouragement,
-      starterOptions: [
-        { text: "Chào hai cậu, tớ vào nói chuyện nè!", translation: "Hello both of you, I'm here to chat!" },
-        { text: "Cảm ơn hai cậu rất nhiều nhé!", translation: "Thank you both so much!" },
-        { text: "Tớ học xong rồi nè Kou ơi!", translation: "I finished studying, Kou!" }
-      ],
-      contextualChipsPrompt: "Build your reply to Ado & Kou:",
-      contextualChips: ["Chào", "hai", "cậu", "Cảm", "ơn", "Ado", "Kou", "nhé", "học", "chăm", "chỉ", "ạ"]
-    };
-  } else if (char.id === "ado") {
+  if (char.id === "ado") {
     let respText = "Chào tiền bối nha! Đi chơi thôi!";
     let trans = "Hello Senpai! Let's go hang out!";
     let tip = "'Chào tiền bối' is a sweet greeting to an upperclassman.";
