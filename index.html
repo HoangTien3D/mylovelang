@@ -333,133 +333,148 @@
           </div>
         </div>
 
-        <!-- Visual Novel Stage Area (The guy standing in the background) -->
-        <div class="vn-stage-container" id="vnStageContainer">
+        <!-- CHAT MAIN CONTENT AREA (Mobile: Vertical Visual Novel; Desktop: Avatar on Left, Chat Interface on Right) -->
+        <div class="vn-chat-main-content" id="vnChatMainContent">
+          <!-- Visual Novel Stage Area (The avatar / love interest guy sprite on Left in Desktop) -->
+          <div class="vn-stage-container" id="vnStageContainer">
 
-          <!-- Group Chat Side Characters (if in Trio mode) -->
-          <div class="vn-group-side-left" id="vnGroupSideLeft" style="display:none;">
-            <img src="/assets/characters/kou_fullbody.png" id="vnGroupLeftImg" class="vn-side-sprite" alt="Side LI" />
-          </div>
-          <div class="vn-group-side-right" id="vnGroupSideRight" style="display:none;">
-            <img src="/assets/characters/ren_fullbody.png" id="vnGroupRightImg" class="vn-side-sprite" alt="Side LI" />
-          </div>
-
-          <!-- Center Full-Body Guy Sprite (in the background) -->
-          <div class="vn-center-guy-stage" id="vnCenterGuyStage" onclick="interactWithFloatingCompanion()" title="Tap character to interact!">
-            <div class="vn-sprite-wrapper" id="vnSpriteWrapper">
-              <img src="/assets/characters/ado_fullbody.png" id="vnCenterGuySprite" class="vn-floating-guy-sprite" alt="Love Interest Standing Sprite" />
+            <!-- Group Chat Side Characters (if in Trio mode) -->
+            <div class="vn-group-side-left" id="vnGroupSideLeft" style="display:none;">
+              <img src="/assets/characters/kou_fullbody.png" id="vnGroupLeftImg" class="vn-side-sprite" alt="Side LI" />
             </div>
-            <!-- Reactive Blush & Heart Burst Overlay -->
-            <div class="vn-heart-burst-container" id="vnHeartBurstContainer"></div>
-          </div>
-
-          <!-- Floating Character Speech Bubble (in the stage, persists until next message) -->
-          <div class="vn-stage-speech-bubble" id="companionSpeechBubble" style="display:flex;">
-            <div class="vn-bubble-speaker" id="companionSpeakerTag">
-              <span id="companionSpeakerName">Ado</span>
+            <div class="vn-group-side-right" id="vnGroupSideRight" style="display:none;">
+              <img src="/assets/characters/ren_fullbody.png" id="vnGroupRightImg" class="vn-side-sprite" alt="Side LI" />
             </div>
-            <div class="vn-bubble-content">
-              <span id="companionSpeechText">Này, cậu lại đi trễ đấy à? Tớ đã chuẩn bị sẵn tài liệu học tập cho cậu rồi...</span>
-              <div id="companionSpeechRomaji" class="vn-bubble-romaji" style="display:none;"></div>
-              <div id="companionSpeechGifWrapper" class="vn-bubble-gif-wrapper" style="display:none;">
-                <img id="companionSpeechGif" class="vn-bubble-gif-img" src="" alt="GIF" />
+
+            <!-- Center Full-Body Guy Sprite (in the stage) -->
+            <div class="vn-center-guy-stage" id="vnCenterGuyStage" onclick="interactWithFloatingCompanion()" title="Tap character to interact!">
+              <div class="vn-sprite-wrapper" id="vnSpriteWrapper">
+                <img src="/assets/characters/ado_fullbody.png" id="vnCenterGuySprite" class="vn-floating-guy-sprite" alt="Love Interest Standing Sprite" />
               </div>
+              <!-- Reactive Blush & Heart Burst Overlay -->
+              <div class="vn-heart-burst-container" id="vnHeartBurstContainer"></div>
+            </div>
+
+            <!-- Desktop Tap-to-Interact Hint Badge -->
+            <div class="vn-stage-desktop-hint" id="vnStageDesktopHint">
+              <span class="material-symbols-outlined" style="font-size:15px; color:var(--primary-pink);">favorite</span>
+              <span>Tap avatar to interact 💕</span>
             </div>
           </div>
 
-          <!-- DEDICATED LANGUAGE INSIGHT BOX (ROOM FOR INSIGHTS & FEEDBACK) -->
-          <div class="vn-insight-box" id="vnDialogueBox">
-            <!-- Header bar with icon and category -->
-            <div class="vn-insight-header" id="vnInsightHeader">
-              <div class="vn-insight-title-group">
-                <span class="material-symbols-outlined vn-insight-icon" id="vnGrammarBadgeIcon" style="font-size:18px;">lightbulb</span>
-                <span class="vn-insight-title" id="vnInsightTitle">Language Insight</span>
-              </div>
-              <span class="vn-insight-status-tag" id="vnInsightStatusTag">Natural & Accurate</span>
-            </div>
-
-            <!-- Insight Body Content -->
-            <div class="vn-insight-body" id="vnInsightBody">
-              <div class="vn-insight-tip" id="vnGrammarTip">
-                Ado is using casual, friendly Vietnamese. "Tài liệu học tập" means study materials/notes.
-              </div>
-
-              <!-- Correction or Alternative Phrasing Card -->
-              <div class="vn-insight-correction-card" id="vnGrammarCorrectionCard" style="display:none;">
-                <span class="vn-corr-badge">Suggested Phrasing:</span>
-                <span class="vn-corr-text" id="vnGrammarCorrection"></span>
-              </div>
-
-              <!-- Typing Indicator Overlay inside Insight Box -->
-              <div class="vn-typing-indicator" id="vnTypingIndicator" style="display:none;">
-                <div class="vn-typing-dots">
-                  <span></span><span></span><span></span>
+          <!-- RIGHT CHAT INTERFACE PANEL (Houses Dialogue, Insights, and Input Controls) -->
+          <div class="vn-chat-interface-panel" id="vnChatInterfacePanel">
+            <!-- Scrollable Dialogue & Insights Area -->
+            <div class="vn-dialogue-scroll-area" id="vnDialogueScrollArea">
+              <!-- Floating Character Speech Bubble -->
+              <div class="vn-stage-speech-bubble" id="companionSpeechBubble" style="display:flex;">
+                <div class="vn-bubble-speaker" id="companionSpeakerTag">
+                  <span id="companionSpeakerName">Ado</span>
                 </div>
-                <span id="vnTypingName">Thinking...</span>
+                <div class="vn-bubble-content">
+                  <span id="companionSpeechText">Này, cậu lại đi trễ đấy à? Tớ đã chuẩn bị sẵn tài liệu học tập cho cậu rồi...</span>
+                  <div id="companionSpeechRomaji" class="vn-bubble-romaji" style="display:none;"></div>
+                  <div id="companionSpeechGifWrapper" class="vn-bubble-gif-wrapper" style="display:none;">
+                    <img id="companionSpeechGif" class="vn-bubble-gif-img" src="" alt="GIF" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- DEDICATED LANGUAGE INSIGHT BOX (ROOM FOR INSIGHTS & FEEDBACK) -->
+              <div class="vn-insight-box" id="vnDialogueBox">
+                <!-- Header bar with icon and category -->
+                <div class="vn-insight-header" id="vnInsightHeader">
+                  <div class="vn-insight-title-group">
+                    <span class="material-symbols-outlined vn-insight-icon" id="vnGrammarBadgeIcon" style="font-size:18px;">lightbulb</span>
+                    <span class="vn-insight-title" id="vnInsightTitle">Language Insight</span>
+                  </div>
+                  <span class="vn-insight-status-tag" id="vnInsightStatusTag">Natural & Accurate</span>
+                </div>
+
+                <!-- Insight Body Content -->
+                <div class="vn-insight-body" id="vnInsightBody">
+                  <div class="vn-insight-tip" id="vnGrammarTip">
+                    Ado is using casual, friendly Vietnamese. "Tài liệu học tập" means study materials/notes.
+                  </div>
+
+                  <!-- Correction or Alternative Phrasing Card -->
+                  <div class="vn-insight-correction-card" id="vnGrammarCorrectionCard" style="display:none;">
+                    <span class="vn-corr-badge">Suggested Phrasing:</span>
+                    <span class="vn-corr-text" id="vnGrammarCorrection"></span>
+                  </div>
+
+                  <!-- Typing Indicator Overlay inside Insight Box -->
+                  <div class="vn-typing-indicator" id="vnTypingIndicator" style="display:none;">
+                    <div class="vn-typing-dots">
+                      <span></span><span></span><span></span>
+                    </div>
+                    <span id="vnTypingName">Thinking...</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Cooldown Banner (appears inside chat box when counting down) -->
-        <div class="chat-cooldown-banner" id="chatCooldownBanner" style="display:none;">
-          <span class="material-symbols-outlined" style="font-size:16px;">timer</span>
-          <span id="chatCooldownText">Cooldown active — Please wait 20s before sending next message...</span>
-        </div>
-
-        <!-- UNDERNEATH THE MESSAGE BOX: PLAYER RESPONSE / INPUT CONTROLS -->
-        <div class="vn-input-section chat-controls" id="vnInputSection">
-          <!-- Collapsed state trigger bar -->
-          <div class="input-collapsed-bar" id="inputCollapsedBar" onclick="toggleInputUiCollapse(false)" style="display:none;">
-            <span class="material-symbols-outlined" style="font-size:18px;">keyboard_arrow_up</span>
-            <span id="inputCollapsedBarText">Show Input Controls</span>
-          </div>
-
-          <!-- Input Feature Mode Selector (Switch freely between Starter Options, Sentence Builder, and Free Text) -->
-          <div class="input-mode-switcher" id="inputModeSwitcher" style="display:flex; gap:6px; align-items:center;">
-            <button id="modeStarterChoiceBtn" class="mode-tab-btn active" type="button" title="Starter Options">
-              <span class="material-symbols-outlined" style="font-size:16px;">format_list_bulleted</span>
-            </button>
-            <button id="modeSentenceBuilderBtn" class="mode-tab-btn" type="button" title="Sentence Builder">
-              <span class="material-symbols-outlined" style="font-size:16px;">extension</span>
-            </button>
-            <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" title="Free Text">
-              <span class="material-symbols-outlined" style="font-size:16px;">chat</span>
-            </button>
-            <button id="openGifModalBtn" class="mode-tab-btn gif-icon-btn" type="button" onclick="openKlipyGifModal()" title="Send GIF">
-              <span class="material-symbols-outlined" style="font-size:16px;">gif_box</span>
-            </button>
-            <button id="collapseInputBtn" class="mode-tab-btn collapse-toggle-btn" type="button" onclick="toggleInputUiCollapse()" title="Collapse / Expand Input UI">
-              <span class="material-symbols-outlined" id="collapseInputIcon" style="font-size:16px;">expand_more</span>
-            </button>
-          </div>
-
-          <!-- Feature 0: Starter Choice (3 Premade Options for Complete Beginners) -->
-          <div class="starter-choice-container" id="starterChoiceContainer">
-            <div class="prompt-guide" id="starterChoicePromptGuide">Choose your response:</div>
-            <div class="starter-options-list" id="starterOptionsList">
-              <!-- 3 premade options rendered dynamically by app.js -->
+            <!-- Cooldown Banner (appears inside chat box when counting down) -->
+            <div class="chat-cooldown-banner" id="chatCooldownBanner" style="display:none;">
+              <span class="material-symbols-outlined" style="font-size:16px;">timer</span>
+              <span id="chatCooldownText">Cooldown active — Please wait 20s before sending next message...</span>
             </div>
-          </div>
 
-          <!-- Feature 1: Contextual Word Bank / Sentence Builder -->
-          <div class="word-bank-container" id="wordBankContainer" style="display:none;">
-            <div class="prompt-guide" id="wordBankPromptGuide">Build your reply in target language:</div>
-            <div class="constructed-sentence-box" id="constructedSentenceBox">
-              <span style="color:var(--text-muted); font-size:12px;" id="constructedPlaceholder">Click word chips below to build...</span>
+            <!-- UNDERNEATH THE MESSAGE BOX: PLAYER RESPONSE / INPUT CONTROLS -->
+            <div class="vn-input-section chat-controls" id="vnInputSection">
+              <!-- Collapsed state trigger bar -->
+              <div class="input-collapsed-bar" id="inputCollapsedBar" onclick="toggleInputUiCollapse(false)" style="display:none;">
+                <span class="material-symbols-outlined" style="font-size:18px;">keyboard_arrow_up</span>
+                <span id="inputCollapsedBarText">Show Input Controls</span>
+              </div>
+
+              <!-- Input Feature Mode Selector (Switch freely between Starter Options, Sentence Builder, and Free Text) -->
+              <div class="input-mode-switcher" id="inputModeSwitcher" style="display:flex; gap:6px; align-items:center;">
+                <button id="modeStarterChoiceBtn" class="mode-tab-btn active" type="button" title="Starter Options">
+                  <span class="material-symbols-outlined" style="font-size:16px;">format_list_bulleted</span>
+                </button>
+                <button id="modeSentenceBuilderBtn" class="mode-tab-btn" type="button" title="Sentence Builder">
+                  <span class="material-symbols-outlined" style="font-size:16px;">extension</span>
+                </button>
+                <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" title="Free Text">
+                  <span class="material-symbols-outlined" style="font-size:16px;">chat</span>
+                </button>
+                <button id="openGifModalBtn" class="mode-tab-btn gif-icon-btn" type="button" onclick="openKlipyGifModal()" title="Send GIF">
+                  <span class="material-symbols-outlined" style="font-size:16px;">gif_box</span>
+                </button>
+                <button id="collapseInputBtn" class="mode-tab-btn collapse-toggle-btn" type="button" onclick="toggleInputUiCollapse()" title="Collapse / Expand Input UI">
+                  <span class="material-symbols-outlined" id="collapseInputIcon" style="font-size:16px;">expand_more</span>
+                </button>
+              </div>
+
+              <!-- Feature 0: Starter Choice (3 Premade Options for Complete Beginners) -->
+              <div class="starter-choice-container" id="starterChoiceContainer">
+                <div class="prompt-guide" id="starterChoicePromptGuide">Choose your response:</div>
+                <div class="starter-options-list" id="starterOptionsList">
+                  <!-- 3 premade options rendered dynamically by app.js -->
+                </div>
+              </div>
+
+              <!-- Feature 1: Contextual Word Bank / Sentence Builder -->
+              <div class="word-bank-container" id="wordBankContainer" style="display:none;">
+                <div class="prompt-guide" id="wordBankPromptGuide">Build your reply in target language:</div>
+                <div class="constructed-sentence-box" id="constructedSentenceBox">
+                  <span style="color:var(--text-muted); font-size:12px;" id="constructedPlaceholder">Click word chips below to build...</span>
+                </div>
+                <div class="word-chips-grid" id="wordChipsGrid"></div>
+                <button class="primary-btn" id="submitSentenceBtn" style="padding:7px 14px; font-size:13px; font-weight:800; border-radius:10px; min-height:36px; margin-top:2px; display:inline-flex; align-items:center; justify-content:center; gap:6px;" title="Send Sentence">
+                  <span class="material-symbols-outlined" style="font-size:18px;">send</span>
+                </button>
+              </div>
+
+              <!-- Feature 2: Free-Form Text Chat -->
+              <div class="text-input-bar" id="freeInputContainer" style="display:none;">
+                <input type="text" id="freeChatInput" class="chat-input" placeholder="Type custom message in target language..." />
+                <button class="send-btn" id="sendFreeMsgBtn" type="button" title="Send Message">
+                  <span class="material-symbols-outlined" style="font-size:20px;">send</span>
+                </button>
+              </div>
             </div>
-            <div class="word-chips-grid" id="wordChipsGrid"></div>
-            <button class="primary-btn" id="submitSentenceBtn" style="padding:7px 14px; font-size:13px; font-weight:800; border-radius:10px; min-height:36px; margin-top:2px; display:inline-flex; align-items:center; justify-content:center; gap:6px;" title="Send Sentence">
-              <span class="material-symbols-outlined" style="font-size:18px;">send</span>
-            </button>
-          </div>
-
-          <!-- Feature 2: Free-Form Text Chat -->
-          <div class="text-input-bar" id="freeInputContainer" style="display:none;">
-            <input type="text" id="freeChatInput" class="chat-input" placeholder="Type custom message in target language..." />
-            <button class="send-btn" id="sendFreeMsgBtn" type="button" title="Send Message">
-              <span class="material-symbols-outlined" style="font-size:20px;">send</span>
-            </button>
           </div>
         </div>
 
