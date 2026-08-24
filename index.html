@@ -232,6 +232,45 @@
           </button>
         </div>
 
+        <!-- Subdomain & Direct Routes Quick Navigator -->
+        <div class="settings-group">
+          <div class="settings-label">
+            <span>🌐 App Domains &amp; Sub-Routes</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
+            Direct paths and subdomain routes mapped across the application:
+          </p>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <button class="primary-btn" type="button" onclick="navigateRoute({view:'landing'})" style="padding:8px 14px; font-size:12px; background:rgba(69,90,159,0.1); color:var(--text-main); border:1px solid rgba(69,90,159,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
+              <span>🏠 Main Domain (Landing / Home)</span>
+              <code style="font-size:11px; opacity:0.8;">/</code>
+            </button>
+            <button class="primary-btn" type="button" onclick="navigateRoute({view:'chats'})" style="padding:8px 14px; font-size:12px; background:rgba(217,0,87,0.08); color:var(--primary-pink); border:1px solid rgba(217,0,87,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
+              <span>💬 Chats Subdomain / Route</span>
+              <code style="font-size:11px; opacity:0.8;">/chats</code>
+            </button>
+            <button class="primary-btn" type="button" onclick="navigateRoute({view:'guidebook'})" style="padding:8px 14px; font-size:12px; background:rgba(16,185,129,0.08); color:var(--accent-emerald); border:1px solid rgba(16,185,129,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
+              <span>📖 Guidebook Subdomain / Route</span>
+              <code style="font-size:11px; opacity:0.8;">/guidebook</code>
+            </button>
+            <button class="primary-btn" type="button" onclick="navigateRoute({view:'settings'})" style="padding:8px 14px; font-size:12px; background:rgba(112,0,217,0.08); color:#7000d9; border:1px solid rgba(112,0,217,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
+              <span>⚙️ Settings Subdomain / Route</span>
+              <code style="font-size:11px; opacity:0.8;">/settings</code>
+            </button>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px; margin-top:4px;">
+              <button class="primary-btn" type="button" onclick="navigateRoute({view:'chat_single', charId:'ado'})" style="padding:6px 8px; font-size:11px; background:rgba(69,90,159,0.08); color:var(--text-main); border:1px solid rgba(69,90,159,0.2);">
+                /chats/ado
+              </button>
+              <button class="primary-btn" type="button" onclick="navigateRoute({view:'chat_single', charId:'kou'})" style="padding:6px 8px; font-size:11px; background:rgba(69,90,159,0.08); color:var(--text-main); border:1px solid rgba(69,90,159,0.2);">
+                /chats/kou
+              </button>
+              <button class="primary-btn" type="button" onclick="navigateRoute({view:'chat_single', charId:'ren'})" style="padding:6px 8px; font-size:11px; background:rgba(69,90,159,0.08); color:var(--text-main); border:1px solid rgba(69,90,159,0.2);">
+                /chats/ren
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Hidden Gemini API key block for system compatibility -->
         <div class="settings-group" id="geminiApiKeyGroup" style="display:none;">
           <div class="settings-label">
@@ -273,7 +312,7 @@
                 Ado <span id="chatHeaderFlag">🇻🇳</span>
               </div>
               <div class="vn-header-status">
-                <span class="vn-online-dot">●</span> <span id="chatHeaderAffection">❤️</span>
+                <span class="vn-online-dot">●</span> <span id="chatHeaderAffection">Affection</span>
               </div>
             </div>
           </div>
@@ -333,7 +372,7 @@
             <!-- Header bar with icon and category -->
             <div class="vn-insight-header" id="vnInsightHeader">
               <div class="vn-insight-title-group">
-                <span class="vn-insight-icon" id="vnGrammarBadgeIcon">💡</span>
+                <span class="material-symbols-outlined vn-insight-icon" id="vnGrammarBadgeIcon" style="font-size:18px;">lightbulb</span>
                 <span class="vn-insight-title" id="vnInsightTitle">Language Insight</span>
               </div>
               <span class="vn-insight-status-tag" id="vnInsightStatusTag">Natural & Accurate</span>
@@ -347,7 +386,7 @@
 
               <!-- Correction or Alternative Phrasing Card -->
               <div class="vn-insight-correction-card" id="vnGrammarCorrectionCard" style="display:none;">
-                <span class="vn-corr-badge">✏️ Suggested Phrasing:</span>
+                <span class="vn-corr-badge">Suggested Phrasing:</span>
                 <span class="vn-corr-text" id="vnGrammarCorrection"></span>
               </div>
 
@@ -364,13 +403,18 @@
 
         <!-- Cooldown Banner (appears inside chat box when counting down) -->
         <div class="chat-cooldown-banner" id="chatCooldownBanner" style="display:none;">
-          <span style="font-size:14px;">⏳</span>
+          <span class="material-symbols-outlined" style="font-size:16px;">timer</span>
           <span id="chatCooldownText">Cooldown active — Please wait 20s before sending next message...</span>
         </div>
 
         <!-- UNDERNEATH THE MESSAGE BOX: PLAYER RESPONSE / INPUT CONTROLS -->
         <div class="vn-input-section chat-controls" id="vnInputSection">
-          <!-- Mode Progression Status Bar -->
+          <!-- Collapsed state trigger bar -->
+          <div class="input-collapsed-bar" id="inputCollapsedBar" onclick="toggleInputUiCollapse(false)" style="display:none;">
+            <span class="material-symbols-outlined" style="font-size:18px;">keyboard_arrow_up</span>
+            <span id="inputCollapsedBarText">Show Input Controls</span>
+          </div>
+
           <!-- Input Feature Mode Selector (Switch freely between Starter Options, Sentence Builder, and Free Text) -->
           <div class="input-mode-switcher" id="inputModeSwitcher" style="display:flex; gap:6px; align-items:center;">
             <button id="modeStarterChoiceBtn" class="mode-tab-btn active" type="button" title="Starter Options">
@@ -384,6 +428,9 @@
             </button>
             <button id="openGifModalBtn" class="mode-tab-btn gif-icon-btn" type="button" onclick="openKlipyGifModal()" title="Send GIF">
               <span class="material-symbols-outlined" style="font-size:16px;">gif_box</span>
+            </button>
+            <button id="collapseInputBtn" class="mode-tab-btn collapse-toggle-btn" type="button" onclick="toggleInputUiCollapse()" title="Collapse / Expand Input UI">
+              <span class="material-symbols-outlined" id="collapseInputIcon" style="font-size:16px;">expand_more</span>
             </button>
           </div>
 
@@ -410,7 +457,9 @@
           <!-- Feature 2: Free-Form Text Chat -->
           <div class="text-input-bar" id="freeInputContainer" style="display:none;">
             <input type="text" id="freeChatInput" class="chat-input" placeholder="Type custom message in target language..." />
-            <button class="send-btn" id="sendFreeMsgBtn" type="button" title="Send Message">➤</button>
+            <button class="send-btn" id="sendFreeMsgBtn" type="button" title="Send Message">
+              <span class="material-symbols-outlined" style="font-size:20px;">send</span>
+            </button>
           </div>
         </div>
 

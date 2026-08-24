@@ -274,6 +274,16 @@ const TIERS = [
   { level: 10, name: "Tier 10: Soulmate Mastery", mode: "free", heartsPerAns: 50, desc: "Full immersion, natural speed & romantic soulmate bond." }
 ];
 
+// Clean Emoji Utility: Strips all emoji symbols from dialogues, choices, and inputs
+function cleanEmojiText(str) {
+  if (!str || typeof str !== "string") return str;
+  return str
+    .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1FA00}-\u{1FAFF}\u{200D}\u{FE0F}\u{FE0E}]/gu, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+window.cleanEmojiText = cleanEmojiText;
+
 // UI Language Dictionary (English & Vietnamese)
 const UI_STRINGS = {
   en: {
@@ -285,21 +295,21 @@ const UI_STRINGS = {
     guidebookSubtitle: "Special letters, typing rules, word forms & romance vocabulary",
     settingsTitle: "App Settings",
     settingsSubtitle: "Customize theme, language preferences & story progress",
-    apiKeyLabel: "🔑 Gemini API Key",
+    apiKeyLabel: "Gemini API Key",
     keyActive: "Key Active",
-    keyRequired: "⚠️ Key Required",
+    keyRequired: "Key Required",
     saveKeyBtn: "Save API Key",
-    resetLabel: "🔄 Reset Story & Chat Progress",
+    resetLabel: "Reset Story & Chat Progress",
     resetDesc: "Wipe all chat histories, reset affection levels back to initial nonchalant states, and restart story choices for a fresh experience.",
     resetBtn: "Reset All Story Progress & Replay",
-    resetSuccess: "✓ All story progress and chat histories have been reset!",
+    resetSuccess: "All story progress and chat histories have been reset!",
     tabChats: "Chats",
     tabLIs: "LIs",
     tabGuidebook: "Guidebook",
     tabSettings: "Settings",
-    sentenceBuilderTab: "🧩 Sentence Builder",
-    freeTextTab: "💬 Free Text Chat",
-    sendSentenceBtn: "Send Built Sentence ❤️",
+    sentenceBuilderTab: "Sentence Builder",
+    freeTextTab: "Free Text Chat",
+    sendSentenceBtn: "Send Built Sentence",
     freeInputPlaceholder: "Type custom message in target language...",
     selectLevelLabel: "Select Level:",
     wordBankPlaceholder: "Click word chips below to build your sentence...",
@@ -317,21 +327,21 @@ const UI_STRINGS = {
     guidebookSubtitle: "Chữ cái đặc biệt, quy tắc gõ, dạng từ & từ vựng tình cảm",
     settingsTitle: "Cài Đặt Ứng Dụng",
     settingsSubtitle: "Tùy chỉnh giao diện, ngôn ngữ & tiến trình câu chuyện",
-    apiKeyLabel: "🔑 Mã Khóa Gemini API Key",
+    apiKeyLabel: "Mã Khóa Gemini API Key",
     keyActive: "Đã Hoạt Động",
-    keyRequired: "⚠️ Cần Mã Khóa",
+    keyRequired: "Cần Mã Khóa",
     saveKeyBtn: "Lưu API Key",
-    resetLabel: "🔄 Đặt Lại Câu Chuyện & Lịch Sử Chat",
+    resetLabel: "Đặt Lại Câu Chuyện & Lịch Sử Chat",
     resetDesc: "Xóa toàn bộ lịch sử trò chuyện, đưa độ thiện cảm về ban đầu để trải nghiệm lại từ đầu.",
     resetBtn: "Đặt Lại Tiến Trình & Chơi Lại",
-    resetSuccess: "✓ Đã đặt lại toàn bộ tiến trình và lịch sử chat!",
+    resetSuccess: "Đã đặt lại toàn bộ tiến trình và lịch sử chat!",
     tabChats: "Trò chuyện",
     tabLIs: "Nhân vật",
     tabGuidebook: "Cẩm Nang",
     tabSettings: "Cài đặt",
-    sentenceBuilderTab: "🧩 Ghép Câu",
-    freeTextTab: "💬 Nhắn Tự Do",
-    sendSentenceBtn: "Gửi Câu Đã Ghép ❤️",
+    sentenceBuilderTab: "Ghép Câu",
+    freeTextTab: "Nhắn Tự Do",
+    sendSentenceBtn: "Gửi Câu Đã Ghép",
     freeInputPlaceholder: "Nhập tin nhắn bằng ngoại ngữ...",
     selectLevelLabel: "Chọn Cấp Độ:",
     wordBankPlaceholder: "Nhấn các thẻ từ bên dưới để ghép câu...",
@@ -349,22 +359,22 @@ function getErrorGlitchMessages(charId) {
 
   if (normalizedId === "kou") {
     return [
-      `${olderUserCap} ơi chờ Kou xíu nha, điện thoại Kou bị đơ đơ 📱🥺`,
-      `Ơ tự nhiên mất mạng xíu, ${olderUserTerm} đừng bỏ Kou đi nha! 📶`,
+      `${olderUserCap} ơi chờ Kou xíu nha, điện thoại Kou bị đơ đơ`,
+      `Ơ tự nhiên mất mạng xíu, ${olderUserTerm} đừng bỏ Kou đi nha!`,
       "Đợi Kou một xíu thôi, máy Kou bị lag nhẹ...",
       `Ủa điện thoại Kou vừa giật giật, một giây thôi ${olderUserTerm} ơi!`
     ];
   } else if (normalizedId === "ado") {
     return [
-      "Khụ... Điện thoại của tớ bị đơ một chút. Đừng tưởng là tớ cố ý ngắt lời đấy nhé 📱",
-      "Mạng bị gián đoạn xíu. Tớ đang khắc phục ngay đây, cậu chờ chút nhé! 📶",
+      "Khụ... Điện thoại của tớ bị đơ một chút. Đừng tưởng là tớ cố ý ngắt lời đấy nhé",
+      "Mạng bị gián đoạn xíu. Tớ đang khắc phục ngay đây, cậu chờ chút nhé!",
       "Lỗi ứng dụng chút thôi. Tớ sẽ khôi phục tín hiệu ngay lập tức...",
       "Đợi tớ một giây, kết nối vừa bị chập chờn..."
     ];
   } else {
     return [
-      "Ơ kìa, sóng chập chờn làm gián đoạn câu chuyện của anh với em rồi 📱😏",
-      "Đừng vội đi đâu đấy nhé, mạng bị lag xíu thôi... Để anh chỉnh lại 📶",
+      "Ơ kìa, sóng chập chờn làm gián đoạn câu chuyện của anh với em rồi",
+      "Đừng vội đi đâu đấy nhé, mạng bị lag xíu thôi... Để anh chỉnh lại",
       "Máy anh hơi đơ chút, em ngoan ngoãn ngồi yên chờ anh đấy...",
       "Kết nối bị đứt xíu, anh quay lại chọc nhóc ngay đây..."
     ];
@@ -377,21 +387,21 @@ function getErrorRecoveryMessages(charId) {
 
   if (normalizedId === "kou") {
     return [
-      `Kou quay lại rồi nè ${olderUserTerm} ơi! Hồi nãy ${olderUserTerm} nói gì với em thế? ✨`,
-      `Được rồi nè ${olderUserTerm} ơi! ${olderUserCap} nhắn lại cho em nha? 🥺`,
+      `Kou quay lại rồi nè ${olderUserTerm} ơi! Hồi nãy ${olderUserTerm} nói gì với em thế?`,
+      `Được rồi nè ${olderUserTerm} ơi! ${olderUserCap} nhắn lại cho em nha?`,
       `Mạng ngon lại rồi! ${olderUserCap} thương Kou đừng giận nha!`,
       `Hihi sửa xong rồi! Kou nghe ${olderUserTerm} nói tiếp đây!`
     ];
   } else if (normalizedId === "ado") {
     return [
-      "Xong rồi đấy. Cậu vừa nói tới đâu rồi nhỉ? Đừng bảo là quên rồi nhé 📚",
+      "Xong rồi đấy. Cậu vừa nói tới đâu rồi nhỉ? Đừng bảo là quên rồi nhé",
       "Khôi phục xong kết nối rồi. Cậu nói tiếp đi, tớ đang nghe đây...",
       "Tốt rồi. Tớ không muốn bỏ dở giữa chừng đâu, cậu lặp lại giúp tớ đi.",
       "Mọi thứ ổn rồi. Cậu nói tiếp nội dung lúc nãy đi."
     ];
   } else {
     return [
-      "Xong rồi đây, nhóc. Hồi nãy định nói gì ngọt ngào với anh à? 😏",
+      "Xong rồi đây, nhóc. Hồi nãy định nói gì ngọt ngào với anh à?",
       "Anh quay lại rồi đây. Tiếp tục chọc em được rồi chứ?",
       "Xong rồi nè. Không có anh trò chuyện em có thấy thiếu thiếu không?",
       "Ổn rồi nhé. Mau nói tiếp cho anh nghe nào, nhóc."
@@ -419,55 +429,55 @@ function getSpontaneousCheckups(charId, targetLang = "vi") {
   if (normalizedId === "kou") {
     if (targetLang === "en") {
       return [
-        { text: "Senpai! Kou misses you so much, please talk to me! 🥺✨", translation: "Senpai! Kou misses you so much, please talk to me! 🥺✨", tip: "Kou is a cute and clingy underclassman!" },
-        { text: "What are you doing Senpai? Were you thinking of Kou? 💖", translation: "What are you doing Senpai? Were you thinking of Kou? 💖", tip: "Kou craves your attention!" },
-        { text: "Kou is waiting for you! Text me back soon, Senpai! 🥺", translation: "Kou is waiting for you! Text me back soon, Senpai! 🥺", tip: "Clingy junior checking in." }
+        { text: "Senpai! Kou misses you so much, please talk to me!", translation: "Senpai! Kou misses you so much, please talk to me!", tip: "Kou is a cute and clingy underclassman!" },
+        { text: "What are you doing Senpai? Were you thinking of Kou?", translation: "What are you doing Senpai? Were you thinking of Kou?", tip: "Kou craves your attention!" },
+        { text: "Kou is waiting for you! Text me back soon, Senpai!", translation: "Kou is waiting for you! Text me back soon, Senpai!", tip: "Clingy junior checking in." }
       ];
     } else if (targetLang === "ja") {
       return [
-        { text: "先輩！Kou、先輩に会いたくてたまらないです！ 🥺✨", romaji: "Senpai! Kou, senpai ni aitakute tamaranai desu!", translation: "Senpai! Kou misses you so much and wants to see you! 🥺✨", tip: "'Aitakute tamaranai' means dying to see you." },
-        { text: "先輩、何してますか？Kouのこと考えてくれてましたか？ 💖", romaji: "Senpai, nani shitemasu ka? Kou no koto kangaete kuretemashita ka?", translation: "Senpai, what are you doing? Were you thinking about Kou? 💖", tip: "Cute clingy check-in." }
+        { text: "先輩！Kou、先輩に会いたくてたまらないです！", romaji: "Senpai! Kou, senpai ni aitakute tamaranai desu!", translation: "Senpai! Kou misses you so much and wants to see you!", tip: "'Aitakute tamaranai' means dying to see you." },
+        { text: "先輩、何してますか？Kouのこと考えてくれてましたか？", romaji: "Senpai, nani shitemasu ka? Kou no koto kangaete kuretemashita ka?", translation: "Senpai, what are you doing? Were you thinking about Kou?", tip: "Cute clingy check-in." }
       ];
     } else {
       return [
-        { text: `${olderUserCap} ơi! Kou nhớ ${olderUserTerm} quá, nhắn tin với em đi mà! 🥺✨`, translation: `${olderUserCap}! Kou misses you so much, please text Kou! 🥺✨`, tip: "'Nhớ' means 'miss someone'. Kou is super sweet and clingy!" },
-        { text: `${olderUserCap} đang làm gì đó? Có đang nghĩ tới em không thế? 💖`, translation: `What are you doing ${olderUserCap}? Are you thinking about Kou? 💖`, tip: "'Đang làm gì' asks what you are doing." },
-        { text: `Kou đứng chờ ${olderUserTerm} ở hành lang nè, nhắn lại cho em nha! 🥺`, translation: `Kou is waiting for you in the hallway, text Kou back! 🥺`, tip: "Kou loves spending time with you!" }
+        { text: `${olderUserCap} ơi! Kou nhớ ${olderUserTerm} quá, nhắn tin với em đi mà!`, translation: `${olderUserCap}! Kou misses you so much, please text Kou!`, tip: "'Nhớ' means 'miss someone'. Kou is super sweet and clingy!" },
+        { text: `${olderUserCap} đang làm gì đó? Có đang nghĩ tới em không thế?`, translation: `What are you doing ${olderUserCap}? Are you thinking about Kou?`, tip: "'Đang làm gì' asks what you are doing." },
+        { text: `Kou đứng chờ ${olderUserTerm} ở hành lang nè, nhắn lại cho em nha!`, translation: `Kou is waiting for you in the hallway, text Kou back!`, tip: "Kou loves spending time with you!" }
       ];
     }
   } else if (normalizedId === "ado") {
     if (targetLang === "en") {
       return [
-        { text: "Ahem... I just organized our study notes. Are you free to review them? 📚", translation: "Ahem... I just organized our study notes. Are you free to review them? 📚", tip: "Ado uses study notes as an excuse to text you!" },
-        { text: "Don't get distracted! Text me if you need help with your lessons. 💬", translation: "Don't get distracted! Text me if you need help with your lessons. 💬", tip: "Strict classmate secretly checking on you." }
+        { text: "Ahem... I just organized our study notes. Are you free to review them?", translation: "Ahem... I just organized our study notes. Are you free to review them?", tip: "Ado uses study notes as an excuse to text you!" },
+        { text: "Don't get distracted! Text me if you need help with your lessons.", translation: "Don't get distracted! Text me if you need help with your lessons.", tip: "Strict classmate secretly checking on you." }
       ];
     } else if (targetLang === "ja") {
       return [
-        { text: "コホン… 勉強のノートがまとまったよ。一緒に確認する？ 📚", romaji: "Kohon... Benkyou no nootu ga matomatta yo. Issho ni kakunin suru?", translation: "Ahem... The study notes are ready. Want to review together? 📚", tip: "Tsundere excuse to study together." },
-        { text: "さぼってないだろうね？分からないところがあったら教えるけど… 💬", romaji: "Sabottenai darou ne? Wakaranai tokoro ga attara oshieru kedo...", translation: "You aren't slacking off, right? I can teach you if there's anything you don't get...", tip: "Tsundere classmate offer." }
+        { text: "コホン… 勉強のノートがまとまったよ。一緒に確認する？", romaji: "Kohon... Benkyou no nootu ga matomatta yo. Issho ni kakunin suru?", translation: "Ahem... The study notes are ready. Want to review together?", tip: "Tsundere excuse to study together." },
+        { text: "さぼってないだろうね？分からないところがあったら教えるけど…", romaji: "Sabottenai darou ne? Wakaranai tokoro ga attara oshieru kedo...", translation: "You aren't slacking off, right? I can teach you if there's anything you don't get...", tip: "Tsundere classmate offer." }
       ];
     } else {
       return [
-        { text: "Khụ... Tớ vừa tổng hợp xong lịch học nè. Cậu có rảnh xem qua không? 📚", translation: "Ahem... I just finished summarizing the study schedule. Free to check it? 📚", tip: "Ado is strict about studies but secretly wants to talk!" },
-        { text: "Đừng có mải chơi mà quên học đấy nhé! Nhắn tớ nếu cần tớ giảng bài cho. 💬", translation: "Don't get distracted playing! Text me if you need me to explain the lesson.", tip: "Tsundere classmate caring for you." }
+        { text: "Khụ... Tớ vừa tổng hợp xong lịch học nè. Cậu có rảnh xem qua không?", translation: "Ahem... I just finished summarizing the study schedule. Free to check it?", tip: "Ado is strict about studies but secretly wants to talk!" },
+        { text: "Đừng có mải chơi mà quên học đấy nhé! Nhắn tớ nếu cần tớ giảng bài cho.", translation: "Don't get distracted playing! Text me if you need me to explain the lesson.", tip: "Tsundere classmate caring for you." }
       ];
     }
   } else {
     // Ren
     if (targetLang === "en") {
       return [
-        { text: "What's up kid? Daydreaming about me again, aren't you? 😏✨", translation: "What's up kid? Daydreaming about me again, aren't you? 😏✨", tip: "Ren loves teasing you boldly." },
-        { text: "Come sit close to me for a bit. Let me test how good you are today. 😈", translation: "Come sit close to me for a bit. Let me test how good you are today. 😈", tip: "Flirty, assertive senior vibe." }
+        { text: "What's up kid? Daydreaming about me again, aren't you?", translation: "What's up kid? Daydreaming about me again, aren't you?", tip: "Ren loves teasing you boldly." },
+        { text: "Come sit close to me for a bit. Let me test how good you are today.", translation: "Come sit close to me for a bit. Let me test how good you are today.", tip: "Flirty, assertive senior vibe." }
       ];
     } else if (targetLang === "ja") {
       return [
-        { text: "どうした、後輩ちゃん？俺のこと考えてたんだろ？ 😏✨", romaji: "Doushita, kouhai-chan? Ore no koto kangaetetandaro?", translation: "What's wrong, junior? You were thinking of me, right? 😏✨", tip: "'Kouhai-chan' is his affectionate tease." },
-        { text: "こっち来て俺の隣に座れよ。よしよししてやるから。 😈", romaji: "Kocchi kite ore no tonari ni suware yo. Yoshi yoshi shite yaru kara.", translation: "Come sit next to me. I'll pat your head. 😈", tip: "Assertive, flirty senior." }
+        { text: "どうした、後輩ちゃん？俺のこと考えてたんだろ？", romaji: "Doushita, kouhai-chan? Ore no koto kangaetetandaro?", translation: "What's wrong, junior? You were thinking of me, right?", tip: "'Kouhai-chan' is his affectionate tease." },
+        { text: "こっち来て俺の隣に座れよ。よしよししてやるから。", romaji: "Kocchi kite ore no tonari ni suware yo. Yoshi yoshi shite yaru kara.", translation: "Come sit next to me. I'll pat your head.", tip: "Assertive, flirty senior." }
       ];
     } else {
       return [
-        { text: "Sao đấy nhóc? Lại đang ngơ ngẩn nghĩ đến anh đúng không? 😏✨", translation: "What's up kid? Daydreaming about me again, right? 😏✨", tip: "'Nhóc' and 'anh' is Ren's flirty addressing." },
-        { text: "Lại đây ngồi với anh xíu nào. Để anh xem hôm nay em có ngoan không. 😈", translation: "Come sit with me for a bit. Let me see if you're well-behaved today. 😈", tip: "Ren is an aggressive, teasing senior." }
+        { text: "Sao đấy nhóc? Lại đang ngơ ngẩn nghĩ đến anh đúng không?", translation: "What's up kid? Daydreaming about me again, right?", tip: "'Nhóc' and 'anh' is Ren's flirty addressing." },
+        { text: "Lại đây ngồi với anh xíu nào. Để anh xem hôm nay em có ngoan không.", translation: "Come sit with me for a bit. Let me see if you're well-behaved today.", tip: "Ren is an aggressive, teasing senior." }
       ];
     }
   }
@@ -491,51 +501,51 @@ function getUnrepliedSequence(charId, targetLang = "vi") {
   if (normalizedId === "kou") {
     if (targetLang === "en") {
       return [
-        { text: "Senpai! Kou bought yummy sweets, come eat with me! 🍰", translation: "Senpai! Kou bought yummy sweets, come eat with me! 🍰", tip: "Kou sharing treats." },
-        { text: "Where did you go Senpai? Don't leave Kou all alone... 🥺", translation: "Where did you go Senpai? Don't leave Kou all alone... 🥺", tip: "Clingy underclassman." },
-        { text: "Do you not care about Kou anymore? I'm gonna cry! 😿💔", translation: "Do you not care about Kou anymore? I'm gonna cry! 😿💔", tip: "Seeking affection." },
-        { text: "Hmph! Leaving me on read? Kou is super pouting now! 😾", translation: "Hmph! Leaving me on read? Kou is super pouting now! 😾", tip: "Kou's pout face." },
+        { text: "Senpai! Kou bought yummy sweets, come eat with me!", translation: "Senpai! Kou bought yummy sweets, come eat with me!", tip: "Kou sharing treats." },
+        { text: "Where did you go Senpai? Don't leave Kou all alone...", translation: "Where did you go Senpai? Don't leave Kou all alone...", tip: "Clingy underclassman." },
+        { text: "Do you not care about Kou anymore? I'm gonna cry!", translation: "Do you not care about Kou anymore? I'm gonna cry!", tip: "Seeking affection." },
+        { text: "Hmph! Leaving me on read? Kou is super pouting now!", translation: "Hmph! Leaving me on read? Kou is super pouting now!", tip: "Kou's pout face." },
         { text: "...", translation: "... (Kou is sitting in the corner pouting until you reply)", tip: "Kou is waiting for your reply!" }
       ];
     } else if (targetLang === "ja") {
       return [
-        { text: "先輩！美味しいケーキ買ってきたから一緒に食べましょう！ 🍰", romaji: "Senpai! Oishii keeki kattakita kara issho ni tabemashou!", translation: "Senpai! I bought delicious cake, let's eat together! 🍰", tip: "Sharing treats with Senpai." },
-        { text: "先輩どこ行ったんですか？Kouを置いていかないで… 🥺", romaji: "Senpai doko ittan desu ka? Kou wo oite ikanaide...", translation: "Where did you go Senpai? Don't leave Kou behind... 🥺", tip: "Clingy junior." },
-        { text: "もう… 既読無視なんてひどいです！Kou、スネちゃいますよ！ 😾💔", romaji: "Mou... kidoku mushi nante hidoi desu! Kou, sunechaimasu yo!", translation: "Geez... Leaving me on read is so mean! Kou will pout! 😾💔", tip: "Pouting junior." },
+        { text: "先輩！美味しいケーキ買ってきたから一緒に食べましょう！", romaji: "Senpai! Oishii keeki kattakita kara issho ni tabemashou!", translation: "Senpai! I bought delicious cake, let's eat together!", tip: "Sharing treats with Senpai." },
+        { text: "先輩どこ行ったんですか？Kouを置いていかないで…", romaji: "Senpai doko ittan desu ka? Kou wo oite ikanaide...", translation: "Where did you go Senpai? Don't leave Kou behind...", tip: "Clingy junior." },
+        { text: "もう… 既読無視なんてひどいです！Kou、スネちゃいますよ！", romaji: "Mou... kidoku mushi nante hidoi desu! Kou, sunechaimasu yo!", translation: "Geez... Leaving me on read is so mean! Kou will pout!", tip: "Pouting junior." },
         { text: "...", translation: "... (Kou is sitting in the corner pouting until you reply)", tip: "Kou is waiting for your reply!" }
       ];
     } else {
       return [
-        { text: `${olderUserCap} ơi! Kou vừa mua bánh ngọt ngon lắm nè, ${olderUserTerm} ăn cùng em nha! 🍰`, translation: `${olderUserCap}! Kou bought delicious cake, eat with Kou! 🍰`, tip: "Kou sharing snacks with you." },
-        { text: `${olderUserCap} đi đâu mất rồi? Đừng bỏ rơi em mà... 🥺`, translation: `Where did ${olderUserCap} go? Don't leave Kou behind... 🥺`, tip: "Kou getting clingy." },
-        { text: `${olderUserCap} không thương Kou nữa sao? Em mếu đó nha! 😿💔`, translation: `Does ${olderUserCap} not love Kou anymore? Kou will cry! 😿💔`, tip: "Kou pouting for attention." },
-        { text: `Mệt ${olderUserTerm} ghê... Kou dỗi thật rồi đó! Hu hu... 😾`, translation: `${olderUserCap} is so mean... Kou is pouting for real now! Waaah... 😾`, tip: "Cute clingy pout!" },
+        { text: `${olderUserCap} ơi! Kou vừa mua bánh ngọt ngon lắm nè, ${olderUserTerm} ăn cùng em nha!`, translation: `${olderUserCap}! Kou bought delicious cake, eat with Kou!`, tip: "Kou sharing snacks with you." },
+        { text: `${olderUserCap} đi đâu mất rồi? Đừng bỏ rơi em mà...`, translation: `Where did ${olderUserCap} go? Don't leave Kou behind...`, tip: "Kou getting clingy." },
+        { text: `${olderUserCap} không thương Kou nữa sao? Em mếu đó nha!`, translation: `Does ${olderUserCap} not love Kou anymore? Kou will cry!`, tip: "Kou pouting for attention." },
+        { text: `Mệt ${olderUserTerm} ghê... Kou dỗi thật rồi đó! Hu hu...`, translation: `${olderUserCap} is so mean... Kou is pouting for real now! Waaah...`, tip: "Cute clingy pout!" },
         { text: "...", translation: `... (Kou is sitting in the corner pouting until ${olderUserCap} replies)`, tip: "Kou is waiting for your reply!" }
       ];
     }
   } else if (normalizedId === "ado") {
     if (targetLang === "en") {
       return [
-        { text: "Ahem... Homework is all prepared. Want me to review yours? 📚", translation: "Ahem... Homework is all prepared. Want me to review yours? 📚", tip: "Ado offering help." },
-        { text: "Hey, what are you busy with? Don't just leave me on read... 😤", translation: "Hey, what are you busy with? Don't just leave me on read... 😤", tip: "Strict classmate getting restless." },
-        { text: "I-I was only worried about your grades! Why keep me waiting like this! 🙈", translation: "I-I was only worried about your grades! Why keep me waiting like this! 🙈", tip: "Tsundere stuttering." },
-        { text: "Fine! See if I ever remind you again! 😾💔", translation: "Fine! See if I ever remind you again! 😾💔", tip: "Tsundere pout." },
+        { text: "Ahem... Homework is all prepared. Want me to review yours?", translation: "Ahem... Homework is all prepared. Want me to review yours?", tip: "Ado offering help." },
+        { text: "Hey, what are you busy with? Don't just leave me on read...", translation: "Hey, what are you busy with? Don't just leave me on read...", tip: "Strict classmate getting restless." },
+        { text: "I-I was only worried about your grades! Why keep me waiting like this!", translation: "I-I was only worried about your grades! Why keep me waiting like this!", tip: "Tsundere stuttering." },
+        { text: "Fine! See if I ever remind you again!", translation: "Fine! See if I ever remind you again!", tip: "Tsundere pout." },
         { text: "...", translation: "... (Ado is looking away blushing and pouting until you reply)", tip: "Ado is pouting!" }
       ];
     } else if (targetLang === "ja") {
       return [
-        { text: "コホン… 宿題のチェック、してあげてもいいけど？ 📚", romaji: "Kohon... Shukudai no chekku, shite agetemo ii kedo?", translation: "Ahem... I could check your homework if you want? 📚", tip: "Tsundere offer." },
-        { text: "ちょっと、無視しないでよ… 忙しいの？ 😤", romaji: "Chotto, mushi shinaide yo... Isogashii no?", translation: "Hey, don't ignore me... Are you busy? 😤", tip: "Classmate getting restless." },
-        { text: "べ、別に寂しいわけじゃないからね！ただノートを渡したいだけ！ 🙈", romaji: "Be, betsu ni sabishii wake janai kara ne! Tada nootu wo watashitai dake!", translation: "I-It's not like I'm lonely or anything! I just want to hand you the notes! 🙈", tip: "Classic tsundere line!" },
-        { text: "もう知らない！後で泣きついても遅いんだからね！ 😾💔", romaji: "Mou shiranai! Ato de nakitsuitemo osoi nda kara ne!", translation: "Fine, I don't care! Don't come crying to me later! 😾💔", tip: "Tsundere pout." },
+        { text: "コホン… 宿題のチェック、してあげてもいいけど？", romaji: "Kohon... Shukudai no chekku, shite agetemo ii kedo?", translation: "Ahem... I could check your homework if you want?", tip: "Tsundere offer." },
+        { text: "ちょっと、無視しないでよ… 忙しいの？", romaji: "Chotto, mushi shinaide yo... Isogashii no?", translation: "Hey, don't ignore me... Are you busy?", tip: "Classmate getting restless." },
+        { text: "べ、別に寂しいわけじゃないからね！ただノートを渡したいだけ！", romaji: "Be, betsu ni sabishii wake janai kara ne! Tada nootu wo watashitai dake!", translation: "I-It's not like I'm lonely or anything! I just want to hand you the notes!", tip: "Classic tsundere line!" },
+        { text: "もう知らない！後で泣きついても遅いんだからね！", romaji: "Mou shiranai! Ato de nakitsuitemo osoi nda kara ne!", translation: "Fine, I don't care! Don't come crying to me later!", tip: "Tsundere pout." },
         { text: "...", translation: "... (Ado is looking away blushing and pouting until you reply)", tip: "Ado is pouting!" }
       ];
     } else {
       return [
-        { text: "Khụ... Tớ chuẩn bị bài tập xong rồi. Cậu có cần tớ kiểm tra giúp không? 📚", translation: "Ahem... Homework is ready. Want me to check yours? 📚", tip: "Ado using homework as excuse." },
-        { text: "Này, cậu bận gì mà không trả lời tớ thế? Đừng có lơ tớ đấy... 😤", translation: "Hey, what are you busy with? Don't ignore me...", tip: "Tsundere getting flustered." },
-        { text: "Tớ... tớ chỉ lo cậu không hiểu bài thôi! Làm gì mà bắt tớ chờ lâu thế! 🙈", translation: "I... I was just worried you didn't understand the lesson! Why make me wait so long!", tip: "Blushing tsundere classmate." },
-        { text: "Tùy cậu đấy! Tớ sẽ không thèm nhắc cậu nữa đâu! 😾💔", translation: "Whatever! I won't bother reminding you anymore!", tip: "Classic tsundere pout." },
+        { text: "Khụ... Tớ chuẩn bị bài tập xong rồi. Cậu có cần tớ kiểm tra giúp không?", translation: "Ahem... Homework is ready. Want me to check yours?", tip: "Ado using homework as excuse." },
+        { text: "Này, cậu bận gì mà không trả lời tớ thế? Đừng có lơ tớ đấy...", translation: "Hey, what are you busy with? Don't ignore me...", tip: "Tsundere getting flustered." },
+        { text: "Tớ... tớ chỉ lo cậu không hiểu bài thôi! Làm gì mà bắt tớ chờ lâu thế!", translation: "I... I was just worried you didn't understand the lesson! Why make me wait so long!", tip: "Blushing tsundere classmate." },
+        { text: "Tùy cậu đấy! Tớ sẽ không thèm nhắc cậu nữa đâu!", translation: "Whatever! I won't bother reminding you anymore!", tip: "Classic tsundere pout." },
         { text: "...", translation: "... (Ado is looking away blushing and pouting until you reply)", tip: "Ado is pouting!" }
       ];
     }
@@ -543,23 +553,23 @@ function getUnrepliedSequence(charId, targetLang = "vi") {
     // Ren
     if (targetLang === "en") {
       return [
-        { text: "Hey kid, daring to ignore my text? You're getting bold... 😏✨", translation: "Hey kid, daring to ignore my text? You're getting bold... 😏✨", tip: "Teasing senior." },
-        { text: "I'm waiting for your reply. Don't make me come to your class to find you. 😈", translation: "I'm waiting for your reply. Don't make me come to your class to find you. 😈", tip: "Assertive senior warning." },
-        { text: "Hmm, playing hard to get? I like your spirit, but you might get punished~ 🔥", translation: "Hmm, playing hard to get? I like your spirit, but you might get punished~ 🔥", tip: "Flirty tease." },
+        { text: "Hey kid, daring to ignore my text? You're getting bold...", translation: "Hey kid, daring to ignore my text? You're getting bold...", tip: "Teasing senior." },
+        { text: "I'm waiting for your reply. Don't make me come to your class to find you.", translation: "I'm waiting for your reply. Don't make me come to your class to find you.", tip: "Assertive senior warning." },
+        { text: "Hmm, playing hard to get? I like your spirit, but you might get punished~", translation: "Hmm, playing hard to get? I like your spirit, but you might get punished~", tip: "Flirty tease." },
         { text: "...", translation: "... (Ren is leaning back smiling dangerously until you text back)", tip: "Ren is waiting assertively!" }
       ];
     } else if (targetLang === "ja") {
       return [
-        { text: "おいおい、俺のメッセージ無視するか？いい度胸だな、後輩ちゃん… 😏✨", romaji: "Oi oi, ore no messeegi mushi suru ka? Ii dokyou dana, kouhai-chan...", translation: "Hey hey, ignoring my message? Bold move, junior... 😏✨", tip: "Teasing senior." },
-        { text: "返事まだ？教室まで迎えに行ってもいいんだぞ？ 😈", romaji: "Henji mada? Kyoushitsu made mukae ni ittemo ii nda zo?", translation: "No reply yet? Should I come pick you up at your classroom? 😈", tip: "Assertive senior." },
-        { text: "焦らすねぇ… そういう生意気なところ、嫌いじゃないけどお仕置きだな 🔥", romaji: "Jirasu nee... souiu namaiki na tokoro, kirai janai kedo oshioki dana", translation: "Teasing me, huh? I don't hate that cheeky side, but you need punishment 🔥", tip: "Flirty bully trope." },
+        { text: "おいおい、俺のメッセージ無視するか？いい度胸だな、後輩ちゃん…", romaji: "Oi oi, ore no messeegi mushi suru ka? Ii dokyou dana, kouhai-chan...", translation: "Hey hey, ignoring my message? Bold move, junior...", tip: "Teasing senior." },
+        { text: "返事まだ？教室まで迎えに行ってもいいんだぞ？", romaji: "Henji mada? Kyoushitsu made mukae ni ittemo ii nda zo?", translation: "No reply yet? Should I come pick you up at your classroom?", tip: "Assertive senior." },
+        { text: "焦らすねぇ… そういう生意気なところ、嫌いじゃないけどお仕置きだな", romaji: "Jirasu nee... souiu namaiki na tokoro, kirai janai kedo oshioki dana", translation: "Teasing me, huh? I don't hate that cheeky side, but you need punishment", tip: "Flirty bully trope." },
         { text: "...", translation: "... (Ren is leaning back smiling dangerously until you text back)", tip: "Ren is waiting assertively!" }
       ];
     } else {
       return [
-        { text: "Này nhóc, dám ngó lơ tin nhắn của anh à? Can gan nhỉ... 😏✨", translation: "Hey kid, daring to ignore my message? How bold... 😏✨", tip: "Ren's teasing tone." },
-        { text: "Anh đang chờ em trả lời đấy. Đừng để anh phải đến tận lớp tìm em nhé. 😈", translation: "I'm waiting for your reply. Don't make me come to your classroom to find you. 😈", tip: "Aggressive, assertive senior." },
-        { text: "Hừm, giả vờ kiêu với anh sao? Hợp gu anh đấy, nhưng coi chừng anh phạt đó nha~ 🔥", translation: "Hmm, playing hard to get? Right up my alley, but watch out or I'll punish you~ 🔥", tip: "Flirty senior bully trope." },
+        { text: "Này nhóc, dám ngó lơ tin nhắn của anh à? Can gan nhỉ...", translation: "Hey kid, daring to ignore my message? How bold...", tip: "Ren's teasing tone." },
+        { text: "Anh đang chờ em trả lời đấy. Đừng để anh phải đến tận lớp tìm em nhé.", translation: "I'm waiting for your reply. Don't make me come to your classroom to find you.", tip: "Aggressive, assertive senior." },
+        { text: "Hừm, giả vờ kiêu với anh sao? Hợp gu anh đấy, nhưng coi chừng anh phạt đó nha~", translation: "Hmm, playing hard to get? Right up my alley, but watch out or I'll punish you~", tip: "Flirty senior bully trope." },
         { text: "...", translation: "... (Ren is leaning back smiling dangerously until you text back)", tip: "Ren is waiting assertively!" }
       ];
     }
@@ -868,7 +878,126 @@ function closeLandingSetupMenu() {
 }
 window.closeLandingSetupMenu = closeLandingSetupMenu;
 
-function enterAppFromLanding() {
+// Routing & Subdomain Navigation Engine
+function parseRouteFromLocation() {
+  const hostname = (window.location.hostname || "").toLowerCase();
+  
+  // 1. Subdomain resolution support (e.g. chats.domain.com, guidebook.domain.com, settings.domain.com)
+  if (hostname.startsWith("chats.") || hostname.startsWith("chat.")) {
+    return { view: "chats" };
+  }
+  if (hostname.startsWith("guidebook.") || hostname.startsWith("guide.") || hostname.startsWith("progress.")) {
+    return { view: "guidebook" };
+  }
+  if (hostname.startsWith("settings.") || hostname.startsWith("setting.")) {
+    return { view: "settings" };
+  }
+
+  // 2. Hash-based routing resolution fallback
+  const rawHash = (window.location.hash || "").replace(/^#\/?/, "").toLowerCase().trim();
+  if (rawHash) {
+    if (rawHash === "chats" || rawHash === "chat") {
+      return { view: "chats" };
+    }
+    if (rawHash.startsWith("chats/") || rawHash.startsWith("chat/")) {
+      const parts = rawHash.split("/");
+      const charId = parts[1] || "ado";
+      return { view: "chat_single", charId };
+    }
+    if (rawHash === "guidebook" || rawHash === "guide" || rawHash === "progress") {
+      return { view: "guidebook" };
+    }
+    if (rawHash === "settings" || rawHash === "setting") {
+      return { view: "settings" };
+    }
+    if (rawHash === "home" || rawHash === "landing" || rawHash === "index" || rawHash === "") {
+      return { view: "landing" };
+    }
+  }
+
+  // 3. Pathname routing resolution
+  const path = (window.location.pathname || "/").toLowerCase().trim();
+  const normalizedPath = path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
+
+  if (normalizedPath.startsWith("/chats/") || normalizedPath.startsWith("/chat/")) {
+    const parts = normalizedPath.split("/").filter(Boolean);
+    const charId = parts[1] || "ado";
+    return { view: "chat_single", charId };
+  }
+  if (normalizedPath === "/chats" || normalizedPath === "/chat") {
+    return { view: "chats" };
+  }
+  if (normalizedPath === "/guidebook" || normalizedPath === "/guide" || normalizedPath === "/progress") {
+    return { view: "guidebook" };
+  }
+  if (normalizedPath === "/settings" || normalizedPath === "/setting") {
+    return { view: "settings" };
+  }
+  
+  // Default to Main Domain Landing (Home)
+  return { view: "landing" };
+}
+window.parseRouteFromLocation = parseRouteFromLocation;
+
+function updateRouteUrl(path, replace = false) {
+  try {
+    const targetPath = path.startsWith("/") ? path : `/${path}`;
+    const currentPath = window.location.pathname;
+    
+    if (currentPath !== targetPath) {
+      if (window.history && window.history.pushState) {
+        if (replace) {
+          window.history.replaceState({ path: targetPath }, "", targetPath);
+        } else {
+          window.history.pushState({ path: targetPath }, "", targetPath);
+        }
+      }
+    }
+  } catch (e) {
+    try {
+      const hashTarget = path === "/" ? "" : `#${path.replace(/^\//, "")}`;
+      if (window.location.hash !== hashTarget) {
+        window.location.hash = hashTarget;
+      }
+    } catch (err) {
+      // Ignore URL update error in sandboxed iframes
+    }
+  }
+}
+window.updateRouteUrl = updateRouteUrl;
+
+function navigateRoute(routeObj, updateHistory = true) {
+  if (!routeObj) routeObj = { view: "landing" };
+
+  if (routeObj.view === "landing") {
+    returnToLandingPage(false);
+    if (updateHistory) updateRouteUrl("/", false);
+  } else if (routeObj.view === "chats") {
+    enterAppFromLanding(false);
+    closeActiveChat(false);
+    switchTab("chats", false);
+    if (updateHistory) updateRouteUrl("/chats", false);
+  } else if (routeObj.view === "guidebook") {
+    enterAppFromLanding(false);
+    closeActiveChat(false);
+    switchTab("progress", false);
+    if (updateHistory) updateRouteUrl("/guidebook", false);
+  } else if (routeObj.view === "settings") {
+    enterAppFromLanding(false);
+    closeActiveChat(false);
+    switchTab("settings", false);
+    if (updateHistory) updateRouteUrl("/settings", false);
+  } else if (routeObj.view === "chat_single") {
+    enterAppFromLanding(false);
+    switchTab("chats", false);
+    const validCharId = (BASE_CHARACTERS && BASE_CHARACTERS[routeObj.charId]) || (CHARACTERS && CHARACTERS[routeObj.charId]) ? routeObj.charId : "ado";
+    openChatroom(validCharId, false);
+    if (updateHistory) updateRouteUrl(`/chats/${validCharId}`, false);
+  }
+}
+window.navigateRoute = navigateRoute;
+
+function enterAppFromLanding(updateUrl = true) {
   const landing = document.getElementById("landingPage");
   const appLayout = document.getElementById("appLayoutWrapper");
 
@@ -890,12 +1019,25 @@ function enterAppFromLanding() {
   renderChatList();
   renderCharactersList();
   renderGuidebook();
+
+  if (updateUrl) {
+    updateRouteUrl("/chats");
+  }
 }
 window.enterAppFromLanding = enterAppFromLanding;
 
-function returnToLandingPage() {
+function returnToLandingPage(updateUrl = true) {
   const landing = document.getElementById("landingPage");
   const appLayout = document.getElementById("appLayoutWrapper");
+  const chatWin = document.getElementById("chatWindow");
+
+  if (chatWin) {
+    chatWin.classList.remove("active");
+    chatWin.style.display = "none";
+  }
+  const desktopStage = document.getElementById("desktopFloatingStage");
+  if (desktopStage) desktopStage.style.display = "none";
+  activeCharacterId = null;
 
   if (landing) {
     landing.style.display = "flex";
@@ -909,6 +1051,10 @@ function returnToLandingPage() {
   if (appLayout) {
     appLayout.style.display = "none";
     appLayout.classList.remove("active");
+  }
+
+  if (updateUrl) {
+    updateRouteUrl("/");
   }
 }
 window.returnToLandingPage = returnToLandingPage;
@@ -1091,6 +1237,12 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCharactersList();
   renderGuidebook();
   
+  // Initial Subdomain & Route Resolution
+  const initialRoute = parseRouteFromLocation();
+  if (initialRoute.view !== "landing") {
+    navigateRoute(initialRoute, false);
+  }
+
   // Initial Convex Sync
   syncUserDataToConvex("Initial app load sync");
 });
@@ -1271,6 +1423,17 @@ function initUI() {
       setAppUiLanguage(nextLang);
     });
   }
+
+  // History Popstate & Hash Navigation Listeners
+  window.addEventListener("popstate", () => {
+    const route = parseRouteFromLocation();
+    navigateRoute(route, false);
+  });
+
+  window.addEventListener("hashchange", () => {
+    const route = parseRouteFromLocation();
+    navigateRoute(route, false);
+  });
 
   // Initial apply of UI language
   applyUiLanguage();
@@ -1578,7 +1741,7 @@ function initUI() {
   if (streakEl) streakEl.textContent = userState.streak;
 }
 
-function closeActiveChat() {
+function closeActiveChat(updateUrl = true) {
   const chatWin = document.getElementById("chatWindow");
   if (chatWin) {
     chatWin.classList.remove("active");
@@ -1591,7 +1754,7 @@ function closeActiveChat() {
   if (desktopStage) desktopStage.style.display = "none";
 
   activeCharacterId = null;
-  switchTab("chats");
+  switchTab("chats", updateUrl);
 }
 window.closeActiveChat = closeActiveChat;
 
@@ -1602,27 +1765,27 @@ function getCompanionInteractions(charId) {
 
   if (normalizedId === "kou") {
     return [
-      `${olderUserCap} ơi! Kou đứng đây ngắm ${olderUserTerm} học nè! 🥺✨`,
-      `Senpai! You're doing so well, Kou is proud of you! ❤️`,
-      `${olderUserCap} xoa đầu Kou một cái được không ạ? 🥺`,
-      `Hôm nay ${olderUserTerm} nói chuyện với em nhiều hơn nha! 💖`,
-      "Senpai! Keep going! Kou is always cheering for you! ✨"
+      `${olderUserCap} ơi! Kou đứng đây ngắm ${olderUserTerm} học nè!`,
+      `Senpai! You're doing so well, Kou is proud of you!`,
+      `${olderUserCap} xoa đầu Kou một cái được không ạ?`,
+      `Hôm nay ${olderUserTerm} nói chuyện với em nhiều hơn nha!`,
+      "Senpai! Keep going! Kou is always cheering for you!"
     ];
   } else if (normalizedId === "ado") {
     return [
-      "C-cậu nhìn tớ làm gì? Tập trung vào bài học đi chứ... 😳📚",
-      "D-don't stare so much! Make sure your grammar is correct! 📚",
-      "Thật ra... cậu tiến bộ nhanh lắm. Tớ chỉ nhắc nhở vậy thôi. ❤️",
-      "Tớ đã chuẩn bị thêm tài liệu rồi, học xong tớ đưa cho. 📝",
-      "Đừng có cười lén tớ đấy nhé! Khụ... tớ là lớp phó nghiêm túc mà! 😳"
+      "C-cậu nhìn tớ làm gì? Tập trung vào bài học đi chứ...",
+      "D-don't stare so much! Make sure your grammar is correct!",
+      "Thật ra... cậu tiến bộ nhanh lắm. Tớ chỉ nhắc nhở vậy thôi.",
+      "Tớ đã chuẩn bị thêm tài liệu rồi, học xong tớ đưa cho.",
+      "Đừng có cười lén tớ đấy nhé! Khụ... tớ là lớp phó nghiêm túc mà!"
     ];
   } else {
     return [
-      "Sao thế nhóc? Bị vẻ đẹp trai của anh làm phân tâm rồi à? 😏✨",
-      "Come closer, kid. Don't be shy around your senior... 😏",
-      "Học chăm chỉ rồi anh sẽ thưởng cho một buổi đi chơi riêng nhé. 💖",
-      "Em ngoan ngoãn như vầy làm anh càng muốn trêu hơn đấy. 😈",
-      "You're getting bolder with every text, I love that about you. 😏🔥"
+      "Sao thế nhóc? Bị vẻ đẹp trai của anh làm phân tâm rồi à?",
+      "Come closer, kid. Don't be shy around your senior...",
+      "Học chăm chỉ rồi anh sẽ thưởng cho một buổi đi chơi riêng nhé.",
+      "Em ngoan ngoãn như vầy làm anh càng muốn trêu hơn đấy.",
+      "You're getting bolder with every text, I love that about you."
     ];
   }
 }
@@ -1683,13 +1846,13 @@ function updateFloatingCompanion(charId, quoteOverride = null, mood = null) {
   let archetypeText = char.archetype || char.role || "Love Interest";
   if (normalizedId === "ado") {
     spriteSrc = char.sprite || "/assets/characters/ado_fullbody.png";
-    archetypeText = "Strict Classmate 📚";
+    archetypeText = "Strict Classmate";
   } else if (normalizedId === "kou") {
     spriteSrc = char.sprite || "/assets/characters/kou_fullbody.png";
-    archetypeText = "Cute Junior 🥺";
+    archetypeText = "Cute Junior";
   } else if (normalizedId === "ren") {
     spriteSrc = char.sprite || "/assets/characters/ren_fullbody.png";
-    archetypeText = "Flirty Senior 😏";
+    archetypeText = "Flirty Senior";
   }
 
   if (desktopSprite) {
@@ -1704,11 +1867,11 @@ function updateFloatingCompanion(charId, quoteOverride = null, mood = null) {
     };
     desktopSprite.src = spriteSrc;
   }
-  if (desktopName) desktopName.innerHTML = `${char.name} <span>${char.flag || "🇻🇳"}</span>`;
+  if (desktopName) desktopName.innerHTML = `${char.name}`;
   if (desktopArchetype) desktopArchetype.textContent = archetypeText;
   if (desktopAffBar) desktopAffBar.style.width = `${Math.min(100, Math.max(0, affectionPct))}%`;
   if (desktopAffText) desktopAffText.textContent = `${affectionPct}%`;
-  if (desktopStatusMood) desktopStatusMood.textContent = mood || "Listening to you attentively... 💖";
+  if (desktopStatusMood) desktopStatusMood.textContent = mood ? cleanEmojiText(mood) : "Listening to you attentively...";
   if (desktopStage) desktopStage.style.display = "none";
 
   // Speech bubble quote
@@ -1779,7 +1942,7 @@ function interactWithFloatingCompanion() {
 window.interactWithFloatingCompanion = interactWithFloatingCompanion;
 
 // Switch Bottom Tabs
-function switchTab(tabName) {
+function switchTab(tabName, updateUrl = true) {
   const chatWin = document.getElementById("chatWindow");
   if (chatWin) {
     chatWin.classList.remove("active");
@@ -1798,6 +1961,11 @@ function switchTab(tabName) {
 
   if (tabName === "chats") renderChatList();
   if (tabName === "progress" || tabName === "guidebook") renderGuidebook();
+
+  if (updateUrl) {
+    const routePath = (tabName === "progress" || tabName === "guidebook") ? "/guidebook" : `/${tabName}`;
+    updateRouteUrl(routePath);
+  }
 }
 window.switchTab = switchTab;
 
@@ -2521,7 +2689,7 @@ function renderGuidebook() {
 }
 
 // Open Active Chatroom
-function openChatroom(charId) {
+function openChatroom(charId, updateUrl = true) {
   activeCharacterId = charId;
   analyticsData.characterInteractions[charId] = (analyticsData.characterInteractions[charId] || 0) + 1;
   
@@ -2583,6 +2751,10 @@ function openChatroom(charId) {
 
   // Update In-Chat Floating Companion and Desktop Floating Stage
   updateFloatingCompanion(charId);
+
+  if (updateUrl) {
+    updateRouteUrl(`/chats/${charId}`);
+  }
 }
 
 window.openChatroom = openChatroom;
@@ -2804,6 +2976,27 @@ function toggleRomajiSetting() {
 }
 window.toggleRomajiSetting = toggleRomajiSetting;
 
+function toggleInputUiCollapse(forceCollapse) {
+  const inputSec = document.getElementById("vnInputSection");
+  const collapseIcon = document.getElementById("collapseInputIcon");
+  const collapsedBar = document.getElementById("inputCollapsedBar");
+  if (!inputSec) return;
+
+  const isCurrentlyCollapsed = inputSec.classList.contains("collapsed");
+  const shouldCollapse = typeof forceCollapse === "boolean" ? forceCollapse : !isCurrentlyCollapsed;
+
+  if (shouldCollapse) {
+    inputSec.classList.add("collapsed");
+    if (collapseIcon) collapseIcon.textContent = "expand_less";
+    if (collapsedBar) collapsedBar.style.display = "flex";
+  } else {
+    inputSec.classList.remove("collapsed");
+    if (collapseIcon) collapseIcon.textContent = "expand_more";
+    if (collapsedBar) collapsedBar.style.display = "none";
+  }
+}
+window.toggleInputUiCollapse = toggleInputUiCollapse;
+
 function setChatMode(modeNum) {
   const modeStarterBtn = document.getElementById("modeStarterChoiceBtn");
   const modeSentenceBtn = document.getElementById("modeSentenceBuilderBtn");
@@ -2902,7 +3095,7 @@ function renderChatHistory() {
         `;
       } else {
         const romajiHtml = (msg.romaji && showRomaji)
-          ? `<div class="romaji-text" style="font-size:12.5px; color:var(--accent-violet); font-weight:700; margin-top:4px; margin-bottom:2px; background:rgba(124, 58, 237, 0.08); border:1px solid rgba(124, 58, 237, 0.2); padding:3px 8px; border-radius:6px; display:inline-block;">🔤 ${msg.romaji}</div>`
+          ? `<div class="romaji-text" style="font-size:12.5px; color:var(--accent-violet); font-weight:700; margin-top:4px; margin-bottom:2px; background:rgba(124, 58, 237, 0.08); border:1px solid rgba(124, 58, 237, 0.2); padding:3px 8px; border-radius:6px; display:inline-block;">${cleanEmojiText(msg.romaji)}</div>`
           : "";
 
         const gifHtml = msg.gifUrl
@@ -2926,13 +3119,13 @@ function renderChatHistory() {
           <div class="msg-body">
             <div class="msg-sender" ${speakerStyle}>${speakerName}</div>
             <div class="msg-bubble">
-              <div style="font-size:15px; font-weight:700;">${msg.text}</div>
+              <div style="font-size:15px; font-weight:700;">${cleanEmojiText(msg.text)}</div>
               ${gifHtml}
               ${romajiHtml}
-              ${(msg.translation || msg.tip || msg.fix) ? `<button type="button" class="assist-toggle-btn">💡 Translation & Tips</button>` : ''}
-              ${msg.translation ? `<div class="translation-text">${msg.translation}</div>` : ""}
-              ${msg.tip ? `<div class="tip-card ${colorClass}"><div class="tip-title ${colorClass}">${tipTitleText}</div>${msg.tip}</div>` : ""}
-              ${msg.fix ? `<div class="fix-card ${colorClass}"><div class="fix-title ${colorClass}">${fixTitleText}</div>${msg.fix}</div>` : ""}
+              ${(msg.translation || msg.tip || msg.fix) ? `<button type="button" class="assist-toggle-btn">Translation & Tips</button>` : ''}
+              ${msg.translation ? `<div class="translation-text">${cleanEmojiText(msg.translation)}</div>` : ""}
+              ${msg.tip ? `<div class="tip-card ${colorClass}"><div class="tip-title ${colorClass}">${tipTitleText}</div>${cleanEmojiText(msg.tip)}</div>` : ""}
+              ${msg.fix ? `<div class="fix-card ${colorClass}"><div class="fix-title ${colorClass}">${cleanEmojiText(msg.fix)}</div>${cleanEmojiText(msg.fix)}</div>` : ""}
             </div>
             <div class="msg-time">${msg.time || "11:42 PM"}</div>
           </div>
@@ -2955,7 +3148,7 @@ function renderChatHistory() {
         group.innerHTML = `
           <div class="msg-body">
             <div class="msg-bubble">
-              <div>${msg.text}</div>
+              <div>${cleanEmojiText(msg.text)}</div>
               ${userGifHtml}
             </div>
             <div class="msg-time">${msg.time || "11:42 PM"}</div>
@@ -2989,82 +3182,82 @@ function generateStarterChoices(charId, lastMsgText) {
     let charName = charId === "ado" ? "Ado" : (charId === "kou" ? "Kou" : (charId === "ren" ? "Ren" : "Everyone"));
     let prompt = `Choose your reply to ${charName} (Beginner Choices):`;
     let options = [
-      { text: `Thank you so much, ${charName}! ❤️`, translation: "Express gratitude sweetly" },
-      { text: `What are you up to today, ${charName}? ✨`, translation: "Ask what they are doing" },
-      { text: `I am very happy to talk with you! 😊`, translation: "Express happiness talking to them" }
+      { text: `Thank you so much, ${charName}!`, translation: "Express gratitude sweetly" },
+      { text: `What are you up to today, ${charName}?`, translation: "Ask what they are doing" },
+      { text: `I am very happy to talk with you!`, translation: "Express happiness talking to them" }
     ];
 
     if (text.includes("coffee") || text.includes("tea") || text.includes("hang out") || text.includes("play")) {
       options = [
-        { text: "I would love to hang out with you! 🍰", translation: "Agree enthusiastically to hang out" },
-        { text: "Where would you like to go today? ✨", translation: "Ask about their preferred spot" },
-        { text: "Let's definitely go together soon! 💖", translation: "Promise to go together soon" }
+        { text: "I would love to hang out with you!", translation: "Agree enthusiastically to hang out" },
+        { text: "Where would you like to go today?", translation: "Ask about their preferred spot" },
+        { text: "Let's definitely go together soon!", translation: "Promise to go together soon" }
       ];
     } else if (text.includes("study") || text.includes("book") || text.includes("class") || text.includes("late")) {
       options = [
-        { text: "Thank you for the notes! I'll study hard! 📚", translation: "Thank them and promise to study" },
-        { text: "Please teach me if I have questions! 💬", translation: "Politely ask for study help" },
-        { text: "Don't worry, I won't disappoint you! ✨", translation: "Reassure them with confidence" }
+        { text: "Thank you for the notes! I'll study hard!", translation: "Thank them and promise to study" },
+        { text: "Please teach me if I have questions!", translation: "Politely ask for study help" },
+        { text: "Don't worry, I won't disappoint you!", translation: "Reassure them with confidence" }
       ];
     }
     return { prompt, options };
   } else if (targetLang === "ja") {
     let charName = charId === "ado" ? "Ado" : (charId === "kou" ? "Kou" : (charId === "ren" ? "Ren" : "みんな"));
-    let prompt = `Choose your reply to ${charName} (Beginner Choices 🇯🇵):`;
+    let prompt = `Choose your reply to ${charName} (Beginner Choices):`;
     let options = [
-      { text: `ありがとう、${charName}くん！❤️`, romaji: `Arigatou, ${charName}-kun!`, translation: "Thank you very much!" },
-      { text: "今日も一日お疲れ様でした！✨", romaji: "Kyou mo ichinichi otsukaresama deshita!", translation: "Great job today!" },
-      { text: "お話しできてすごく嬉しいです！😊", romaji: "Ohanashi dekite sugoku ureshii desu!", translation: "I'm very happy to talk with you!" }
+      { text: `ありがとう、${charName}くん！`, romaji: `Arigatou, ${charName}-kun!`, translation: "Thank you very much!" },
+      { text: "今日も一日お疲れ様でした！", romaji: "Kyou mo ichinichi otsukaresama deshita!", translation: "Great job today!" },
+      { text: "お話しできてすごく嬉しいです！", romaji: "Ohanashi dekite sugoku ureshii desu!", translation: "I'm very happy to talk with you!" }
     ];
 
     if (text.includes("お出かけ") || text.includes("一緒") || text.includes("遊")) {
       options = [
-        { text: "うん、一緒にお出かけしよう！🍰", romaji: "Un, issho ni odekake shiyou!", translation: "Yeah, let's go out together!" },
-        { text: "どこに行きたいか教えて？✨", romaji: "Doko ni ikitai ka oshiete?", translation: "Tell me where you want to go!" },
-        { text: "すっごく楽しみにしてるね！💖", romaji: "Suggoku tanoshimi ni shiteru ne!", translation: "I'm really looking forward to it!" }
+        { text: "うん、一緒にお出かけしよう！", romaji: "Un, issho ni odekake shiyou!", translation: "Yeah, let's go out together!" },
+        { text: "どこに行きたいか教えて？", romaji: "Doko ni ikitai ka oshiete?", translation: "Tell me where you want to go!" },
+        { text: "すっごく楽しみにしてるね！", romaji: "Suggoku tanoshimi ni shiteru ne!", translation: "I'm really looking forward to it!" }
       ];
     }
     return { prompt, options };
   } else {
     // Default Vietnamese
     if (charId === "ado") {
-      let prompt = "Choose your reply to Ado (Beginner Choices 📚):";
+      let prompt = "Choose your reply to Ado (Beginner Choices):";
       let options = [
-        { text: "Cảm ơn Ado nhé, tớ sẽ học hành chăm chỉ! 📚", translation: "Thanks Ado, I will study diligently!" },
-        { text: "Ado chu đáo quá, đừng nghiêm khắc quá nha. 😳", translation: "You're so thoughtful, don't be too strict." },
-        { text: "Chút nữa Ado giảng lại bài này giúp tớ nhé? 💬", translation: "Could you explain this lesson to me later?" }
+        { text: "Cảm ơn Ado nhé, tớ sẽ học hành chăm chỉ!", translation: "Thanks Ado, I will study diligently!" },
+        { text: "Ado chu đáo quá, đừng nghiêm khắc quá nha.", translation: "You're so thoughtful, don't be too strict." },
+        { text: "Chút nữa Ado giảng lại bài này giúp tớ nhé?", translation: "Could you explain this lesson to me later?" }
       ];
       return { prompt, options };
     } else if (charId === "kou") {
       const { olderUserTerm, olderUserCap } = getUserVietnameseAddressTerms();
-      let prompt = "Choose your reply to Kou (Beginner Choices 🥺):";
+      let prompt = "Choose your reply to Kou (Beginner Choices):";
       let options = [
-        { text: `Chào Kou, ${olderUserTerm} cũng nhớ em lắm nè! 🥺✨`, translation: `Hello Kou, ${olderUserTerm} misses you too!` },
-        { text: "Được chứ, đi chơi thôi Kou ơi! 🍰", translation: "Sure, let's hang out Kou!" },
-        { text: `Kou hôm nay ngoan quá, ${olderUserTerm} thưởng nha! 💖`, translation: `Kou is so well-behaved, ${olderUserTerm} will reward you!` }
+        { text: `Chào Kou, ${olderUserTerm} cũng nhớ em lắm nè!`, translation: `Hello Kou, ${olderUserTerm} misses you too!` },
+        { text: "Được chứ, đi chơi thôi Kou ơi!", translation: "Sure, let's hang out Kou!" },
+        { text: `Kou hôm nay ngoan quá, ${olderUserTerm} thưởng nha!`, translation: `Kou is so well-behaved, ${olderUserTerm} will reward you!` }
       ];
       if (text.includes("chơi") || text.includes("rảnh") || text.includes("tìm")) {
         options = [
-          { text: `${olderUserCap} rảnh nè, Kou muốn đi đâu chơi nào? 🍰`, translation: `I am free, where does Kou want to go?` },
-          { text: `Được đi chơi với Kou thì ${olderUserTerm} vui lắm! 💖`, translation: `I'd be so happy to hang out with Kou!` },
-          { text: `Kou đứng chờ ${olderUserTerm} xíu nhé, tới ngay đây! ✨`, translation: "Wait for me a bit, I'm coming right away!" }
+          { text: `${olderUserCap} rảnh nè, Kou muốn đi đâu chơi nào?`, translation: `I am free, where does Kou want to go?` },
+          { text: `Được đi chơi với Kou thì ${olderUserTerm} vui lắm!`, translation: `I'd be so happy to hang out with Kou!` },
+          { text: `Kou đứng chờ ${olderUserTerm} xíu nhé, tới ngay đây!`, translation: "Wait for me a bit, I'm coming right away!" }
         ];
       }
       return { prompt, options };
     } else if (charId === "ren") {
-      let prompt = "Choose your reply to Ren (Beginner Choices 😏):";
+      let prompt = "Choose your reply to Ren (Beginner Choices):";
       let options = [
-        { text: "Anh Ren lại trêu em rồi, em chào anh! 😏✨", translation: "Teasing me again Ren, hello!" },
-        { text: "Em ngồi gần anh rồi nè, vừa ý anh chưa? 💖", translation: "Sitting close to you now, satisfied?" },
-        { text: "Em không phải là nhóc con đâu nhé! 🔥", translation: "I am not a little kid, you know!" }
+        { text: "Anh Ren lại trêu em rồi, em chào anh!", translation: "Teasing me again Ren, hello!" },
+        { text: "Em ngồi gần anh rồi nè, vừa ý anh chưa?", translation: "Sitting close to you now, satisfied?" },
+        { text: "Em không phải là nhóc con đâu nhé!", translation: "I am not a little kid, you know!" }
       ];
       return { prompt, options };
     } else {
       let prompt = `Choose your reply to ${charId} (Beginner Choices):`;
       let options = [
-        { text: "Cảm ơn bạn rất nhiều nhé! ❤️", translation: "Thank you so much!" },
-        { text: "Rất vui được trò chuyện cùng bạn! ✨", translation: "Nice talking with you!" },
-        { text: "Hôm nay bạn thấy thế nào? 💬", translation: "How are you feeling today?" }
+        { text: "Cảm ơn bạn rất nhiều nhé!", translation: "Thank you so much!" },
+        { text: "Rất vui được trò chuyện cùng bạn!", translation: "Nice talking with you!" },
+        { text: "Hôm nay bạn thấy thế nào?", translation: "How are you feeling today?" }
       ];
       return { prompt, options };
     }
@@ -3181,7 +3374,7 @@ function generateContextualWordChips(charId, lastMsgText) {
 
   if (targetLang === "en") {
     let charName = charId === "ado" ? "Ado" : (charId === "kou" ? "Kou" : (charId === "ren" ? "Ren" : "Lounge"));
-    let prompt = `Build your reply to ${charName} (English 🇬🇧):`;
+    let prompt = `Build your reply to ${charName} (English):`;
     let chips = ["Hello", charName, "I", "am", "very", "happy", "to", "chat", "with", "you", "today", "thank", "you"];
 
     if (text.includes("coffee") || text.includes("tea") || text.includes("drink") || text.includes("hang out")) {
@@ -3194,7 +3387,7 @@ function generateContextualWordChips(charId, lastMsgText) {
     return { prompt, chips };
   } else if (targetLang === "ja") {
     let charName = charId === "ado" ? "Ado" : (charId === "kou" ? "Kou" : (charId === "ren" ? "Ren" : "みんな"));
-    let prompt = `Build your reply to ${charName} (Japanese 🇯🇵):`;
+    let prompt = `Build your reply to ${charName} (Japanese):`;
     let chips = ["こんにちは", charName, "私", "は", "お話し", "できて", "嬉しい", "です", "ありがとう"];
 
     if (text.includes("お茶") || text.includes("コーヒー") || text.includes("飲み")) {
@@ -3205,12 +3398,12 @@ function generateContextualWordChips(charId, lastMsgText) {
   } else {
     // Default Vietnamese
     if (charId === "ado") {
-      let prompt = "Build your reply to Ado (Vietnamese 🇻🇳):";
+      let prompt = "Build your reply to Ado (Vietnamese):";
       let chips = ["Cảm", "ơn", "Ado", "chu", "đáo", "quá", "tớ", "sẽ", "học", "chăm", "chỉ", "đừng", "lo", "nhé", "ạ"];
       return { prompt, chips };
     } else if (charId === "kou") {
       const { olderUserTerm, olderUserCap } = getUserVietnameseAddressTerms();
-      let prompt = "Build your reply to Kou (Vietnamese 🇻🇳):";
+      let prompt = "Build your reply to Kou (Vietnamese):";
       let chips = ["Cảm", "ơn", "Kou", "em", "ngoan", "quá", "đi", "chơi", "với", olderUserTerm, "nhé", "ạ"];
 
       if (text.includes("chơi") || text.includes("tìm") || text.includes("senpai")) {
@@ -3219,7 +3412,7 @@ function generateContextualWordChips(charId, lastMsgText) {
       }
       return { prompt, chips };
     } else if (charId === "ren") {
-      let prompt = "Build your reply to Ren (Vietnamese 🇻🇳):";
+      let prompt = "Build your reply to Ren (Vietnamese):";
       let chips = ["Cảm", "ơn", "anh", "Ren", "anh", "lại", "trêu", "em", "rồi", "em", "không", "phải", "nhóc", "đâu"];
       return { prompt, chips };
     } else {
@@ -3540,11 +3733,11 @@ function showGrammarFeedback(evalColor, isCorrect, correction, tip, encouragemen
 
   if (color === "red") {
     if (icon) icon.textContent = "error";
-    if (title) title.textContent = "🔴 Severely Broken Language";
-    if (encouragementEl) encouragementEl.textContent = encouragement || "Grammar fix needed! Here is the corrected structure:";
+    if (title) title.textContent = "Severely Broken Language";
+    if (encouragementEl) encouragementEl.textContent = encouragement ? cleanEmojiText(encouragement) : "Grammar fix needed! Here is the corrected structure:";
     if (correctionEl) {
       if (correction && correction !== "Spot on!") {
-        correctionEl.textContent = `Correction: ${correction}`;
+        correctionEl.textContent = `Correction: ${cleanEmojiText(correction)}`;
         correctionEl.style.display = "block";
       } else {
         correctionEl.style.display = "none";
@@ -3552,7 +3745,7 @@ function showGrammarFeedback(evalColor, isCorrect, correction, tip, encouragemen
     }
     if (tipEl) {
       if (tip) {
-        tipEl.textContent = `💡 ${tip}`;
+        tipEl.textContent = cleanEmojiText(tip);
         tipEl.style.display = "block";
       } else {
         tipEl.style.display = "none";
@@ -3560,11 +3753,11 @@ function showGrammarFeedback(evalColor, isCorrect, correction, tip, encouragemen
     }
   } else if (color === "yellow") {
     if (icon) icon.textContent = "forum";
-    if (title) title.textContent = "🟡 Slang & Casual Reminder";
-    if (encouragementEl) encouragementEl.textContent = encouragement || "Fun casual slang! Here is a reminder of the formal term:";
+    if (title) title.textContent = "Slang & Casual Reminder";
+    if (encouragementEl) encouragementEl.textContent = encouragement ? cleanEmojiText(encouragement) : "Fun casual slang! Here is a reminder of the formal term:";
     if (correctionEl) {
       if (correction && correction !== "Spot on!") {
-        correctionEl.textContent = `Standard / Formal: ${correction}`;
+        correctionEl.textContent = `Standard / Formal: ${cleanEmojiText(correction)}`;
         correctionEl.style.display = "block";
       } else {
         correctionEl.style.display = "none";
@@ -3572,7 +3765,7 @@ function showGrammarFeedback(evalColor, isCorrect, correction, tip, encouragemen
     }
     if (tipEl) {
       if (tip) {
-        tipEl.textContent = `💡 ${tip}`;
+        tipEl.textContent = cleanEmojiText(tip);
         tipEl.style.display = "block";
       } else {
         tipEl.style.display = "none";
@@ -3581,14 +3774,14 @@ function showGrammarFeedback(evalColor, isCorrect, correction, tip, encouragemen
   } else {
     // Green
     if (icon) icon.textContent = "verified";
-    if (title) title.textContent = "🟢 Good Grammar & Vocab!";
-    if (encouragementEl) encouragementEl.textContent = encouragement || "Awesome effort! Excellent grammar & vocabulary usage.";
+    if (title) title.textContent = "Good Grammar & Vocab";
+    if (encouragementEl) encouragementEl.textContent = encouragement ? cleanEmojiText(encouragement) : "Awesome effort! Excellent grammar & vocabulary usage.";
     if (correctionEl) {
       correctionEl.style.display = "none";
     }
     if (tipEl) {
       if (tip) {
-        tipEl.textContent = `💡 ${tip}`;
+        tipEl.textContent = cleanEmojiText(tip);
         tipEl.style.display = "block";
       } else {
         tipEl.style.display = "none";

@@ -450,6 +450,33 @@ Return ONLY valid JSON matching this schema:
       usedModel = "fallback-engine";
     }
 
+    if (parsedData) {
+      const stripEmojis = (str: any) => {
+        if (!str || typeof str !== "string") return str;
+        return str
+          .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1FA00}-\u{1FAFF}\u{200D}\u{FE0F}\u{FE0E}]/gu, "")
+          .replace(/\s{2,}/g, " ")
+          .trim();
+      };
+
+      if (parsedData.characterResponse) {
+        parsedData.characterResponse = stripEmojis(parsedData.characterResponse);
+      }
+      if (Array.isArray(parsedData.groupResponses)) {
+        parsedData.groupResponses.forEach((gr: any) => {
+          if (gr.text) gr.text = stripEmojis(gr.text);
+        });
+      }
+      if (Array.isArray(parsedData.starterOptions)) {
+        parsedData.starterOptions.forEach((so: any) => {
+          if (so.text) so.text = stripEmojis(so.text);
+        });
+      }
+      if (Array.isArray(parsedData.contextualChips)) {
+        parsedData.contextualChips = parsedData.contextualChips.map((chip: any) => stripEmojis(chip)).filter(Boolean);
+      }
+    }
+
     return res.status(200).json({
       success: true,
       usedModel,

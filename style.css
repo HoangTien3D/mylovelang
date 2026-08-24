@@ -179,7 +179,7 @@ body {
   letter-spacing: 0.3px;
 }
 
-/* Play Now Button */
+/* Play Now Button (Ticket Style with Corner-Shape Scoop) */
 .landing-play-btn {
   display: inline-flex;
   align-items: center;
@@ -188,7 +188,21 @@ body {
   min-width: 240px;
   height: 58px;
   padding: 0 36px;
-  border-radius: 9999px;
+  border-radius: 18px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 14px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 14px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 14px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 14px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 14px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 14px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 14px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 14px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   background: linear-gradient(135deg, #FF3377 0%, #7000D9 100%);
   color: #ffffff;
   font-family: var(--font-heading);
@@ -1004,6 +1018,7 @@ body {
   cursor: pointer;
   flex-wrap: nowrap;
   transition: all 0.2s ease;
+  opacity: 0;
 }
 
 .vn-header-character-pill:hover {
@@ -1175,14 +1190,14 @@ body {
 }
 
 .vn-sprite-wrapper {
-  height: 84%;
-  max-height: 520px;
+  height: min(480px, 65vh);
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   animation: vn-idle-float 4.6s ease-in-out infinite alternate;
   transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+  flex-shrink: 0;
 }
 
 .vn-center-guy-stage:hover .vn-sprite-wrapper {
@@ -1194,15 +1209,19 @@ body {
 }
 
 .vn-floating-guy-sprite {
-  max-height: 100%;
+  height: min(460px, 62vh);
+  max-height: none;
   width: auto;
-  max-width: 86%;
+  max-width: 90%;
   object-fit: contain;
+  object-position: bottom center;
   filter: drop-shadow(0 12px 28px rgba(31, 21, 46, 0.22)) drop-shadow(0 0 20px rgba(217, 0, 87, 0.12));
-  transition: all 0.3s ease;
+  transition: filter 0.3s ease;
   user-select: none;
-  transform: scale(1.4);
+  transform: scale(1.35);
+  transform-origin: bottom center;
   -webkit-user-drag: none;
+  flex-shrink: 0;
 }
 
 @keyframes vn-idle-float {
@@ -1493,7 +1512,7 @@ body {
   -webkit-backdrop-filter: blur(16px);
   border-top: 1.5px solid rgba(217, 0, 87, 0.2);
   padding: 10px 14px 12px 14px;
-  border-radius: 20px 20px 0 0;
+  border-radius: 10px 10px 0 0;
   box-shadow: 0 -8px 24px rgba(31, 21, 46, 0.08);
   display: flex;
   flex-direction: column;
@@ -1869,6 +1888,56 @@ body {
   transition: all 0.25s ease;
 }
 
+.chat-controls.collapsed {
+  padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 0px)) 12px;
+  gap: 0;
+}
+
+.chat-controls.collapsed .input-mode-switcher,
+.chat-controls.collapsed .starter-choice-container,
+.chat-controls.collapsed .word-bank-container,
+.chat-controls.collapsed .text-input-bar {
+  display: none !important;
+}
+
+.chat-controls.collapsed .input-collapsed-bar {
+  display: flex !important;
+}
+
+.input-collapsed-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(217, 0, 87, 0.25);
+  border-radius: 14px;
+  color: var(--primary-pink);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(31, 21, 46, 0.05);
+  transition: all 0.2s ease;
+}
+
+.input-collapsed-bar:hover {
+  background: rgba(217, 0, 87, 0.08);
+  border-color: var(--primary-pink);
+  transform: translateY(-1px);
+}
+
+.collapse-toggle-btn {
+  margin-left: auto;
+  padding: 6px 8px;
+  color: var(--text-muted);
+}
+
+.collapse-toggle-btn:hover {
+  color: var(--primary-pink);
+}
+
 .chat-controls.cooldown-active {
   opacity: 0.75 !important;
   pointer-events: none !important;
@@ -1901,6 +1970,20 @@ body {
   border: 1px solid rgba(160, 140, 190, 0.25);
   color: var(--text-muted);
   border-radius: 10px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   padding: 6px 12px;
   font-size: 12.5px;
   font-weight: 800;
@@ -1930,7 +2013,7 @@ body {
   font-size: 14px;
 }
 
-/* Starter Choice (Beginner 3 Options) */
+/* Starter Choice (Beginner 3 Options - Multiple Choice Ticket Option Buttons) */
 .starter-choice-container {
   display: flex;
   flex-direction: column;
@@ -1946,8 +2029,22 @@ body {
 .starter-option-card {
   background: rgba(255, 255, 255, 0.95);
   border: 1.5px solid rgba(217, 0, 87, 0.18);
-  border-radius: 12px;
-  padding: 10px 14px;
+  border-radius: 14px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 10px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 10px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 10px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 10px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 10px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 10px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 10px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 10px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
+  padding: 10px 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -2208,6 +2305,20 @@ body {
   background: transparent;
   padding: 10px 12px;
   border-radius: 10px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   font-size: 14px;
   font-weight: 700;
   color: var(--text-muted);
@@ -2477,6 +2588,20 @@ body {
   color: #ffffff;
   padding: 12px;
   border-radius: 14px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 10px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 10px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 10px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 10px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 10px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 10px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 10px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 10px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   font-size: 14px;
   font-weight: 800;
   cursor: pointer;
@@ -3057,6 +3182,20 @@ body {
   color: #ffffff;
   border: none;
   border-radius: 12px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 8px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 8px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 8px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 8px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 8px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 8px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 8px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 8px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   padding: 6px 14px;
   font-size: 11.5px;
   font-weight: 800;
@@ -3132,6 +3271,20 @@ body {
   min-width: 140px;
   padding: 12px 18px;
   border-radius: 14px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 8px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 8px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 8px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 8px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 8px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 8px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 8px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 8px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   font-size: 13px;
   font-weight: 800;
   border: 1px solid rgba(160, 140, 190, 0.3);
@@ -3166,7 +3319,23 @@ body {
   font-size: 13px;
   font-weight: 800;
   border-radius: 14px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 10px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 10px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 10px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 10px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 10px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 10px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 10px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 10px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   width: 100%;
+  border: none;
+  cursor: pointer;
 }
 
 .reset-success-toast {
@@ -3452,7 +3621,7 @@ body.dark-theme .option-pill-btn.active {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 28px;
+    border-radius: 5px;
     border: 1px solid rgba(160, 140, 190, 0.3);
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
     overflow: hidden;
@@ -3472,6 +3641,160 @@ body.dark-theme .option-pill-btn.active {
 
   .chat-controls {
     padding: 10px 16px;
+  }
+
+  /* Desktop Typography Scaling for Enhanced Readability */
+  body, html, input, button, select, textarea {
+    font-size: 17.5px;
+  }
+
+  .section-title {
+    font-size: 28px;
+  }
+
+  .section-subtitle {
+    font-size: 16px;
+  }
+
+  /* Visual Novel Dialogue & Speech Bubble on Desktop */
+  .vn-bubble-speaker {
+    font-size: 15.5px;
+  }
+
+  .vn-bubble-content {
+    font-size: 19px;
+    line-height: 1.6;
+  }
+
+  .vn-bubble-romaji {
+    font-size: 14.5px;
+    padding: 3px 10px;
+  }
+
+  /* Chat Message & Feedback Typography on Desktop */
+  .chat-message-text,
+  .message-bubble {
+    font-size: 17.5px;
+    line-height: 1.55;
+  }
+
+  .vn-insight-title {
+    font-size: 15.5px;
+  }
+
+  .vn-insight-tip {
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .vn-insight-correction-card,
+  .vn-corr-text {
+    font-size: 15.5px;
+  }
+
+  /* Chat Input Controls & Starter Options on Desktop */
+  .starter-option-text {
+    font-size: 17px;
+    line-height: 1.35;
+  }
+
+  .starter-option-romaji {
+    font-size: 13.5px;
+  }
+
+  .starter-option-trans {
+    font-size: 14.5px;
+  }
+
+  .mode-tab-btn {
+    font-size: 13.5px;
+    padding: 7px 14px;
+  }
+
+  .prompt-guide {
+    font-size: 14px;
+    padding: 7px 12px;
+  }
+
+  .word-chip {
+    font-size: 16px;
+    padding: 6px 14px;
+  }
+
+  .constructed-sentence-box {
+    font-size: 16.5px;
+    min-height: 48px;
+    padding: 10px 14px;
+  }
+
+  .chat-input {
+    font-size: 16px;
+    min-height: 48px;
+    height: 48px;
+    padding: 10px 18px;
+  }
+
+  .send-btn {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    font-size: 19px;
+  }
+
+  /* Guidebook, Vocabulary & Grammar on Desktop */
+  .guide-card-title {
+    font-size: 20px;
+  }
+
+  .guide-desc,
+  .guide-card-body,
+  .grammar-rule,
+  .grammar-example,
+  .scenario-text {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .vocab-category-title {
+    font-size: 17px;
+  }
+
+  .vocab-term {
+    font-size: 17.5px;
+  }
+
+  .vocab-trans {
+    font-size: 15.5px;
+  }
+
+  /* Character Cards & Settings on Desktop */
+  .square-char-role {
+    font-size: 15px;
+  }
+
+  .square-aff-level {
+    font-size: 14px;
+  }
+
+  .character-card-desc,
+  .character-bio,
+  .character-personality {
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .setting-label {
+    font-size: 17px;
+  }
+
+  .setting-desc {
+    font-size: 14.5px;
+  }
+
+  .user-profile-summary,
+  .modal-body {
+    font-size: 16.5px;
+    line-height: 1.55;
   }
 }
 
@@ -3573,6 +3896,20 @@ body.dark-theme .option-pill-btn.active {
 .bento-search-btn {
   padding: 8px 14px;
   border-radius: 12px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   background: linear-gradient(135deg, var(--accent-violet), var(--primary-pink));
   color: #fff;
   border: none;
@@ -3892,6 +4229,20 @@ body.dark-theme .option-pill-btn.active {
   font-weight: 800;
   padding: 7px 12px;
   border-radius: 12px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -4304,6 +4655,20 @@ body.dark-theme .option-pill-btn.active {
   width: 100%;
   height: 48px;
   border-radius: 16px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 12px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 12px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 12px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 12px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 12px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 12px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 12px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 12px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   background: linear-gradient(135deg, #d90057 0%, #7c3aed 100%);
   border: none;
   color: #ffffff;
@@ -4436,6 +4801,20 @@ body.dark-theme .option-pill-btn.active {
 .install-tab-btn {
   padding: 7px 10px;
   border-radius: 10px;
+  corner-shape: scoop;
+  -webkit-corner-shape: scoop;
+  -webkit-mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
+                radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
+                radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
+                radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  -webkit-mask-size: 51% 51%;
+  -webkit-mask-repeat: no-repeat;
+  mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
+        radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
+        radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
+        radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
+  mask-size: 51% 51%;
+  mask-repeat: no-repeat;
   border: 1.5px solid rgba(160, 140, 190, 0.3);
   background: #f8f6fb;
   font-size: 12px;
