@@ -284,9 +284,13 @@ function cleanEmojiText(str) {
 }
 window.cleanEmojiText = cleanEmojiText;
 
-// UI Language Dictionary (English & Vietnamese)
+// UI Language Dictionary (English, Vietnamese & Japanese)
 const UI_STRINGS = {
   en: {
+    appLangBtn: "English",
+    appLangLabel: "App Language (UI)",
+    landingSubtitle: "Learn romance, vocabulary & real-world conversations with charming love interests",
+    landingPlayBtn: "Play Now",
     chatsTitle: "Messenger Chats",
     chatsSubtitle: "Select a Love Interest to start learning & chatting",
     charactersTitle: "Love Interests",
@@ -319,6 +323,10 @@ const UI_STRINGS = {
     playTier: "Play Tier",
   },
   vi: {
+    appLangBtn: "Tiếng Việt",
+    appLangLabel: "Ngôn ngữ ứng dụng",
+    landingSubtitle: "Học ngôn ngữ lãng mạn, từ vựng & giao tiếp đời thực cùng các chàng trai quyến rũ",
+    landingPlayBtn: "Chơi Ngay",
     chatsTitle: "Đoạn Chat Messenger",
     chatsSubtitle: "Chọn một nhân vật để bắt đầu học và trò chuyện",
     charactersTitle: "Các Nhân Vật Nam",
@@ -349,6 +357,42 @@ const UI_STRINGS = {
     affectionLevel: "Mức Độ Thiện Cảm",
     currentTier: "Cấp độ hiện tại:",
     playTier: "Chơi Cấp Độ",
+  },
+  ja: {
+    appLangBtn: "日本語",
+    appLangLabel: "アプリ言語 (UI)",
+    landingSubtitle: "魅力的なキャラクターたちとロマンス、語彙、日常会話を学ぼう",
+    landingPlayBtn: "今すぐプレイ",
+    chatsTitle: "メッセンジャーチャット",
+    chatsSubtitle: "キャラクターを選んで学習とチャットを始めましょう",
+    charactersTitle: "攻略キャラクター",
+    charactersSubtitle: "プロフィール、好感度、関係性ステータス",
+    guidebookTitle: "言語ガイドブック",
+    guidebookSubtitle: "特殊文字、入力規則、語形変化、ロマンス語彙",
+    settingsTitle: "アプリ設定",
+    settingsSubtitle: "テーマ、言語設定、ストーリー進行度の管理",
+    apiKeyLabel: "Gemini APIキー",
+    keyActive: "有効",
+    keyRequired: "キーが必要です",
+    saveKeyBtn: "APIキーを保存",
+    resetLabel: "ストーリーと進行状況のリセット",
+    resetDesc: "すべてのチャット履歴を消去し、好感度を初期状態に戻して最初からプレイします。",
+    resetBtn: "すべてリセットして最初から",
+    resetSuccess: "ストーリーとチャット履歴がリセットされました！",
+    tabChats: "チャット",
+    tabLIs: "キャラ",
+    tabGuidebook: "ガイド",
+    tabSettings: "設定",
+    sentenceBuilderTab: "文章作成",
+    freeTextTab: "フリーチャット",
+    sendSentenceBtn: "作成した文を送信",
+    freeInputPlaceholder: "学習言語でメッセージを入力...",
+    selectLevelLabel: "レベル選択:",
+    wordBankPlaceholder: "下の単語チップをタップして文章を作成...",
+    chatWith: "チャット:",
+    affectionLevel: "好感度レベル",
+    currentTier: "現在のティア:",
+    playTier: "ティアをプレイ",
   }
 };
 
@@ -1292,6 +1336,40 @@ function applyUiLanguage() {
     toggleBtn.textContent = lang === "en" ? "🌐 EN | VI" : "🌐 VI | EN";
   }
 
+  // Landing Page Subtitle, Play Button & UI Language Button
+  const landingSub = document.getElementById("landingSubtitle");
+  if (landingSub) landingSub.textContent = s.landingSubtitle || "Learn romance, vocabulary & real-world conversations with charming love interests";
+
+  const landingPlayText = document.querySelector("#landingPlayBtn .landing-play-text");
+  if (landingPlayText) landingPlayText.textContent = s.landingPlayBtn || "Play Now";
+
+  const landingUiLangText = document.getElementById("landingUiLangText");
+  const landingUiLangFlag = document.getElementById("landingUiLangFlag");
+  if (landingUiLangText) {
+    if (lang === "vi") {
+      landingUiLangText.textContent = "Giao diện: Tiếng Việt";
+      if (landingUiLangFlag) landingUiLangFlag.textContent = "🇻🇳";
+    } else if (lang === "ja") {
+      landingUiLangText.textContent = "アプリ言語: 日本語";
+      if (landingUiLangFlag) landingUiLangFlag.textContent = "🇯🇵";
+    } else {
+      landingUiLangText.textContent = "App Language: English";
+      if (landingUiLangFlag) landingUiLangFlag.textContent = "🇬🇧";
+    }
+  }
+
+  // Active checkmarks in landing dropdown
+  document.getElementById("landingOptEn")?.classList.toggle("active", lang === "en");
+  document.getElementById("landingOptVi")?.classList.toggle("active", lang === "vi");
+  document.getElementById("landingOptJa")?.classList.toggle("active", lang === "ja");
+
+  const checkEn = document.getElementById("checkLangEn");
+  const checkVi = document.getElementById("checkLangVi");
+  const checkJa = document.getElementById("checkLangJa");
+  if (checkEn) checkEn.style.display = lang === "en" ? "inline-block" : "none";
+  if (checkVi) checkVi.style.display = lang === "vi" ? "inline-block" : "none";
+  if (checkJa) checkJa.style.display = lang === "ja" ? "inline-block" : "none";
+
   // Section Titles & Subtitles
   const chatsHeader = document.querySelector("#view-chats .section-title span");
   if (chatsHeader) chatsHeader.textContent = s.chatsTitle;
@@ -1365,6 +1443,51 @@ function applyUiLanguage() {
   updateThemeUi();
 }
 
+// Landing Page Language Switcher Helpers
+function toggleLandingLangDropdown(e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const dropdown = document.getElementById("landingLangDropdown");
+  const btn = document.getElementById("landingUiLangBtn");
+  if (!dropdown) return;
+  const isShown = dropdown.style.display === "block" || dropdown.classList.contains("show");
+  if (isShown) {
+    closeLandingLangDropdown();
+  } else {
+    dropdown.style.display = "block";
+    dropdown.classList.add("show");
+    btn?.setAttribute("aria-expanded", "true");
+  }
+}
+window.toggleLandingLangDropdown = toggleLandingLangDropdown;
+
+function closeLandingLangDropdown() {
+  const dropdown = document.getElementById("landingLangDropdown");
+  const btn = document.getElementById("landingUiLangBtn");
+  if (dropdown) {
+    dropdown.style.display = "none";
+    dropdown.classList.remove("show");
+  }
+  btn?.setAttribute("aria-expanded", "false");
+}
+window.closeLandingLangDropdown = closeLandingLangDropdown;
+
+function selectLandingUiLang(lang) {
+  setAppUiLanguage(lang);
+  closeLandingLangDropdown();
+}
+window.selectLandingUiLang = selectLandingUiLang;
+
+// Global click outside listener to close landing language dropdown
+document.addEventListener("click", (e) => {
+  const wrapper = document.getElementById("landingLangWrapper");
+  if (wrapper && !wrapper.contains(e.target)) {
+    closeLandingLangDropdown();
+  }
+});
+
 // Theme & Language Helper Functions
 function setAppTheme(theme) {
   userState.theme = theme;
@@ -1405,8 +1528,10 @@ function updateLangUi() {
   const currentLang = userState.uiLang || "en";
   const enBtn = document.getElementById("settingLangEnBtn");
   const viBtn = document.getElementById("settingLangViBtn");
+  const jaBtn = document.getElementById("settingLangJaBtn");
   if (enBtn) enBtn.classList.toggle("active", currentLang === "en");
   if (viBtn) viBtn.classList.toggle("active", currentLang === "vi");
+  if (jaBtn) jaBtn.classList.toggle("active", currentLang === "ja");
 }
 
 // UI Event Handlers & Tab Navigation

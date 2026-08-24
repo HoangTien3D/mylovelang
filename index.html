@@ -19,6 +19,74 @@
 
   <!-- LANDING PAGE (MAIN TITLE SCREEN) -->
   <div class="landing-page-wrapper active" id="landingPage">
+    <!-- Top Bar with App UI Language Switcher -->
+    <div class="landing-top-bar" id="landingTopBar">
+      <div class="landing-lang-wrapper" id="landingLangWrapper">
+        <button
+          type="button"
+          class="landing-ui-lang-btn"
+          id="landingUiLangBtn"
+          onclick="toggleLandingLangDropdown(event)"
+          title="Change App UI Language"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span class="material-symbols-outlined landing-lang-icon" style="font-size:18px;">language</span>
+          <span class="landing-lang-btn-text" id="landingUiLangText">App Language: English</span>
+          <span class="landing-lang-btn-flag" id="landingUiLangFlag">🇬🇧</span>
+          <span class="material-symbols-outlined landing-lang-arrow" id="landingLangArrow" style="font-size:16px;">arrow_drop_down</span>
+        </button>
+
+        <div class="landing-lang-dropdown" id="landingLangDropdown" style="display:none;">
+          <div class="landing-lang-dropdown-header">
+            <span class="material-symbols-outlined" style="font-size:15px;">translate</span>
+            <span>App (UI) Language</span>
+          </div>
+          <div class="landing-lang-dropdown-list">
+            <button
+              type="button"
+              class="landing-lang-option"
+              id="landingOptEn"
+              onclick="selectLandingUiLang('en')"
+            >
+              <span class="landing-opt-flag">🇬🇧</span>
+              <div class="landing-opt-info">
+                <span class="landing-opt-name">English</span>
+                <span class="landing-opt-code">English (EN)</span>
+              </div>
+              <span class="landing-opt-check" id="checkLangEn">✓</span>
+            </button>
+            <button
+              type="button"
+              class="landing-lang-option"
+              id="landingOptVi"
+              onclick="selectLandingUiLang('vi')"
+            >
+              <span class="landing-opt-flag">🇻🇳</span>
+              <div class="landing-opt-info">
+                <span class="landing-opt-name">Tiếng Việt</span>
+                <span class="landing-opt-code">Vietnamese (VI)</span>
+              </div>
+              <span class="landing-opt-check" id="checkLangVi">✓</span>
+            </button>
+            <button
+              type="button"
+              class="landing-lang-option"
+              id="landingOptJa"
+              onclick="selectLandingUiLang('ja')"
+            >
+              <span class="landing-opt-flag">🇯🇵</span>
+              <div class="landing-opt-info">
+                <span class="landing-opt-name">日本語</span>
+                <span class="landing-opt-code">Japanese (JA)</span>
+              </div>
+              <span class="landing-opt-check" id="checkLangJa">✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="landing-content-card">
       <!-- 752x547 Hero Graphic Placeholder Container (Replace /assets/landing_hero.svg with your SVG) -->
       <div class="landing-graphic-container" id="landingGraphicContainer">
@@ -178,6 +246,9 @@
             </button>
             <button type="button" class="option-pill-btn" id="settingLangViBtn" onclick="setAppUiLanguage('vi')">
               🇻🇳 Tiếng Việt
+            </button>
+            <button type="button" class="option-pill-btn" id="settingLangJaBtn" onclick="setAppUiLanguage('ja')">
+              🇯🇵 日本語
             </button>
           </div>
         </div>
@@ -529,7 +600,7 @@
 
       <div class="setup-modal-intro">
         <h2 class="setup-modal-title">Personalize Your Romance 💕</h2>
-        <p class="setup-modal-subtitle">Choose your target learning language, pronouns, and age so Ado, Kou &amp; Ren address you personally!</p>
+      
       </div>
 
       <form id="userProfileForm" onsubmit="event.preventDefault(); saveUserProfileFromModal();">
@@ -544,7 +615,6 @@
               <span class="setup-lang-flag">🇻🇳</span>
               <div class="setup-lang-info">
                 <span class="setup-lang-name">Tiếng Việt (Vietnamese)</span>
-                <span class="setup-lang-sub">Romantic Vietnamese phrases, daily banter &amp; natural slang</span>
               </div>
               <span class="setup-lang-check">✓</span>
             </button>
@@ -552,7 +622,6 @@
               <span class="setup-lang-flag">🇬🇧</span>
               <div class="setup-lang-info">
                 <span class="setup-lang-name">English</span>
-                <span class="setup-lang-sub">Conversational English romance dialogue, idioms &amp; compliments</span>
               </div>
               <span class="setup-lang-check">✓</span>
             </button>
@@ -560,7 +629,6 @@
               <span class="setup-lang-flag">🇯🇵</span>
               <div class="setup-lang-info">
                 <span class="setup-lang-name">日本語 (Japanese)</span>
-                <span class="setup-lang-sub">Japanese anime romance tropes, honorifics &amp; romaji guide</span>
               </div>
               <span class="setup-lang-check">✓</span>
             </button>
@@ -575,12 +643,6 @@
           </label>
           <div class="setup-input-wrapper">
             <input type="text" id="modalUserName" class="setup-input" placeholder="e.g. Alex, MC, Linh..." value="MC" required />
-            <div class="setup-quick-chips">
-              <span class="setup-chip" onclick="document.getElementById('modalUserName').value='MC'">MC</span>
-              <span class="setup-chip" onclick="document.getElementById('modalUserName').value='Alex'">Alex</span>
-              <span class="setup-chip" onclick="document.getElementById('modalUserName').value='Linh'">Linh</span>
-              <span class="setup-chip" onclick="document.getElementById('modalUserName').value='Y/N'">Y/N</span>
-            </div>
           </div>
         </div>
 
@@ -677,7 +739,7 @@
         <!-- ACTION BUTTONS -->
         <div class="setup-actions-group">
           <button type="submit" class="setup-start-btn" id="saveProfileModalBtn">
-            <span>Start Story &amp; Meet LIs</span>
+            <span>Start Story</span>
             <span class="material-symbols-outlined" style="font-size:20px;">favorite</span>
           </button>
           <button type="button" class="setup-skip-btn" id="skipProfileModalBtn" onclick="handleSkipProfileModal()">

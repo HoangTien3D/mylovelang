@@ -132,6 +132,187 @@ body {
   animation: landingFadeIn 0.5s ease-out;
 }
 
+/* Landing Top Bar & Language Selector */
+.landing-top-bar {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 auto 14px auto;
+  position: relative;
+  z-index: 1005;
+  padding: 0 4px;
+}
+
+.landing-lang-wrapper {
+  position: relative;
+}
+
+.landing-ui-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 9999px;
+  padding: 8px 16px;
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(20, 10, 40, 0.3);
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  outline: none;
+  user-select: none;
+}
+
+.landing-ui-lang-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(20, 10, 40, 0.4);
+}
+
+.landing-ui-lang-btn:active {
+  transform: translateY(0);
+}
+
+.landing-lang-icon {
+  color: #FFE600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.landing-lang-btn-text {
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.landing-lang-btn-flag {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.landing-lang-arrow {
+  opacity: 0.85;
+  transition: transform 0.2s ease;
+}
+
+.landing-ui-lang-btn[aria-expanded="true"] .landing-lang-arrow {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.landing-lang-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 240px;
+  background: linear-gradient(180deg, #321c56 0%, #1e0e38 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(217, 0, 87, 0.3);
+  z-index: 1010;
+  animation: landingDropdownFade 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes landingDropdownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.landing-lang-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 8px 10px;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 4px;
+}
+
+.landing-lang-dropdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.landing-lang-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font-heading);
+}
+
+.landing-lang-option:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.landing-lang-option.active {
+  background: rgba(255, 51, 119, 0.28);
+  border-color: rgba(255, 51, 119, 0.7);
+}
+
+.landing-opt-flag {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.landing-opt-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.landing-opt-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.landing-opt-code {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 2px;
+}
+
+.landing-opt-check {
+  font-size: 15px;
+  font-weight: 900;
+  color: #38ef7d;
+  display: none;
+}
+
+.landing-lang-option.active .landing-opt-check {
+  display: inline-block;
+}
+
 @keyframes landingFadeIn {
   0% {
     opacity: 0;
@@ -232,6 +413,20 @@ body {
 }
 
 @media (max-width: 600px) {
+  .landing-top-bar {
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .landing-ui-lang-btn {
+    font-size: 13px;
+    padding: 6px 14px;
+    gap: 6px;
+  }
+  .landing-lang-dropdown {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
   .landing-graphic-container {
     max-height: 50vh;
     border-radius: 14px;
