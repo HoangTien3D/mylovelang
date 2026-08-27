@@ -6,6 +6,8 @@
  */
 
 import { inject } from "@vercel/analytics";
+import { STORY_SCENARIOS, getScenarioQuestions } from "./storyData.js";
+import { VN_SCENERY_SVGS, VN_SPRITES, playVNSound, speakVNLine } from "./src/vnVisuals.js";
 
 // Initialize Vercel Analytics
 try {
@@ -738,6 +740,8 @@ let userState = {
     pronouns: localStorage.getItem("otome_user_pronouns") || "she/her",
     age: localStorage.getItem("otome_user_age") || "20",
   },
+  storyProgress: JSON.parse(localStorage.getItem("otome_story_progress")) || { ado: {}, kou: {}, ren: {} },
+  selectedStoryChar: localStorage.getItem("otome_story_char") || "ado",
 };
 
 // Map legacy character keys to new character keys in userState
@@ -926,9 +930,12 @@ window.closeLandingSetupMenu = closeLandingSetupMenu;
 function parseRouteFromLocation() {
   const hostname = (window.location.hostname || "").toLowerCase();
   
-  // 1. Subdomain resolution support (e.g. chats.domain.com, guidebook.domain.com, settings.domain.com)
+  // 1. Subdomain resolution support (e.g. chats.domain.com, story.domain.com, guidebook.domain.com, settings.domain.com)
   if (hostname.startsWith("chats.") || hostname.startsWith("chat.")) {
     return { view: "chats" };
+  }
+  if (hostname.startsWith("story.") || hostname.startsWith("stories.")) {
+    return { view: "story" };
   }
   if (hostname.startsWith("guidebook.") || hostname.startsWith("guide.") || hostname.startsWith("progress.")) {
     return { view: "guidebook" };
@@ -947,6 +954,9 @@ function parseRouteFromLocation() {
       const parts = rawHash.split("/");
       const charId = parts[1] || "ado";
       return { view: "chat_single", charId };
+    }
+    if (rawHash === "story" || rawHash === "stories") {
+      return { view: "story" };
     }
     if (rawHash === "guidebook" || rawHash === "guide" || rawHash === "progress") {
       return { view: "guidebook" };
@@ -970,6 +980,9 @@ function parseRouteFromLocation() {
   }
   if (normalizedPath === "/chats" || normalizedPath === "/chat") {
     return { view: "chats" };
+  }
+  if (normalizedPath === "/story" || normalizedPath === "/stories") {
+    return { view: "story" };
   }
   if (normalizedPath === "/guidebook" || normalizedPath === "/guide" || normalizedPath === "/progress") {
     return { view: "guidebook" };
@@ -1021,6 +1034,11 @@ function navigateRoute(routeObj, updateHistory = true) {
     closeActiveChat(false);
     switchTab("chats", false);
     if (updateHistory) updateRouteUrl("/chats", false);
+  } else if (routeObj.view === "story") {
+    enterAppFromLanding(false);
+    closeActiveChat(false);
+    switchTab("story", false);
+    if (updateHistory) updateRouteUrl("/story", false);
   } else if (routeObj.view === "guidebook") {
     enterAppFromLanding(false);
     closeActiveChat(false);
@@ -1924,7 +1942,7 @@ const COMPANION_INTERACTIONS = new Proxy({}, {
 let currentCompanionQuoteIndex = 0;
 let companionQuoteTimeout = null;
 
-function updateFloatingCompanion(charId, quoteOverride = null, mood = null) {
+function updateFloatingCompanion(charId, quoteOverride = null, mood = null, emotion = "normal") {
   if (!charId) charId = activeCharacterId || "ado";
   let normalizedId = charId;
   if (charId === "bao") normalizedId = "ado";
@@ -1967,31 +1985,37 @@ function updateFloatingCompanion(charId, quoteOverride = null, mood = null) {
   const stageBubbleText = document.getElementById("stageSpeechText");
   const stageBubble = document.getElementById("stageSpeechBubble");
 
-  let spriteSrc = char.sprite || `/assets/characters/${normalizedId}_fullbody.png`;
   let archetypeText = char.archetype || char.role || "Love Interest";
   if (normalizedId === "ado") {
-    spriteSrc = char.sprite || "/assets/characters/ado_fullbody.png";
     archetypeText = "Strict Classmate";
   } else if (normalizedId === "kou") {
-    spriteSrc = char.sprite || "/assets/characters/kou_fullbody.png";
     archetypeText = "Cute Junior";
   } else if (normalizedId === "ren") {
-    spriteSrc = char.sprite || "/assets/characters/ren_fullbody.png";
     archetypeText = "Flirty Senior";
   }
 
   if (desktopSprite) {
+    const primarySrc = `/assets/characters/${normalizedId}/${emotion || 'normal'}.png`;
+    const normalSrc = `/assets/characters/${normalizedId}/normal.png`;
+    const fullbodySrc = `/assets/characters/${normalizedId}_fullbody.png`;
+    const vectorSvg = (window.VN_SPRITES && window.VN_SPRITES[normalizedId] && (window.VN_SPRITES[normalizedId][emotion] || window.VN_SPRITES[normalizedId].normal)) || `/assets/characters/${normalizedId}_fullbody.svg`;
+
+    let step = 0;
     desktopSprite.onerror = function() {
-      if (this.src.endsWith("_fullbody.png")) {
-        // Try capitalized single name e.g. Ado.png or SVG placeholder
-        const capName = normalizedId.charAt(0).toUpperCase() + normalizedId.slice(1);
-        this.src = `/assets/characters/${capName}.png`;
-      } else if (this.src.endsWith(".png")) {
-        this.src = `/assets/characters/${normalizedId}_fullbody.svg`;
+      step++;
+      if (step === 1) {
+        this.src = normalSrc;
+      } else if (step === 2) {
+        this.src = fullbodySrc;
+      } else if (step === 3) {
+        this.src = vectorSvg;
+      } else {
+        this.onerror = null;
       }
     };
-    desktopSprite.src = spriteSrc;
+    desktopSprite.src = primarySrc;
   }
+
   if (desktopName) desktopName.innerHTML = `${char.name}`;
   if (desktopArchetype) desktopArchetype.textContent = archetypeText;
   if (desktopAffBar) desktopAffBar.style.width = `${Math.min(100, Math.max(0, affectionPct))}%`;
@@ -2046,8 +2070,14 @@ function interactWithFloatingCompanion() {
   if (normalizedId === "ren") mood = "Playfully Teasing 😏";
   if (normalizedId === "ado") mood = "Adoring Junior 🥺✨";
 
-  triggerHeartBurst();
-  increaseAffection(normalizedId, 1);
+  // Gentle interaction bonus: +0.2% up to 5 times per session to feel natural
+  if (!userState.companionPokeCount) userState.companionPokeCount = 0;
+  if (userState.companionPokeCount < 5) {
+    userState.companionPokeCount++;
+    increaseAffection(normalizedId, 0.2);
+  } else {
+    triggerHeartBurst("💕");
+  }
   updateFloatingCompanion(normalizedId, selectedQuote, mood);
 
   // Add bounce effect to sprite and avatar
@@ -2085,6 +2115,7 @@ function switchTab(tabName, updateUrl = true) {
   });
 
   if (tabName === "chats") renderChatList();
+  if (tabName === "story") renderStoryMode();
   if (tabName === "progress" || tabName === "guidebook") renderGuidebook();
 
   if (updateUrl) {
@@ -2189,6 +2220,7 @@ function renderChatList() {
     const history = userState.chatHistories[char.id] || [];
     const lastMsg = history.length > 0 ? history[history.length - 1].text : char.greeting;
 
+    const relInfo = getRelationshipInfo(affectionPct);
     let badgeHtml = "";
     if (isPout) {
       badgeHtml = `<span class="square-pout-badge">💢 Pouting</span>`;
@@ -2215,7 +2247,7 @@ function renderChatList() {
           <span class="square-online-dot ${isPout ? 'pout-dot' : ''}"></span>
           <span>${isPout ? 'Waiting' : 'Online'}</span>
         </div>
-        ${badgeHtml ? badgeHtml : `<span class="square-affection-pill"><span class="material-symbols-outlined" style="font-size:12px; color:var(--primary-pink);">favorite</span> ${affectionPct}%</span>`}
+        ${badgeHtml ? badgeHtml : `<span class="square-affection-pill relationship-milestone-badge ${relInfo.badgeClass}"><span class="material-symbols-outlined" style="font-size:12px; color:var(--primary-pink);">favorite</span> ${relInfo.icon} ${affectionPct}%</span>`}
       </div>
 
       <div class="square-card-bottom-info">
@@ -2245,6 +2277,7 @@ function renderCharactersList() {
 
   Object.values(CHARACTERS).forEach((char) => {
     const affectionPct = userState.affection[char.id] || 0;
+    const relInfo = getRelationshipInfo(affectionPct);
 
     let pfpCoverHtml = `
       <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.png';" />
@@ -2265,9 +2298,9 @@ function renderCharactersList() {
           <span class="square-online-dot"></span>
           <span>${char.language || 'Multi'}</span>
         </span>
-        <span class="square-affection-pill">
+        <span class="square-affection-pill relationship-milestone-badge ${relInfo.badgeClass}">
           <span class="material-symbols-outlined" style="font-size:12px; color:var(--primary-pink);">favorite</span>
-          ${affectionPct}%
+          ${relInfo.icon} ${relInfo.stage} (${affectionPct}%)
         </span>
       </div>
 
@@ -2843,8 +2876,14 @@ function openChatroom(charId, updateUrl = true) {
   if (headerName) headerName.innerHTML = `${char.name} <span>${char.flag}</span>`;
   const headerAvatar = document.getElementById("chatHeaderAvatar");
   if (headerAvatar) headerAvatar.src = char.avatar;
+  const relInfo = getRelationshipInfo(affectionPct);
   const headerAffection = document.getElementById("chatHeaderAffection");
-  if (headerAffection) headerAffection.textContent = "❤️";
+  if (headerAffection) {
+    headerAffection.innerHTML = `<span class="relationship-milestone-badge ${relInfo.badgeClass}">${relInfo.icon} ${relInfo.stage} (${affectionPct}%)</span>`;
+  }
+
+  // Populate Phonetic & Tone helper chips for current language
+  renderPhoneticChips(charId, userState.targetLanguage || "vi");
 
   // Romaji Toggle Button Visibility (Especially for Japanese)
   const romajiBtn = document.getElementById("romajiToggleBtn");
@@ -2921,10 +2960,12 @@ function updateVnDialogueBox(latestLiMsg, char) {
   // 1. Floating Speech Bubble on Top of the Love Interest
   const bubbleEl = document.getElementById("companionSpeechBubble");
   const speakerNameEl = document.getElementById("companionSpeakerName");
+  const emotionBadgeEl = document.getElementById("companionEmotionBadge");
   const speechTextEl = document.getElementById("companionSpeechText");
   const bubbleRomajiEl = document.getElementById("companionSpeechRomaji");
   const bubbleGifWrapperEl = document.getElementById("companionSpeechGifWrapper");
   const bubbleGifImgEl = document.getElementById("companionSpeechGif");
+
 
   // 2. Dedicated Language Insight Box (Roomy & Clean)
   const insightBoxEl = document.getElementById("vnDialogueBox");
@@ -2949,19 +2990,37 @@ function updateVnDialogueBox(latestLiMsg, char) {
     else speakerName = "Ado";
   }
 
-  // Update center floating guy sprite in background!
+  // Determine emotional expression (fear, happy, angry, pout, sad, normal)
+  let emotion = (latestLiMsg && latestLiMsg.emotion) ? latestLiMsg.emotion.toLowerCase().trim() : "normal";
+  if (!["fear", "happy", "angry", "pout", "sad", "normal"].includes(emotion)) {
+    if (latestLiMsg && latestLiMsg.evalColor === "red") emotion = "angry";
+    else if (latestLiMsg && latestLiMsg.evalColor === "yellow") emotion = "pout";
+    else emotion = "normal";
+  }
+
+  // Update center floating guy sprite in background with emotion-specific image!
   if (centerSprite) {
-    let spriteSrc = `/assets/characters/${speakerId}_fullbody.png`;
+    const primaryEmotionPng = `/assets/characters/${speakerId}/${emotion}.png`;
+    const normalPng = `/assets/characters/${speakerId}/normal.png`;
+    const fullbodyPng = `/assets/characters/${speakerId}_fullbody.png`;
+    const vectorSvg = (window.VN_SPRITES && window.VN_SPRITES[speakerId] && (window.VN_SPRITES[speakerId][emotion] || window.VN_SPRITES[speakerId].normal)) || `/assets/characters/${speakerId}_fullbody.svg`;
+
+    let step = 0;
     centerSprite.onerror = function() {
-      if (this.src.endsWith("_fullbody.png")) {
-        const capName = speakerId.charAt(0).toUpperCase() + speakerId.slice(1);
-        this.src = `/assets/characters/${capName}.png`;
-      } else if (this.src.endsWith(".png")) {
-        this.src = `/assets/characters/${speakerId}_fullbody.svg`;
+      step++;
+      if (step === 1) {
+        this.src = normalPng;
+      } else if (step === 2) {
+        this.src = fullbodyPng;
+      } else if (step === 3) {
+        this.src = vectorSvg;
+      } else {
+        this.onerror = null;
       }
     };
-    centerSprite.src = spriteSrc;
+    centerSprite.src = primaryEmotionPng;
   }
+
 
   // Group side sprites
   const sideLeft = document.getElementById("vnGroupSideLeft");
@@ -2985,7 +3044,23 @@ function updateVnDialogueBox(latestLiMsg, char) {
 
   // Render dialogue onto speech bubble on top of the Love Interest
   if (speakerNameEl) speakerNameEl.textContent = speakerName;
-  if (speechTextEl) speechTextEl.textContent = text || "";
+  if (emotionBadgeEl) {
+    const emotionLabels = {
+      fear: "⚡ Fear",
+      happy: "✨ Happy",
+      angry: "🔥 Angry",
+      pout: "💢 Pout",
+      sad: "💧 Sad",
+      normal: "💬 Talking"
+    };
+    emotionBadgeEl.textContent = emotionLabels[emotion] || "💬 Talking";
+    emotionBadgeEl.className = `vn-emotion-badge emotion-${emotion}`;
+    emotionBadgeEl.style.display = "inline-flex";
+  }
+  if (speechTextEl) {
+    speechTextEl.innerHTML = wrapInteractiveScaffoldWords(cleanEmojiText(text || ""), targetLang);
+  }
+
 
   // Romaji on speech bubble
   const showRomaji = userState.showRomaji !== false;
@@ -3047,12 +3122,13 @@ function updateVnDialogueBox(latestLiMsg, char) {
     }
   }
 
-  // Trigger slight animation bounce on character when speaking
+  // Trigger emotion animation & bounce on character when speaking
   if (spriteWrapper) {
-    spriteWrapper.classList.remove("vn-talk-bounce");
+    spriteWrapper.classList.remove("vn-talk-bounce", "emotion-fear", "emotion-happy", "emotion-angry", "emotion-pout", "emotion-normal");
     void spriteWrapper.offsetWidth;
-    spriteWrapper.classList.add("vn-talk-bounce");
+    spriteWrapper.classList.add("vn-talk-bounce", `emotion-${emotion}`);
   }
+
 }
 window.updateVnDialogueBox = updateVnDialogueBox;
 
@@ -3244,7 +3320,7 @@ function renderChatHistory() {
           <div class="msg-body">
             <div class="msg-sender" ${speakerStyle}>${speakerName}</div>
             <div class="msg-bubble">
-              <div style="font-size:15px; font-weight:700;">${cleanEmojiText(msg.text)}</div>
+              <div style="font-size:15px; font-weight:700;">${wrapInteractiveScaffoldWords(cleanEmojiText(msg.text), userState.targetLanguage || "vi")}</div>
               ${gifHtml}
               ${romajiHtml}
               ${(msg.translation || msg.tip || msg.fix) ? `<button type="button" class="assist-toggle-btn">Translation & Tips</button>` : ''}
@@ -3480,7 +3556,7 @@ async function handleSendStarterChoice(chosenText) {
   const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
 
   addHearts(tierObj.heartsPerAns || 10);
-  increaseAffection(charId, 10);
+  increaseAffection(charId, null, { mode: "starter" });
   triggerHeartBurst();
 
   try {
@@ -3736,7 +3812,7 @@ async function handleSendWordBankMessage() {
   const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
 
   addHearts(tierObj.heartsPerAns || 10);
-  increaseAffection(charId, 8);
+  increaseAffection(charId, null, { mode: "sentence" });
   triggerHeartBurst();
 
   try {
@@ -3782,7 +3858,7 @@ async function handleSendFreeMessage() {
   const tierObj = TIERS.find((t) => t.level === tierNum) || TIERS[0];
 
   addHearts(tierObj.heartsPerAns || 10);
-  increaseAffection(charId, 10);
+  increaseAffection(charId, null, { mode: "free" });
   triggerHeartBurst();
 
   try {
@@ -3996,6 +4072,16 @@ async function triggerLLMResponse(userText, tierObj) {
 
     const history = userState.chatHistories[charId] || [];
 
+    // Extract emotion (fear, happy, angry, pout, sad, normal)
+    let charEmotion = responseData.emotion ? responseData.emotion.toLowerCase().trim() : null;
+    if (!charEmotion || !["fear", "happy", "angry", "pout", "sad", "normal"].includes(charEmotion)) {
+      if (responseData.evalColor === "red") charEmotion = "angry";
+      else if (responseData.evalColor === "yellow") charEmotion = "pout";
+      else if (/sad|sorry|cry|buồn|tiếc|khóc|miss|đau|lonely|heartbroken/i.test(responseData.characterResponse || "")) charEmotion = "sad";
+      else if (/love|sweet|thank|cute|happy|smile|great|fun|yay|nhớ|yêu|thương|vui/i.test(responseData.characterResponse || "")) charEmotion = "happy";
+      else charEmotion = "normal";
+    }
+
     history.push({
       sender: "li",
       text: responseData.characterResponse || responseData.text || "Chào bạn nha! Rất vui được gặp! ❤️",
@@ -4004,6 +4090,7 @@ async function triggerLLMResponse(userText, tierObj) {
       tip: responseData.tip || "Keep practicing your conversation skills!",
       fix: responseData.correction || responseData.fix || null,
       evalColor: responseData.evalColor || "green",
+      emotion: charEmotion,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     });
 
@@ -4025,9 +4112,10 @@ async function triggerLLMResponse(userText, tierObj) {
     saveLocalState();
     renderChatHistory();
 
-    // Update Floating Companion with recent response & mood
+    // Update Floating Companion with recent response & mood & emotion
     const companionQuote = responseData.characterResponse || null;
-    updateFloatingCompanion(charId, companionQuote, responseData.evalColor === "green" ? "Blushing & Impressed 💕" : "Observing carefully ✨");
+    updateFloatingCompanion(charId, companionQuote, responseData.evalColor === "green" ? "Blushing & Impressed 💕" : "Observing carefully ✨", charEmotion);
+
 
     setupTierInputControls(tierObj || TIERS[0], char);
     syncUserDataToConvex(`Post-chat response sync (${char.name})`);
@@ -4203,6 +4291,156 @@ function removeTypingIndicator() {
   if (el) el.remove();
 }
 
+// ==========================================================================
+// BALANCED AFFECTION CURVE & NATURAL RELATIONSHIP PROGRESSION ENGINE
+// ==========================================================================
+function getRelationshipInfo(affectionPct) {
+  const pct = Math.max(0, Math.min(100, Math.round((affectionPct || 0) * 10) / 10));
+  if (pct < 20) {
+    return {
+      stage: "Acquaintance",
+      stageVi: "Người Quen",
+      stageJa: "知人",
+      icon: "🤍",
+      badgeClass: "stage-acquaintance",
+      desc: "Polite & formal. Icebreaking conversations.",
+      nextThreshold: 20
+    };
+  } else if (pct < 45) {
+    return {
+      stage: "Casual Friend",
+      stageVi: "Bạn Thân Thiết",
+      stageJa: "友達",
+      icon: "💛",
+      badgeClass: "stage-casual-friend",
+      desc: "Warm smiles & shared banter. Barriers dropping.",
+      nextThreshold: 45
+    };
+  } else if (pct < 70) {
+    return {
+      stage: "Close Confidant",
+      stageVi: "Tri Kỷ Tri Âm",
+      stageJa: "親友",
+      icon: "💖",
+      badgeClass: "stage-close-confidant",
+      desc: "Heart flutters & mutual trust. Private moments shared.",
+      nextThreshold: 70
+    };
+  } else if (pct < 90) {
+    return {
+      stage: "Romantic Spark",
+      stageVi: "Tình Cảm Chớm Nở",
+      stageJa: "恋の予感",
+      icon: "💘",
+      badgeClass: "stage-romantic-spark",
+      desc: "Unmistakable romantic tension & gentle blushes.",
+      nextThreshold: 90
+    };
+  } else {
+    return {
+      stage: "Sweethearts",
+      stageVi: "Người Yêu Đắm Say",
+      stageJa: "恋人",
+      icon: "💍",
+      badgeClass: "stage-sweethearts",
+      desc: "Devoted bond. Deep emotional intimacy and true love.",
+      nextThreshold: 100
+    };
+  }
+}
+window.getRelationshipInfo = getRelationshipInfo;
+
+function calculateAffectionGain(charId, mode = "starter", evalColor = "green") {
+  const currentAff = userState.affection[charId] || 0;
+  
+  // 1. Natural Diminishing Returns Base Curve
+  let baseGain = 2.2;
+  if (currentAff >= 90) {
+    baseGain = 0.35; // Final devoted stage requires intentional dedication
+  } else if (currentAff >= 70) {
+    baseGain = 0.65; // Romance stage: slow, tender build
+  } else if (currentAff >= 45) {
+    baseGain = 1.05; // Confidant stage
+  } else if (currentAff >= 20) {
+    baseGain = 1.5;  // Casual friend stage
+  } else {
+    baseGain = 2.2;  // Acquaintance stage
+  }
+
+  // 2. Input Mode Multiplier (Rewarding active effort)
+  let modeMult = 1.0;
+  if (mode === "free") modeMult = 1.35;
+  else if (mode === "sentence") modeMult = 1.15;
+  else modeMult = 1.0;
+
+  // 3. Grammar Quality Bonus
+  let qualityBonus = 0;
+  if (evalColor === "green") qualityBonus = 0.25;
+  else if (evalColor === "yellow") qualityBonus = 0.15;
+  else if (evalColor === "red") qualityBonus = 0.05;
+
+  const totalGain = (baseGain * modeMult) + qualityBonus;
+  return Math.round(totalGain * 10) / 10;
+}
+window.calculateAffectionGain = calculateAffectionGain;
+
+function showMilestoneToast(charName, newStageObj) {
+  let toast = document.getElementById("milestoneToast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "milestoneToast";
+    toast.className = "milestone-toast";
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<span>${newStageObj.icon}</span> <span>Relationship with <strong>${charName}</strong> is now <strong>${newStageObj.stage}</strong>!</span>`;
+  toast.classList.add("show");
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 4000);
+}
+window.showMilestoneToast = showMilestoneToast;
+
+function increaseAffection(charId, amount = null, options = {}) {
+  if (!charId) return;
+  let normalizedId = charId;
+  if (charId === "bao") normalizedId = "ado";
+  if (charId === "julian") normalizedId = "kou";
+
+  const prevAff = userState.affection[normalizedId] || 0;
+  const prevStage = getRelationshipInfo(prevAff);
+
+  let gain = 0;
+  if (typeof amount === "number") {
+    gain = Math.min(amount, 2.5);
+  } else {
+    const mode = options.mode || "starter";
+    const evalColor = options.evalColor || "green";
+    gain = calculateAffectionGain(normalizedId, mode, evalColor);
+  }
+
+  const newAff = Math.min(100, Math.round((prevAff + gain) * 10) / 10);
+  userState.affection[normalizedId] = newAff;
+  
+  const newStage = getRelationshipInfo(newAff);
+  if (newStage.stage !== prevStage.stage && newAff > prevAff) {
+    const charName = CHARACTERS[normalizedId]?.name?.split(" ")[0] || normalizedId;
+    showMilestoneToast(charName, newStage);
+  }
+
+  saveLocalState();
+  renderCharactersList();
+  renderChatList();
+
+  // If active chatroom is open, update top header milestone badge
+  if (activeCharacterId === normalizedId) {
+    const headerAffection = document.getElementById("chatHeaderAffection");
+    if (headerAffection) {
+      headerAffection.innerHTML = `<span class="relationship-milestone-badge ${newStage.badgeClass}">${newStage.icon} ${newStage.stage} (${newAff}%)</span>`;
+    }
+  }
+}
+window.increaseAffection = increaseAffection;
+
 // Hearts & Affection Increment
 function addHearts(amount) {
   userState.totalHearts += amount;
@@ -4211,39 +4449,1362 @@ function addHearts(amount) {
   saveLocalState();
 }
 
-function increaseAffection(charId, amount) {
-  userState.affection[charId] = Math.min(100, (userState.affection[charId] || 0) + amount);
-  saveLocalState();
-  renderCharactersList();
-}
-
-// Spontaneous LI Check-Up messaging loop disabled per user request
-function startCheckUpAndPoutEngine() {
-  // Disabled: Characters do not text the user first
-}
-
-// Show In-App Top Banner Notification Toast disabled per user request
-function showNotificationToast(char, msgText, isPout = false) {
-  // Disabled: No notification toasts
-}
-
 // Check Tier Level-Up (Disabled)
 function checkTierLevelUp(charId) {
   triggerHeartBurst();
 }
 
 // Heart Particle Visual Animation
-function triggerHeartBurst() {
+function triggerHeartBurst(customText = "❤️ +10") {
   const frame = document.getElementById("appFrame");
   const heart = document.createElement("div");
   heart.className = "heart-burst";
-  heart.textContent = "❤️ +10";
+  heart.textContent = customText;
   heart.style.left = Math.random() * 60 + 20 + "%";
   heart.style.bottom = "120px";
   if (frame) frame.appendChild(heart);
 
   setTimeout(() => heart.remove(), 1000);
 }
+
+// Decrease Affection (Used for Failed Date Scenarios)
+function decreaseAffection(charId, amount = 2.5) {
+  if (!charId) return;
+  let normalizedId = charId;
+  if (charId === "bao") normalizedId = "ado";
+  if (charId === "julian") normalizedId = "kou";
+
+  const prevAff = userState.affection[normalizedId] || 0;
+  const prevStage = getRelationshipInfo(prevAff);
+
+  const penalty = Math.max(0.5, amount);
+  const newAff = Math.max(0, Math.round((prevAff - penalty) * 10) / 10);
+  userState.affection[normalizedId] = newAff;
+
+  saveLocalState();
+  renderCharactersList();
+  renderChatList();
+
+  const newStage = getRelationshipInfo(newAff);
+  if (newStage.stage !== prevStage.stage && newAff < prevAff) {
+    const charName = CHARACTERS[normalizedId]?.name?.split(" ")[0] || normalizedId;
+    let toast = document.getElementById("milestoneToast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "milestoneToast";
+      toast.className = "milestone-toast";
+      document.body.appendChild(toast);
+    }
+    toast.innerHTML = `<span>💔</span> <span>Relationship with <strong>${charName}</strong> dropped to <strong>${newStage.stage}</strong> (${newAff}%)</span>`;
+    toast.classList.add("show");
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 4000);
+  }
+}
+window.decreaseAffection = decreaseAffection;
+
+// ==========================================
+// STORY DATE SCENARIO GAMEPLAY ENGINE
+// ==========================================
+
+let activeStorySession = null;
+let selectedScenarioForPartner = null;
+
+function selectStoryCharacter(charId) {
+  if (!charId) return;
+  userState.selectedStoryChar = charId;
+  saveLocalState();
+  renderStoryMode();
+}
+window.selectStoryCharacter = selectStoryCharacter;
+
+function openStoryPartnerSelect(scenarioId) {
+  selectedScenarioForPartner = Number(scenarioId);
+  if (typeof playVNSound === "function") playVNSound("click");
+  renderStoryMode();
+}
+window.openStoryPartnerSelect = openStoryPartnerSelect;
+
+function backToStoryScenarios() {
+  selectedScenarioForPartner = null;
+  if (typeof playVNSound === "function") playVNSound("click");
+  renderStoryMode();
+}
+window.backToStoryScenarios = backToStoryScenarios;
+
+function renderStoryMode() {
+  const container = document.getElementById("view-story");
+  if (!container) return;
+
+  // 1. If in active gameplay, render VN visual novel gameplay screen
+  if (activeStorySession) {
+    renderStoryGameplay();
+    return;
+  }
+
+  const availableChars = [
+    { 
+      id: "ado", 
+      name: "Ado", 
+      role: "Class Vice-President", 
+      color: "pink", 
+      avatar: SVG_AVATARS.ado,
+      teasers: {
+        1: "“Don't let your guard down during our library study session... I'm grading you!”",
+        2: "“A coffee break together? Well, I suppose you've earned a short chat.”",
+        3: "“The sunset along the riverbank... don't walk too fast, stay close.”",
+        4: "“A festival together? Just don't let go of my hand in the crowd.”",
+        5: "“Up here on the starlit roof... there's something important I need to tell you.”"
+      }
+    },
+    { 
+      id: "kou", 
+      name: "Kou", 
+      role: "Gentle Junior Artist", 
+      color: "blue", 
+      avatar: SVG_AVATARS.kou,
+      teasers: {
+        1: "“Senpai, look at these art books with me in the library corner!”",
+        2: "“I ordered extra whipped cream on our lattes so we could share sweets!”",
+        3: "“The breeze by the river is so refreshing... I want to sketch your smile.”",
+        4: "“Can we watch the festival fireworks side by side, Senpai?”",
+        5: "“Under the constellations on this rooftop... my heart is beating so fast.”"
+      }
+    },
+    { 
+      id: "ren", 
+      name: "Ren", 
+      role: "Charming Musician Senior", 
+      color: "purple", 
+      avatar: SVG_AVATARS.ren,
+      teasers: {
+        1: "“Whispering in the library stacks? That's my favorite secret melody.”",
+        2: "“Rainy afternoon cafe date with warm espresso... perfect atmosphere with you.”",
+        3: "“Golden hour river stroll with cherry blossoms drifting... truly romantic.”",
+        4: "“Festival lights and firework bursts... none of them shine as bright as you.”",
+        5: "“Starlight shining down on the rooftop... let me play a song just for your heart.”"
+      }
+    }
+  ];
+
+  // 2. If a Date Scenario Square was selected, render the LOVE INTEREST CHOICE SCREEN
+  if (selectedScenarioForPartner) {
+    const sc = STORY_SCENARIOS.find(s => s.id === selectedScenarioForPartner) || STORY_SCENARIOS[0];
+    const bgKey = getScenarioBackgroundKey(sc.id);
+    const bgSvg = (window.VN_SCENERY_SVGS && window.VN_SCENERY_SVGS[bgKey]) || "";
+
+    const partnerCardsHtml = availableChars.map(c => {
+      const cAff = (userState.affection && userState.affection[c.id]) || 10;
+      const cRel = getRelationshipInfo(cAff);
+      const cProgress = (userState.storyProgress && userState.storyProgress[c.id]) || {};
+      const scRecord = cProgress[sc.id];
+      const isCleared = scRecord && scRecord.passed;
+      const teaserQuote = (c.teasers && c.teasers[sc.id]) || "“Let's embark on this memorable date together!”";
+
+      return `
+        <div class="story-partner-choice-card" onclick="startStoryScenario(${sc.id}, '${c.id}')">
+          <div class="story-partner-avatar-wrap">
+            <img src="${c.avatar}" alt="${c.name}" class="story-partner-avatar-img" />
+          </div>
+          <div class="story-partner-char-name">${c.name}</div>
+          <div class="story-partner-char-role">${c.role}</div>
+          <div class="story-partner-aff-badge">
+            <span>${cRel.icon} ${cRel.stage}</span>
+            <span>•</span>
+            <span>${cAff}% Affection</span>
+          </div>
+          <div class="story-partner-teaser-quote">${teaserQuote}</div>
+          <button class="story-partner-select-start-btn" type="button">
+            <span>${isCleared ? `Replay with ${c.name}` : `Date with ${c.name}`}</span>
+            <span class="material-symbols-outlined" style="font-size:18px;">favorite</span>
+          </button>
+        </div>
+      `;
+    }).join("");
+
+    container.innerHTML = `
+      <div class="story-partner-screen">
+        <div class="story-partner-nav-bar">
+          <button class="story-back-scenarios-btn" onclick="backToStoryScenarios()" type="button">
+            <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+            <span>Back to All Date Scenarios</span>
+          </button>
+          <div class="story-hero-badge">STEP 2: SELECT YOUR LOVE INTEREST</div>
+        </div>
+
+        <div class="story-scenario-preview-card">
+          <div class="story-scenario-preview-bg" style="background-image: url('${bgSvg}');"></div>
+          <div class="story-scenario-preview-info">
+            <div class="story-square-level-tag" style="width: fit-content;">Level ${sc.level} Date</div>
+            <div class="story-scenario-preview-title">
+              <span>${sc.icon}</span>
+              <span>${sc.title}</span>
+            </div>
+            <div class="story-scenario-preview-desc">${sc.description}</div>
+            <div class="story-scenario-preview-tags">
+              <span class="story-meta-tag">📍 ${sc.location}</span>
+              <span class="story-meta-tag">🎭 ${sc.tone}</span>
+              <span class="story-meta-tag">🎯 15 Interactive Acts</span>
+              <span class="story-meta-tag">🏆 Pass: ≥10/15 Correct</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-section-title" style="margin-top: 10px;">
+          <span>Choose Your Date Partner:</span>
+        </div>
+
+        <div class="story-partner-cards-grid">
+          ${partnerCardsHtml}
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // 3. DEFAULT VIEW: DATE SCENARIOS AS SQUARES
+  const squaresHtml = STORY_SCENARIOS.map(sc => {
+    const bgKey = getScenarioBackgroundKey(sc.id);
+    const bgSvg = (window.VN_SCENERY_SVGS && window.VN_SCENERY_SVGS[bgKey]) || "";
+
+    // Check if cleared by ANY character
+    let clearedByAny = false;
+    availableChars.forEach(c => {
+      const cProg = (userState.storyProgress && userState.storyProgress[c.id]) || {};
+      if (cProg[sc.id] && cProg[sc.id].passed) clearedByAny = true;
+    });
+
+    return `
+      <div class="story-scenario-square ${clearedByAny ? 'passed' : ''}" onclick="openStoryPartnerSelect(${sc.id})" title="Click to choose partner and start ${sc.title}">
+        <div class="story-square-backdrop" style="background-image: url('${bgSvg}');"></div>
+        <div class="story-square-gradient-overlay"></div>
+
+        <div class="story-square-top-row">
+          <div class="story-square-level-tag">Level ${sc.level}</div>
+          <div class="story-square-status-pill ${clearedByAny ? 'cleared' : ''}">
+            ${clearedByAny ? '✨ Cleared' : '⭐ 15 Questions'}
+          </div>
+        </div>
+
+        <div class="story-square-center-icon">
+          ${sc.icon}
+        </div>
+
+        <div class="story-square-bottom-content">
+          <div class="story-square-title">${sc.title}</div>
+          <div class="story-square-loc">📍 ${sc.location}</div>
+          <div class="story-square-action-row">
+            <span class="story-square-theme-tag">${sc.tone}</span>
+            <div class="story-square-select-btn">
+              <span>Choose Partner</span>
+              <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  container.innerHTML = `
+    <div class="story-squares-wrapper">
+      <div class="story-hub-hero">
+        <div class="story-hero-badge">💕 VISUAL NOVEL DATE SCENARIOS</div>
+        <h2 class="story-hero-title">Choose Your Date Scenario</h2>
+        <p class="story-hero-subtitle">
+          Select a date setting below to begin your visual novel experience. 
+          Pick a scenario first, then choose which love interest (Ado, Kou, or Ren) to take on the date!
+        </p>
+      </div>
+
+      <div class="story-section-title">
+        <span>5 Date Scenarios (Square Selection):</span>
+      </div>
+
+      <div class="story-squares-grid">
+        ${squaresHtml}
+      </div>
+    </div>
+  `;
+}
+window.renderStoryMode = renderStoryMode;
+
+
+function getScenarioBackgroundKey(scenarioId) {
+  switch (Number(scenarioId)) {
+    case 1: return "library";
+    case 2: return "cafe";
+    case 3: return "riverbank";
+    case 4: return "festival";
+    case 5: return "rooftop";
+    default: return "library";
+  }
+}
+
+function getScenarioParticlesHtml(scenarioId) {
+  const scId = Number(scenarioId);
+  if (scId === 1) {
+    // Library: floating golden dust motes
+    return `
+      <div class="vn-particles vn-particles-dust">
+        <span class="vn-dust-dot d1"></span>
+        <span class="vn-dust-dot d2"></span>
+        <span class="vn-dust-dot d3"></span>
+        <span class="vn-dust-dot d4"></span>
+        <span class="vn-dust-dot d5"></span>
+      </div>
+    `;
+  } else if (scId === 2) {
+    // Cafe: animated window rain streaks & mist
+    return `
+      <div class="vn-particles vn-particles-rain">
+        <span class="vn-rain-drop r1"></span>
+        <span class="vn-rain-drop r2"></span>
+        <span class="vn-rain-drop r3"></span>
+        <span class="vn-rain-drop r4"></span>
+        <span class="vn-rain-drop r5"></span>
+      </div>
+    `;
+  } else if (scId === 3) {
+    // Riverbank: drifting sakura petals
+    return `
+      <div class="vn-particles vn-particles-sakura">
+        <span class="vn-petal p1">🌸</span>
+        <span class="vn-petal p2">🌸</span>
+        <span class="vn-petal p3">🌸</span>
+        <span class="vn-petal p4">🌸</span>
+      </div>
+    `;
+  } else if (scId === 4) {
+    // Festival: glowing sparks & lantern embers
+    return `
+      <div class="vn-particles vn-particles-festival">
+        <span class="vn-spark s1">✨</span>
+        <span class="vn-spark s2">🏮</span>
+        <span class="vn-spark s3">✨</span>
+        <span class="vn-spark s4">🎆</span>
+      </div>
+    `;
+  } else if (scId === 5) {
+    // Rooftop: twinkling stars & celestial motes
+    return `
+      <div class="vn-particles vn-particles-stars">
+        <span class="vn-star st1">✨</span>
+        <span class="vn-star st2">⭐</span>
+        <span class="vn-star st3">✨</span>
+        <span class="vn-shooting-star"></span>
+      </div>
+    `;
+  }
+  return "";
+}
+
+function startStoryScenario(scenarioId, charId = null) {
+  const chosenChar = charId || userState.selectedStoryChar || "ado";
+  const scenario = STORY_SCENARIOS.find(s => s.id === scenarioId) || STORY_SCENARIOS[0];
+  const targetLang = userState.targetLanguage || "vi";
+
+  const questions = getScenarioQuestions(scenario.id, chosenChar, targetLang, userState.userProfile);
+
+  activeStorySession = {
+    scenarioId: scenario.id,
+    charId: chosenChar,
+    currentQuestionIdx: 0,
+    score: 0,
+    userAnswers: [],
+    questions: questions,
+    isAnsweringLocked: false,
+    spriteEmotion: "normal",
+    isUiHidden: false,
+    showTranslation: true,
+    dialogueHistory: []
+  };
+
+  playVNSound("click");
+  renderStoryGameplay();
+
+  // Play opening voice line for first question
+  setTimeout(() => {
+    if (activeStorySession && activeStorySession.questions[0]) {
+      speakVNLine(activeStorySession.questions[0].promptDialogue, targetLang);
+    }
+  }, 400);
+}
+window.startStoryScenario = startStoryScenario;
+
+function toggleVnBacklogModal(show = true) {
+  const modal = document.getElementById("vnBacklogModal");
+  if (!modal) return;
+  modal.style.display = show ? "flex" : "none";
+  playVNSound("click");
+}
+window.toggleVnBacklogModal = toggleVnBacklogModal;
+
+function toggleVnUiVisibility() {
+  if (!activeStorySession) return;
+  activeStorySession.isUiHidden = !activeStorySession.isUiHidden;
+  playVNSound("click");
+  renderStoryGameplay();
+}
+window.toggleVnUiVisibility = toggleVnUiVisibility;
+
+function toggleVnSubtitles() {
+  if (!activeStorySession) return;
+  activeStorySession.showTranslation = !activeStorySession.showTranslation;
+  playVNSound("click");
+  renderStoryGameplay();
+}
+window.toggleVnSubtitles = toggleVnSubtitles;
+
+function playCurrentVnVoiceLine() {
+  if (!activeStorySession) return;
+  const session = activeStorySession;
+  const currentQ = session.questions[session.currentQuestionIdx];
+  const targetLang = userState.targetLanguage || "vi";
+  if (currentQ && currentQ.promptDialogue) {
+    speakVNLine(currentQ.promptDialogue, targetLang);
+    // Subtle sprite reaction bounce
+    const spriteEl = document.querySelector(".vn-stage-sprite-standee");
+    if (spriteEl) {
+      spriteEl.classList.remove("vn-sprite-bounce");
+      void spriteEl.offsetWidth; // trigger reflow
+      spriteEl.classList.add("vn-sprite-bounce");
+    }
+  }
+}
+window.playCurrentVnVoiceLine = playCurrentVnVoiceLine;
+
+function reactToSpriteClick() {
+  if (!activeStorySession) return;
+  const session = activeStorySession;
+  session.spriteEmotion = session.spriteEmotion === "blush" ? "happy" : "blush";
+  playVNSound("heart");
+  triggerHeartBurst("💖");
+  playCurrentVnVoiceLine();
+  renderStoryGameplay();
+}
+window.reactToSpriteClick = reactToSpriteClick;
+
+function renderStoryGameplay() {
+  const container = document.getElementById("view-story");
+  if (!container || !activeStorySession) return;
+
+  const session = activeStorySession;
+  const scenario = STORY_SCENARIOS.find(s => s.id === session.scenarioId) || STORY_SCENARIOS[0];
+  const charData = CHARACTERS[session.charId] || CHARACTERS.ado;
+  const qIndex = session.currentQuestionIdx;
+  const totalQ = session.questions.length; // 15
+  const currentQ = session.questions[qIndex];
+  const progressPct = Math.round(((qIndex) / totalQ) * 100);
+
+  const bgKey = getScenarioBackgroundKey(scenario.id);
+  const bgSvg = (window.VN_SCENERY_SVGS && window.VN_SCENERY_SVGS[bgKey]) || VN_SCENERY_SVGS.library;
+  const currentEmotion = session.spriteEmotion || "normal";
+  const primaryEmotionPng = `/assets/characters/${session.charId}/${currentEmotion}.png`;
+  const normalPng = `/assets/characters/${session.charId}/normal.png`;
+  const fullbodyPng = `/assets/characters/${session.charId}_fullbody.png`;
+  const spriteSvg = (window.VN_SPRITES && window.VN_SPRITES[session.charId] && (window.VN_SPRITES[session.charId][currentEmotion] || window.VN_SPRITES[session.charId].normal)) || VN_SPRITES.ado.normal;
+  const targetLang = userState.targetLanguage || "vi";
+
+
+  // Check if current question has already been answered in this session
+  const existingAns = session.userAnswers[qIndex];
+  const isAnswered = existingAns !== undefined;
+
+  // Build choice cards HTML
+  let optionsHtml = currentQ.options.map((opt, idx) => {
+    let optClass = "vn-choice-card";
+    let statusPill = "";
+
+    if (isAnswered) {
+      if (idx === currentQ.correctIdx) {
+        optClass += " choice-correct";
+        statusPill = `<span class="vn-choice-status-badge badge-correct">✓ Match (+1💖)</span>`;
+      } else if (idx === existingAns.selectedIdx) {
+        optClass += " choice-incorrect";
+        statusPill = `<span class="vn-choice-status-badge badge-incorrect">✗ Miss</span>`;
+      } else {
+        optClass += " choice-disabled";
+      }
+    }
+
+    return `
+      <button class="${optClass}" onclick="handleStoryOptionSelect(${idx})" ${isAnswered ? 'disabled' : ''} type="button">
+        <div class="vn-choice-letter-badge">${String.fromCharCode(65 + idx)}</div>
+        <div class="vn-choice-body">
+          <div class="vn-choice-text">${opt.text}</div>
+          ${opt.phonetic ? `<div class="vn-choice-phonetic">${opt.phonetic}</div>` : ''}
+          ${session.showTranslation ? `<div class="vn-choice-trans">${opt.trans}</div>` : ''}
+        </div>
+        ${statusPill}
+      </button>
+    `;
+  }).join("");
+
+  // Feedback explanation card
+  let feedbackHtml = "";
+  if (isAnswered) {
+    const isCorrect = existingAns.isCorrect;
+    const isLastQuestion = qIndex === totalQ - 1;
+    feedbackHtml = `
+      <div class="vn-feedback-overlay ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}">
+        <div class="vn-feedback-header">
+          <div class="vn-feedback-icon">${isCorrect ? '💖' : '💧'}</div>
+          <div class="vn-feedback-title">
+            <strong>${isCorrect ? 'Charming Response! (+1 Heart Point)' : 'Not Quite What They Hoped For'}</strong>
+            <span class="vn-feedback-sub">${isCorrect ? `${charData.name} smiles warmly at your words.` : `${charData.name} looks a bit caught off guard.`}</span>
+          </div>
+        </div>
+        <p class="vn-feedback-expl">${currentQ.explanation}</p>
+        <div class="vn-feedback-action">
+          <button class="vn-next-act-btn" onclick="handleNextStoryQuestion()" type="button">
+            <span>${isLastQuestion ? 'Complete Date & See Ending 🎉' : 'Next Scene (Act ' + (qIndex + 2) + ') →'}</span>
+            <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // Emotion floating reaction badge above character head
+  let emotionBubble = "";
+  if (session.spriteEmotion === "blush") {
+    emotionBubble = `<div class="vn-sprite-reaction-bubble blush">😳 💖</div>`;
+  } else if (session.spriteEmotion === "happy") {
+    emotionBubble = `<div class="vn-sprite-reaction-bubble happy">✨ 💖</div>`;
+  }
+
+  // Generate Backlog History items
+  const backlogItemsHtml = session.dialogueHistory.length > 0 ? session.dialogueHistory.map((item, i) => `
+    <div class="vn-backlog-item">
+      <div class="vn-backlog-header">
+        <span class="vn-backlog-act">Act ${i + 1}</span>
+        <span class="vn-backlog-speaker ${item.charId === 'user' ? 'speaker-user' : 'speaker-li'}">${item.speaker}:</span>
+      </div>
+      <div class="vn-backlog-dialogue">${item.promptDialogue}</div>
+      ${item.promptTrans ? `<div class="vn-backlog-trans">"${item.promptTrans}"</div>` : ''}
+      <div class="vn-backlog-choice ${item.isCorrect ? 'choice-pass' : 'choice-miss'}">
+        <span>Your Response: <strong>${item.userChoice}</strong> ${item.isCorrect ? '💖 (Correct)' : '⚠️'}</span>
+      </div>
+    </div>
+  `).join("") : `<div class="vn-backlog-empty">No past acts in this date yet. Make your first choice!</div>`;
+
+  const heartsCount = Math.min(10, session.score);
+  const heartsGaugeHtml = Array.from({ length: 10 }).map((_, i) => 
+    i < heartsCount ? `<span class="vn-heart-icon active">💖</span>` : `<span class="vn-heart-icon inactive">🤍</span>`
+  ).join("");
+
+  // Scaffolded interactive words in partner dialogue
+  const wrappedDialogue = wrapInteractiveScaffoldWords(currentQ.promptDialogue, targetLang);
+
+  container.innerHTML = `
+    <div class="vn-date-stage ${session.isUiHidden ? 'vn-cg-hidden-ui' : ''}" id="vnDateStage">
+      <!-- Background Scenery Layer -->
+      <div class="vn-stage-backdrop" style="background-image: url('${bgSvg}');">
+        ${getScenarioParticlesHtml(scenario.id)}
+      </div>
+
+      <!-- Character Standee Sprite Layer -->
+      <div class="vn-stage-sprite-container" onclick="reactToSpriteClick()" title="Tap ${charData.name} for voice & reactions">
+        ${emotionBubble}
+        <img src="${primaryEmotionPng}" onerror="if(this.src.endsWith('${currentEmotion}.png')){this.src='${normalPng}';}else if(this.src.endsWith('normal.png')){this.src='${fullbodyPng}';}else{this.src='${spriteSvg}';this.onerror=null;}" alt="${charData.name}" class="vn-stage-sprite-standee emotion-${currentEmotion} ${session.spriteEmotion === 'blush' ? 'sprite-blushing' : ''}" />
+
+      </div>
+
+      <!-- Top Visual Novel HUD Bar -->
+      <div class="vn-hud-bar">
+        <div class="vn-hud-left">
+          <button class="vn-hud-btn vn-exit-btn" onclick="exitStoryGameplay(true)" type="button" title="Exit Date">
+            <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
+            <span>Exit</span>
+          </button>
+          <div class="vn-scene-badge">
+            <span class="vn-scene-level">LVL ${scenario.level}</span>
+            <span class="vn-scene-title">${scenario.icon} ${scenario.title}</span>
+          </div>
+        </div>
+
+        <div class="vn-hud-center">
+          <div class="vn-hearts-gauge" title="Affection Pass Gauge: ${session.score}/10 Needed">
+            <div class="vn-hearts-row">${heartsGaugeHtml}</div>
+            <div class="vn-hearts-label">Score: <strong>${session.score}</strong> / ${totalQ} (${session.score >= 10 ? '✨ PASSING' : '10 to Pass'})</div>
+          </div>
+        </div>
+
+        <div class="vn-hud-right">
+          <button class="vn-hud-btn" onclick="toggleVnBacklogModal(true)" type="button" title="Dialogue History Log">
+            <span class="material-symbols-outlined" style="font-size:16px;">history_edu</span>
+            <span>Log</span>
+          </button>
+          <button class="vn-hud-btn" onclick="toggleVnSubtitles()" type="button" title="Toggle Translations">
+            <span class="material-symbols-outlined" style="font-size:16px;">translate</span>
+            <span>${session.showTranslation ? 'Sub: ON' : 'Sub: OFF'}</span>
+          </button>
+          <button class="vn-hud-btn" onclick="toggleVnUiVisibility()" type="button" title="Hide UI / CG Mode">
+            <span class="material-symbols-outlined" style="font-size:16px;">visibility_off</span>
+            <span>CG</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Situation Cue Narrative Ribbon -->
+      <div class="vn-scene-cue-ribbon">
+        <span class="vn-cue-tag">📍 Act ${qIndex + 1}/${totalQ}</span>
+        <span class="vn-cue-text">${currentQ.situation}</span>
+      </div>
+
+      <!-- Floating Visual Novel Choice Branches Tray -->
+      <div class="vn-choices-tray ${isAnswered ? 'tray-locked' : ''}">
+        <div class="vn-choices-tray-header">
+          <span>💖 Choose Your Response to ${charData.name}:</span>
+        </div>
+        <div class="vn-choices-list">
+          ${optionsHtml}
+        </div>
+      </div>
+
+      <!-- Classic Visual Novel ADV Bottom Dialogue Textbox -->
+      <div class="vn-adv-textbox">
+        <div class="vn-adv-nameplate-row">
+          <div class="vn-adv-nameplate char-${session.charId}">
+            <span class="vn-nameplate-gem">💎</span>
+            <span class="vn-nameplate-text">${charData.name}</span>
+            <span class="vn-nameplate-role">(${charData.role || 'Love Interest'})</span>
+          </div>
+
+          <div class="vn-adv-controls">
+            <button class="vn-voice-play-btn" onclick="playCurrentVnVoiceLine()" type="button" title="Listen to ${charData.name}'s voice">
+              <span class="material-symbols-outlined" style="font-size:16px;">volume_up</span>
+              <span>Voice</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="vn-adv-dialogue-content">
+          <div class="vn-adv-dialogue-text">
+            ${wrappedDialogue}
+          </div>
+          ${session.showTranslation ? `
+            <div class="vn-adv-dialogue-trans">
+              "${currentQ.promptTrans}"
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- Feedback Overlay upon answering -->
+      ${feedbackHtml}
+
+      <!-- CG Mode Floating Hint (visible only when UI is hidden) -->
+      <div class="vn-cg-overlay-hint" onclick="toggleVnUiVisibility()">
+        <span>👁️ CG Viewing Mode • Tap anywhere to restore Visual Novel UI</span>
+      </div>
+
+      <!-- Dialogue Backlog History Modal -->
+      <div class="vn-backlog-modal" id="vnBacklogModal" style="display:none;">
+        <div class="vn-backlog-dialog">
+          <div class="vn-backlog-dialog-header">
+            <div class="vn-backlog-title">
+              <span class="material-symbols-outlined">history_edu</span>
+              <span>Dialogue Backlog • ${scenario.title}</span>
+            </div>
+            <button class="vn-backlog-close-btn" onclick="toggleVnBacklogModal(false)" type="button">✕</button>
+          </div>
+          <div class="vn-backlog-dialog-body">
+            ${backlogItemsHtml}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+window.renderStoryGameplay = renderStoryGameplay;
+
+function handleStoryOptionSelect(selectedIdx) {
+  if (!activeStorySession || activeStorySession.isAnsweringLocked) return;
+  
+  const session = activeStorySession;
+  const qIndex = session.currentQuestionIdx;
+  const q = session.questions[qIndex];
+  const charData = CHARACTERS[session.charId] || CHARACTERS.ado;
+  
+  const isCorrect = selectedIdx === q.correctIdx;
+  session.isAnsweringLocked = true;
+
+  if (isCorrect) {
+    session.score++;
+    session.spriteEmotion = "happy";
+    playVNSound("correct");
+    triggerHeartBurst("💕 Charming Response!");
+  } else {
+    session.spriteEmotion = "sad";
+    playVNSound("wrong");
+  }
+
+  const chosenOption = q.options[selectedIdx];
+
+  // Save answer
+  session.userAnswers[qIndex] = {
+    selectedIdx: selectedIdx,
+    isCorrect: isCorrect
+  };
+
+  // Add to backlog history
+  session.dialogueHistory.push({
+    actIndex: qIndex + 1,
+    charId: session.charId,
+    speaker: charData.name,
+    promptDialogue: q.promptDialogue,
+    promptTrans: q.promptTrans,
+    userChoice: chosenOption.text + (chosenOption.trans ? ` (${chosenOption.trans})` : ''),
+    isCorrect: isCorrect
+  });
+
+  renderStoryGameplay();
+}
+window.handleStoryOptionSelect = handleStoryOptionSelect;
+
+function handleNextStoryQuestion() {
+  if (!activeStorySession) return;
+  const session = activeStorySession;
+  const targetLang = userState.targetLanguage || "vi";
+  
+  playVNSound("click");
+
+  if (session.currentQuestionIdx < session.questions.length - 1) {
+    session.currentQuestionIdx++;
+    session.isAnsweringLocked = false;
+    session.spriteEmotion = "normal";
+    renderStoryGameplay();
+
+    // Auto voice current line
+    setTimeout(() => {
+      if (activeStorySession) {
+        const nextQ = activeStorySession.questions[activeStorySession.currentQuestionIdx];
+        if (nextQ) speakVNLine(nextQ.promptDialogue, targetLang);
+      }
+    }, 300);
+  } else {
+    completeStoryScenario();
+  }
+}
+window.handleNextStoryQuestion = handleNextStoryQuestion;
+
+function completeStoryScenario() {
+  const container = document.getElementById("view-story");
+  if (!container || !activeStorySession) return;
+
+  const session = activeStorySession;
+  const scenario = STORY_SCENARIOS.find(s => s.id === session.scenarioId) || STORY_SCENARIOS[0];
+  const charId = session.charId;
+  const charData = CHARACTERS[charId] || CHARACTERS.ado;
+  const score = session.score;
+  const total = session.questions.length;
+  const isPassed = score >= (scenario.passingScore || 10);
+
+  const bgKey = getScenarioBackgroundKey(scenario.id);
+  const bgSvg = VN_SCENERY_SVGS[bgKey] || VN_SCENERY_SVGS.library;
+  const endEmotion = isPassed ? 'happy' : 'sad';
+  const primaryEndingPng = `/assets/characters/${charId}/${endEmotion}.png`;
+  const normalEndingPng = `/assets/characters/${charId}/normal.png`;
+  const fullbodyEndingPng = `/assets/characters/${charId}_fullbody.png`;
+  const endSpriteSvg = (window.VN_SPRITES && window.VN_SPRITES[charId] && (window.VN_SPRITES[charId][endEmotion] || window.VN_SPRITES[charId].normal)) || VN_SPRITES.ado.normal;
+  const targetLang = userState.targetLanguage || "vi";
+
+  if (!userState.storyProgress) userState.storyProgress = {};
+  if (!userState.storyProgress[charId]) userState.storyProgress[charId] = {};
+
+  userState.storyProgress[charId][scenario.id] = {
+    passed: isPassed,
+    score: score,
+    total: total,
+    completedAt: Date.now()
+  };
+
+  const prevAff = userState.affection[charId] || 10;
+  let newAff = prevAff;
+  let penaltyOrGainText = "";
+
+  if (isPassed) {
+    playVNSound("clear");
+    // Reward player with affection and hearts
+    newAff = Math.min(100, Math.round((prevAff + scenario.affPassGain) * 10) / 10);
+    userState.affection[charId] = newAff;
+    userState.totalHearts += scenario.rewardHearts;
+    penaltyOrGainText = `+${scenario.affPassGain}% Affection Gain & +${scenario.rewardHearts} 💖 Hearts`;
+    triggerHeartBurst(`🎉 Date Passed! +${scenario.affPassGain}%`);
+  } else {
+    playVNSound("wrong");
+    // Fail: Decrease relationship status
+    newAff = Math.max(0, Math.round((prevAff - scenario.affFailPenalty) * 10) / 10);
+    userState.affection[charId] = newAff;
+    penaltyOrGainText = `-${scenario.affFailPenalty}% Relationship Affection Penalty`;
+  }
+
+  saveLocalState();
+  renderCharactersList();
+  renderChatList();
+
+  const relInfo = getRelationshipInfo(newAff);
+  const partnerDialogue = isPassed ? scenario.partnerReactionPass[charId] || scenario.partnerReactionPass.ado : scenario.partnerReactionFail[charId] || scenario.partnerReactionFail.ado;
+
+  // Speak partner's ending quote
+  setTimeout(() => {
+    speakVNLine(partnerDialogue, targetLang);
+  }, 400);
+
+  container.innerHTML = `
+    <div class="vn-date-stage vn-ending-stage">
+      <!-- Background Scenery Layer -->
+      <div class="vn-stage-backdrop" style="background-image: url('${bgSvg}');">
+        ${getScenarioParticlesHtml(scenario.id)}
+      </div>
+
+      <!-- Large Ending Character Standee -->
+      <div class="vn-stage-sprite-container vn-ending-sprite">
+        <img src="${primaryEndingPng}" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${normalEndingPng}';}else if(this.dataset.step=='1'){this.dataset.step=2;this.src='${fullbodyEndingPng}';}else if(this.dataset.step=='2'){this.dataset.step=3;this.src='${endSpriteSvg}';}" alt="${charData.name}" class="vn-stage-sprite-standee emotion-${endEmotion}" />
+      </div>
+
+      <!-- Ending Card Overlay -->
+      <div class="vn-ending-card-overlay ${isPassed ? 'ending-passed' : 'ending-failed'}">
+        <div class="vn-ending-badge">
+          <span>${isPassed ? '🏆 S-RANK ROMANTIC CLEAR' : '💔 AWKWARD MOMENT ENDING'}</span>
+        </div>
+
+        <h3 class="vn-ending-title">${isPassed ? `True Romance Clear with ${charData.name}!` : `Awkward Date with ${charData.name}`}</h3>
+        
+        <div class="vn-ending-score-pill">
+          <span class="vn-score-num">${score} / ${total} Correct</span>
+          <span class="vn-score-req">${isPassed ? '✨ Target Met (≥10/15)' : '⚠️ 10/15 Required to Pass'}</span>
+        </div>
+
+        <!-- Ending Partner Reaction Dialogue -->
+        <div class="vn-ending-speech-box">
+          <div class="vn-ending-speaker-row">
+            <span class="vn-ending-speaker">${charData.name}:</span>
+            <button class="vn-voice-play-btn mini" onclick="speakVNLine('${partnerDialogue.replace(/'/g, "\\'")}', '${targetLang}')" type="button">
+              <span class="material-symbols-outlined" style="font-size:14px;">volume_up</span>
+              <span>Voice</span>
+            </button>
+          </div>
+          <p class="vn-ending-quote">"${partnerDialogue}"</p>
+        </div>
+
+        <!-- Relationship Status Delta -->
+        <div class="vn-ending-stakes-delta ${isPassed ? 'delta-gain' : 'delta-loss'}">
+          <strong>${isPassed ? '✨ Bond Deepened:' : '⚠️ Relationship Status Decreased:'}</strong>
+          <div>${penaltyOrGainText}</div>
+          <div style="font-size:12px; margin-top:4px; opacity:0.9;">Current Affection: <strong>${newAff}%</strong> (${relInfo.icon} ${relInfo.stage})</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="vn-ending-actions">
+          <button class="vn-ending-btn-primary" onclick="startStoryScenario(${scenario.id}, '${charId}')" type="button">
+            <span class="material-symbols-outlined" style="font-size:18px;">refresh</span>
+            <span>${isPassed ? 'Replay Date' : 'Retry Date Now'}</span>
+          </button>
+          
+          ${isPassed && scenario.id < 5 ? `
+            <button class="vn-ending-btn-next" onclick="startStoryScenario(${scenario.id + 1}, '${charId}')" type="button">
+              <span>Next Level (${scenario.id + 1}) →</span>
+            </button>
+          ` : ''}
+
+          <button class="vn-ending-btn-secondary" onclick="exitStoryGameplay(false)" type="button">
+            <span>Back to Story Hub</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  activeStorySession = null;
+}
+window.completeStoryScenario = completeStoryScenario;
+
+function exitStoryGameplay(confirmExit = true) {
+  if (confirmExit && activeStorySession && activeStorySession.currentQuestionIdx < 14) {
+    if (!confirm("Are you sure you want to leave this date? Progress for this round will be lost.")) {
+      return;
+    }
+  }
+  playVNSound("click");
+  activeStorySession = null;
+  renderStoryMode();
+}
+window.exitStoryGameplay = exitStoryGameplay;
+window.exitStoryGameplay = exitStoryGameplay;
+
+// ==========================================================================
+// SCAFFOLDED LEARNING TOOLS: DICTIONARY, HOVER TOOLTIPS, PHONETICS, GRAMMAR DRAWER
+// ==========================================================================
+
+const SCAFFOLD_DICTIONARY = {
+  vi: {
+    "anh": { phonetic: "ănh [Level tone]", def: "Older male / romantic partner / you", note: "Used when addressing an older guy or romantic love interest." },
+    "em": { phonetic: "em [Level tone]", def: "Younger person / sweetheart / me / you", note: "Sweet, affectionate way to address a younger partner or oneself." },
+    "chị": { phonetic: "chị [Drop dot tone (Nặng)]", def: "Older female / older sister / you", note: "Respectful and affectionate term for an older female." },
+    "tớ": { phonetic: "tớ [High rising tone (Sắc)]", def: "I / me (peer / classmate)", note: "Casual, friendly pronoun among classmates like Ado." },
+    "cậu": { phonetic: "cậu [Drop dot tone (Nặng)]", def: "You (peer / classmate)", note: "Friendly address to equal-aged friends." },
+    "nhóc": { phonetic: "nhóc [High rising tone (Sắc)]", def: "Kid / little one", note: "Playful teasing address used by seniors like Ren." },
+    "tiền bối": { phonetic: "tiền bối [Low falling + High rising]", def: "Senior / Upperclassman", note: "Equivalent to Japanese 'Senpai'." },
+    "senpai": { phonetic: "sen-pai", def: "Upperclassman / senior mentor", note: "Affectionate term for a respected senior." },
+    "nhớ": { phonetic: "nhớ [High rising tone (Sắc)]", def: "To miss (someone) / to remember", note: "Ex: 'Nhớ em' = 'I miss you dearly'." },
+    "thương": { phonetic: "thương [Level tone (Ngang)]", def: "To cherish / deeply care for & love", note: "Deeper than 'yêu'—expresses protective caring love." },
+    "thích": { phonetic: "thích [High rising tone (Sắc)]", def: "To like / fond of", note: "Ex: 'Thích cậu' = 'I like you'." },
+    "yêu": { phonetic: "yêu [Level tone (Ngang)]", def: "To love", note: "Classic romantic declaration of love." },
+    "quan tâm": { phonetic: "quan tâm [Level tones]", def: "To care about / pay attention to", note: "Thoughtful affection." },
+    "chăm chỉ": { phonetic: "chăm chỉ [Level + Dipping tone (Hỏi)]", def: "Diligent / hardworking", note: "Ex: 'Học chăm chỉ' = 'Study diligently'." },
+    "học": { phonetic: "học [Drop dot tone (Nặng)]", def: "To study / to learn", note: "Essential school verb." },
+    "chơi": { phonetic: "chơi [Level tone (Ngang)]", def: "To play / hang out", note: "Ex: 'Đi chơi' = 'Go out on a date / hang out'." },
+    "rảnh": { phonetic: "rảnh [Dipping tone (Hỏi)]", def: "Free / available", note: "Ex: 'Có rảnh không?' = 'Are you free?'." },
+    "uống": { phonetic: "uống [High rising tone (Sắc)]", def: "To drink", note: "Ex: 'Uống cà phê' = 'Drink coffee'." },
+    "cà phê": { phonetic: "cà phê [Low falling + Level]", def: "Coffee", note: "Quintessential Vietnamese hangout date." },
+    "trà": { phonetic: "trà [Low falling tone (Huyền)]", def: "Tea", note: "Calming beverage." },
+    "chu đáo": { phonetic: "chu đáo [Level + High rising]", def: "Thoughtful / attentive", note: "Great compliment for a caring crush." },
+    "nghiêm khắc": { phonetic: "nghiêm khắc [Level + High rising]", def: "Strict / rigorous", note: "Describes Ado's vice-president persona." },
+    "dễ thương": { phonetic: "dễ thương [Tilde tone (Ngã) + Level]", def: "Cute / adorable", note: "High-frequency romantic compliment." },
+    "đẹp trai": { phonetic: "đẹp trai [Drop dot + Level]", def: "Handsome / good looking", note: "Compliment for male love interests." },
+    "ngoan": { phonetic: "ngoan [Level tone (Ngang)]", def: "Well-behaved / good / obedient", note: "Affectionate praise (ex: 'Ngoan lắm')." },
+    "nhé": { phonetic: "nhé [High rising tone (Sắc)]", def: "Gentle sentence-ending particle ('okay?', 'please')", note: "Softens sentences and invites friendly agreement." },
+    "nha": { phonetic: "nha [Level tone (Ngang)]", def: "Cute pleading particle ('promise?', 'okay?')", note: "Southern dialect, adds endearing warmth." },
+    "ạ": { phonetic: "ạ [Drop dot tone (Nặng)]", def: "Polite reverent particle", note: "Placed at end of sentences to show respect to seniors." },
+    "á": { phonetic: "á [High rising tone (Sắc)]", def: "Surprised / curious ending particle", note: "Ex: 'Thật á?' = 'Really?'" },
+    "nhỉ": { phonetic: "nhỉ [Dipping tone (Hỏi)]", def: "Right? / Isn't it?", note: "Invites shared sentiment (ex: 'Đẹp nhỉ')." },
+    "hả": { phonetic: "hả [Dipping tone (Hỏi)]", def: "Huh? / Really?", note: "Casual question tone." },
+    "đấy": { phonetic: "đấy [High rising tone (Sắc)]", def: "There / that / emphatic particle", note: "Adds emphasis to advice or teasing." },
+    "cảm ơn": { phonetic: "cảm ơn [Dipping tone + Level]", def: "Thank you", note: "Polite gratitude." },
+    "xin lỗi": { phonetic: "xin lỗi [Level + Tilde tone (Ngã)]", def: "Sorry / excuse me", note: "Apology." },
+    "chào": { phonetic: "chào [Low falling tone (Huyền)]", def: "Hello / greetings / goodbye", note: "Standard greeting." },
+    "tạm biệt": { phonetic: "tạm biệt [Drop dot tones]", def: "Goodbye / farewell", note: "Parting phrase." }
+  },
+  ja: {
+    "先輩": { phonetic: "せんぱい (Senpai)", def: "Senior / upperclassman", note: "Respectful and affectionate title for an upperclassman." },
+    "ありがとう": { phonetic: "Arigatou", def: "Thank you", note: "Standard warm expression of gratitude." },
+    "好き": { phonetic: "すき (Suki)", def: "Like / Fond of / Love", note: "Direct romantic expression of affection." },
+    "お茶": { phonetic: "おちゃ (O-cha)", def: "Tea", note: "Traditional Japanese green tea." },
+    "一緒": { phonetic: "いっしょ (Issho)", def: "Together", note: "Ex: 'Issho ni' = 'Together with'." },
+    "可愛い": { phonetic: "かわいい (Kawaii)", def: "Cute / lovely", note: "Endearing compliment." },
+    "嬉しい": { phonetic: "うれしい (Ureshii)", def: "Happy / glad", note: "Ex: 'Ohanashi dekite ureshii' = 'Glad to talk with you'." }
+  },
+  en: {
+    "senpai": { phonetic: "sen-pai", def: "Senior student / mentor", note: "Upperclassman who guides and cares for you." },
+    "classmate": { phonetic: "class-mate", def: "Peer in same grade", note: "Fellow student like Ado." },
+    "sweetheart": { phonetic: "sweet-heart", def: "Beloved partner", note: "Affectionate term of endearment." },
+    "notes": { phonetic: "nohts", def: "Study materials / summaries", note: "Ado's thoughtful study preparation for you." }
+  }
+};
+
+function getScaffoldWordData(rawWord, lang = "vi") {
+  if (!rawWord) return null;
+  const cleanWord = rawWord.toLowerCase().trim().replace(/[.,!?:;"'()]/g, "");
+  const dict = SCAFFOLD_DICTIONARY[lang] || SCAFFOLD_DICTIONARY.vi;
+  return dict[cleanWord] || null;
+}
+
+function wrapInteractiveScaffoldWords(text, lang = "vi") {
+  if (!text) return "";
+  const dict = SCAFFOLD_DICTIONARY[lang] || SCAFFOLD_DICTIONARY.vi;
+  
+  // Split into tokens preserving punctuation and whitespace
+  const tokens = text.split(/(\s+|[.,!?:;"'()]+)/);
+  return tokens.map((tok) => {
+    if (!tok || /^\s+$/.test(tok) || /^[.,!?:;"'()]+$/.test(tok)) {
+      return tok;
+    }
+    const cleanTok = tok.toLowerCase().replace(/[.,!?:;"'()]/g, "").trim();
+    const data = dict[cleanTok];
+    if (data) {
+      const defEsc = (data.def || "").replace(/"/g, "&quot;");
+      const pronEsc = (data.phonetic || "").replace(/"/g, "&quot;");
+      const noteEsc = (data.note || "").replace(/"/g, "&quot;");
+      return `<span class="hover-trans-word" data-word="${tok}" data-def="${defEsc}" data-phonetic="${pronEsc}" data-note="${noteEsc}" tabindex="0" role="button">${tok}</span>`;
+    }
+    return tok;
+  }).join("");
+}
+window.wrapInteractiveScaffoldWords = wrapInteractiveScaffoldWords;
+
+// Global Floating Tooltip Engine
+function initScaffoldTooltipEngine() {
+  const tooltip = document.getElementById("scaffoldTooltip");
+  if (!tooltip) return;
+
+  function showTooltip(target, e) {
+    const word = target.getAttribute("data-word") || target.textContent;
+    const phonetic = target.getAttribute("data-phonetic") || "";
+    const def = target.getAttribute("data-def") || "";
+    const note = target.getAttribute("data-note") || "";
+
+    if (!def && !phonetic) return;
+
+    tooltip.innerHTML = `
+      <div class="scaffold-tooltip-word">
+        <span>${word}</span>
+        ${phonetic ? `<span class="scaffold-tooltip-phonetic">${phonetic}</span>` : ""}
+      </div>
+      <div class="scaffold-tooltip-def">${def}</div>
+      ${note ? `<div class="scaffold-tooltip-note">💡 ${note}</div>` : ""}
+    `;
+
+    const rect = target.getBoundingClientRect();
+    const topPos = rect.top - 8;
+    const leftPos = rect.left + (rect.width / 2);
+
+    tooltip.style.top = `${Math.max(10, topPos)}px`;
+    tooltip.style.left = `${Math.min(window.innerWidth - 130, Math.max(130, leftPos))}px`;
+    tooltip.style.display = "block";
+    tooltip.style.opacity = "1";
+  }
+
+  function hideTooltip() {
+    tooltip.style.display = "none";
+    tooltip.style.opacity = "0";
+  }
+
+  document.addEventListener("mouseenter", (e) => {
+    const target = e.target.closest(".hover-trans-word");
+    if (target) showTooltip(target, e);
+  }, true);
+
+  document.addEventListener("mouseleave", (e) => {
+    const target = e.target.closest(".hover-trans-word");
+    if (target) hideTooltip();
+  }, true);
+
+  document.addEventListener("click", (e) => {
+    const target = e.target.closest(".hover-trans-word");
+    if (target) {
+      e.stopPropagation();
+      showTooltip(target, e);
+    } else if (!e.target.closest("#scaffoldTooltip")) {
+      hideTooltip();
+    }
+  });
+}
+
+// 1. Phonetic & Tone Helper Pill Bar Engine
+function togglePhoneticHelper(forceState) {
+  const bar = document.getElementById("vnPhoneticsGuideBar");
+  if (!bar) return;
+  const isCurrentlyOpen = (bar.style.display === "flex" || (bar.style.display !== "none" && bar.style.display !== ""));
+  const shouldOpen = (typeof forceState === "boolean") ? forceState : !isCurrentlyOpen;
+  bar.style.display = shouldOpen ? "flex" : "none";
+  if (shouldOpen) {
+    renderPhoneticChips(activeCharacterId || "ado", userState.targetLanguage || "vi");
+  }
+}
+window.togglePhoneticHelper = togglePhoneticHelper;
+
+function renderPhoneticChips(charId, targetLang = "vi") {
+  const container = document.getElementById("vnPhoneticChipsContainer");
+  const title = document.getElementById("vnPhoneticsBarTitle");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (targetLang === "ja") {
+    if (title) title.textContent = "Japanese Romaji & Pitch Guide 🇯🇵";
+    const jaChips = [
+      { text: "Senpai", note: "Senior / Upperclassman", sym: "★" },
+      { text: "Arigatou", note: "Thank you (Gratitude)", sym: "♡" },
+      { text: "Suki desu", note: "I like you (Romance)", sym: "♥" },
+      { text: "Issho ni", note: "Together with you", sym: "✦" },
+      { text: "Kawaii", note: "Cute / Endearing", sym: "✿" },
+      { text: "Ohanashi", note: "Conversation / Chat", sym: "♪" }
+    ];
+    jaChips.forEach((item) => {
+      const chip = document.createElement("div");
+      chip.className = "phonetic-chip-pill hover-trans-word";
+      chip.setAttribute("data-word", item.text);
+      chip.setAttribute("data-def", item.note);
+      chip.setAttribute("data-phonetic", "Japanese Romaji");
+      chip.innerHTML = `<span class="tone-symbol">${item.sym}</span> <span>${item.text}</span>`;
+      chip.onclick = () => insertFormulaIntoChat(item.text);
+      container.appendChild(chip);
+    });
+  } else if (targetLang === "en") {
+    if (title) title.textContent = "English Pronunciation & Accent Guide 🇬🇧";
+    const enChips = [
+      { text: "Senpai", note: "Upperclassman mentor", sym: "★" },
+      { text: "Hang out", note: "Spend time together", sym: "☕" },
+      { text: "Thoughtful", note: "Caring & considerate", sym: "♡" },
+      { text: "Study notes", note: "Prepared learning materials", sym: "📚" },
+      { text: "Miss you", note: "Affectionate longing", sym: "♥" }
+    ];
+    enChips.forEach((item) => {
+      const chip = document.createElement("div");
+      chip.className = "phonetic-chip-pill hover-trans-word";
+      chip.setAttribute("data-word", item.text);
+      chip.setAttribute("data-def", item.note);
+      chip.setAttribute("data-phonetic", "Stress marker");
+      chip.innerHTML = `<span class="tone-symbol">${item.sym}</span> <span>${item.text}</span>`;
+      chip.onclick = () => insertFormulaIntoChat(item.text);
+      container.appendChild(chip);
+    });
+  } else {
+    if (title) title.textContent = "Vietnamese 6 Tones & Vowel Guide 🇻🇳";
+    const viChips = [
+      { text: "Sắc (á) ↗", note: "High rising tone (e.g. nhớ, thích)", sym: "↗" },
+      { text: "Huyền (à) ↘", note: "Low falling tone (e.g. cà phê, chào)", sym: "↘" },
+      { text: "Hỏi (ả) ⤵", note: "Dipping hook tone (e.g. rảnh, cảm ơn)", sym: "⤵" },
+      { text: "Ngã (ã) ~", note: "High broken glottal tone (e.g. dễ thương)", sym: "~" },
+      { text: "Nặng (ạ) •", note: "Drop dot tone (e.g. đẹp, học, ạ)", sym: "•" },
+      { text: "Ngang (a) —", note: "Level neutral tone (e.g. em, anh, ngoan)", sym: "—" },
+      { text: "nhé / nha", note: "Gentle sweet ending particles", sym: "♡" },
+      { text: "ạ", note: "Polite reverence to seniors", sym: "★" }
+    ];
+    viChips.forEach((item) => {
+      const chip = document.createElement("div");
+      chip.className = "phonetic-chip-pill hover-trans-word";
+      chip.setAttribute("data-word", item.text);
+      chip.setAttribute("data-def", item.note);
+      chip.setAttribute("data-phonetic", "Vietnamese Tone");
+      chip.innerHTML = `<span class="tone-symbol">${item.sym}</span> <span>${item.text}</span>`;
+      container.appendChild(chip);
+    });
+  }
+}
+window.renderPhoneticChips = renderPhoneticChips;
+
+// 2. Grammar Hints & Sentence Formula Drawer Engine
+let currentGrammarCategory = "romance";
+
+function toggleGrammarDrawer(forceState) {
+  const drawer = document.getElementById("vnGrammarDrawer");
+  if (!drawer) return;
+  const isCurrentlyOpen = (drawer.style.display === "flex" || (drawer.style.display !== "none" && drawer.style.display !== ""));
+  const shouldOpen = (typeof forceState === "boolean") ? forceState : !isCurrentlyOpen;
+  drawer.style.display = shouldOpen ? "flex" : "none";
+  if (shouldOpen) {
+    renderGrammarDrawer(currentGrammarCategory);
+  }
+}
+window.toggleGrammarDrawer = toggleGrammarDrawer;
+
+function renderGrammarDrawer(category = "romance") {
+  currentGrammarCategory = category;
+  const body = document.getElementById("vnGrammarDrawerBody");
+  if (!body) return;
+
+  const targetLang = userState.targetLanguage || "vi";
+  const { olderUserTerm, olderUserCap } = getUserVietnameseAddressTerms();
+
+  body.innerHTML = `
+    <div class="grammar-cat-bar">
+      <button class="grammar-cat-btn ${category === 'romance' ? 'active' : ''}" onclick="renderGrammarDrawer('romance')">💖 Romance & Compliments</button>
+      <button class="grammar-cat-btn ${category === 'polite' ? 'active' : ''}" onclick="renderGrammarDrawer('polite')">🙏 Polite Gratitude</button>
+      <button class="grammar-cat-btn ${category === 'hangout' ? 'active' : ''}" onclick="renderGrammarDrawer('hangout')">☕ Dates & Hangouts</button>
+      <button class="grammar-cat-btn ${category === 'teasing' ? 'active' : ''}" onclick="renderGrammarDrawer('teasing')">😏 Playful Teasing</button>
+      <button class="grammar-cat-btn ${category === 'pronouns' ? 'active' : ''}" onclick="renderGrammarDrawer('pronouns')">👥 Pronoun Matrix</button>
+      <button class="grammar-cat-btn ${category === 'particles' ? 'active' : ''}" onclick="renderGrammarDrawer('particles')">💬 Emotion Particles</button>
+    </div>
+    <div id="grammarCardsList" style="display:flex; flex-direction:column; gap:10px; margin-top:8px;"></div>
+  `;
+
+  const list = document.getElementById("grammarCardsList");
+
+  if (category === "pronouns") {
+    list.innerHTML = `
+      <div class="grammar-formula-card">
+        <div class="grammar-formula-header">
+          <span class="grammar-formula-name">👥 Character Addressing Matrix</span>
+          <span class="grammar-formula-badge">Essential Culture</span>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted); line-height:1.4;">
+          Vietnamese pronouns dynamically reflect age hierarchy and chemistry:
+        </p>
+        <div class="pronoun-matrix-grid">
+          <div class="pronoun-matrix-col">
+            <span class="pronoun-col-title">Ado (Classmate)</span>
+            <span class="pronoun-chip-tag">tớ (I/me)</span>
+            <span class="pronoun-chip-tag">cậu (You)</span>
+            <span class="pronoun-chip-tag">Ado ơi</span>
+          </div>
+          <div class="pronoun-matrix-col">
+            <span class="pronoun-col-title">Kou (Junior)</span>
+            <span class="pronoun-chip-tag">${olderUserTerm} (I/me)</span>
+            <span class="pronoun-chip-tag">em / Kou (You)</span>
+            <span class="pronoun-chip-tag">senpai</span>
+          </div>
+          <div class="pronoun-matrix-col">
+            <span class="pronoun-col-title">Ren (Senior)</span>
+            <span class="pronoun-chip-tag">em (I/me)</span>
+            <span class="pronoun-chip-tag">anh / Ren (You)</span>
+            <span class="pronoun-chip-tag">nhóc (teasing)</span>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  if (category === "particles") {
+    list.innerHTML = `
+      <div class="grammar-formula-card">
+        <div class="grammar-formula-header">
+          <span class="grammar-formula-name">✨ Sentence-Ending Tone Modifiers</span>
+          <span class="grammar-formula-badge">Emotional Scaffolding</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px; font-size:12px;">
+          <div style="background:#f8fafc; padding:8px 10px; border-radius:8px;">
+            <strong>nhé / nha:</strong> Softens statements into sweet invitations. <em>"Đi cà phê nhé?" (Let's grab coffee, okay?)</em>
+          </div>
+          <div style="background:#f8fafc; padding:8px 10px; border-radius:8px;">
+            <strong>ạ:</strong> Expresses polite reverence to upperclassmen like Ren. <em>"Em chào anh ạ!" (Hello Senior!)</em>
+          </div>
+          <div style="background:#f8fafc; padding:8px 10px; border-radius:8px;">
+            <strong>á / hả:</strong> Adds cute curiosity or playful surprise. <em>"Thật á? (Really?)"</em>
+          </div>
+          <div style="background:#f8fafc; padding:8px 10px; border-radius:8px;">
+            <strong>đấy nhé:</strong> Gentle reminder / tsundere confirmation. <em>"Học chăm chỉ đấy nhé!"</em>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // General Category Formula Cards
+  let formulas = [];
+  if (category === "romance") {
+    formulas = [
+      {
+        name: "Sweet Compliment Formula",
+        badge: "Romance + Affection",
+        pattern: "[Pronoun] + [chu đáo / dễ thương / đẹp trai] + quá à!",
+        example: "Ado chu đáo quá à! / Anh Ren đẹp trai quá à!",
+        trans: "You are so thoughtful / cute / handsome!",
+        template: "chu đáo quá à!"
+      },
+      {
+        name: "Affectionate Longing (Miss You)",
+        badge: "Heart Flutter",
+        pattern: "[Pronoun] + cũng rất nhớ + [Pronoun] + nè!",
+        example: `${olderUserCap} cũng rất nhớ Kou nè!`,
+        trans: "I miss you so much too!",
+        template: "cũng rất nhớ nè!"
+      },
+      {
+        name: "Protective Caring (Thương)",
+        badge: "Deep Bond",
+        pattern: "[Pronoun] + thương + [Pronoun] + nhiều lắm!",
+        example: "Em thương anh nhiều lắm!",
+        trans: "I cherish and care for you deeply!",
+        template: "thương nhiều lắm!"
+      }
+    ];
+  } else if (category === "polite") {
+    formulas = [
+      {
+        name: "Heartfelt Gratitude with Particle",
+        badge: "Polite Respect",
+        pattern: "Cảm ơn + [Pronoun] + đã giúp đỡ + [Pronoun] + nhé!",
+        example: "Cảm ơn Ado đã giúp đỡ tớ nhé!",
+        trans: "Thank you for helping me!",
+        template: "Cảm ơn đã giúp đỡ nhé!"
+      },
+      {
+        name: "Promise to Strive / Study Hard",
+        badge: "Diligence",
+        pattern: "[Pronoun] + sẽ cố gắng học hành chăm chỉ!",
+        example: "Tớ sẽ cố gắng học hành chăm chỉ!",
+        trans: "I will study hard and do my best!",
+        template: "sẽ cố gắng học hành chăm chỉ!"
+      }
+    ];
+  } else if (category === "hangout") {
+    formulas = [
+      {
+        name: "Coffee & Hangout Invitation",
+        badge: "Date Request",
+        pattern: "Hôm nào + [Pronoun] + đi uống cà phê với + [Pronoun] + nhé?",
+        example: `Hôm nào Kou đi uống cà phê với ${olderUserTerm} nhé?`,
+        trans: "Let's go drink coffee together sometime, okay?",
+        template: "Hôm nào đi uống cà phê với nhau nhé?"
+      },
+      {
+        name: "Checking Availability (Are you free?)",
+        badge: "Icebreaker",
+        pattern: "[Pronoun] + ơi, lúc này + [Pronoun] + có rảnh không?",
+        example: "Ado ơi, lúc này cậu có rảnh không?",
+        trans: "Hey, are you free right now?",
+        template: "ơi, lúc này có rảnh không?"
+      }
+    ];
+  } else if (category === "teasing") {
+    formulas = [
+      {
+        name: "Playful Tsundere Pushback",
+        badge: "Playful Banter",
+        pattern: "[Pronoun] + đừng có mà + trêu chọc + [Pronoun] + nữa mà!",
+        example: "Anh Ren đừng có mà trêu chọc em nữa mà!",
+        trans: "Stop teasing me already!",
+        template: "đừng có mà trêu chọc nữa mà!"
+      },
+      {
+        name: "Proud Reassurance",
+        badge: "Playful",
+        pattern: "[Pronoun] + không phải là nhóc con đâu nhé!",
+        example: "Em không phải là nhóc con đâu nhé!",
+        trans: "I'm not a little kid, you know!",
+        template: "không phải là nhóc con đâu nhé!"
+      }
+    ];
+  }
+
+  formulas.forEach((item) => {
+    const card = document.createElement("div");
+    card.className = "grammar-formula-card";
+    card.innerHTML = `
+      <div class="grammar-formula-header">
+        <span class="grammar-formula-name">${item.name}</span>
+        <span class="grammar-formula-badge">${item.badge}</span>
+      </div>
+      <div class="grammar-pattern-box">
+        <code>${item.pattern}</code>
+        <button class="grammar-formula-insert-btn" type="button">
+          <span class="material-symbols-outlined" style="font-size:13px;">add_circle</span> Insert
+        </button>
+      </div>
+      <div class="grammar-example-item">
+        <strong>Ex:</strong> <em>${item.example}</em>
+        <div class="grammar-example-trans">(${item.trans})</div>
+      </div>
+    `;
+
+    card.querySelector(".grammar-formula-insert-btn").onclick = () => {
+      insertFormulaIntoChat(item.example);
+    };
+
+    list.appendChild(card);
+  });
+}
+window.renderGrammarDrawer = renderGrammarDrawer;
+
+function insertFormulaIntoChat(textToInsert) {
+  if (!textToInsert) return;
+
+  // Switch to free text or insert into active box
+  const freeBtn = document.getElementById("modeFreeTextBtn");
+  if (freeBtn) freeBtn.click();
+
+  const freeInput = document.getElementById("freeChatInput");
+  if (freeInput) {
+    freeInput.value = textToInsert;
+    freeInput.focus();
+    freeInput.classList.add("input-highlight-glow");
+    setTimeout(() => freeInput.classList.remove("input-highlight-glow"), 1200);
+  }
+
+  toggleGrammarDrawer(false);
+  triggerHeartBurst("💡 Inserted!");
+}
+window.insertFormulaIntoChat = insertFormulaIntoChat;
+
+// Initialize Scaffold Tooltip Engine on startup
+initScaffoldTooltipEngine();
+
 
 // Save LocalStorage State
 function saveLocalState() {
@@ -4262,6 +5823,8 @@ function saveLocalState() {
   localStorage.setItem("otome_input_mode", JSON.stringify(userState.selectedInputMode || {}));
   localStorage.setItem("otome_ui_lang", userState.uiLang || "en");
   localStorage.setItem("otome_user_profile", JSON.stringify(userState.userProfile || { name: "MC", pronouns: "she/her", age: "20" }));
+  localStorage.setItem("otome_story_progress", JSON.stringify(userState.storyProgress || {}));
+  localStorage.setItem("otome_story_char", userState.selectedStoryChar || "ado");
 }
 
 // Synchronize User Data to Convex Cloud (`/sync-user`)
@@ -4528,7 +6091,7 @@ async function sendUserKlipyGif(gifUrl, gifTitle) {
 
     lastLiCheckupTime[charId] = Date.now();
     lastMessageWasLi[charId] = true;
-    userState.affection[charId] = Math.min(100, (userState.affection[charId] || 0) + 5);
+    increaseAffection(charId, 1.0);
 
     renderChatHistory();
     saveLocalState();

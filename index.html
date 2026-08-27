@@ -135,7 +135,20 @@
         </div>
       </section>
 
-      <!-- VIEW 2: LANGUAGE GUIDEBOOK -->
+      <!-- VIEW 2: STORY DATE SCENARIOS -->
+      <section class="view-section" id="view-story">
+        <div class="section-header">
+          <h2 class="section-title">Story: Date Scenarios</h2>
+          <p class="section-subtitle">Take part in immersive date challenges. Get 10/15 correct to deepen your romance!</p>
+        </div>
+
+        <!-- Story Date Scenarios Container (Rendered by app.js) -->
+        <div id="storyContainer">
+          <!-- Dynamic Content: Scenarios List or Active Gameplay Stage or Results -->
+        </div>
+      </section>
+
+      <!-- VIEW 3: LANGUAGE GUIDEBOOK -->
       <section class="view-section" id="view-progress">
         <div class="section-header">
           <h2 class="section-title">Language Guidebook</h2>
@@ -320,6 +333,10 @@
               <span>💬 Chats Subdomain / Route</span>
               <code style="font-size:11px; opacity:0.8;">/chats</code>
             </button>
+            <button class="primary-btn" type="button" onclick="navigateRoute({view:'story'})" style="padding:8px 14px; font-size:12px; background:rgba(217,0,87,0.08); color:var(--primary-pink); border:1px solid rgba(217,0,87,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
+              <span>📖 Story Date Scenarios Subdomain / Route</span>
+              <code style="font-size:11px; opacity:0.8;">/story</code>
+            </button>
             <button class="primary-btn" type="button" onclick="navigateRoute({view:'guidebook'})" style="padding:8px 14px; font-size:12px; background:rgba(16,185,129,0.08); color:var(--accent-emerald); border:1px solid rgba(16,185,129,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
               <span>📖 Guidebook Subdomain / Route</span>
               <code style="font-size:11px; opacity:0.8;">/guidebook</code>
@@ -392,6 +409,12 @@
             <button id="vnLangSwitchBtn" type="button" class="vn-lang-switch-btn" onclick="cycleChatTargetLang()" title="Switch Target Language">
               <span id="vnLangFlagIcon">🇻🇳</span> <span id="vnLangCodeText">VI</span>
             </button>
+            <button id="vnPhoneticToggleBtn" type="button" class="vn-romaji-toggle-btn" onclick="togglePhoneticHelper()" title="Toggle Phonetics & Tones Helper">
+              <span class="material-symbols-outlined" style="font-size:17px;">record_voice_over</span>
+            </button>
+            <button id="vnGrammarDrawerBtn" type="button" class="vn-romaji-toggle-btn" onclick="toggleGrammarDrawer()" title="Open Grammar Hints & Formulas">
+              <span class="material-symbols-outlined" style="font-size:17px;">school</span>
+            </button>
             <button id="romajiToggleBtn" type="button" class="vn-romaji-toggle-btn" onclick="toggleRomajiSetting()" title="Toggle Romaji">
               <span class="material-symbols-outlined" style="font-size:17px;">translate</span>
             </button>
@@ -441,6 +464,7 @@
               <div class="vn-stage-speech-bubble" id="companionSpeechBubble" style="display:flex;">
                 <div class="vn-bubble-speaker" id="companionSpeakerTag">
                   <span id="companionSpeakerName">Ado</span>
+                  <span id="companionEmotionBadge" class="vn-emotion-badge emotion-normal" style="display:none;">💬 Normal</span>
                 </div>
                 <div class="vn-bubble-content">
                   <span id="companionSpeechText">Này, cậu lại đi trễ đấy à? Tớ đã chuẩn bị sẵn tài liệu học tập cho cậu rồi...</span>
@@ -448,6 +472,17 @@
                   <div id="companionSpeechGifWrapper" class="vn-bubble-gif-wrapper" style="display:none;">
                     <img id="companionSpeechGif" class="vn-bubble-gif-img" src="" alt="GIF" />
                   </div>
+                </div>
+              </div>
+
+              <!-- Interactive Phonetic & Tone Helper Pill Bar (Collapsible / Toggleable) -->
+              <div class="vn-phonetic-bar" id="vnPhoneticsGuideBar" style="display:none;">
+                <div class="vn-phonetic-header">
+                  <span class="material-symbols-outlined" style="font-size:15px; color:var(--accent-violet);">hearing</span>
+                  <span id="vnPhoneticsBarTitle" style="font-weight:700; font-size:12px;">Phonetic & Tone Guide</span>
+                </div>
+                <div class="vn-phonetic-chips" id="vnPhoneticChipsContainer">
+                  <!-- Tone and pronunciation pills injected by JS -->
                 </div>
               </div>
 
@@ -510,6 +545,9 @@
                 <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" title="Free Text">
                   <span class="material-symbols-outlined" style="font-size:16px;">chat</span>
                 </button>
+                <button id="openGrammarHintsBtn" class="mode-tab-btn grammar-hint-toggle-btn" type="button" onclick="toggleGrammarDrawer(true)" title="Grammar & Formula Drawer">
+                  <span class="material-symbols-outlined" style="font-size:16px; color:#d97706;">school</span>
+                </button>
                 <button id="openGifModalBtn" class="mode-tab-btn gif-icon-btn" type="button" onclick="openKlipyGifModal()" title="Send GIF">
                   <span class="material-symbols-outlined" style="font-size:16px;">gif_box</span>
                 </button>
@@ -520,7 +558,7 @@
 
               <!-- Feature 0: Starter Choice (3 Premade Options for Complete Beginners) -->
               <div class="starter-choice-container" id="starterChoiceContainer">
-                <div class="prompt-guide" id="starterChoicePromptGuide">Choose your response:</div>
+                <div class="prompt-guide" id="starterChoicePromptGuide">Choose your response (hover/tap for translation):</div>
                 <div class="starter-options-list" id="starterOptionsList">
                   <!-- 3 premade options rendered dynamically by app.js -->
                 </div>
@@ -528,7 +566,7 @@
 
               <!-- Feature 1: Contextual Word Bank / Sentence Builder -->
               <div class="word-bank-container" id="wordBankContainer" style="display:none;">
-                <div class="prompt-guide" id="wordBankPromptGuide">Build your reply in target language:</div>
+                <div class="prompt-guide" id="wordBankPromptGuide">Build your reply in target language (hover chips for meanings):</div>
                 <div class="constructed-sentence-box" id="constructedSentenceBox">
                   <span style="color:var(--text-muted); font-size:12px;" id="constructedPlaceholder">Click word chips below to build...</span>
                 </div>
@@ -549,6 +587,23 @@
           </div>
         </div>
 
+        <!-- GRAMMAR & SENTENCE FORMULA DRAWER OVERLAY -->
+        <div class="vn-grammar-drawer" id="vnGrammarDrawer" style="display:none;">
+          <div class="vn-grammar-drawer-header">
+            <div class="vn-grammar-drawer-title">
+              <span class="material-symbols-outlined" style="font-size:20px; color:#d97706;">school</span>
+              <span>Scaffolded Grammar & Formula Hints</span>
+            </div>
+            <button id="closeGrammarDrawerBtn" type="button" class="vn-close-backlog-btn" onclick="toggleGrammarDrawer(false)" title="Close">
+              <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+            </button>
+          </div>
+          
+          <div class="vn-grammar-drawer-body" id="vnGrammarDrawerBody">
+            <!-- Category Pills & Sentence Templates injected by JS -->
+          </div>
+        </div>
+
         <!-- FULL BACKLOG / TRANSCRIPT DRAWER OVERLAY -->
         <div class="vn-backlog-drawer" id="vnBacklogDrawer" style="display:none;">
           <div class="vn-backlog-header">
@@ -566,6 +621,9 @@
         </div>
       </div>
 
+      <!-- GLOBAL SCAFFOLD HOVER TRANSLATION TOOLTIP -->
+      <div id="scaffoldTooltip" class="scaffold-tooltip" style="display:none;"></div>
+
     </main>
 
     <!-- Bottom Tab Navigation Bar -->
@@ -573,6 +631,10 @@
       <button class="tab-btn active" data-tab="chats" onclick="switchTab('chats')">
         <span class="tab-icon material-symbols-outlined">forum</span>
         <span>Chats</span>
+      </button>
+      <button class="tab-btn" data-tab="story" onclick="switchTab('story')">
+        <span class="tab-icon material-symbols-outlined">auto_stories</span>
+        <span>Story</span>
       </button>
       <button class="tab-btn" data-tab="progress" onclick="switchTab('progress')">
         <span class="tab-icon material-symbols-outlined">menu_book</span>

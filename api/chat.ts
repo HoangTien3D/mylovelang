@@ -117,6 +117,13 @@ Instructions:
 1. Ultra-Simple Beginner Language (A1 Level): Keep responses very short, simple, and natural (strictly 3 to 8 words max, e.g., "Chào ${userOlderHonorific} nha!", "Đi chơi thôi nào!", "Cảm ơn ${userOlderHonorific}!"). Do NOT use complex grammar, subordinate clauses, or long sentences!
 2. Strict No-Emoji Rule: Do NOT include emojis in character dialogues, starter options, or chips!
 3. Ensure Ado sounds tsundere/diligent, Kou sounds cute/clingy, and Ren sounds flirty/assertive.
+4. EMOTION CLASSIFICATION: For each character speaking, assign one exact 'emotion' from ["fear", "happy", "angry", "pout", "sad", "normal"]:
+   - "happy": delighted, smiling, excited, praises, playful warmth
+   - "pout": tsundere flustered, denying feelings, sulking, blushy embarrassment
+   - "angry": strict scolding, lecture mode, feisty annoyance
+   - "fear": startled, caught off-guard, stammering shock, puppy-eyed panic
+   - "sad": downcast, heartbroken, melancholy, sorrowful, dejected, missing user
+   - "normal": calm, standard speaking, composed
 
 EVALUATION COLOR RANGE & INSIGHTFUL FEEDBACK RULES:
 Analyze "${userText}" and classify its language quality into 'evalColor' ("red", "yellow", or "green"):
@@ -157,6 +164,7 @@ Return ONLY valid JSON matching this schema:
       "speaker": "ado",
       "speakerName": "Ado",
       "text": "Short 3-6 word response from Ado in ${targetLangName} without emojis",
+      "emotion": "pout",
       "translation": "Full English translation",
       "tip": "Short language tip from Ado"
     },
@@ -164,6 +172,7 @@ Return ONLY valid JSON matching this schema:
       "speaker": "kou",
       "speakerName": "Kou",
       "text": "Short 3-6 word response from Kou in ${targetLangName} without emojis",
+      "emotion": "happy",
       "translation": "Full English translation",
       "tip": "Short language tip from Kou"
     }
@@ -226,9 +235,16 @@ ${trimmedHistory}
 Instructions:
 1. Ultra-Simple Beginner Language (A1 Level): Keep your in-character response extremely short, simple, and elementary (strictly 3 to 8 words maximum, e.g., "Chào ${userOlderHonorific} nha!", "Kou nhớ ${userOlderHonorific} lắm!", "Đi chơi thôi nào!", "Ngoan quá!", "Hừm... Tốt lắm.", "Chào nhóc nhé."). Ban long sentences, complicated vocabulary, or dense grammar!
 2. Strict No-Emoji Rule: Do NOT include emojis in character responses or dialogue!
-3. If ${userName} is saying goodbye or leaving, send a brief sign-off text in ${targetLangName} matching your personality.
-4. If target language is Japanese (${targetLangCode} === 'ja'), provide Romaji in 'romaji'. Otherwise set 'romaji' to null.
-5. Provide full English translation in 'translation'.
+3. Character Emotion: Set 'emotion' to one of ["fear", "happy", "angry", "pout", "sad", "normal"] matching your reaction and expression.
+   - "happy": cheerful, praised, excited, warm affection
+   - "pout": tsundere blush, shy stammer, denying feelings, cute sulk
+   - "angry": strict scolding, lecture mode, feisty annoyance
+   - "fear": startled, caught off-guard, blushing panic, puppy-eyed shock
+   - "sad": downcast, heartbroken, melancholy, sorrowful, dejected, missing user
+   - "normal": composed, normal talking, steady conversation
+4. If ${userName} is saying goodbye or leaving, send a brief sign-off text in ${targetLangName} matching your personality.
+5. If target language is Japanese (${targetLangCode} === 'ja'), provide Romaji in 'romaji'. Otherwise set 'romaji' to null.
+6. Provide full English translation in 'translation'.
 
 EVALUATION COLOR RANGE & INSIGHTFUL FEEDBACK RULES:
 Analyze "${userText}" and classify its language quality into 'evalColor' ("red", "yellow", or "green"):
@@ -257,13 +273,14 @@ Analyze "${userText}" and classify its language quality into 'evalColor' ("red",
    - Set 'tip': An insightful breakdown praising their grammar/vocab selection, explaining WHY it sounds natural, authentic, or contextually fitting.
    - Set 'encouragement': "Excellent grammar and natural vocabulary usage!"
 
-6. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation), e.g., ["Thank", "you", "so", "much", "I", "am", "happy", "to", "see", "you", "too"]. Do NOT suggest full sentences or multi-word phrases!
-7. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options without emojis in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào Ado!", "translation": "Hello Ado!"}, {"text": "Đi chơi nhé!", "translation": "Let's hang out!"}, {"text": "Cảm ơn em!", "translation": "Thank you!"}].
-8. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for popular pop culture or meme GIFs matching your emotion (e.g., "shrek happy", "ishowspeed hype", "funny cat reaction", "popular meme reaction", "steve harvey shock"). Only include this ONCE IN A WHILE (occasionally) when a GIF reaction is truly fitting!
+7. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation), e.g., ["Thank", "you", "so", "much", "I", "am", "happy", "to", "see", "you", "too"]. Do NOT suggest full sentences or multi-word phrases!
+8. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options without emojis in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào Ado!", "translation": "Hello Ado!"}, {"text": "Đi chơi nhé!", "translation": "Let's hang out!"}, {"text": "Cảm ơn em!", "translation": "Thank you!"}].
+9. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for popular pop culture or meme GIFs matching your emotion (e.g., "shrek happy", "ishowspeed hype", "funny cat reaction", "popular meme reaction", "steve harvey shock"). Only include this ONCE IN A WHILE (occasionally) when a GIF reaction is truly fitting!
 
 Return ONLY valid JSON matching this schema:
 {
   "characterResponse": "short 3-8 word response without emojis in ${targetLangName}",
+  "emotion": "happy",
   "romaji": "romaji text if Japanese, else null",
   "translation": "English translation",
   "evalColor": "green",
@@ -350,6 +367,7 @@ Return ONLY valid JSON matching this schema:
               speaker: "ado",
               speakerName: "Ado",
               text: "Ado nhớ bạn lắm nè!",
+              emotion: "pout",
               translation: "Ado: I miss you so much!",
               tip: "Ado is showing his cute junior affection."
             },
@@ -357,6 +375,7 @@ Return ONLY valid JSON matching this schema:
               speaker: "kou",
               speakerName: "Kou",
               text: "Hừm... Học bài xong chưa?",
+              emotion: "happy",
               translation: "Kou: Hmph... Are you done studying?",
               tip: "Kou is showing his tsundere caring side."
             }
@@ -377,6 +396,7 @@ Return ONLY valid JSON matching this schema:
       } else if (characterId === "ado") {
         parsedData = {
           characterResponse: "Hừm... Cậu làm tốt lắm.",
+          emotion: "pout",
           romaji: null,
           translation: "Hmph... You did well.",
           evalColor: fallbackColor,
@@ -395,6 +415,7 @@ Return ONLY valid JSON matching this schema:
       } else if (characterId === "kou") {
         parsedData = {
           characterResponse: `Chào ${userOlderHonorific} nha! Đi chơi với em thôi!`,
+          emotion: "happy",
           romaji: null,
           translation: `Hello ${userOlderHonorificCap}! Let's go play together!`,
           evalColor: fallbackColor,
@@ -413,6 +434,7 @@ Return ONLY valid JSON matching this schema:
       } else if (characterId === "ren") {
         parsedData = {
           characterResponse: "Chào nhóc nhé. Ngoan lắm!",
+          emotion: "happy",
           romaji: null,
           translation: "Hello kid. Good job!",
           evalColor: fallbackColor,
@@ -431,6 +453,7 @@ Return ONLY valid JSON matching this schema:
       } else {
         parsedData = {
           characterResponse: "Hello! So happy to talk!",
+          emotion: "happy",
           romaji: null,
           translation: "Hello! So happy to talk!",
           evalColor: fallbackColor,
