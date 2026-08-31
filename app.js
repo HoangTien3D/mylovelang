@@ -309,7 +309,9 @@ const UI_STRINGS = {
     resetDesc: "Wipe all chat histories, reset affection levels back to initial nonchalant states, and restart story choices for a fresh experience.",
     resetBtn: "Reset All Story Progress & Replay",
     resetSuccess: "All story progress and chat histories have been reset!",
+    tabLanding: "Landing",
     tabChats: "Chats",
+    tabStory: "Story",
     tabLIs: "LIs",
     tabGuidebook: "Guidebook",
     tabSettings: "Settings",
@@ -345,7 +347,9 @@ const UI_STRINGS = {
     resetDesc: "Xóa toàn bộ lịch sử trò chuyện, đưa độ thiện cảm về ban đầu để trải nghiệm lại từ đầu.",
     resetBtn: "Đặt Lại Tiến Trình & Chơi Lại",
     resetSuccess: "Đã đặt lại toàn bộ tiến trình và lịch sử chat!",
+    tabLanding: "Trang Đầu",
     tabChats: "Trò chuyện",
+    tabStory: "Cốt Truyện",
     tabLIs: "Nhân vật",
     tabGuidebook: "Cẩm Nang",
     tabSettings: "Cài đặt",
@@ -381,7 +385,9 @@ const UI_STRINGS = {
     resetDesc: "すべてのチャット履歴を消去し、好感度を初期状態に戻して最初からプレイします。",
     resetBtn: "すべてリセットして最初から",
     resetSuccess: "ストーリーとチャット履歴がリセットされました！",
+    tabLanding: "タイトル",
     tabChats: "チャット",
+    tabStory: "ストーリー",
     tabLIs: "キャラ",
     tabGuidebook: "ガイド",
     tabSettings: "設定",
@@ -743,6 +749,41 @@ let userState = {
   storyProgress: JSON.parse(localStorage.getItem("otome_story_progress")) || { ado: {}, kou: {}, ren: {} },
   selectedStoryChar: localStorage.getItem("otome_story_char") || "ado",
 };
+
+// OpenKoto Guidebook State
+let currentGuidebookSubMode = "openkoto"; // 'openkoto' | 'library'
+let openkotoState = {
+  activeSource: "upload", // 'upload' | 'text' | 'chat' | 'voice' | 'camera'
+  selectedChatChar: "ado",
+  selectedChatMsgs: [],
+  mediaFile: null,
+  mediaBase64: null,
+  mediaMimeType: null,
+  mediaType: null, // 'image' | 'audio' | 'video' | 'text'
+  fileName: "",
+  pastedText: "",
+  targetLang: "vi",
+  customFocus: "Romance, Flirting & Everyday Life",
+  isLoading: false,
+  activeLesson: null,
+  activeQuizMode: "mc", // 'mc' | 'scramble' | 'cloze' | 'roleplay'
+  activeQuizState: {
+    scramblePicked: [],
+    scrambleRemaining: [],
+    answered: {},
+    roleplayAnswered: null,
+    score: 0
+  },
+  bilingualVisible: true,
+  phoneticsVisible: true,
+  isRecording: false,
+  mediaRecorder: null,
+  audioChunks: [],
+  savedLessons: JSON.parse(localStorage.getItem("openkoto_saved_lessons") || "[]"),
+  savedFlashcards: JSON.parse(localStorage.getItem("openkoto_saved_flashcards") || "[]")
+};
+window.openkotoState = openkotoState;
+window.currentGuidebookSubMode = currentGuidebookSubMode;
 
 // Map legacy character keys to new character keys in userState
 ["currentTiers", "affection", "chatStep", "unreadMessages", "isPouting", "unrepliedCount", "saidGoodbye", "unlockedModes", "modeProgress"].forEach(prop => {
@@ -1201,7 +1242,9 @@ function setAppTargetLanguage(lang) {
 
   updateTargetLangUI();
 
-  currentGuidebookLang = lang;
+  if (typeof openkotoState !== "undefined") {
+    openkotoState.targetLang = lang;
+  }
 
   renderChatList();
   renderCharactersList();
@@ -1414,10 +1457,12 @@ function applyUiLanguage() {
     const tabName = btn.dataset.tab;
     const labelSpan = btn.querySelector("span:not(.material-symbols-outlined)");
     if (labelSpan) {
-      if (tabName === "chats") labelSpan.textContent = s.tabChats;
-      if (tabName === "characters") labelSpan.textContent = s.tabLIs;
-      if (tabName === "progress" || tabName === "roadmap" || tabName === "guidebook") labelSpan.textContent = s.tabGuidebook;
-      if (tabName === "settings") labelSpan.textContent = s.tabSettings;
+      if (tabName === "landing") labelSpan.textContent = s.tabLanding || "Landing";
+      if (tabName === "chats") labelSpan.textContent = s.tabChats || "Chats";
+      if (tabName === "story") labelSpan.textContent = s.tabStory || "Story";
+      if (tabName === "characters") labelSpan.textContent = s.tabLIs || "LIs";
+      if (tabName === "progress" || tabName === "roadmap" || tabName === "guidebook") labelSpan.textContent = s.tabGuidebook || "Guidebook";
+      if (tabName === "settings") labelSpan.textContent = s.tabSettings || "Settings";
     }
   });
 
@@ -1890,6 +1935,8 @@ function closeActiveChat(updateUrl = true) {
     chatWin.classList.remove("active");
     chatWin.style.display = "none";
   }
+  const navDock = document.querySelector(".bottom-nav-dock");
+  if (navDock) navDock.classList.remove("hidden-in-chat");
   const tabBar = document.querySelector(".tab-bar");
   if (tabBar) tabBar.classList.remove("hidden-in-chat");
   
@@ -2098,11 +2145,18 @@ window.interactWithFloatingCompanion = interactWithFloatingCompanion;
 
 // Switch Bottom Tabs
 function switchTab(tabName, updateUrl = true) {
+  if (tabName === "landing") {
+    returnToLandingPage(updateUrl);
+    return;
+  }
+
   const chatWin = document.getElementById("chatWindow");
   if (chatWin) {
     chatWin.classList.remove("active");
     chatWin.style.display = "none";
   }
+  const navDock = document.querySelector(".bottom-nav-dock");
+  if (navDock) navDock.classList.remove("hidden-in-chat");
   const tabBar = document.querySelector(".tab-bar");
   if (tabBar) tabBar.classList.remove("hidden-in-chat");
   activeCharacterId = null;
@@ -2326,524 +2380,1419 @@ function renderCharactersList() {
   });
 }
 
-// Guidebook State (Default to Vietnamese guide)
-let currentGuidebookLang = "vi";
+// ============================================================================
+// OPENKOTO AI MEDIA LEARNING LAB ENGINE
+// Inspired by hikariming/openkoto
+// ============================================================================
 
-function setGuidebookLang(lang) {
-  currentGuidebookLang = lang;
+function setOpenkotoTargetLang(lang) {
+  openkotoState.targetLang = lang;
   renderGuidebook();
 }
-window.setGuidebookLang = setGuidebookLang;
+window.setOpenkotoTargetLang = setOpenkotoTargetLang;
 
-// Render Language Guidebook
+function setOpenkotoCustomFocus(focus) {
+  openkotoState.customFocus = focus;
+}
+window.setOpenkotoCustomFocus = setOpenkotoCustomFocus;
+
+function setGuidebookSubMode(mode) {
+  currentGuidebookSubMode = mode;
+  window.currentGuidebookSubMode = mode;
+  renderGuidebook();
+}
+window.setGuidebookSubMode = setGuidebookSubMode;
+
+function setOpenkotoSource(source) {
+  openkotoState.activeSource = source;
+  renderGuidebook();
+}
+window.setOpenkotoSource = setOpenkotoSource;
+
+function toggleOpenkotoBilingual() {
+  openkotoState.bilingualVisible = !openkotoState.bilingualVisible;
+  renderGuidebook();
+}
+window.toggleOpenkotoBilingual = toggleOpenkotoBilingual;
+
+function toggleOpenkotoPhonetics() {
+  openkotoState.phoneticsVisible = !openkotoState.phoneticsVisible;
+  renderGuidebook();
+}
+window.toggleOpenkotoPhonetics = toggleOpenkotoPhonetics;
+
+function setOpenkotoQuizMode(mode) {
+  openkotoState.activeQuizMode = mode;
+  // Initialize scramble state if needed
+  if (mode === "scramble" && openkotoState.activeLesson && openkotoState.activeLesson.quizzes) {
+    const scrambleQuiz = openkotoState.activeLesson.quizzes.find((q) => q.type === "sentence_scramble");
+    if (scrambleQuiz) {
+      openkotoState.activeQuizState.scramblePicked = [];
+      openkotoState.activeQuizState.scrambleRemaining = [...(scrambleQuiz.scrambledWords || [])];
+    }
+  }
+  renderGuidebook();
+}
+window.setOpenkotoQuizMode = setOpenkotoQuizMode;
+
+// Speech Synthesis Helper
+function speakOpenkotoPhrase(text, lang = "vi") {
+  if (!("speechSynthesis" in window)) {
+    console.warn("Speech synthesis not supported");
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  const langMap = {
+    vi: "vi-VN",
+    en: "en-US",
+    ja: "ja-JP",
+    ko: "ko-KR",
+    zh: "zh-CN"
+  };
+  utterance.lang = langMap[lang] || "vi-VN";
+  utterance.rate = 0.9;
+  window.speechSynthesis.speak(utterance);
+}
+window.speakOpenkotoPhrase = speakOpenkotoPhrase;
+
+// Preset Media Samples
+const OPENKOTO_PRESETS = {
+  cafe_date: {
+    title: "Cafe Date Dialogue (Hẹn Hò Quán Cà Phê)",
+    type: "text",
+    lang: "vi",
+    focus: "Romance & Everyday Dating",
+    text: "Hôm nay được đi cà phê với em vui thật đấy. Lần sau chúng mình lại cùng đi uống trà sữa nữa nhé! Anh muốn được ở bên em nhiều hơn."
+  },
+  anime_romance: {
+    title: "Anime Confession & Banter (アニメの告白)",
+    type: "text",
+    lang: "ja",
+    focus: "Anime Dialogue & Sweet Banter",
+    text: "今日は来てくれてありがとう。君と一緒に過ごす時間が一番好きだよ。また明日も会えるかな？ずっと隣にいてほしいな。"
+  },
+  kpop_lyrics: {
+    title: "Romantic Ballad Lyrics (달콤한 발라드)",
+    type: "text",
+    lang: "ko",
+    focus: "Song Lyrics & Affection",
+    text: "오늘 너를 만나서 정말 행복했어. 내일도 우리 다시 만날 수 있을까? 언제나 네 곁에 있고 싶어. 사랑해."
+  },
+  tea_poetry: {
+    title: "Savoring Tea & Poetry (品茶时光)",
+    type: "text",
+    lang: "zh",
+    focus: "Tea Culture & Gentle Whispers",
+    text: "今天和你一起喝茶很开心。希望明天我们还能再见。有你陪伴的时光最温柔。"
+  }
+};
+
+function applyOpenkotoPreset(presetKey) {
+  const preset = OPENKOTO_PRESETS[presetKey];
+  if (!preset) return;
+  openkotoState.activeSource = "text";
+  openkotoState.pastedText = preset.text;
+  openkotoState.targetLang = preset.lang;
+  openkotoState.customFocus = preset.focus;
+  openkotoState.mediaFile = null;
+  openkotoState.mediaBase64 = null;
+  openkotoState.mediaMimeType = null;
+  openkotoState.mediaType = "text";
+  openkotoState.fileName = preset.title;
+  renderGuidebook();
+}
+window.applyOpenkotoPreset = applyOpenkotoPreset;
+
+// Chat Importer Helpers for OpenKoto AI Media Lab
+function setOpenkotoChatChar(charId) {
+  openkotoState.selectedChatChar = charId;
+  openkotoState.selectedChatMsgs = [];
+  renderGuidebook();
+}
+window.setOpenkotoChatChar = setOpenkotoChatChar;
+
+function toggleOpenkotoChatMsgSelection(msgIndex) {
+  const idx = parseInt(msgIndex, 10);
+  if (isNaN(idx)) return;
+  if (!openkotoState.selectedChatMsgs) openkotoState.selectedChatMsgs = [];
+  const foundPos = openkotoState.selectedChatMsgs.indexOf(idx);
+  if (foundPos >= 0) {
+    openkotoState.selectedChatMsgs.splice(foundPos, 1);
+  } else {
+    openkotoState.selectedChatMsgs.push(idx);
+  }
+  renderGuidebook();
+}
+window.toggleOpenkotoChatMsgSelection = toggleOpenkotoChatMsgSelection;
+
+function selectAllOpenkotoChatMsgs() {
+  const charId = openkotoState.selectedChatChar || "ado";
+  const history = userState.chatHistories[charId] || [];
+  openkotoState.selectedChatMsgs = history.map((_, i) => i);
+  renderGuidebook();
+}
+window.selectAllOpenkotoChatMsgs = selectAllOpenkotoChatMsgs;
+
+function clearOpenkotoChatMsgSelection() {
+  openkotoState.selectedChatMsgs = [];
+  renderGuidebook();
+}
+window.clearOpenkotoChatMsgSelection = clearOpenkotoChatMsgSelection;
+
+function importRecentChatExchanges(charId, count = 6, autoAnalyze = false) {
+  if (!charId) charId = openkotoState.selectedChatChar || "ado";
+  const history = userState.chatHistories[charId] || [];
+  const char = CHARACTERS[charId] || CHARACTERS.ado;
+  if (history.length === 0) {
+    alert(`No messages yet with ${char.name}. Say hello in their chatroom first!`);
+    return;
+  }
+  const slice = history.slice(-count);
+  const formattedText = slice.map((m) => {
+    const speaker = m.sender === "user" ? (userState.userProfile?.name || "You") : (m.speakerName || char.name);
+    return `${speaker}: ${cleanEmojiText(m.text || "")}`;
+  }).join("\n");
+
+  openkotoState.pastedText = formattedText;
+  openkotoState.mediaType = "text";
+  openkotoState.mediaFile = null;
+  openkotoState.mediaBase64 = null;
+  openkotoState.mediaMimeType = null;
+  openkotoState.fileName = `${char.name} Dialogue (Last ${slice.length} messages)`;
+  openkotoState.targetLang = userState.targetLanguage || "vi";
+
+  if (autoAnalyze) {
+    generateOpenkotoLesson();
+  } else {
+    openkotoState.activeSource = "text";
+    renderGuidebook();
+  }
+}
+window.importRecentChatExchanges = importRecentChatExchanges;
+
+function importSelectedChatMsgsToOpenkoto(autoAnalyze = false) {
+  const charId = openkotoState.selectedChatChar || "ado";
+  const history = userState.chatHistories[charId] || [];
+  const char = CHARACTERS[charId] || CHARACTERS.ado;
+  const indices = (openkotoState.selectedChatMsgs || []).sort((a, b) => a - b);
+  
+  if (indices.length === 0) {
+    alert("Please select at least one message using the checkboxes, or choose '⚡ Last 6 Msgs'.");
+    return;
+  }
+
+  const selected = indices.map(i => history[i]).filter(Boolean);
+  if (selected.length === 0) return;
+
+  const formattedText = selected.length === 1 && selected[0].text
+    ? cleanEmojiText(selected[0].text)
+    : selected.map(m => {
+        const speaker = m.sender === "user" ? (userState.userProfile?.name || "You") : (m.speakerName || char.name);
+        return `${speaker}: ${cleanEmojiText(m.text || "")}`;
+      }).join("\n");
+
+  openkotoState.pastedText = formattedText;
+  openkotoState.mediaType = "text";
+  openkotoState.mediaFile = null;
+  openkotoState.mediaBase64 = null;
+  openkotoState.mediaMimeType = null;
+  openkotoState.fileName = `${char.name} Chat (${selected.length} message${selected.length > 1 ? "s" : ""})`;
+  openkotoState.targetLang = userState.targetLanguage || "vi";
+
+  if (autoAnalyze) {
+    generateOpenkotoLesson();
+  } else {
+    openkotoState.activeSource = "text";
+    renderGuidebook();
+  }
+}
+window.importSelectedChatMsgsToOpenkoto = importSelectedChatMsgsToOpenkoto;
+
+function importSingleChatMsgToMediaLab(charId, msgIndex, autoAnalyze = true) {
+  if (!charId) charId = activeCharacterId || "ado";
+  const history = userState.chatHistories[charId] || [];
+  const char = CHARACTERS[charId] || CHARACTERS.ado;
+  const msg = history[msgIndex];
+  if (!msg || !msg.text) return;
+
+  const cleanText = cleanEmojiText(msg.text);
+  const speaker = msg.sender === "user" ? (userState.userProfile?.name || "You") : (msg.speakerName || char.name);
+
+  openkotoState.pastedText = cleanText;
+  openkotoState.mediaFile = null;
+  openkotoState.mediaBase64 = null;
+  openkotoState.mediaMimeType = null;
+  openkotoState.mediaType = "text";
+  openkotoState.fileName = `${speaker} Message: "${cleanText.slice(0, 30)}${cleanText.length > 30 ? "..." : ""}"`;
+  openkotoState.targetLang = userState.targetLanguage || "vi";
+  openkotoState.selectedChatChar = charId;
+  openkotoState.activeSource = "text";
+
+  // Visual toast feedback
+  const toast = document.createElement("div");
+  toast.className = "reset-success-toast";
+  toast.style.cssText = "position:fixed; top:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; align-items:center; gap:8px; background:linear-gradient(135deg, #d90057 0%, #7c3aed 100%); color:#ffffff; font-weight:800; font-size:13.5px; padding:12px 22px; border-radius:30px; box-shadow:0 8px 24px rgba(217,0,87,0.45); pointer-events:none;";
+  toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:20px;">auto_awesome</span> <span>Imported message to <strong>AI Media Lab</strong>!</span>`;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.remove();
+  }, 3500);
+
+  // Switch to progress / AI Media Lab
+  if (typeof enterAppFromLanding === "function") enterAppFromLanding(false);
+  if (typeof closeActiveChat === "function") closeActiveChat(false);
+  switchTab("progress", true);
+  setGuidebookSubMode("openkoto");
+
+  if (autoAnalyze) {
+    setTimeout(() => {
+      generateOpenkotoLesson();
+    }, 150);
+  }
+}
+window.importSingleChatMsgToMediaLab = importSingleChatMsgToMediaLab;
+
+function exportCurrentChatToMediaLab() {
+  const charId = activeCharacterId || "ado";
+  openkotoState.selectedChatChar = charId;
+  openkotoState.activeSource = "chat";
+  openkotoState.selectedChatMsgs = [];
+  
+  if (typeof enterAppFromLanding === "function") enterAppFromLanding(false);
+  if (typeof closeActiveChat === "function") closeActiveChat(false);
+  switchTab("progress", true);
+  setGuidebookSubMode("openkoto");
+}
+window.exportCurrentChatToMediaLab = exportCurrentChatToMediaLab;
+
+function importCurrentSpeechBubbleToMediaLab() {
+  const charId = activeCharacterId || "ado";
+  const char = CHARACTERS[charId] || CHARACTERS.ado;
+  const textEl = document.getElementById("companionSpeechText");
+  const text = textEl ? textEl.innerText.trim() : "";
+  if (!text) return;
+  
+  openkotoState.pastedText = cleanEmojiText(text);
+  openkotoState.mediaFile = null;
+  openkotoState.mediaBase64 = null;
+  openkotoState.mediaMimeType = null;
+  openkotoState.mediaType = "text";
+  openkotoState.fileName = `${char.name} Speech: "${text.slice(0, 30)}${text.length > 30 ? "..." : ""}"`;
+  openkotoState.targetLang = userState.targetLanguage || "vi";
+  openkotoState.selectedChatChar = charId;
+  openkotoState.activeSource = "text";
+
+  const toast = document.createElement("div");
+  toast.className = "reset-success-toast";
+  toast.style.cssText = "position:fixed; top:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; align-items:center; gap:8px; background:linear-gradient(135deg, #d90057 0%, #7c3aed 100%); color:#ffffff; font-weight:800; font-size:13.5px; padding:12px 22px; border-radius:30px; box-shadow:0 8px 24px rgba(217,0,87,0.45); pointer-events:none;";
+  toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:20px;">auto_awesome</span> <span>Imported message to <strong>AI Media Lab</strong>!</span>`;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.remove(); }, 3500);
+
+  if (typeof enterAppFromLanding === "function") enterAppFromLanding(false);
+  if (typeof closeActiveChat === "function") closeActiveChat(false);
+  switchTab("progress", true);
+  setGuidebookSubMode("openkoto");
+
+  setTimeout(() => {
+    generateOpenkotoLesson();
+  }, 150);
+}
+window.importCurrentSpeechBubbleToMediaLab = importCurrentSpeechBubbleToMediaLab;
+
+// File Upload Handler
+function handleOpenkotoFileSelect(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  processUploadedMediaFile(file);
+}
+window.handleOpenkotoFileSelect = handleOpenkotoFileSelect;
+
+function handleOpenkotoDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  const dt = e.dataTransfer;
+  if (dt && dt.files && dt.files[0]) {
+    processUploadedMediaFile(dt.files[0]);
+  }
+}
+window.handleOpenkotoDrop = handleOpenkotoDrop;
+
+function processUploadedMediaFile(file) {
+  openkotoState.mediaFile = file;
+  openkotoState.fileName = file.name;
+  
+  if (file.type.startsWith("image/")) {
+    openkotoState.mediaType = "image";
+  } else if (file.type.startsWith("audio/")) {
+    openkotoState.mediaType = "audio";
+  } else if (file.type.startsWith("video/")) {
+    openkotoState.mediaType = "video";
+  } else {
+    openkotoState.mediaType = "text";
+  }
+
+  const reader = new FileReader();
+  if (openkotoState.mediaType === "text") {
+    reader.onload = (e) => {
+      openkotoState.pastedText = e.target.result;
+      openkotoState.mediaBase64 = null;
+      openkotoState.mediaMimeType = file.type || "text/plain";
+      renderGuidebook();
+    };
+    reader.readAsText(file);
+  } else {
+    reader.onload = (e) => {
+      openkotoState.mediaBase64 = e.target.result;
+      openkotoState.mediaMimeType = file.type;
+      renderGuidebook();
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function clearOpenkotoMedia() {
+  openkotoState.mediaFile = null;
+  openkotoState.mediaBase64 = null;
+  openkotoState.mediaMimeType = null;
+  openkotoState.mediaType = null;
+  openkotoState.fileName = "";
+  openkotoState.pastedText = "";
+  renderGuidebook();
+}
+window.clearOpenkotoMedia = clearOpenkotoMedia;
+
+// Live Microphone Voice Recording
+async function toggleOpenkotoVoiceRecord() {
+  if (openkotoState.isRecording) {
+    // Stop recording
+    if (openkotoState.mediaRecorder && openkotoState.mediaRecorder.state !== "inactive") {
+      openkotoState.mediaRecorder.stop();
+    }
+    openkotoState.isRecording = false;
+    renderGuidebook();
+  } else {
+    // Start recording
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      openkotoState.audioChunks = [];
+      const recorder = new MediaRecorder(stream);
+      openkotoState.mediaRecorder = recorder;
+      
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) openkotoState.audioChunks.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const audioBlob = new Blob(openkotoState.audioChunks, { type: "audio/webm" });
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          openkotoState.mediaBase64 = e.target.result;
+          openkotoState.mediaMimeType = "audio/webm";
+          openkotoState.mediaType = "audio";
+          openkotoState.fileName = `Voice_Recording_${new Date().toLocaleTimeString()}.webm`;
+          renderGuidebook();
+        };
+        reader.readAsDataURL(audioBlob);
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      recorder.start();
+      openkotoState.isRecording = true;
+      renderGuidebook();
+    } catch (err) {
+      alert("Microphone permission denied or not supported on this device.");
+    }
+  }
+}
+window.toggleOpenkotoVoiceRecord = toggleOpenkotoVoiceRecord;
+
+// Generate OpenKoto AI Learning Pack
+async function generateOpenkotoLesson() {
+  const textInput = document.getElementById("openkotoTextInput");
+  if (textInput) {
+    openkotoState.pastedText = textInput.value;
+  }
+  const focusSelect = document.getElementById("openkotoFocusSelect");
+  if (focusSelect) {
+    openkotoState.customFocus = focusSelect.value;
+  }
+  const langSelect = document.getElementById("openkotoLangSelect");
+  if (langSelect) {
+    openkotoState.targetLang = langSelect.value;
+  }
+
+  openkotoState.isLoading = true;
+  renderGuidebook();
+
+  try {
+    const payload = {
+      mediaType: openkotoState.mediaType || "text",
+      targetLanguage: openkotoState.targetLang || "vi",
+      text: openkotoState.pastedText,
+      mediaBase64: openkotoState.mediaBase64,
+      mimeType: openkotoState.mediaMimeType,
+      fileName: openkotoState.fileName,
+      customFocus: openkotoState.customFocus,
+      apiKey: userState.openRouterKey || ""
+    };
+
+    const resp = await fetch("/api/media-learning", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const resData = await resp.json();
+    if (resData && resData.success && resData.data) {
+      openkotoState.activeLesson = resData.data;
+      openkotoState.activeLesson.id = "lesson_" + Date.now();
+      openkotoState.activeLesson.createdAt = new Date().toISOString();
+      
+      // Auto-initialize Scramble Quiz
+      if (openkotoState.activeLesson.quizzes) {
+        const scrambleQuiz = openkotoState.activeLesson.quizzes.find((q) => q.type === "sentence_scramble");
+        if (scrambleQuiz) {
+          openkotoState.activeQuizState.scramblePicked = [];
+          openkotoState.activeQuizState.scrambleRemaining = [...(scrambleQuiz.scrambledWords || [])];
+        }
+      }
+      openkotoState.activeQuizState.answered = {};
+      openkotoState.activeQuizState.roleplayAnswered = null;
+      openkotoState.activeQuizState.score = 0;
+    } else {
+      alert("Could not generate lesson: " + (resData?.error || "Unknown server response"));
+    }
+  } catch (err) {
+    console.error("[OpenKoto] Request failed:", err);
+    alert("Network error processing media. Falling back to local engine.");
+  } finally {
+    openkotoState.isLoading = false;
+    renderGuidebook();
+  }
+}
+window.generateOpenkotoLesson = generateOpenkotoLesson;
+
+function resetOpenkotoStudio() {
+  openkotoState.activeLesson = null;
+  openkotoState.activeWordPopover = null;
+  clearOpenkotoMedia();
+  renderGuidebook();
+}
+window.resetOpenkotoStudio = resetOpenkotoStudio;
+
+// Word Token Inspector
+function inspectOpenkotoToken(word, lemma, pos, phonetic, meaning, note) {
+  openkotoState.activeWordPopover = {
+    word: decodeURIComponent(word),
+    lemma: decodeURIComponent(lemma),
+    pos: decodeURIComponent(pos),
+    phonetic: decodeURIComponent(phonetic),
+    meaning: decodeURIComponent(meaning),
+    note: decodeURIComponent(note)
+  };
+  renderGuidebook();
+}
+window.inspectOpenkotoToken = inspectOpenkotoToken;
+
+function closeOpenkotoWordPopover() {
+  openkotoState.activeWordPopover = null;
+  renderGuidebook();
+}
+window.closeOpenkotoWordPopover = closeOpenkotoWordPopover;
+
+// Add Word to Flashcards
+function saveOpenkotoFlashcard(term, reading, pos, meaning, example = "") {
+  const card = {
+    id: "fc_" + Date.now(),
+    term: decodeURIComponent(term),
+    reading: decodeURIComponent(reading),
+    pos: decodeURIComponent(pos),
+    meaning: decodeURIComponent(meaning),
+    example: decodeURIComponent(example),
+    lang: openkotoState.targetLang || "vi",
+    mastered: false,
+    addedAt: new Date().toISOString()
+  };
+  openkotoState.savedFlashcards.unshift(card);
+  localStorage.setItem("openkoto_saved_flashcards", JSON.stringify(openkotoState.savedFlashcards));
+  
+  // Visual Toast Feedback
+  const toast = document.createElement("div");
+  toast.className = "reset-success-toast";
+  toast.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; display:block; background:#10b981; color:#ffffff; font-weight:800; padding:10px 18px; border-radius:30px; box-shadow:0 6px 20px rgba(16,185,129,0.4);";
+  toast.innerHTML = `⭐ Saved "<strong>${card.term}</strong>" to Flashcard Deck!`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+
+  renderGuidebook();
+}
+window.saveOpenkotoFlashcard = saveOpenkotoFlashcard;
+
+// Save Full Lesson to Library
+function saveCurrentOpenkotoLesson() {
+  if (!openkotoState.activeLesson) return;
+  const existing = openkotoState.savedLessons.find((l) => l.id === openkotoState.activeLesson.id);
+  if (!existing) {
+    openkotoState.savedLessons.unshift(openkotoState.activeLesson);
+    localStorage.setItem("openkoto_saved_lessons", JSON.stringify(openkotoState.savedLessons));
+  }
+  const toast = document.createElement("div");
+  toast.className = "reset-success-toast";
+  toast.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; display:block; background:#7c3aed; color:#ffffff; font-weight:800; padding:10px 18px; border-radius:30px; box-shadow:0 6px 20px rgba(124,58,237,0.4);";
+  toast.innerHTML = `💾 Lesson saved to your Media Library!`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+window.saveCurrentOpenkotoLesson = saveCurrentOpenkotoLesson;
+
+function loadSavedOpenkotoLesson(lessonId) {
+  const lesson = openkotoState.savedLessons.find((l) => l.id === lessonId);
+  if (lesson) {
+    openkotoState.activeLesson = lesson;
+    currentGuidebookSubMode = "openkoto";
+    renderGuidebook();
+  }
+}
+window.loadSavedOpenkotoLesson = loadSavedOpenkotoLesson;
+
+function deleteSavedOpenkotoLesson(lessonId) {
+  openkotoState.savedLessons = openkotoState.savedLessons.filter((l) => l.id !== lessonId);
+  localStorage.setItem("openkoto_saved_lessons", JSON.stringify(openkotoState.savedLessons));
+  renderGuidebook();
+}
+window.deleteSavedOpenkotoLesson = deleteSavedOpenkotoLesson;
+
+function deleteOpenkotoFlashcard(cardId) {
+  openkotoState.savedFlashcards = openkotoState.savedFlashcards.filter((c) => c.id !== cardId);
+  localStorage.setItem("openkoto_saved_flashcards", JSON.stringify(openkotoState.savedFlashcards));
+  renderGuidebook();
+}
+window.deleteOpenkotoFlashcard = deleteOpenkotoFlashcard;
+
+function toggleOpenkotoFlashcardMastery(cardId) {
+  const card = openkotoState.savedFlashcards.find((c) => c.id === cardId);
+  if (card) {
+    card.mastered = !card.mastered;
+    localStorage.setItem("openkoto_saved_flashcards", JSON.stringify(openkotoState.savedFlashcards));
+    renderGuidebook();
+  }
+}
+window.toggleOpenkotoFlashcardMastery = toggleOpenkotoFlashcardMastery;
+
+// Export Deck (JSON / Markdown / Anki)
+function exportOpenkotoDeck(format) {
+  let content = "";
+  let mimeType = "text/plain";
+  let fileName = `OpenKoto_Vocabulary_${Date.now()}`;
+
+  if (format === "json") {
+    content = JSON.stringify(openkotoState.savedFlashcards, null, 2);
+    mimeType = "application/json";
+    fileName += ".json";
+  } else if (format === "anki") {
+    // Front \t Back format for Anki Import
+    content = openkotoState.savedFlashcards.map((c) => `${c.term} (${c.reading})\t${c.meaning} [${c.pos}]<br/><em>${c.example || ""}</em>`).join("\n");
+    mimeType = "text/tab-separated-values";
+    fileName += "_Anki.tsv";
+  } else {
+    // Markdown format
+    content = `# OpenKoto AI Study Deck\nGenerated on ${new Date().toLocaleDateString()}\n\n` +
+      openkotoState.savedFlashcards.map((c) => `### **${c.term}** (${c.reading})\n- **Part of Speech:** ${c.pos}\n- **Meaning:** ${c.meaning}\n- **Example:** ${c.example || "N/A"}\n`).join("\n---\n\n");
+    mimeType = "text/markdown";
+    fileName += ".md";
+  }
+
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+window.exportOpenkotoDeck = exportOpenkotoDeck;
+
+// Quiz Interaction Handlers
+function answerOpenkotoMC(optionIdx, correctIdx) {
+  openkotoState.activeQuizState.answered["mc"] = { optionIdx, correctIdx, isCorrect: optionIdx === correctIdx };
+  renderGuidebook();
+}
+window.answerOpenkotoMC = answerOpenkotoMC;
+
+function answerOpenkotoCloze(optionIdx, correctIdx) {
+  openkotoState.activeQuizState.answered["cloze"] = { optionIdx, correctIdx, isCorrect: optionIdx === correctIdx };
+  renderGuidebook();
+}
+window.answerOpenkotoCloze = answerOpenkotoCloze;
+
+function pickOpenkotoScrambleChip(word, index) {
+  openkotoState.activeQuizState.scramblePicked.push(word);
+  openkotoState.activeQuizState.scrambleRemaining.splice(index, 1);
+  renderGuidebook();
+}
+window.pickOpenkotoScrambleChip = pickOpenkotoScrambleChip;
+
+function removeOpenkotoScramblePicked(word, index) {
+  openkotoState.activeQuizState.scrambleRemaining.push(word);
+  openkotoState.activeQuizState.scramblePicked.splice(index, 1);
+  renderGuidebook();
+}
+window.removeOpenkotoScramblePicked = removeOpenkotoScramblePicked;
+
+function resetOpenkotoScramble() {
+  if (openkotoState.activeLesson && openkotoState.activeLesson.quizzes) {
+    const scrambleQuiz = openkotoState.activeLesson.quizzes.find((q) => q.type === "sentence_scramble");
+    if (scrambleQuiz) {
+      openkotoState.activeQuizState.scramblePicked = [];
+      openkotoState.activeQuizState.scrambleRemaining = [...(scrambleQuiz.scrambledWords || [])];
+      renderGuidebook();
+    }
+  }
+}
+window.resetOpenkotoScramble = resetOpenkotoScramble;
+
+function answerOpenkotoRoleplay(optionIdx, correctIdx, feedback) {
+  openkotoState.activeQuizState.roleplayAnswered = {
+    optionIdx,
+    correctIdx,
+    feedback: decodeURIComponent(feedback)
+  };
+  renderGuidebook();
+}
+window.answerOpenkotoRoleplay = answerOpenkotoRoleplay;
+
+// Primary OpenKoto AI Media Lab Render Function
 function renderGuidebook() {
   const container = document.getElementById("guidebookContainer");
   if (!container) return;
 
-  // Update tab buttons state
-  const viTab = document.getElementById("guideTabViBtn");
-  const enTab = document.getElementById("guideTabEnBtn");
-  const jaTab = document.getElementById("guideTabJaBtn");
-  const koTab = document.getElementById("guideTabKoBtn");
-  const zhTab = document.getElementById("guideTabZhBtn");
-  if (viTab) viTab.classList.toggle("active", currentGuidebookLang === "vi");
-  if (enTab) enTab.classList.toggle("active", currentGuidebookLang === "en");
-  if (jaTab) jaTab.classList.toggle("active", currentGuidebookLang === "ja");
-  if (koTab) koTab.classList.toggle("active", currentGuidebookLang === "ko");
-  if (zhTab) zhTab.classList.toggle("active", currentGuidebookLang === "zh");
+  // Sub-Navigation Tabs Update
+  const navOpenkoto = document.getElementById("guideSubNavOpenkoto");
+  const navLibrary = document.getElementById("guideSubNavLibrary");
 
-  if (currentGuidebookLang === "ja") {
-    container.innerHTML = `
-      <div class="guide-section-card">
-        <div class="guide-card-header">
-          <div class="guide-card-icon">🇯🇵</div>
-          <div class="guide-card-title">Japanese Script & Romaji Guide (Ren Takahashi)</div>
-        </div>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
-          Japanese uses Hiragana (ひらがな), Katakana (カタカナ), and Kanji (漢字). Romaji translates native Japanese characters into the Latin alphabet for reading guide.
-        </p>
-        <div class="vocab-category-title">❤️ Romance & Polite Japanese Vocab</div>
-        <div class="vocab-list">
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">こんにちは (Konnichiwa)</span>
-              <span class="vocab-trans">Hello / Good afternoon</span>
-            </div>
-          </div>
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">好きです (Suki desu)</span>
-              <span class="vocab-trans">I like you / I love you</span>
-            </div>
-            <span class="vocab-tip">'Suki' expresses affection, '-desu' is polite.</span>
-          </div>
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">お茶 (O-cha)</span>
-              <span class="vocab-trans">Green Tea</span>
-            </div>
-            <span class="vocab-tip">Ren's favorite drink to share with you!</span>
-          </div>
-        </div>
-      </div>
-    `;
-  } else if (currentGuidebookLang === "ko") {
-    container.innerHTML = `
-      <div class="guide-section-card">
-        <div class="guide-card-header">
-          <div class="guide-card-icon">🇰🇷</div>
-          <div class="guide-card-title">Korean Hangul & Romaja Guide (Min-jun Park)</div>
-        </div>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
-          Korean uses the phonetic Hangul alphabet (한글). Romaja provides clear pronunciation guidance so you can easily speak sweet words with Min-jun!
-        </p>
-        <div class="vocab-category-title">🎵 Music & Romance Korean Vocab</div>
-        <div class="vocab-list">
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">안녕하세요 (Annyeonghaseyo)</span>
-              <span class="vocab-trans">Hello (Polite)</span>
-            </div>
-          </div>
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">좋아해요 (Joh-a-hae-yo)</span>
-              <span class="vocab-trans">I like you</span>
-            </div>
-            <span class="vocab-tip">A classic, sweet expression of affection.</span>
-          </div>
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">보고 싶어요 (Bogo sip-eoyo)</span>
-              <span class="vocab-trans">I miss you</span>
-            </div>
-            <span class="vocab-tip">Literally 'I want to see you'.</span>
-          </div>
-        </div>
-      </div>
-    `;
-  } else if (currentGuidebookLang === "zh") {
-    container.innerHTML = `
-      <div class="guide-section-card">
-        <div class="guide-card-header">
-          <div class="guide-card-icon">🇨🇳</div>
-          <div class="guide-card-title">Mandarin Characters & Pinyin Guide (Chen Wei)</div>
-        </div>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
-          Mandarin Chinese uses Chinese Characters (汉字). Pinyin provides the romanized phonetic spellings and tone marks to guide reading.
-        </p>
-        <div class="vocab-category-title">🍵 Poetic Tea & Romance Chinese Vocab</div>
-        <div class="vocab-list">
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">你好 (Nǐ hǎo)</span>
-              <span class="vocab-trans">Hello</span>
-            </div>
-          </div>
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">喜欢你 (Xǐhuān nǐ)</span>
-              <span class="vocab-trans">I like you / fond of you</span>
-            </div>
-          </div>
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">品茶 (Pǐn chá)</span>
-              <span class="vocab-trans">Savor / Sample fine tea</span>
-            </div>
-            <span class="vocab-tip">Chen's gentle invitation for quiet moments together.</span>
-          </div>
-        </div>
-      </div>
-    `;
-  } else if (currentGuidebookLang === "vi") {
-    container.innerHTML = `
-      <!-- Card 1: Special Letters & Accents -->
-      <div class="guide-section-card">
-        <div class="guide-card-header">
-          <div class="guide-card-icon">🔤</div>
-          <div class="guide-card-title">Chữ Cái Đặc Biệt & Dấu Thanh (Special Letters)</div>
-        </div>
+  if (navOpenkoto) navOpenkoto.classList.toggle("active", currentGuidebookSubMode === "openkoto");
+  if (navLibrary) navLibrary.classList.toggle("active", currentGuidebookSubMode === "library");
 
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
-          Tiếng Việt có các nguyên âm thêm dấu mũ (^) hoặc râu (ơ, ư), cùng 5 dấu thanh điều chỉnh cao độ giọng nói:
-        </p>
-
-        <div class="letters-grid">
-          <div class="letter-pill">
-            <span class="letter-symbol">Ă / ă</span>
-            <span class="letter-desc">A nón ngửa (Short A)</span>
-            <span class="letter-ex">Ex: <em>ăn</em> (to eat)</span>
-          </div>
-          <div class="letter-pill">
-            <span class="letter-symbol">Â / â</span>
-            <span class="letter-desc">A mũ úp (Deep A)</span>
-            <span class="letter-ex">Ex: <em>anh</em> (you/brother)</span>
-          </div>
-          <div class="letter-pill">
-            <span class="letter-symbol">Ê / ê</span>
-            <span class="letter-desc">E mũ (Soft E)</span>
-            <span class="letter-ex">Ex: <em>em</em> (sweetheart)</span>
-          </div>
-          <div class="letter-pill">
-            <span class="letter-symbol">Ô / ô</span>
-            <span class="letter-desc">O mũ (Round O)</span>
-            <span class="letter-ex">Ex: <em>ô mai</em> (plum)</span>
-          </div>
-          <div class="letter-pill">
-            <span class="letter-symbol">Ơ / ơ</span>
-            <span class="letter-desc">O râu (Unrounded O)</span>
-            <span class="letter-ex">Ex: <em>thơm</em> (fragrant)</span>
-          </div>
-          <div class="letter-pill">
-            <span class="letter-symbol">Ư / ư</span>
-            <span class="letter-desc">U râu (Unrounded U)</span>
-            <span class="letter-ex">Ex: <em>thương</em> (cherish)</span>
-          </div>
-          <div class="letter-pill">
-            <span class="letter-symbol">Đ / đ</span>
-            <span class="letter-desc">D gạch ngang (Hard D)</span>
-            <span class="letter-ex">Ex: <em>đẹp quá</em> (pretty)</span>
-          </div>
-        </div>
-
-        <div style="margin-top:14px; background:#f8f5fa; padding:10px 12px; border-radius:12px; border:1px solid rgba(160,140,190,0.18);">
-          <div style="font-size:12px; font-weight:800; color:var(--primary-pink); margin-bottom:6px;">🎵 5 Dấu Thanh (Tone Marks)</div>
-          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:6px; font-size:11.5px;">
-            <div><strong>á</strong> (Sắc) - High Rising</div>
-            <div><strong>à</strong> (Huyền) - Low Falling</div>
-            <div><strong>ả</strong> (Hỏi) - Dipping Hook</div>
-            <div><strong>ã</strong> (Ngã) - Wave Tilde</div>
-            <div><strong>ạ</strong> (Nặng) - Drop Dot</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 2: How to Type Vietnamese -->
-      <div class="guide-section-card">
-        <div class="guide-card-header">
-          <div class="guide-card-icon">⌨️</div>
-          <div class="guide-card-title">Cách Gõ Tiếng Việt (How to Type)</div>
-        </div>
-
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">
-          Gõ kiểu <strong>TELEX</strong> đơn giản nhất: gõ 2 lần phím gốc hoặc dùng phím <span class="typing-code">w</span> để thêm mũ/râu, và gõ phím dấu ở cuối từ:
-        </p>
-
-        <table class="typing-table">
-          <thead>
-            <tr>
-              <th>Kết quả</th>
-              <th>Thao tác TELEX</th>
-              <th>Ví dụ gõ</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>â, ê, ô, đ</strong></td>
-              <td><span class="typing-code">aa</span>, <span class="typing-code">ee</span>, <span class="typing-code">oo</span>, <span class="typing-code">dd</span></td>
-              <td><span class="typing-code">a-n-h</span> → <em>anh</em></td>
-            </tr>
-            <tr>
-              <td><strong>ă, ơ, ư</strong></td>
-              <td><span class="typing-code">aw</span>, <span class="typing-code">ow</span>, <span class="typing-code">uw</span> hoặc <span class="typing-code">w</span></td>
-              <td><span class="typing-code">a-n-w</span> → <em>ăn</em></td>
-            </tr>
-            <tr>
-              <td><strong>Dấu Sắc (á)</strong></td>
-              <td>Thêm phím <span class="typing-code">s</span></td>
-              <td><span class="typing-code">n-h-o-s</span> → <em>nhớ</em></td>
-            </tr>
-            <tr>
-              <td><strong>Dấu Huyền (à)</strong></td>
-              <td>Thêm phím <span class="typing-code">f</span></td>
-              <td><span class="typing-code">c-a-f</span> → <em>cà</em></td>
-            </tr>
-            <tr>
-              <td><strong>Dấu Hỏi (ả)</strong></td>
-              <td>Thêm phím <span class="typing-code">r</span></td>
-              <td><span class="typing-code">r-a-n-h-r</span> → <em>rảnh</em></td>
-            </tr>
-            <tr>
-              <td><strong>Dấu Ngã (ã)</strong></td>
-              <td>Thêm phím <span class="typing-code">x</span></td>
-              <td><span class="typing-code">d-e-e-x</span> → <em>dễ</em></td>
-            </tr>
-            <tr>
-              <td><strong>Dấu Nặng (ạ)</strong></td>
-              <td>Thêm phím <span class="typing-code">j</span></td>
-              <td><span class="typing-code">d-e-e-p-j</span> → <em>đẹp</em></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Card 3: Romance Vocabularies Learned -->
-      <div class="guide-section-card">
-        <div class="guide-card-header">
-          <div class="guide-card-icon">📖</div>
-          <div class="guide-card-title">Từ Vựng Tình Cảm Đã Học (Learned Vocab)</div>
-        </div>
-
-        <div class="vocab-category-title">☕ Cà Phê & Quan Tâm Hằng Ngày</div>
-        <div class="vocab-list">
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Em ơi / Anh ơi</span>
-              <span class="vocab-trans">Sweet address ("Hey sweetheart")</span>
-            </div>
-            <span class="vocab-tip">Dùng để gọi bạn đời hoặc crush ngọt ngào</span>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Rảnh không?</span>
-              <span class="vocab-trans">Are you free right now?</span>
-            </div>
-            <span class="vocab-tip">Mở lời rủ đi chơi/nhắn tin tự nhiên</span>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Ăn cơm chưa?</span>
-              <span class="vocab-trans">Have you eaten yet?</span>
-            </div>
-            <span class="vocab-tip">Lời hỏi thăm quan tâm chuẩn văn hóa Việt</span>
-          </div>
-        </div>
-
-        <div class="vocab-category-title">❤️ Tình Cảm & Thả Thính</div>
-        <div class="vocab-list">
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Nhớ em / Nhớ anh</span>
-              <span class="vocab-trans">Miss you so much</span>
-            </div>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Thương</span>
-              <span class="vocab-trans">Deep affection & caring love</span>
-            </div>
-            <span class="vocab-tip">Sâu sắc hơn cả 'yêu' - vừa yêu vừa muốn che chở</span>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Đẹp quá / Dễ thương quá</span>
-              <span class="vocab-trans">So beautiful / so cute</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="vocab-category-title">✨ Từ Đệm Nhắn Tin Ngọt Ngào</div>
-        <div class="vocab-list">
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">nhé / nha</span>
-              <span class="vocab-trans">Gentle particle ("okay?", "promise")</span>
-            </div>
-            <span class="vocab-tip">Thêm vào cuối câu giúp lời nhắn mềm mại</span>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">xíu</span>
-              <span class="vocab-trans">A tiny bit / a moment</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  } else {
-    // English Guidebook
-    container.innerHTML = `
-      <!-- Card 1: Word Forms Made Simple -->
-      <div class="guide-section-card">
-        <div class="guide-card-header">
-          <div class="guide-card-icon">🔤</div>
-          <div class="guide-card-title">Word Forms Made Simple (Dạng Từ)</div>
-        </div>
-
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
-          English words transform smoothly between Nouns, Verbs, Adjectives, and Adverbs. Here is how root words evolve in romance chats:
-        </p>
-
-        <div class="word-forms-card">
-          <div style="font-size:12.5px; font-weight:800; color:var(--primary-pink); margin-bottom:4px;">❤️ Love (Tình Yêu)</div>
-          <div class="form-row">
-            <div class="form-box">
-              <div class="form-label">Noun</div>
-              <div class="form-val">Love</div>
-            </div>
-            <div class="form-box">
-              <div class="form-label">Verb</div>
-              <div class="form-val">Love</div>
-            </div>
-            <div class="form-box">
-              <div class="form-label">Adj</div>
-              <div class="form-val">Lovely</div>
-            </div>
-            <div class="form-box">
-              <div class="form-label">Adv</div>
-              <div class="form-val">Lovingly</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="word-forms-card">
-          <div style="font-size:12.5px; font-weight:800; color:var(--accent-violet); margin-bottom:4px;">✨ Beauty (Vẻ Đẹp)</div>
-          <div class="form-row">
-            <div class="form-box">
-              <div class="form-label">Noun</div>
-              <div class="form-val">Beauty</div>
-            </div>
-            <div class="form-box">
-              <div class="form-label">Verb</div>
-              <div class="form-val">Beautify</div>
-            </div>
-            <div class="form-box">
-              <div class="form-label">Adj</div>
-              <div class="form-val">Beautiful</div>
-            </div>
-            <div class="form-box">
-              <div class="form-label">Adv</div>
-              <div class="form-val">Beautifully</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="word-forms-card">
-          <div style="font-size:12.5px; font-weight:800; color:var(--accent-emerald); margin-bottom:4px;">🍯 Sweetness (Ngọt Ngào)</div>
-          <div class="form-row">
-            <div class="form-box">
-              <div class="form-label">Noun</div>
-              <div class="form-val">Sweetness</div>
-            </div>
-            <div class="form-box">
-              <div class="form-label">Verb</div>
-              <div class="form-val">Sweeten</div>
-            </div>
-            <div class="form-box">
-              <div class="form-label">Adj</div>
-              <div class="form-val">Sweet</div>
-            </div>
-            <div class="form-box">
-              <div class="form-label">Adv</div>
-              <div class="form-val">Sweetly</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="background:#f8f5fa; padding:10px 12px; border-radius:12px; border:1px solid rgba(160,140,190,0.18);">
-          <div style="font-size:12px; font-weight:800; color:var(--primary-pink); margin-bottom:4px;">💡 Quick Pattern Tip</div>
-          <div style="font-size:11.5px; color:var(--text-main); line-height:1.4;">
-            • Add <strong>-ly</strong> to adjectives to describe actions: <em>gentle → gently</em>, <em>sweet → sweetly</em>.<br/>
-            • Add <strong>-ful</strong> or <strong>-y</strong> to nouns to describe feelings: <em>charm → charming</em>, <em>sun → sunny</em>.
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 2: Learned Romance Vocabulary -->
-      <div class="guide-section-card">
-        <div class="guide-card-header">
-          <div class="guide-card-icon">📖</div>
-          <div class="guide-card-title">English Romance Vocabularies Learned</div>
-        </div>
-
-        <div class="vocab-category-title">📚 Strict & Reliable Classmate Vocab (Ado)</div>
-        <div class="vocab-list">
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Study schedule / Notes</span>
-              <span class="vocab-trans">Lịch học / Tài liệu ôn tập</span>
-            </div>
-            <span class="vocab-tip">Ex: "I prepared the study notes for you!"</span>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Duty / Responsibility</span>
-              <span class="vocab-trans">Trách nhiệm / Bổn phận</span>
-            </div>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Secretly caring (Tsundere)</span>
-              <span class="vocab-trans">Quan tâm âm thầm / Ngoài lạnh trong nóng</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="vocab-category-title">🥺 Cute & Clingy Underclassman Vocab (Kou)</div>
-        <div class="vocab-list">
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Affectionate Senior (Anh / Chị)</span>
-              <span class="vocab-trans">Anh / Chị (Cách xưng hô thân mật)</span>
-            </div>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Looking for you / Clingy</span>
-              <span class="vocab-trans">Tìm kiếm / Bám dính đáng yêu</span>
-            </div>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Spending time together</span>
-              <span class="vocab-trans">Dành thời gian bên nhau</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="vocab-category-title">😏 Flirty & Assertive Senior Vocab (Ren)</div>
-        <div class="vocab-list">
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Daydreaming about me</span>
-              <span class="vocab-trans">Mơ màng nghĩ đến anh</span>
-            </div>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">Sit close to me / Teasing</span>
-              <span class="vocab-trans">Ngồi gần anh / Trêu ghẹo quyến rũ</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="vocab-category-title">💬 Sweet Conversational Formulas</div>
-        <div class="vocab-list">
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">"Are you free right now?"</span>
-              <span class="vocab-trans">"Cậu có rảnh lúc này không?"</span>
-            </div>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">"You made my day."</span>
-              <span class="vocab-trans">"Cậu làm một ngày của tớ thêm vui tươi."</span>
-            </div>
-          </div>
-
-          <div class="vocab-item">
-            <div class="vocab-item-row">
-              <span class="vocab-term">"Hope your day treating you gently."</span>
-              <span class="vocab-trans">"Mong một ngày của cậu diễn ra thật dịu dàng."</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
+  // SUB-MODE 1: OPENKOTO AI MEDIA LEARNING LAB
+  if (currentGuidebookSubMode === "openkoto") {
+    renderOpenkotoStudioView(container);
+    return;
   }
+
+  // SUB-MODE 2: SAVED FLASHCARD DECK & LESSON LIBRARY
+  if (currentGuidebookSubMode === "library") {
+    renderOpenkotoLibraryView(container);
+    return;
+  }
+
+  // Default fallback
+  renderOpenkotoStudioView(container);
+}
+
+// RENDER OPENKOTO STUDIO VIEW
+function renderOpenkotoStudioView(container) {
+  // If active lesson exists, render the interactive Studio
+  if (openkotoState.activeLesson) {
+    const lesson = openkotoState.activeLesson;
+    const isImage = openkotoState.mediaType === "image" && openkotoState.mediaBase64;
+    const isAudio = openkotoState.mediaType === "audio" && openkotoState.mediaBase64;
+    const isVideo = openkotoState.mediaType === "video" && openkotoState.mediaBase64;
+
+    const mcQuiz = (lesson.quizzes || []).find((q) => q.type === "multiple_choice");
+    const scrambleQuiz = (lesson.quizzes || []).find((q) => q.type === "sentence_scramble");
+    const clozeQuiz = (lesson.quizzes || []).find((q) => q.type === "cloze_fill");
+    const roleplayQuiz = (lesson.quizzes || []).find((q) => q.type === "roleplay_reply");
+
+    container.innerHTML = `
+      <div class="openkoto-lesson-studio">
+        <!-- Studio Header Banner -->
+        <div class="openkoto-studio-header">
+          <div class="openkoto-studio-title-row">
+            <div class="openkoto-studio-title">
+              ✨ ${lesson.title || "AI Media Learning Pack"}
+            </div>
+            <span class="openkoto-level-tag">${lesson.level || "Beginner (A1)"}</span>
+          </div>
+          <p class="openkoto-studio-summary">${lesson.summary || "Interactive multimodal language lesson generated from your media."}</p>
+          
+          <div class="openkoto-studio-toolbar">
+            <button class="openkoto-tool-btn" type="button" onclick="speakOpenkotoPhrase('${encodeURIComponent(lesson.transcription || "").replace(/'/g, "\\'")}', '${openkotoState.targetLang}')">
+              <span class="material-symbols-outlined" style="font-size:16px;">volume_up</span>
+              <span>Listen Full</span>
+            </button>
+            <button class="openkoto-tool-btn ${openkotoState.bilingualVisible ? "active" : ""}" type="button" onclick="toggleOpenkotoBilingual()">
+              <span class="material-symbols-outlined" style="font-size:16px;">translate</span>
+              <span>Bilingual</span>
+            </button>
+            <button class="openkoto-tool-btn ${openkotoState.phoneticsVisible ? "active" : ""}" type="button" onclick="toggleOpenkotoPhonetics()">
+              <span class="material-symbols-outlined" style="font-size:16px;">record_voice_over</span>
+              <span>Phonetics</span>
+            </button>
+            <button class="openkoto-tool-btn" type="button" onclick="saveCurrentOpenkotoLesson()">
+              <span class="material-symbols-outlined" style="font-size:16px;">bookmark_add</span>
+              <span>Save Lesson</span>
+            </button>
+            <button class="openkoto-tool-btn" type="button" onclick="resetOpenkotoStudio()">
+              <span class="material-symbols-outlined" style="font-size:16px;">replay</span>
+              <span>New Media</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Media Stage Visualizer (if image/audio/video attached) -->
+        ${isImage ? `
+          <div class="openkoto-media-preview-box">
+            <img src="${openkotoState.mediaBase64}" alt="Uploaded Learning Media" />
+          </div>
+        ` : ""}
+        ${isAudio ? `
+          <div class="openkoto-card" style="padding:12px;">
+            <audio controls src="${openkotoState.mediaBase64}" style="width:100%;"></audio>
+          </div>
+        ` : ""}
+        ${isVideo ? `
+          <div class="openkoto-media-preview-box">
+            <video controls src="${openkotoState.mediaBase64}" style="width:100%; max-height:240px;"></video>
+          </div>
+        ` : ""}
+
+        <!-- SMART INTERACTIVE READER (Line-by-line + Clickable Word Tokens) -->
+        <div class="openkoto-reader-card">
+          <div class="openkoto-reader-title">
+            <span>📖 Interactive Smart Reader (Tap any word for details)</span>
+            <span style="font-size:13px; font-weight:700; color:var(--text-muted);">${(lesson.sentences || []).length} Sentences</span>
+          </div>
+
+          <div class="openkoto-sentences-list">
+            ${(lesson.sentences || []).map((sent) => `
+              <div class="openkoto-sentence-item">
+                <div class="openkoto-sentence-tokens-row">
+                  ${(sent.tokens || []).map((tok) => `
+                    <button class="openkoto-token" type="button" onclick="inspectOpenkotoToken('${encodeURIComponent(tok.word || "")}', '${encodeURIComponent(tok.lemma || tok.word || "")}', '${encodeURIComponent(tok.pos || "Word")}', '${encodeURIComponent(tok.phonetic || "")}', '${encodeURIComponent(tok.meaning || "")}', '${encodeURIComponent(tok.note || "")}')">
+                      ${openkotoState.phoneticsVisible && tok.phonetic ? `<span class="openkoto-token-ruby">${tok.phonetic}</span>` : ""}
+                      <span>${tok.word}</span>
+                    </button>
+                  `).join("")}
+                  
+                  <button class="openkoto-tool-btn" style="padding:4px 8px; font-size:12px; background:rgba(69,90,159,0.1); color:var(--text-main); border:none; margin-left:auto;" type="button" onclick="speakOpenkotoPhrase('${encodeURIComponent(sent.original || "").replace(/'/g, "\\'")}', '${openkotoState.targetLang}')">
+                    🔊
+                  </button>
+                </div>
+
+                ${openkotoState.phoneticsVisible && sent.phonetic ? `
+                  <div class="openkoto-sentence-phonetic">${sent.phonetic}</div>
+                ` : ""}
+
+                ${openkotoState.bilingualVisible && sent.translation ? `
+                  <div class="openkoto-sentence-translation">${sent.translation}</div>
+                ` : ""}
+
+                ${sent.grammarNotes ? `
+                  <div class="openkoto-sentence-notes">💡 ${sent.grammarNotes}</div>
+                ` : ""}
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <!-- CORE VOCABULARY DECK -->
+        ${(lesson.vocabularyList || []).length > 0 ? `
+          <div class="openkoto-card">
+            <div style="font-size:15.5px; font-weight:800; color:var(--primary-pink); display:flex; align-items:center; justify-content:space-between;">
+              <span>⭐ Key Vocabulary Extracted</span>
+              <span style="font-size:13px; color:var(--text-muted);">${lesson.vocabularyList.length} words</span>
+            </div>
+            
+            <div class="openkoto-vocab-grid">
+              ${lesson.vocabularyList.map((v) => `
+                <div class="openkoto-vocab-card">
+                  <div class="openkoto-vocab-top">
+                    <span class="openkoto-vocab-term">${v.term}</span>
+                    <span class="openkoto-vocab-level">${v.difficulty || "A1"} • ${v.pos || "Word"}</span>
+                  </div>
+                  <div style="font-size:12.5px; color:var(--text-muted); font-style:italic;">${v.reading || ""}</div>
+                  <div class="openkoto-vocab-def">${v.meaning}</div>
+                  ${v.example ? `
+                    <div class="openkoto-vocab-ex">
+                      <strong>Ex:</strong> ${v.example}
+                      ${v.exampleTrans ? `<br/><span style="color:var(--text-muted);">${v.exampleTrans}</span>` : ""}
+                    </div>
+                  ` : ""}
+                  <div style="display:flex; gap:8px; margin-top:6px;">
+                    <button class="openkoto-tool-btn" style="flex:1; background:rgba(69,90,159,0.08); color:var(--text-main); border:1px solid rgba(69,90,159,0.2); justify-content:center; font-size:13px; padding:8px;" type="button" onclick="speakOpenkotoPhrase('${encodeURIComponent(v.term || "").replace(/'/g, "\\'")}', '${openkotoState.targetLang}')">
+                      🔊 Listen
+                    </button>
+                    <button class="openkoto-tool-btn" style="flex:1; background:rgba(217,0,87,0.08); color:var(--primary-pink); border:1px solid rgba(217,0,87,0.25); justify-content:center; font-size:13px; padding:8px;" type="button" onclick="saveOpenkotoFlashcard('${encodeURIComponent(v.term)}', '${encodeURIComponent(v.reading || "")}', '${encodeURIComponent(v.pos || "")}', '${encodeURIComponent(v.meaning)}', '${encodeURIComponent(v.example || "")}')">
+                      ⭐ Bookmark
+                    </button>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        ` : ""}
+
+        <!-- GRAMMAR PATTERNS & CULTURAL INSIGHTS -->
+        ${(lesson.grammarPoints || []).length > 0 ? `
+          <div class="openkoto-card">
+            <div style="font-size:15.5px; font-weight:800; color:var(--accent-violet);">
+              🎓 Sentence Formulas &amp; Romance Nuances
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              ${lesson.grammarPoints.map((g) => `
+                <div style="background:#fdfbff; border:1px solid rgba(124,58,237,0.2); border-radius:14px; padding:12px 14px;">
+                  <div style="font-size:15px; font-weight:800; color:var(--accent-violet); margin-bottom:6px;">
+                    📌 ${g.pattern}
+                  </div>
+                  <div style="font-size:14px; color:var(--text-main); margin-bottom:6px; line-height:1.45;">
+                    ${g.explanation}
+                  </div>
+                  ${g.example ? `<div style="font-size:13px; color:var(--text-muted); background:rgba(124,58,237,0.05); padding:6px 10px; border-radius:8px; margin-bottom:6px;">Ex: ${g.example}</div>` : ""}
+                  ${g.romanceContext ? `<div style="font-size:13px; color:var(--primary-pink); font-weight:700;">💕 Dating Tip: ${g.romanceContext}</div>` : ""}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        ` : ""}
+
+        <!-- INTERACTIVE PRACTICE SUITE (4 Modes) -->
+        <div class="openkoto-quiz-card">
+          <div style="font-size:15.5px; font-weight:800; color:var(--text-main); margin-bottom:10px;">
+            🎯 Interactive Practice Arena (Media Quizzes)
+          </div>
+
+          <div class="openkoto-quiz-mode-tabs">
+            ${mcQuiz ? `<button class="openkoto-quiz-tab-btn ${openkotoState.activeQuizMode === "mc" ? "active" : ""}" type="button" onclick="setOpenkotoQuizMode('mc')">1. Comprehension</button>` : ""}
+            ${scrambleQuiz ? `<button class="openkoto-quiz-tab-btn ${openkotoState.activeQuizMode === "scramble" ? "active" : ""}" type="button" onclick="setOpenkotoQuizMode('scramble')">2. Word Scramble</button>` : ""}
+            ${clozeQuiz ? `<button class="openkoto-quiz-tab-btn ${openkotoState.activeQuizMode === "cloze" ? "active" : ""}" type="button" onclick="setOpenkotoQuizMode('cloze')">3. Fill-in-the-Blank</button>` : ""}
+            ${roleplayQuiz ? `<button class="openkoto-quiz-tab-btn ${openkotoState.activeQuizMode === "roleplay" ? "active" : ""}" type="button" onclick="setOpenkotoQuizMode('roleplay')">4. Romance Reaction</button>` : ""}
+          </div>
+
+          <!-- Mode 1: Multiple Choice -->
+          ${openkotoState.activeQuizMode === "mc" && mcQuiz ? `
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="font-size:15px; font-weight:800; color:var(--text-main); margin-bottom:6px;">
+                ${mcQuiz.question}
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                ${(mcQuiz.options || []).map((opt, idx) => {
+                  const state = openkotoState.activeQuizState.answered["mc"];
+                  let btnClass = "openkoto-quiz-option";
+                  if (state) {
+                    if (idx === mcQuiz.correctIndex) btnClass += " correct";
+                    else if (state.optionIdx === idx) btnClass += " wrong";
+                  }
+                  return `
+                    <button class="${btnClass}" type="button" onclick="answerOpenkotoMC(${idx}, ${mcQuiz.correctIndex})">
+                      ${opt}
+                    </button>
+                  `;
+                }).join("")}
+              </div>
+              ${openkotoState.activeQuizState.answered["mc"] ? `
+                <div style="padding:12px 14px; background:rgba(16,185,129,0.1); border-radius:12px; font-size:13.5px; color:#065f46; line-height:1.45;">
+                  💡 <strong>Explanation:</strong> ${mcQuiz.explanation || "Great job!"}
+                </div>
+              ` : ""}
+            </div>
+          ` : ""}
+
+          <!-- Mode 2: Sentence Scramble -->
+          ${openkotoState.activeQuizMode === "scramble" && scrambleQuiz ? `
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="font-size:13.5px; color:var(--text-muted);">
+                ${scrambleQuiz.prompt || "Reconstruct the sentence in correct order:"}
+              </div>
+              <div style="font-size:15px; font-weight:800; color:var(--primary-pink); margin-bottom:6px;">
+                "${scrambleQuiz.translation}"
+              </div>
+
+              <!-- Picked Chips Tray -->
+              <div class="openkoto-scramble-tray">
+                ${openkotoState.activeQuizState.scramblePicked.length === 0 ? `
+                  <span style="font-size:13.5px; color:var(--text-muted);">Tap words below to assemble sentence...</span>
+                ` : openkotoState.activeQuizState.scramblePicked.map((word, idx) => `
+                  <button class="openkoto-scramble-chip" style="background:var(--primary-pink); color:#ffffff; border-color:var(--primary-pink);" type="button" onclick="removeOpenkotoScramblePicked('${word}', ${idx})">
+                    ${word} ✕
+                  </button>
+                `).join("")}
+              </div>
+
+              <!-- Available Chips Tray -->
+              <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+                ${openkotoState.activeQuizState.scrambleRemaining.map((word, idx) => `
+                  <button class="openkoto-scramble-chip" type="button" onclick="pickOpenkotoScrambleChip('${word}', ${idx})">
+                    ${word}
+                  </button>
+                `).join("")}
+              </div>
+
+              <div style="display:flex; gap:10px; align-items:center;">
+                <button class="openkoto-tool-btn" style="background:rgba(69,90,159,0.1); color:var(--text-main); border:1px solid rgba(69,90,159,0.25); padding:8px 14px; font-size:13px;" type="button" onclick="resetOpenkotoScramble()">
+                  🔄 Reset Words
+                </button>
+                ${openkotoState.activeQuizState.scrambleRemaining.length === 0 ? `
+                  <div style="font-size:13.5px; font-weight:800; color:#10b981; display:flex; align-items:center;">
+                    ✓ Perfect assembly! Target: "${scrambleQuiz.targetSentence}"
+                  </div>
+                ` : ""}
+              </div>
+            </div>
+          ` : ""}
+
+          <!-- Mode 3: Cloze Fill-in-the-Blank -->
+          ${openkotoState.activeQuizMode === "cloze" && clozeQuiz ? `
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="font-size:15px; font-weight:800; color:var(--text-main); margin-bottom:6px;">
+                ${clozeQuiz.sentenceWithBlank}
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                ${(clozeQuiz.options || []).map((opt, idx) => {
+                  const state = openkotoState.activeQuizState.answered["cloze"];
+                  let btnClass = "openkoto-quiz-option";
+                  if (state) {
+                    if (idx === clozeQuiz.correctIndex) btnClass += " correct";
+                    else if (state.optionIdx === idx) btnClass += " wrong";
+                  }
+                  return `
+                    <button class="${btnClass}" type="button" onclick="answerOpenkotoCloze(${idx}, ${clozeQuiz.correctIndex})">
+                      ${opt}
+                    </button>
+                  `;
+                }).join("")}
+              </div>
+              ${openkotoState.activeQuizState.answered["cloze"] ? `
+                <div style="padding:12px 14px; background:rgba(16,185,129,0.1); border-radius:12px; font-size:13.5px; color:#065f46; line-height:1.45;">
+                  💡 ${clozeQuiz.explanation || "Correct choice!"}
+                </div>
+              ` : ""}
+            </div>
+          ` : ""}
+
+          <!-- Mode 4: Otome Character Dialogue Reaction -->
+          ${openkotoState.activeQuizMode === "roleplay" && roleplayQuiz ? `
+            <div style="background:#fdfbff; border:1.5px solid rgba(217,0,87,0.25); border-radius:14px; padding:16px;">
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+                <div style="font-size:28px;">💬</div>
+                <div>
+                  <div style="font-size:15px; font-weight:800; color:var(--primary-pink);">${roleplayQuiz.partnerName || "Character"}</div>
+                  <div style="font-size:14.5px; font-weight:700; color:var(--text-main);">"${roleplayQuiz.partnerDialogue}"</div>
+                  ${roleplayQuiz.partnerTrans ? `<div style="font-size:13px; color:var(--text-muted); font-style:italic;">(${roleplayQuiz.partnerTrans})</div>` : ""}
+                </div>
+              </div>
+
+              <div style="font-size:13.5px; font-weight:800; color:var(--text-muted); margin-bottom:10px;">Choose your reply:</div>
+
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                ${(roleplayQuiz.options || []).map((opt, idx) => `
+                  <button class="openkoto-quiz-option" type="button" onclick="answerOpenkotoRoleplay(${idx}, ${roleplayQuiz.correctIndex || 0}, '${encodeURIComponent(opt.feedback || "")}')">
+                    <div style="font-size:14.5px; font-weight:800;">${opt.text}</div>
+                    ${opt.trans ? `<div style="font-size:12.5px; opacity:0.85; font-weight:normal; margin-top:2px;">${opt.trans}</div>` : ""}
+                  </button>
+                `).join("")}
+              </div>
+
+              ${openkotoState.activeQuizState.roleplayAnswered ? `
+                <div style="margin-top:12px; padding:12px 14px; background:rgba(217,0,87,0.08); border-radius:12px; font-size:13.5px; color:var(--primary-pink); font-weight:700; line-height:1.45;">
+                  💌 ${openkotoState.activeQuizState.roleplayAnswered.feedback}
+                </div>
+              ` : ""}
+            </div>
+          ` : ""}
+        </div>
+      </div>
+
+      <!-- FLOATING SMART WORD INSPECTOR MODAL -->
+      ${openkotoState.activeWordPopover ? `
+        <div class="openkoto-word-modal">
+          <div class="openkoto-word-header">
+            <div>
+              <div class="openkoto-word-lemma">${openkotoState.activeWordPopover.word}</div>
+              <div style="font-size:11px; color:var(--text-muted); font-style:italic;">
+                ${openkotoState.activeWordPopover.phonetic || openkotoState.activeWordPopover.lemma}
+              </div>
+            </div>
+            <span class="openkoto-word-pos">${openkotoState.activeWordPopover.pos}</span>
+          </div>
+
+          <div class="openkoto-word-meaning">${openkotoState.activeWordPopover.meaning}</div>
+          ${openkotoState.activeWordPopover.note ? `
+            <div class="openkoto-word-tip">💡 ${openkotoState.activeWordPopover.note}</div>
+          ` : ""}
+
+          <div class="openkoto-word-actions">
+            <button class="openkoto-word-action-btn" style="background:rgba(69,90,159,0.1); color:var(--text-main);" type="button" onclick="speakOpenkotoPhrase('${encodeURIComponent(openkotoState.activeWordPopover.word).replace(/'/g, "\\'")}', '${openkotoState.targetLang}')">
+              🔊 Pronounce
+            </button>
+            <button class="openkoto-word-action-btn" style="background:var(--primary-pink); color:#ffffff;" type="button" onclick="saveOpenkotoFlashcard('${encodeURIComponent(openkotoState.activeWordPopover.word)}', '${encodeURIComponent(openkotoState.activeWordPopover.phonetic)}', '${encodeURIComponent(openkotoState.activeWordPopover.pos)}', '${encodeURIComponent(openkotoState.activeWordPopover.meaning)}', '')">
+              ⭐ Add Flashcard
+            </button>
+            <button class="openkoto-word-action-btn" style="background:#f1f5f9; color:var(--text-muted);" type="button" onclick="closeOpenkotoWordPopover()">
+              ✕ Close
+            </button>
+          </div>
+        </div>
+      ` : ""}
+    `;
+    return;
+  }
+
+  // If no active lesson, render Studio Upload / Builder Form
+  container.innerHTML = `
+    <div class="openkoto-container">
+      <!-- Studio Input Card -->
+      <div class="openkoto-card">
+        <!-- Media Source Tabs -->
+        <div class="openkoto-source-tabs">
+          <button class="openkoto-source-btn ${openkotoState.activeSource === "upload" ? "active" : ""}" type="button" onclick="setOpenkotoSource('upload')">
+            <span class="material-symbols-outlined">upload_file</span>
+            <span>Upload File</span>
+          </button>
+          <button class="openkoto-source-btn ${openkotoState.activeSource === "text" ? "active" : ""}" type="button" onclick="setOpenkotoSource('text')">
+            <span class="material-symbols-outlined">edit_note</span>
+            <span>Paste Text</span>
+          </button>
+          <button class="openkoto-source-btn ${openkotoState.activeSource === "chat" ? "active" : ""}" type="button" onclick="setOpenkotoSource('chat')">
+            <span class="material-symbols-outlined">forum</span>
+            <span>Import Chat</span>
+          </button>
+          <button class="openkoto-source-btn ${openkotoState.activeSource === "voice" ? "active" : ""}" type="button" onclick="setOpenkotoSource('voice')">
+            <span class="material-symbols-outlined">mic</span>
+            <span>Voice Record</span>
+          </button>
+          <button class="openkoto-source-btn ${openkotoState.activeSource === "camera" ? "active" : ""}" type="button" onclick="setOpenkotoSource('camera')">
+            <span class="material-symbols-outlined">photo_camera</span>
+            <span>Take Photo</span>
+          </button>
+        </div>
+
+        <!-- 1. FILE UPLOAD DROPZONE -->
+        ${openkotoState.activeSource === "upload" ? `
+          <div class="openkoto-dropzone" ondragover="this.classList.add('dragover'); event.preventDefault();" ondragleave="this.classList.remove('dragover');" ondrop="this.classList.remove('dragover'); handleOpenkotoDrop(event);" onclick="document.getElementById('openkotoFileInput').click();">
+            <input type="file" id="openkotoFileInput" style="display:none;" accept="image/*,audio/*,video/*,.txt,.srt,.vtt,.lrc,.md,.json" onchange="handleOpenkotoFileSelect(event)" />
+            <span class="material-symbols-outlined openkoto-dropzone-icon">cloud_upload</span>
+            <div class="openkoto-dropzone-title">Drop image, audio, video or text file here</div>
+            <div class="openkoto-dropzone-sub">Supports PNG, JPG, MP3, WAV, MP4, SRT, LRC &amp; TXT</div>
+          </div>
+        ` : ""}
+
+        <!-- 2. PASTE TEXT / LYRICS -->
+        ${openkotoState.activeSource === "text" ? `
+          <textarea id="openkotoTextInput" class="openkoto-textarea" placeholder="Paste dialogue, lyrics, romance messages, article excerpts, or video subtitles here...">${openkotoState.pastedText}</textarea>
+        ` : ""}
+
+        <!-- 3. CHAT IMPORTER DECK -->
+        ${openkotoState.activeSource === "chat" ? (() => {
+          const charId = openkotoState.selectedChatChar || "ado";
+          const char = CHARACTERS[charId] || CHARACTERS.ado;
+          const history = userState.chatHistories[charId] || [];
+          const selectedIndices = openkotoState.selectedChatMsgs || [];
+          const selectedCount = selectedIndices.length;
+
+          const charsList = [
+            { id: "ado", name: "Ado", avatar: "/assets/characters/ado_avatar.png", count: (userState.chatHistories.ado || []).length },
+            { id: "kou", name: "Kou", avatar: "/assets/characters/kou_avatar.png", count: (userState.chatHistories.kou || []).length },
+            { id: "ren", name: "Ren", avatar: "/assets/characters/ren_avatar.png", count: (userState.chatHistories.ren || []).length },
+            { id: "group", name: "Study Group", avatar: "/assets/characters/ado_avatar.png", count: (userState.chatHistories.group || []).length }
+          ];
+
+          return `
+            <div class="openkoto-chat-importer">
+              <!-- Character Selector Tabs -->
+              <div class="openkoto-chat-char-tabs">
+                ${charsList.map(c => `
+                  <button type="button" class="openkoto-chat-char-tab ${c.id === charId ? "active" : ""}" onclick="setOpenkotoChatChar('${c.id}')">
+                    <img src="${c.avatar}" alt="${c.name}" class="openkoto-chat-tab-avatar" />
+                    <div class="openkoto-chat-tab-info">
+                      <div class="openkoto-chat-tab-name">${c.name}</div>
+                      <div class="openkoto-chat-tab-count">${c.count} msg${c.count !== 1 ? 's' : ''}</div>
+                    </div>
+                  </button>
+                `).join('')}
+              </div>
+
+              <!-- Quick Action Toolbar -->
+              <div class="openkoto-chat-toolbar">
+                <div class="openkoto-chat-toolbar-left">
+                  <span class="material-symbols-outlined" style="font-size:17px; color:var(--primary-pink);">forum</span>
+                  <span><strong>${char.name}</strong> (${history.length} messages)</span>
+                </div>
+                <div class="openkoto-chat-toolbar-actions">
+                  ${history.length > 0 ? `
+                    <button type="button" class="openkoto-chat-tool-btn" onclick="importRecentChatExchanges('${charId}', 6, false)" title="Load last 3 exchanges into text">
+                      ⚡ Last 6 Msgs
+                    </button>
+                    <button type="button" class="openkoto-chat-tool-btn" onclick="selectAllOpenkotoChatMsgs()">
+                      ☑️ Select All
+                    </button>
+                    ${selectedCount > 0 ? `
+                      <button type="button" class="openkoto-chat-tool-btn danger" onclick="clearOpenkotoChatMsgSelection()">
+                        ✕ Clear (${selectedCount})
+                      </button>
+                    ` : ''}
+                  ` : ''}
+                </div>
+              </div>
+
+              <!-- Message Deck List -->
+              ${history.length === 0 ? `
+                <div class="openkoto-chat-empty">
+                  <span class="material-symbols-outlined" style="font-size:38px; color:var(--primary-pink); opacity:0.85;">chat_bubble_outline</span>
+                  <div style="font-weight:700; color:var(--text-main); font-size:14.5px; margin-top:6px;">No conversation messages yet with ${char.name}</div>
+                  <div style="font-size:12.5px; color:var(--text-muted); margin-top:2px;">Chat with ${char.name} in the Chatroom first, or use a sample preset!</div>
+                  <div style="display:flex; gap:8px; margin-top:12px;">
+                    <button type="button" class="primary-btn" style="font-size:12px; padding:6px 16px; border-radius:10px;" onclick="openChat('${charId}')">
+                      💬 Open ${char.name}'s Chat
+                    </button>
+                  </div>
+                </div>
+              ` : `
+                <div class="openkoto-chat-msg-list">
+                  ${history.map((msg, idx) => {
+                    const isSelected = selectedIndices.includes(idx);
+                    const isLi = msg.sender === "li";
+                    const speakerName = isLi ? (msg.speakerName || char.name) : (userState.userProfile?.name || "You");
+                    const speakerAvatar = isLi ? (msg.speaker === "ren" ? CHARACTERS.ren.avatar : (msg.speaker === "kou" ? CHARACTERS.kou.avatar : char.avatar)) : (userState.userProfile?.avatar || "/assets/icons/icon-192.png");
+                    
+                    return `
+                      <div class="openkoto-chat-msg-row ${isSelected ? "selected" : ""}" onclick="toggleOpenkotoChatMsgSelection(${idx})">
+                        <input type="checkbox" class="openkoto-chat-checkbox" ${isSelected ? "checked" : ""} onclick="event.stopPropagation(); toggleOpenkotoChatMsgSelection(${idx});" />
+                        <img src="${speakerAvatar}" class="openkoto-chat-msg-avatar" alt="${speakerName}" />
+                        <div class="openkoto-chat-msg-body">
+                          <div class="openkoto-chat-msg-header">
+                            <span class="openkoto-chat-msg-sender ${isLi ? "partner" : "user"}">${speakerName}</span>
+                            <span class="openkoto-chat-msg-time">${msg.time || ""}</span>
+                          </div>
+                          <div class="openkoto-chat-msg-text">${cleanEmojiText(msg.text || "")}</div>
+                          ${msg.translation ? `<div class="openkoto-chat-msg-trans">${cleanEmojiText(msg.translation)}</div>` : ""}
+                        </div>
+                        <button type="button" class="openkoto-chat-quick-import-btn" title="Import this message into text" onclick="event.stopPropagation(); importSingleChatMsgToMediaLab('${charId}', ${idx}, false);">
+                          <span class="material-symbols-outlined" style="font-size:15px;">arrow_forward</span>
+                          <span>Import</span>
+                        </button>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              `}
+
+              <!-- Bottom Selection Action Bar -->
+              ${selectedCount > 0 ? `
+                <div class="openkoto-chat-selected-bar">
+                  <div class="openkoto-chat-selected-info">
+                    <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary-pink);">check_circle</span>
+                    <span><strong>${selectedCount}</strong> message${selectedCount > 1 ? "s" : ""} selected</span>
+                  </div>
+                  <div class="openkoto-chat-selected-actions">
+                    <button type="button" class="openkoto-chat-import-btn" onclick="importSelectedChatMsgsToOpenkoto(false)">
+                      📋 Load into Text
+                    </button>
+                    <button type="button" class="openkoto-chat-import-btn primary" onclick="importSelectedChatMsgsToOpenkoto(true)">
+                      ⚡ Analyze Now
+                    </button>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        })() : ""}
+
+        <!-- 3. LIVE VOICE RECORDER -->
+        ${openkotoState.activeSource === "voice" ? `
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; background:#fdfbff; border:1.5px dashed rgba(217,0,87,0.35); border-radius:16px; text-align:center;">
+            <button class="primary-btn" type="button" onclick="toggleOpenkotoVoiceRecord()" style="width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:${openkotoState.isRecording ? "#ef4444" : "linear-gradient(135deg, #d90057 0%, #7c3aed 100%)"}; box-shadow:0 4px 20px ${openkotoState.isRecording ? "rgba(239,68,68,0.5)" : "rgba(217,0,87,0.4)"}; margin-bottom:12px;">
+              <span class="material-symbols-outlined" style="font-size:32px; color:#ffffff;">
+                ${openkotoState.isRecording ? "stop" : "mic"}
+              </span>
+            </button>
+            <div style="font-size:13.5px; font-weight:800; color:var(--text-main);">
+              ${openkotoState.isRecording ? "🔴 Recording speech... Tap to finish" : "Tap microphone to record foreign speech"}
+            </div>
+            <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">
+              AI will transcribe and generate vocabulary, phonetics &amp; quizzes automatically!
+            </div>
+          </div>
+        ` : ""}
+
+        <!-- 4. CAMERA SNAPSHOT -->
+        ${openkotoState.activeSource === "camera" ? `
+          <div class="openkoto-dropzone" onclick="document.getElementById('openkotoCameraInput').click();">
+            <input type="file" id="openkotoCameraInput" style="display:none;" accept="image/*" capture="environment" onchange="handleOpenkotoFileSelect(event)" />
+            <span class="material-symbols-outlined openkoto-dropzone-icon">photo_camera</span>
+            <div class="openkoto-dropzone-title">Snap photo of text, menu, manga or signs</div>
+            <div class="openkoto-dropzone-sub">Uses camera to scan and extract language lessons</div>
+          </div>
+        ` : ""}
+
+        <!-- Attached Media Preview Bar -->
+        ${openkotoState.fileName || openkotoState.mediaBase64 ? `
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:#f1f5f9; border-radius:12px; font-size:12px; font-weight:700;">
+            <div style="display:flex; align-items:center; gap:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary-pink);">attach_file</span>
+              <span style="color:var(--text-main);">${openkotoState.fileName || "Media Attached"}</span>
+            </div>
+            <button type="button" onclick="clearOpenkotoMedia()" style="background:none; border:none; color:#ef4444; font-size:16px; cursor:pointer; font-weight:800;">✕</button>
+          </div>
+        ` : ""}
+
+        <!-- Quick 1-Click Sample Presets -->
+        <div class="openkoto-presets-deck">
+          <div class="openkoto-presets-title">
+            <span class="material-symbols-outlined" style="font-size:15px; color:var(--primary-pink);">flash_on</span>
+            <span>Or try instant 1-click sample media:</span>
+          </div>
+          <div class="openkoto-presets-grid">
+            <button class="openkoto-preset-chip" type="button" onclick="applyOpenkotoPreset('cafe_date')">
+              ☕ Cafe Date (VI)
+            </button>
+            <button class="openkoto-preset-chip" type="button" onclick="applyOpenkotoPreset('anime_romance')">
+              🌸 Anime Dialogue (JA)
+            </button>
+            <button class="openkoto-preset-chip" type="button" onclick="applyOpenkotoPreset('kpop_lyrics')">
+              🎵 Love Ballad (KO)
+            </button>
+            <button class="openkoto-preset-chip" type="button" onclick="applyOpenkotoPreset('tea_poetry')">
+              🍵 Tea Poetry (ZH)
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Controls Grid -->
+        <div class="openkoto-controls-grid">
+          <div class="openkoto-control-group">
+            <label for="openkotoLangSelect" class="openkoto-control-label">Target Learning Language</label>
+            <select id="openkotoLangSelect" class="openkoto-select" onchange="setOpenkotoTargetLang(this.value)">
+              <option value="vi" ${openkotoState.targetLang === "vi" ? "selected" : ""}>🇻🇳 Vietnamese</option>
+              <option value="en" ${openkotoState.targetLang === "en" ? "selected" : ""}>🇬🇧 English</option>
+              <option value="ja" ${openkotoState.targetLang === "ja" ? "selected" : ""}>🇯🇵 Japanese</option>
+              <option value="ko" ${openkotoState.targetLang === "ko" ? "selected" : ""}>🇰🇷 Korean</option>
+              <option value="zh" ${openkotoState.targetLang === "zh" ? "selected" : ""}>🇨🇳 Chinese</option>
+            </select>
+          </div>
+
+          <div class="openkoto-control-group">
+            <label for="openkotoFocusSelect" class="openkoto-control-label">Learning Focus / Context</label>
+            <select id="openkotoFocusSelect" class="openkoto-select" onchange="setOpenkotoCustomFocus(this.value)">
+              <option value="Romance, Flirting & Everyday Life">💕 Romance &amp; Flirting</option>
+              <option value="Everyday Natural Slang & Banter">💬 Colloquial Slang</option>
+              <option value="Polite & Respectful Forms">🎓 Polite Forms</option>
+              <option value="Travel & Food Culture">🍜 Travel &amp; Food</option>
+              <option value="Anime & Drama Dialogue">🎌 Anime &amp; Drama</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Primary Action Trigger -->
+        <button class="openkoto-action-btn" type="button" onclick="generateOpenkotoLesson()" ${openkotoState.isLoading ? "disabled" : ""}>
+          ${openkotoState.isLoading ? `
+            <span class="material-symbols-outlined" style="animation:spin 1s linear infinite;">sync</span>
+            <span>OpenKoto AI is analyzing media &amp; building lesson...</span>
+          ` : `
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <span>Generate OpenKoto AI Learning Pack</span>
+          `}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// RENDER SAVED MEDIA & VOCABULARY LIBRARY VIEW
+function renderOpenkotoLibraryView(container) {
+  const lessons = openkotoState.savedLessons || [];
+  const cards = openkotoState.savedFlashcards || [];
+
+  container.innerHTML = `
+    <div class="openkoto-container">
+      <!-- Export Deck Header -->
+      <div class="openkoto-card" style="padding:16px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div style="font-size:16px; font-weight:800; color:var(--text-main);">⭐ My Saved Flashcard Deck</div>
+            <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">${cards.length} saved terms • ${lessons.length} saved lessons</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="openkoto-tool-btn" style="background:var(--primary-pink); color:#ffffff; border:none; font-size:13px; padding:8px 14px;" type="button" onclick="exportOpenkotoDeck('anki')">
+              Export Anki
+            </button>
+            <button class="openkoto-tool-btn" style="background:#455A9F; color:#ffffff; border:none; font-size:13px; padding:8px 14px;" type="button" onclick="exportOpenkotoDeck('md')">
+              Export Markdown
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved Vocabulary Cards -->
+      <div class="openkoto-card">
+        <div style="font-size:15.5px; font-weight:800; color:var(--primary-pink); margin-bottom:12px;">
+          📚 Bookmarked Vocabulary Terms
+        </div>
+
+        ${cards.length === 0 ? `
+          <div style="text-align:center; padding:28px 14px; color:var(--text-muted); font-size:14px; line-height:1.5;">
+            No flashcards saved yet. Tap "⭐ Add Flashcard" on any word in the OpenKoto AI Reader!
+          </div>
+        ` : `
+          <div class="openkoto-vocab-grid">
+            ${cards.map((c) => `
+              <div class="openkoto-vocab-card" style="${c.mastered ? "background:#f0fdf4; border-color:#86efac;" : ""}">
+                <div class="openkoto-vocab-top">
+                  <span class="openkoto-vocab-term">${c.term}</span>
+                  <button class="openkoto-tool-btn" style="font-size:11px; padding:3px 10px; background:${c.mastered ? "#10b981" : "#e2e8f0"}; color:${c.mastered ? "#ffffff" : "var(--text-main)"}; border:none;" type="button" onclick="toggleOpenkotoFlashcardMastery('${c.id}')">
+                    ${c.mastered ? "✓ Mastered" : "Learning"}
+                  </button>
+                </div>
+                ${c.reading ? `<div style="font-size:12.5px; color:var(--text-muted); font-style:italic;">${c.reading}</div>` : ""}
+                <div class="openkoto-vocab-def">${c.meaning}</div>
+                <div style="display:flex; gap:8px; margin-top:8px;">
+                  <button class="openkoto-tool-btn" style="flex:1; background:rgba(69,90,159,0.08); color:var(--text-main); justify-content:center; font-size:14px; padding:8px;" type="button" onclick="speakOpenkotoPhrase('${encodeURIComponent(c.term).replace(/'/g, "\\'")}', '${c.lang || "vi"}')">
+                    🔊 Listen
+                  </button>
+                  <button class="openkoto-tool-btn" style="background:rgba(239,68,68,0.1); color:#ef4444; border:none; padding:8px 12px; font-size:13px;" type="button" onclick="deleteOpenkotoFlashcard('${c.id}')">
+                    ✕
+                  </button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `}
+      </div>
+
+      <!-- Saved Media Lessons -->
+      <div class="openkoto-card">
+        <div style="font-size:15.5px; font-weight:800; color:var(--accent-violet); margin-bottom:12px;">
+          💾 Saved Media Lessons (${lessons.length})
+        </div>
+
+        ${lessons.length === 0 ? `
+          <div style="text-align:center; padding:28px 14px; color:var(--text-muted); font-size:14px; line-height:1.5;">
+            No saved media lessons yet. When generating a lesson in AI Media Lab, tap "Save Lesson" to keep it here!
+          </div>
+        ` : `
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            ${lessons.map((l) => `
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:14px 16px; background:#ffffff; border:1.5px solid rgba(160,140,190,0.2); border-radius:14px;">
+                <div>
+                  <div style="font-size:15px; font-weight:800; color:var(--text-main);">${l.title || "Media Lesson"}</div>
+                  <div style="font-size:13px; color:var(--text-muted); margin-top:2px;">${l.level || "Beginner"} • ${(l.sentences || []).length} Sentences</div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button class="openkoto-tool-btn" style="background:var(--primary-pink); color:#ffffff; border:none; font-size:13px; padding:8px 14px;" type="button" onclick="loadSavedOpenkotoLesson('${l.id}')">
+                    Study Now
+                  </button>
+                  <button class="openkoto-tool-btn" style="background:#f1f5f9; color:#ef4444; border:none; padding:8px 12px; font-size:13px;" type="button" onclick="deleteSavedOpenkotoLesson('${l.id}')">
+                    ✕
+                  </button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `}
+      </div>
+    </div>
+  `;
 }
 
 // Open Active Chatroom
@@ -2852,6 +3801,8 @@ function openChatroom(charId, updateUrl = true) {
   analyticsData.characterInteractions[charId] = (analyticsData.characterInteractions[charId] || 0) + 1;
   
   // Hide bottom tab bar while in chat window
+  const navDock = document.querySelector(".bottom-nav-dock");
+  if (navDock) navDock.classList.add("hidden-in-chat");
   const tabBar = document.querySelector(".tab-bar");
   if (tabBar) tabBar.classList.add("hidden-in-chat");
 
@@ -2990,9 +3941,9 @@ function updateVnDialogueBox(latestLiMsg, char) {
     else speakerName = "Ado";
   }
 
-  // Determine emotional expression (fear, happy, angry, pout, sad, normal)
+  // Determine emotional expression (idle, fear, happy, angry, pout, sad, normal)
   let emotion = (latestLiMsg && latestLiMsg.emotion) ? latestLiMsg.emotion.toLowerCase().trim() : "normal";
-  if (!["fear", "happy", "angry", "pout", "sad", "normal"].includes(emotion)) {
+  if (!["idle", "fear", "happy", "angry", "pout", "sad", "normal"].includes(emotion)) {
     if (latestLiMsg && latestLiMsg.evalColor === "red") emotion = "angry";
     else if (latestLiMsg && latestLiMsg.evalColor === "yellow") emotion = "pout";
     else emotion = "normal";
@@ -3046,6 +3997,7 @@ function updateVnDialogueBox(latestLiMsg, char) {
   if (speakerNameEl) speakerNameEl.textContent = speakerName;
   if (emotionBadgeEl) {
     const emotionLabels = {
+      idle: "🌿 Idle",
       fear: "⚡ Fear",
       happy: "✨ Happy",
       angry: "🔥 Angry",
@@ -3124,7 +4076,7 @@ function updateVnDialogueBox(latestLiMsg, char) {
 
   // Trigger emotion animation & bounce on character when speaking
   if (spriteWrapper) {
-    spriteWrapper.classList.remove("vn-talk-bounce", "emotion-fear", "emotion-happy", "emotion-angry", "emotion-pout", "emotion-normal");
+    spriteWrapper.classList.remove("vn-talk-bounce", "emotion-fear", "emotion-happy", "emotion-angry", "emotion-pout", "emotion-sad", "emotion-idle", "emotion-normal");
     void spriteWrapper.offsetWidth;
     spriteWrapper.classList.add("vn-talk-bounce", `emotion-${emotion}`);
   }
@@ -3259,7 +4211,7 @@ function renderChatHistory() {
 
   const showRomaji = userState.showRomaji !== false;
 
-  history.forEach((msg) => {
+  history.forEach((msg, idx) => {
     const group = document.createElement("div");
     group.className = "message-group " + (msg.sender === "user" ? "user-msg" : "li-msg");
 
@@ -3323,7 +4275,10 @@ function renderChatHistory() {
               <div style="font-size:15px; font-weight:700;">${wrapInteractiveScaffoldWords(cleanEmojiText(msg.text), userState.targetLanguage || "vi")}</div>
               ${gifHtml}
               ${romajiHtml}
-              ${(msg.translation || msg.tip || msg.fix) ? `<button type="button" class="assist-toggle-btn">Translation & Tips</button>` : ''}
+              <div class="msg-action-row" style="display:flex; align-items:center; gap:6px; margin-top:6px; flex-wrap:wrap;">
+                ${(msg.translation || msg.tip || msg.fix) ? `<button type="button" class="assist-toggle-btn">Translation & Tips</button>` : ''}
+                ${msg.text ? `<button type="button" class="msg-study-media-btn" onclick="importSingleChatMsgToMediaLab('${activeCharacterId}', ${idx})" title="Import message to AI Media Lab for deep study & breakdown"><span class="material-symbols-outlined" style="font-size:14px;">auto_awesome</span> <span>Import to Media Lab</span></button>` : ''}
+              </div>
               ${msg.translation ? `<div class="translation-text">${cleanEmojiText(msg.translation)}</div>` : ""}
               ${msg.tip ? `<div class="tip-card ${colorClass}"><div class="tip-title ${colorClass}">${tipTitleText}</div>${cleanEmojiText(msg.tip)}</div>` : ""}
               ${msg.fix ? `<div class="fix-card ${colorClass}"><div class="fix-title ${colorClass}">${cleanEmojiText(msg.fix)}</div>${cleanEmojiText(msg.fix)}</div>` : ""}
@@ -3351,6 +4306,11 @@ function renderChatHistory() {
             <div class="msg-bubble">
               <div>${cleanEmojiText(msg.text)}</div>
               ${userGifHtml}
+              ${msg.text && msg.text !== "[Sent a GIF 🖼️]" ? `
+                <div class="msg-action-row" style="display:flex; justify-content:flex-end; gap:6px; margin-top:6px;">
+                  <button type="button" class="msg-study-media-btn user-side" onclick="importSingleChatMsgToMediaLab('${activeCharacterId}', ${idx})" title="Import message to AI Media Lab"><span class="material-symbols-outlined" style="font-size:14px;">auto_awesome</span> <span>Import to Media Lab</span></button>
+                </div>
+              ` : ''}
             </div>
             <div class="msg-time">${msg.time || "11:42 PM"}</div>
           </div>
@@ -4072,9 +5032,9 @@ async function triggerLLMResponse(userText, tierObj) {
 
     const history = userState.chatHistories[charId] || [];
 
-    // Extract emotion (fear, happy, angry, pout, sad, normal)
+    // Extract emotion (idle, fear, happy, angry, pout, sad, normal)
     let charEmotion = responseData.emotion ? responseData.emotion.toLowerCase().trim() : null;
-    if (!charEmotion || !["fear", "happy", "angry", "pout", "sad", "normal"].includes(charEmotion)) {
+    if (!charEmotion || !["idle", "fear", "happy", "angry", "pout", "sad", "normal"].includes(charEmotion)) {
       if (responseData.evalColor === "red") charEmotion = "angry";
       else if (responseData.evalColor === "yellow") charEmotion = "pout";
       else if (/sad|sorry|cry|buồn|tiếc|khóc|miss|đau|lonely|heartbroken/i.test(responseData.characterResponse || "")) charEmotion = "sad";
@@ -4641,12 +5601,12 @@ function renderStoryMode() {
               <span>${sc.icon}</span>
               <span>${sc.title}</span>
             </div>
-            <div class="story-scenario-preview-desc">${sc.description}</div>
+            <div class="story-scenario-preview-desc">${sc.description || sc.desc}</div>
             <div class="story-scenario-preview-tags">
               <span class="story-meta-tag">📍 ${sc.location}</span>
               <span class="story-meta-tag">🎭 ${sc.tone}</span>
-              <span class="story-meta-tag">🎯 15 Interactive Acts</span>
-              <span class="story-meta-tag">🏆 Pass: ≥10/15 Correct</span>
+              <span class="story-meta-tag">🎯 ${sc.totalQuestions || 7} Interactive Acts</span>
+              <span class="story-meta-tag">🏆 Pass: ≥${sc.passingScore || 5}/${sc.totalQuestions || 7} Correct</span>
             </div>
           </div>
         </div>
@@ -4683,7 +5643,7 @@ function renderStoryMode() {
         <div class="story-square-top-row">
           <div class="story-square-level-tag">Level ${sc.level}</div>
           <div class="story-square-status-pill ${clearedByAny ? 'cleared' : ''}">
-            ${clearedByAny ? '✨ Cleared' : '⭐ 15 Questions'}
+            ${clearedByAny ? '✨ Cleared' : `⭐ ${sc.totalQuestions || 7} Questions`}
           </div>
         </div>
 
@@ -4893,7 +5853,7 @@ function renderStoryGameplay() {
   const scenario = STORY_SCENARIOS.find(s => s.id === session.scenarioId) || STORY_SCENARIOS[0];
   const charData = CHARACTERS[session.charId] || CHARACTERS.ado;
   const qIndex = session.currentQuestionIdx;
-  const totalQ = session.questions.length; // 15
+  const totalQ = session.questions.length || 7;
   const currentQ = session.questions[qIndex];
   const progressPct = Math.round(((qIndex) / totalQ) * 100);
 
@@ -4906,18 +5866,18 @@ function renderStoryGameplay() {
   const spriteSvg = (window.VN_SPRITES && window.VN_SPRITES[session.charId] && (window.VN_SPRITES[session.charId][currentEmotion] || window.VN_SPRITES[session.charId].normal)) || VN_SPRITES.ado.normal;
   const targetLang = userState.targetLanguage || "vi";
 
-
   // Check if current question has already been answered in this session
   const existingAns = session.userAnswers[qIndex];
   const isAnswered = existingAns !== undefined;
+  const correctIdx = (currentQ.correctIdx !== undefined) ? currentQ.correctIdx : (currentQ.correctIndex !== undefined ? currentQ.correctIndex : 0);
 
   // Build choice cards HTML
-  let optionsHtml = currentQ.options.map((opt, idx) => {
+  let optionsHtml = (currentQ.options || []).map((opt, idx) => {
     let optClass = "vn-choice-card";
     let statusPill = "";
 
     if (isAnswered) {
-      if (idx === currentQ.correctIdx) {
+      if (idx === correctIdx) {
         optClass += " choice-correct";
         statusPill = `<span class="vn-choice-status-badge badge-correct">✓ Match (+1💖)</span>`;
       } else if (idx === existingAns.selectedIdx) {
@@ -4928,13 +5888,15 @@ function renderStoryGameplay() {
       }
     }
 
+    const optTrans = opt.trans || opt.sub || "";
+
     return `
       <button class="${optClass}" onclick="handleStoryOptionSelect(${idx})" ${isAnswered ? 'disabled' : ''} type="button">
         <div class="vn-choice-letter-badge">${String.fromCharCode(65 + idx)}</div>
         <div class="vn-choice-body">
           <div class="vn-choice-text">${opt.text}</div>
           ${opt.phonetic ? `<div class="vn-choice-phonetic">${opt.phonetic}</div>` : ''}
-          ${session.showTranslation ? `<div class="vn-choice-trans">${opt.trans}</div>` : ''}
+          ${session.showTranslation && optTrans ? `<div class="vn-choice-trans">${optTrans}</div>` : ''}
         </div>
         ${statusPill}
       </button>
@@ -4955,7 +5917,7 @@ function renderStoryGameplay() {
             <span class="vn-feedback-sub">${isCorrect ? `${charData.name} smiles warmly at your words.` : `${charData.name} looks a bit caught off guard.`}</span>
           </div>
         </div>
-        <p class="vn-feedback-expl">${currentQ.explanation}</p>
+        <p class="vn-feedback-expl">${currentQ.explanation || 'Express genuine feelings and politeness.'}</p>
         <div class="vn-feedback-action">
           <button class="vn-next-act-btn" onclick="handleNextStoryQuestion()" type="button">
             <span>${isLastQuestion ? 'Complete Date & See Ending 🎉' : 'Next Scene (Act ' + (qIndex + 2) + ') →'}</span>
@@ -4989,13 +5951,17 @@ function renderStoryGameplay() {
     </div>
   `).join("") : `<div class="vn-backlog-empty">No past acts in this date yet. Make your first choice!</div>`;
 
-  const heartsCount = Math.min(10, session.score);
-  const heartsGaugeHtml = Array.from({ length: 10 }).map((_, i) => 
-    i < heartsCount ? `<span class="vn-heart-icon active">💖</span>` : `<span class="vn-heart-icon inactive">🤍</span>`
+  const passReq = scenario.passingScore || 5;
+  const heartsGaugeHtml = Array.from({ length: totalQ }).map((_, i) => 
+    i < session.score ? `<span class="vn-heart-icon active">💖</span>` : `<span class="vn-heart-icon inactive">🤍</span>`
   ).join("");
 
+  const currentDialogue = currentQ.promptDialogue || currentQ.partnerDialogue || "";
+  const currentTrans = currentQ.promptTrans || currentQ.dialogueTrans || "";
+  const currentSituation = currentQ.situation || currentQ.prompt || `Act ${qIndex + 1}/${totalQ}`;
+
   // Scaffolded interactive words in partner dialogue
-  const wrappedDialogue = wrapInteractiveScaffoldWords(currentQ.promptDialogue, targetLang);
+  const wrappedDialogue = wrapInteractiveScaffoldWords(currentDialogue, targetLang);
 
   container.innerHTML = `
     <div class="vn-date-stage ${session.isUiHidden ? 'vn-cg-hidden-ui' : ''}" id="vnDateStage">
@@ -5025,9 +5991,9 @@ function renderStoryGameplay() {
         </div>
 
         <div class="vn-hud-center">
-          <div class="vn-hearts-gauge" title="Affection Pass Gauge: ${session.score}/10 Needed">
+          <div class="vn-hearts-gauge" title="Affection Pass Gauge: ${session.score}/${passReq} Needed">
             <div class="vn-hearts-row">${heartsGaugeHtml}</div>
-            <div class="vn-hearts-label">Score: <strong>${session.score}</strong> / ${totalQ} (${session.score >= 10 ? '✨ PASSING' : '10 to Pass'})</div>
+            <div class="vn-hearts-label">Score: <strong>${session.score}</strong> / ${totalQ} (${session.score >= passReq ? '✨ PASSING' : `${passReq} to Pass`})</div>
           </div>
         </div>
 
@@ -5050,7 +6016,7 @@ function renderStoryGameplay() {
       <!-- Situation Cue Narrative Ribbon -->
       <div class="vn-scene-cue-ribbon">
         <span class="vn-cue-tag">📍 Act ${qIndex + 1}/${totalQ}</span>
-        <span class="vn-cue-text">${currentQ.situation}</span>
+        <span class="vn-cue-text">${currentSituation}</span>
       </div>
 
       <!-- Floating Visual Novel Choice Branches Tray -->
@@ -5086,7 +6052,7 @@ function renderStoryGameplay() {
           </div>
           ${session.showTranslation ? `
             <div class="vn-adv-dialogue-trans">
-              "${currentQ.promptTrans}"
+              "${currentTrans}"
             </div>
           ` : ''}
         </div>
@@ -5128,7 +6094,8 @@ function handleStoryOptionSelect(selectedIdx) {
   const q = session.questions[qIndex];
   const charData = CHARACTERS[session.charId] || CHARACTERS.ado;
   
-  const isCorrect = selectedIdx === q.correctIdx;
+  const correctIdx = (q.correctIdx !== undefined) ? q.correctIdx : (q.correctIndex !== undefined ? q.correctIndex : 0);
+  const isCorrect = selectedIdx === correctIdx;
   session.isAnsweringLocked = true;
 
   if (isCorrect) {
@@ -5142,6 +6109,9 @@ function handleStoryOptionSelect(selectedIdx) {
   }
 
   const chosenOption = q.options[selectedIdx];
+  const promptText = q.promptDialogue || q.partnerDialogue || "";
+  const promptTrans = q.promptTrans || q.dialogueTrans || "";
+  const optTrans = chosenOption.trans || chosenOption.sub || "";
 
   // Save answer
   session.userAnswers[qIndex] = {
@@ -5154,9 +6124,9 @@ function handleStoryOptionSelect(selectedIdx) {
     actIndex: qIndex + 1,
     charId: session.charId,
     speaker: charData.name,
-    promptDialogue: q.promptDialogue,
-    promptTrans: q.promptTrans,
-    userChoice: chosenOption.text + (chosenOption.trans ? ` (${chosenOption.trans})` : ''),
+    promptDialogue: promptText,
+    promptTrans: promptTrans,
+    userChoice: chosenOption.text + (optTrans ? ` (${optTrans})` : ''),
     isCorrect: isCorrect
   });
 
@@ -5181,7 +6151,10 @@ function handleNextStoryQuestion() {
     setTimeout(() => {
       if (activeStorySession) {
         const nextQ = activeStorySession.questions[activeStorySession.currentQuestionIdx];
-        if (nextQ) speakVNLine(nextQ.promptDialogue, targetLang);
+        if (nextQ) {
+          const nextDialogue = nextQ.promptDialogue || nextQ.partnerDialogue;
+          if (nextDialogue) speakVNLine(nextDialogue, targetLang);
+        }
       }
     }, 300);
   } else {
@@ -5199,8 +6172,9 @@ function completeStoryScenario() {
   const charId = session.charId;
   const charData = CHARACTERS[charId] || CHARACTERS.ado;
   const score = session.score;
-  const total = session.questions.length;
-  const isPassed = score >= (scenario.passingScore || 10);
+  const total = session.questions.length || 7;
+  const passReq = scenario.passingScore || 5;
+  const isPassed = score >= passReq;
 
   const bgKey = getScenarioBackgroundKey(scenario.id);
   const bgSvg = VN_SCENERY_SVGS[bgKey] || VN_SCENERY_SVGS.library;
@@ -5246,7 +6220,9 @@ function completeStoryScenario() {
   renderChatList();
 
   const relInfo = getRelationshipInfo(newAff);
-  const partnerDialogue = isPassed ? scenario.partnerReactionPass[charId] || scenario.partnerReactionPass.ado : scenario.partnerReactionFail[charId] || scenario.partnerReactionFail.ado;
+  const partnerDialogue = isPassed 
+    ? (scenario.partnerReactionPass && (scenario.partnerReactionPass[charId] || scenario.partnerReactionPass.ado)) || "Hôm nay tuyệt vời lắm!" 
+    : (scenario.partnerReactionFail && (scenario.partnerReactionFail[charId] || scenario.partnerReactionFail.ado)) || "Lần sau chúng mình cố gắng hơn nhé.";
 
   // Speak partner's ending quote
   setTimeout(() => {
@@ -5275,7 +6251,7 @@ function completeStoryScenario() {
         
         <div class="vn-ending-score-pill">
           <span class="vn-score-num">${score} / ${total} Correct</span>
-          <span class="vn-score-req">${isPassed ? '✨ Target Met (≥10/15)' : '⚠️ 10/15 Required to Pass'}</span>
+          <span class="vn-score-req">${isPassed ? `✨ Target Met (≥${passReq}/${total})` : `⚠️ ${passReq}/${total} Required to Pass`}</span>
         </div>
 
         <!-- Ending Partner Reaction Dialogue -->
@@ -5323,7 +6299,7 @@ function completeStoryScenario() {
 window.completeStoryScenario = completeStoryScenario;
 
 function exitStoryGameplay(confirmExit = true) {
-  if (confirmExit && activeStorySession && activeStorySession.currentQuestionIdx < 14) {
+  if (confirmExit && activeStorySession && activeStorySession.currentQuestionIdx < (activeStorySession.questions.length - 1)) {
     if (!confirm("Are you sure you want to leave this date? Progress for this round will be lost.")) {
       return;
     }

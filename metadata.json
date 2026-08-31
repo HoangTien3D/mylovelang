@@ -1,6 +1,6 @@
 {
   "name": "Otome Lingua",
-  "description": "A Duolingo competitor disguised as an Otome dating simulation with 10-tier difficulty progression, Story Mode date scenarios with 15-question rounds and relationship stakes, Gemini API integration, and analytics dashboard.",
+  "description": "A Duolingo competitor disguised as an Otome dating simulation with 10-tier difficulty progression, Story Mode date scenarios, OpenKoto AI Media Learning Lab in Cẩm Nang, Gemini API integration, and analytics dashboard.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

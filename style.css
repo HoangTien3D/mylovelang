@@ -652,25 +652,78 @@ body {
   position: relative;
 }
 
-/* Tab Navigation Bar */
-.tab-bar {
-  height: 56px;
+/* Bottom Navigation Dock & Tab Bar */
+.bottom-nav-dock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 6px 12px 6px 12px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-top: 1.5px solid rgba(217, 0, 87, 0.2);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
-  z-index: 100;
   box-shadow: 0 -4px 16px rgba(31, 21, 46, 0.06);
+  z-index: 100;
+  box-sizing: border-box;
 }
 
+.bottom-nav-dock.hidden-in-chat,
 .tab-bar.hidden-in-chat,
+.app-container:has(.chat-window.active) .bottom-nav-dock,
 .app-container:has(.chat-window.active) .tab-bar {
   display: none !important;
+}
+
+/* Separate Circle Home Button */
+.nav-circle-home-btn {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(217, 0, 87, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+  border: 1.5px solid rgba(217, 0, 87, 0.3);
+  color: var(--primary-pink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(217, 0, 87, 0.12);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  outline: none;
+  flex-shrink: 0;
+}
+
+.nav-circle-home-btn:hover {
+  background: linear-gradient(135deg, #d90057 0%, #7c3aed 100%);
+  color: #ffffff;
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px rgba(217, 0, 87, 0.3);
+}
+
+.nav-circle-home-btn:active {
+  transform: scale(0.94);
+}
+
+.nav-circle-home-btn .material-symbols-outlined {
+  font-size: 22px;
+  pointer-events: none;
+}
+
+.tab-bar {
+  height: 52px;
+  background: transparent;
+  border: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  flex: 1;
+  width: 100%;
+  margin: 0;
+  box-shadow: none;
+  gap: 6px;
 }
 
 .tab-btn {
@@ -790,8 +843,9 @@ body {
     gap: 18px !important;
   }
   .guidebook-container {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
     gap: 18px !important;
   }
 }
@@ -3820,9 +3874,26 @@ body.dark-theme .status-bar {
   border-bottom-color: rgba(160, 140, 190, 0.15);
 }
 
-body.dark-theme .tab-bar {
+body.dark-theme .bottom-nav-dock {
   background: #140d24;
   border-top-color: rgba(160, 140, 190, 0.18);
+}
+
+body.dark-theme .nav-circle-home-btn {
+  background: rgba(30, 20, 50, 0.9);
+  border-color: rgba(217, 0, 87, 0.35);
+  color: #f472b6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .nav-circle-home-btn:hover {
+  background: linear-gradient(135deg, #d90057 0%, #7c3aed 100%);
+  color: #ffffff;
+}
+
+body.dark-theme .tab-bar {
+  background: transparent;
+  border-top-color: transparent;
 }
 
 body.dark-theme .chat-card,
@@ -3905,6 +3976,7 @@ body.dark-theme .option-pill-btn.active {
     display: block;
     min-height: 100vh;
     overflow-x: hidden;
+    font-size: clamp(16.5px, 0.4vw + 15px, 18.5px);
   }
 
   .app-container {
@@ -3918,8 +3990,8 @@ body.dark-theme .option-pill-btn.active {
   }
 
   .main-content {
-    padding: 24px 48px 110px 48px;
-    max-width: 1440px;
+    padding: 28px 48px 120px 48px;
+    max-width: 1480px;
     margin: 0 auto;
     width: 100%;
   }
@@ -3929,15 +4001,17 @@ body.dark-theme .option-pill-btn.active {
   }
 
   .section-header {
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
 
   .section-title {
-    font-size: 24px;
+    font-size: clamp(26px, 1.2vw + 20px, 36px);
+    letter-spacing: -0.01em;
   }
 
   .section-subtitle {
-    font-size: 14px;
+    font-size: clamp(15px, 0.4vw + 13.5px, 18px);
+    line-height: 1.5;
   }
 
   /* Desktop Multi-column Grid Layouts for Square Character Cards */
@@ -3953,10 +4027,281 @@ body.dark-theme .option-pill-btn.active {
     gap: 22px;
   }
 
+  /* Guidebook & OpenKoto Adaptive Desktop Typography & Spacing */
   .guidebook-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
-    gap: 24px;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 28px;
+    font-size: clamp(16px, 0.4vw + 14.5px, 18.5px);
+  }
+
+  .openkoto-nav-bar {
+    padding: 6px;
+    gap: 8px;
+    border-radius: 18px;
+  }
+
+  .openkoto-nav-btn {
+    font-size: clamp(15px, 0.4vw + 13.5px, 17px);
+    padding: 14px 20px;
+    border-radius: 14px;
+  }
+
+  .openkoto-card {
+    padding: 24px;
+    gap: 20px;
+    border-radius: 22px;
+  }
+
+  .openkoto-source-tabs {
+    gap: 12px;
+  }
+
+  .openkoto-source-btn {
+    font-size: clamp(13.5px, 0.35vw + 12px, 15.5px);
+    padding: 16px 12px;
+    border-radius: 16px;
+  }
+
+  .openkoto-source-btn .material-symbols-outlined {
+    font-size: 28px;
+  }
+
+  .openkoto-dropzone {
+    padding: 38px 24px;
+    border-radius: 18px;
+  }
+
+  .openkoto-dropzone-icon {
+    font-size: 52px;
+  }
+
+  .openkoto-dropzone-title {
+    font-size: clamp(17px, 0.5vw + 15px, 21px);
+  }
+
+  .openkoto-dropzone-sub {
+    font-size: clamp(14px, 0.35vw + 12.5px, 16px);
+  }
+
+  .openkoto-textarea {
+    font-size: clamp(16px, 0.4vw + 14.5px, 18px);
+    min-height: 150px;
+    padding: 16px 20px;
+    border-radius: 16px;
+  }
+
+  .openkoto-presets-deck {
+    gap: 12px;
+  }
+
+  .openkoto-presets-title {
+    font-size: clamp(14.5px, 0.35vw + 13px, 16.5px);
+  }
+
+  .openkoto-preset-chip {
+    font-size: clamp(13.5px, 0.35vw + 12px, 15px);
+    padding: 10px 18px;
+    border-radius: 24px;
+  }
+
+  .openkoto-controls-grid {
+    gap: 16px;
+  }
+
+  .openkoto-control-label {
+    font-size: clamp(13.5px, 0.35vw + 12px, 15px);
+  }
+
+  .openkoto-select {
+    height: 48px;
+    font-size: clamp(14.5px, 0.35vw + 13px, 16px);
+    padding: 0 16px;
+    border-radius: 14px;
+  }
+
+  .openkoto-action-btn {
+    height: 56px;
+    font-size: clamp(17px, 0.45vw + 15px, 20px);
+    border-radius: 18px;
+  }
+
+  /* Active Lesson Studio Desktop Scaling */
+  .openkoto-studio-header {
+    padding: 24px;
+    gap: 16px;
+    border-radius: 22px;
+  }
+
+  .openkoto-studio-title {
+    font-size: clamp(22px, 0.9vw + 18px, 28px);
+  }
+
+  .openkoto-level-tag {
+    font-size: clamp(13px, 0.35vw + 11.5px, 15px);
+    padding: 5px 12px;
+  }
+
+  .openkoto-studio-summary {
+    font-size: clamp(15px, 0.4vw + 13.5px, 17.5px);
+    line-height: 1.6;
+  }
+
+  .openkoto-studio-toolbar {
+    gap: 10px;
+  }
+
+  .openkoto-tool-btn {
+    font-size: clamp(13.5px, 0.35vw + 12px, 15px);
+    padding: 10px 18px;
+    border-radius: 22px;
+  }
+
+  .openkoto-reader-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
+
+  .openkoto-reader-title {
+    font-size: clamp(17px, 0.5vw + 15px, 21px);
+    margin-bottom: 18px;
+  }
+
+  .openkoto-sentence-item {
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    border-radius: 16px;
+  }
+
+  .openkoto-sentence-tokens-row {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .openkoto-token {
+    font-size: clamp(18px, 0.55vw + 16px, 23px);
+    padding: 5px 10px;
+    border-radius: 12px;
+  }
+
+  .openkoto-token-ruby {
+    font-size: clamp(12px, 0.35vw + 10.5px, 14px);
+    margin-bottom: 2px;
+  }
+
+  .openkoto-sentence-phonetic {
+    font-size: clamp(14.5px, 0.35vw + 13px, 16.5px);
+    margin-bottom: 8px;
+  }
+
+  .openkoto-sentence-translation {
+    font-size: clamp(16px, 0.45vw + 14.5px, 19px);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .openkoto-sentence-notes {
+    font-size: clamp(14px, 0.35vw + 12.5px, 16px);
+    padding: 8px 14px;
+    border-radius: 10px;
+  }
+
+  .openkoto-vocab-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .openkoto-vocab-card {
+    padding: 18px;
+    border-radius: 16px;
+    gap: 10px;
+  }
+
+  .openkoto-vocab-term {
+    font-size: clamp(17px, 0.45vw + 15px, 20px);
+  }
+
+  .openkoto-vocab-level {
+    font-size: clamp(12px, 0.3vw + 10.5px, 13.5px);
+    padding: 4px 10px;
+  }
+
+  .openkoto-vocab-def {
+    font-size: clamp(15px, 0.35vw + 13.5px, 17px);
+  }
+
+  .openkoto-vocab-ex {
+    font-size: clamp(14px, 0.35vw + 12.5px, 15.5px);
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+
+  .openkoto-quiz-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
+
+  .openkoto-quiz-tab-btn {
+    font-size: clamp(14px, 0.35vw + 12.5px, 16px);
+    padding: 10px 18px;
+  }
+
+  .openkoto-quiz-option {
+    font-size: clamp(16px, 0.4vw + 14.5px, 18.5px);
+    padding: 16px 20px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+  }
+
+  .openkoto-scramble-tray {
+    min-height: 60px;
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+
+  .openkoto-scramble-chip {
+    font-size: clamp(16px, 0.4vw + 14.5px, 18px);
+    padding: 12px 20px;
+    border-radius: 16px;
+  }
+
+  .openkoto-word-modal {
+    max-width: 520px;
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .openkoto-word-lemma {
+    font-size: clamp(22px, 0.8vw + 18px, 26px);
+  }
+
+  .openkoto-word-def {
+    font-size: clamp(16.5px, 0.45vw + 15px, 19px);
+  }
+
+  .openkoto-word-tip {
+    font-size: clamp(14px, 0.35vw + 12.5px, 16px);
+  }
+
+  .openkoto-word-action-btn {
+    font-size: clamp(14px, 0.35vw + 12.5px, 15.5px);
+    padding: 12px 16px;
+  }
+
+  /* Guide card items on desktop */
+  .guide-card {
+    padding: 20px 24px;
+    border-radius: 18px;
+  }
+
+  .guide-card-title {
+    font-size: clamp(17px, 0.4vw + 15px, 20px);
+  }
+
+  .guide-card-desc {
+    font-size: clamp(14.5px, 0.35vw + 13px, 16.5px);
   }
 
   #view-settings {
@@ -3964,15 +4309,57 @@ body.dark-theme .option-pill-btn.active {
     margin: 0 auto;
   }
 
-  /* Floating Floating Desktop Tab Navigation Dock */
-  .tab-bar {
+  /* Floating Desktop Bottom Navigation Dock */
+  .bottom-nav-dock {
     position: fixed !important;
     bottom: 28px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     width: auto !important;
+    max-width: 840px;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 0 !important;
+    z-index: 900;
+  }
+
+  .nav-circle-home-btn {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(217, 0, 87, 0.25);
+    color: var(--primary-pink);
+    box-shadow: 0 16px 40px rgba(31, 21, 46, 0.16), 0 4px 16px rgba(217, 0, 87, 0.1);
+  }
+
+  .nav-circle-home-btn .material-symbols-outlined {
+    font-size: 26px;
+  }
+
+  .nav-circle-home-btn:hover {
+    background: linear-gradient(135deg, #d90057 0%, #7c3aed 100%);
+    color: #ffffff;
+    transform: scale(1.08);
+    box-shadow: 0 18px 45px rgba(217, 0, 87, 0.35);
+  }
+
+  .tab-bar {
+    position: static !important;
+    transform: none !important;
+    width: auto !important;
     min-width: 480px;
-    max-width: 620px;
+    max-width: 660px;
     height: 58px;
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(16px);
@@ -3984,12 +4371,26 @@ body.dark-theme .option-pill-btn.active {
     align-items: center;
     justify-content: space-between;
     padding: 6px 10px;
-    z-index: 900;
+    margin: 0 !important;
   }
 
+  .bottom-nav-dock.hidden-in-chat,
   .tab-bar.hidden-in-chat,
+  .app-container:has(.chat-window.active) .bottom-nav-dock,
   .app-container:has(.chat-window.active) .tab-bar {
     display: none !important;
+  }
+
+  body.dark-theme .nav-circle-home-btn {
+    background: rgba(20, 13, 36, 0.92);
+    border-color: rgba(217, 0, 87, 0.35);
+    color: #f472b6;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(217, 0, 87, 0.2);
+  }
+
+  body.dark-theme .nav-circle-home-btn:hover {
+    background: linear-gradient(135deg, #d90057 0%, #7c3aed 100%);
+    color: #ffffff;
   }
 
   body.dark-theme .tab-bar {
@@ -7373,6 +7774,74 @@ body.dark-theme .option-pill-btn.active {
   width: 100%;
 }
 
+.story-hub-hero {
+  position: relative;
+  background: linear-gradient(135deg, #1e1035 0%, #3b1354 100%);
+  border: 2px solid rgba(217, 0, 87, 0.35);
+  border-radius: 20px;
+  padding: 22px 24px;
+  color: #ffffff !important;
+  box-shadow: 0 12px 30px rgba(31, 15, 48, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.story-hub-hero * {
+  color: #ffffff;
+}
+
+.story-hero-badge {
+  font-family: var(--font-heading), 'Darumadrop One', cursive, sans-serif !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffffff !important;
+  background: rgba(217, 0, 87, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 5px 14px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.story-hero-title {
+  font-family: var(--font-heading), 'Darumadrop One', cursive, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff !important;
+  margin: 4px 0 2px 0;
+  line-height: 1.25;
+}
+
+.story-hero-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.92) !important;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 680px;
+}
+
+.story-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-heading);
+  font-size: 17px;
+  color: var(--text-main);
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+body.dark-theme .story-section-title {
+  color: #ffffff;
+}
+
 .story-squares-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -7882,4 +8351,1276 @@ body.dark-theme .option-pill-btn.active {
   50% { transform: translateY(-6px) rotate(-1.5deg); }
   100% { transform: translateY(0) rotate(0); }
 }
+
+/* ==========================================================================
+   OPENKOTO AI MEDIA LEARNING LAB (CẨM NANG TAB)
+   Inspired by hikariming/openkoto
+   ========================================================================== */
+
+.openkoto-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 24px;
+}
+
+/* Mode Tabs at top of Guidebook */
+.openkoto-nav-bar {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(217, 0, 87, 0.15);
+  border-radius: 16px;
+  padding: 5px;
+  gap: 6px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(31, 21, 46, 0.05);
+}
+
+.openkoto-nav-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.openkoto-nav-btn:hover {
+  background: rgba(217, 0, 87, 0.06);
+  color: var(--primary-pink);
+}
+
+.openkoto-nav-btn.active {
+  background: linear-gradient(135deg, #d90057 0%, #7c3aed 100%);
+  color: #ffffff;
+  box-shadow: 0 3px 12px rgba(217, 0, 87, 0.3);
+}
+
+/* Studio Upload Card */
+.openkoto-card {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-card);
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid rgba(160, 140, 190, 0.25);
+  box-shadow: 0 4px 20px rgba(31, 21, 46, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Media Source Switcher Tabs */
+.openkoto-source-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.openkoto-source-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 12px 8px;
+  background: rgba(69, 90, 159, 0.05);
+  border: 1.5px solid rgba(69, 90, 159, 0.15);
+  border-radius: 14px;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.openkoto-source-btn .material-symbols-outlined {
+  font-size: 24px;
+  color: var(--primary-pink);
+}
+
+.openkoto-source-btn.active {
+  background: rgba(217, 0, 87, 0.1);
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
+}
+
+/* Dropzone */
+.openkoto-dropzone {
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px dashed rgba(217, 0, 87, 0.35);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.openkoto-dropzone:hover,
+.openkoto-dropzone.dragover {
+  background: rgba(217, 0, 87, 0.06);
+  border-color: var(--primary-pink);
+  transform: translateY(-2px);
+}
+
+.openkoto-dropzone-icon {
+  font-size: 44px;
+  color: var(--primary-pink);
+  margin-bottom: 8px;
+}
+
+.openkoto-dropzone-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.openkoto-dropzone-sub {
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+
+/* Text / Lyrics Input Area */
+.openkoto-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 130px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(160, 140, 190, 0.3);
+  padding: 14px 16px;
+  font-size: 15px;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-main);
+  resize: vertical;
+  line-height: 1.55;
+  transition: border-color 0.2s;
+}
+
+.openkoto-textarea:focus {
+  outline: none;
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 0 3px rgba(217, 0, 87, 0.15);
+}
+
+/* Presets Container */
+.openkoto-presets-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.openkoto-presets-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.openkoto-presets-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.openkoto-preset-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid rgba(160, 140, 190, 0.25);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.openkoto-preset-chip:hover {
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
+  background: rgba(217, 0, 87, 0.05);
+  transform: translateY(-1px);
+}
+
+/* Media Preview Header */
+.openkoto-media-preview-box {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(160, 140, 190, 0.25);
+  background: #0f172a;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-height: 300px;
+}
+
+.openkoto-media-preview-box img {
+  max-width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+}
+
+.openkoto-media-preview-box audio,
+.openkoto-media-preview-box video {
+  width: 100%;
+}
+
+.openkoto-remove-media-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #ffffff;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background 0.2s;
+}
+
+.openkoto-remove-media-btn:hover {
+  background: #ef4444;
+}
+
+/* Controls Grid */
+.openkoto-controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.openkoto-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.openkoto-control-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.openkoto-select {
+  width: 100%;
+  height: 42px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(160, 140, 190, 0.3);
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  background: #ffffff;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+/* Primary Action Button */
+.openkoto-action-btn {
+  width: 100%;
+  height: 52px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, #d90057 0%, #7c3aed 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(217, 0, 87, 0.35);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.openkoto-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217, 0, 87, 0.45);
+}
+
+.openkoto-action-btn:active {
+  transform: translateY(0);
+}
+
+.openkoto-action-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ACTIVE LESSON STUDIO VIEW */
+.openkoto-lesson-studio {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.openkoto-studio-header {
+  width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #455A9F 0%, #7c3aed 100%);
+  color: #ffffff;
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 18px rgba(69, 90, 159, 0.25);
+}
+
+.openkoto-studio-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.openkoto-studio-title {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.openkoto-level-tag {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.openkoto-studio-summary {
+  font-size: 14px;
+  opacity: 0.95;
+  line-height: 1.5;
+}
+
+.openkoto-studio-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.openkoto-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.openkoto-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.openkoto-tool-btn.active {
+  background: #ffffff;
+  color: #455A9F;
+  border-color: #ffffff;
+}
+
+/* SMART READER: SENTENCES & TOKENS */
+.openkoto-reader-card {
+  width: 100%;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid rgba(160, 140, 190, 0.25);
+  box-shadow: 0 4px 18px rgba(31, 21, 46, 0.05);
+}
+
+.openkoto-reader-title {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--primary-pink);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.openkoto-sentence-item {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fdfbff;
+  border: 1.5px solid rgba(160, 140, 190, 0.18);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  transition: all 0.2s;
+}
+
+.openkoto-sentence-item:hover {
+  border-color: rgba(217, 0, 87, 0.3);
+  background: #ffffff;
+  box-shadow: 0 3px 12px rgba(217, 0, 87, 0.06);
+}
+
+.openkoto-sentence-tokens-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+/* INTERACTIVE CLICKABLE TOKEN */
+.openkoto-token {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 10px;
+  background: rgba(69, 90, 159, 0.06);
+  color: var(--text-main);
+  font-size: 16.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.openkoto-token:hover {
+  background: var(--primary-pink);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(217, 0, 87, 0.25);
+}
+
+.openkoto-token.active {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+.openkoto-token-ruby {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  line-height: 1.1;
+  margin-bottom: 1px;
+}
+
+.openkoto-token:hover .openkoto-token-ruby {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.openkoto-sentence-phonetic {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 6px;
+}
+
+.openkoto-sentence-translation {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.openkoto-sentence-notes {
+  font-size: 13px;
+  color: var(--accent-violet);
+  background: rgba(124, 58, 237, 0.06);
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+  line-height: 1.45;
+}
+
+/* FLOATING SMART WORD INSPECTOR MODAL / POPOVER */
+.openkoto-word-modal {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 440px;
+  background: #ffffff;
+  border: 1.5px solid var(--primary-pink);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 10px 32px rgba(31, 21, 46, 0.2);
+  z-index: 1200;
+  animation: slideUpWord 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUpWord {
+  0% { transform: translate(-50%, 20px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.openkoto-word-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.openkoto-word-lemma {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary-pink);
+}
+
+.openkoto-word-pos {
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: rgba(217, 0, 87, 0.1);
+  color: var(--primary-pink);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.openkoto-word-meaning {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.openkoto-word-tip {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  line-height: 1.45;
+}
+
+.openkoto-word-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.openkoto-word-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+/* VOCABULARY DECK GRID */
+.openkoto-vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.openkoto-vocab-card {
+  background: #ffffff;
+  border: 1px solid rgba(160, 140, 190, 0.2);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.openkoto-vocab-card:hover {
+  border-color: var(--primary-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(217, 0, 87, 0.08);
+}
+
+.openkoto-vocab-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.openkoto-vocab-term {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.openkoto-vocab-level {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--accent-emerald);
+  border-radius: 6px;
+}
+
+.openkoto-vocab-def {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.openkoto-vocab-ex {
+  font-size: 13px;
+  color: var(--text-main);
+  background: #f8f5fa;
+  padding: 6px 10px;
+  border-radius: 8px;
+  line-height: 1.4;
+}
+
+/* INTERACTIVE PRACTICE SUITE */
+.openkoto-quiz-card {
+  width: 100%;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid rgba(160, 140, 190, 0.25);
+  box-shadow: 0 4px 18px rgba(31, 21, 46, 0.05);
+}
+
+.openkoto-quiz-mode-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.openkoto-quiz-tab-btn {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(160, 140, 190, 0.25);
+  background: #ffffff;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.openkoto-quiz-tab-btn.active {
+  background: var(--primary-pink);
+  color: #ffffff;
+  border-color: var(--primary-pink);
+}
+
+.openkoto-quiz-option {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(160, 140, 190, 0.25);
+  background: #ffffff;
+  color: var(--text-main);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.openkoto-quiz-option:hover {
+  border-color: var(--primary-pink);
+  background: rgba(217, 0, 87, 0.04);
+}
+
+.openkoto-quiz-option.correct {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border-color: #10b981 !important;
+  color: #065f46 !important;
+}
+
+.openkoto-quiz-option.wrong {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: #ef4444 !important;
+  color: #991b1b !important;
+}
+
+/* SENTENCE SCRAMBLE CHIPS */
+.openkoto-scramble-tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 52px;
+  padding: 12px;
+  background: #f8f5fa;
+  border: 1.5px dashed rgba(160, 140, 190, 0.35);
+  border-radius: 14px;
+  margin-bottom: 14px;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.openkoto-scramble-chip {
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1.5px solid rgba(160, 140, 190, 0.25);
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(31, 21, 46, 0.05);
+  transition: all 0.15s;
+}
+
+.openkoto-scramble-chip:hover {
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
+  transform: translateY(-2px);
+}
+
+/* ========================================================
+   CHAT MESSAGE "IMPORT TO MEDIA LAB" BUTTON & IMPORTER
+   ======================================================== */
+
+.msg-study-media-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(217, 0, 87, 0.08);
+  border: 1px solid rgba(217, 0, 87, 0.28);
+  border-radius: 10px;
+  color: var(--primary-pink);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.msg-study-media-btn:hover {
+  background: linear-gradient(135deg, #d90057 0%, #7c3aed 100%);
+  border-color: transparent;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(217, 0, 87, 0.3);
+}
+
+.msg-study-media-btn.user-side {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.28);
+  color: #7c3aed;
+}
+
+.msg-study-media-btn.user-side:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  border-color: transparent;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(124, 58, 237, 0.3);
+}
+
+/* Floating VN Speech Bubble Import Button */
+.vn-bubble-import-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: auto;
+  padding: 2px 8px;
+  background: rgba(217, 0, 87, 0.08);
+  border: 1px solid rgba(217, 0, 87, 0.25);
+  border-radius: 8px;
+  color: var(--primary-pink);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.vn-bubble-import-btn:hover {
+  background: var(--primary-pink);
+  border-color: var(--primary-pink);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(217, 0, 87, 0.25);
+}
+
+body.dark-theme .msg-study-media-btn {
+  background: rgba(217, 0, 87, 0.15);
+  border-color: rgba(217, 0, 87, 0.35);
+  color: #ff75a0;
+}
+
+body.dark-theme .msg-study-media-btn:hover {
+  background: linear-gradient(135deg, #d90057 0%, #7c3aed 100%);
+  color: #ffffff;
+}
+
+body.dark-theme .msg-study-media-btn.user-side {
+  background: rgba(124, 58, 237, 0.15);
+  border-color: rgba(124, 58, 237, 0.35);
+  color: #c4b5fd;
+}
+
+body.dark-theme .msg-study-media-btn.user-side:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  color: #ffffff;
+}
+
+body.dark-theme .vn-bubble-import-btn {
+  background: rgba(217, 0, 87, 0.18);
+  border-color: rgba(217, 0, 87, 0.35);
+  color: #ff75a0;
+}
+
+body.dark-theme .vn-bubble-import-btn:hover {
+  background: var(--primary-pink);
+  color: #ffffff;
+}
+
+/* CHAT IMPORTER DECK IN OPENKOTO AI MEDIA LAB */
+.openkoto-chat-importer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Character Selector Tabs */
+.openkoto-chat-char-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.openkoto-chat-char-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(69, 90, 159, 0.04);
+  border: 1.5px solid rgba(69, 90, 159, 0.14);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s ease;
+}
+
+.openkoto-chat-char-tab:hover {
+  background: rgba(217, 0, 87, 0.06);
+  border-color: rgba(217, 0, 87, 0.3);
+  transform: translateY(-1px);
+}
+
+.openkoto-chat-char-tab.active {
+  background: rgba(217, 0, 87, 0.1);
+  border-color: var(--primary-pink);
+  box-shadow: 0 2px 8px rgba(217, 0, 87, 0.15);
+}
+
+.openkoto-chat-tab-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.openkoto-chat-tab-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.openkoto-chat-tab-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.openkoto-chat-tab-count {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Chat Importer Toolbar */
+.openkoto-chat-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(69, 90, 159, 0.05);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.openkoto-chat-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.openkoto-chat-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.openkoto-chat-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #ffffff;
+  border: 1px solid rgba(69, 90, 159, 0.2);
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.openkoto-chat-tool-btn:hover {
+  background: rgba(217, 0, 87, 0.08);
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
+}
+
+.openkoto-chat-tool-btn.danger {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.openkoto-chat-tool-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Chat Message List Container */
+.openkoto-chat-msg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 4px 2px;
+  box-sizing: border-box;
+}
+
+.openkoto-chat-msg-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(160, 140, 190, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.openkoto-chat-msg-row:hover {
+  background: #ffffff;
+  border-color: rgba(217, 0, 87, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.openkoto-chat-msg-row.selected {
+  background: rgba(217, 0, 87, 0.05);
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 0 1px var(--primary-pink);
+}
+
+.openkoto-chat-checkbox {
+  margin-top: 4px;
+  cursor: pointer;
+  accent-color: var(--primary-pink);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.openkoto-chat-msg-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.openkoto-chat-msg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.openkoto-chat-msg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.openkoto-chat-msg-sender {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.openkoto-chat-msg-sender.partner {
+  color: var(--primary-pink);
+}
+
+.openkoto-chat-msg-sender.user {
+  color: #7c3aed;
+}
+
+.openkoto-chat-msg-time {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.openkoto-chat-msg-text {
+  font-size: 13.5px;
+  color: var(--text-main);
+  line-height: 1.4;
+  word-break: break-word;
+  font-weight: 600;
+}
+
+.openkoto-chat-msg-trans {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.openkoto-chat-quick-import-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  background: rgba(69, 90, 159, 0.06);
+  border: 1px solid rgba(69, 90, 159, 0.18);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.openkoto-chat-quick-import-btn:hover {
+  background: var(--primary-pink);
+  border-color: var(--primary-pink);
+  color: #ffffff;
+}
+
+/* Empty State */
+.openkoto-chat-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1.5px dashed rgba(160, 140, 190, 0.3);
+  border-radius: 14px;
+  text-align: center;
+}
+
+/* Selected Bar */
+.openkoto-chat-selected-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1.5px solid rgba(217, 0, 87, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(217, 0, 87, 0.08);
+  flex-wrap: wrap;
+}
+
+.openkoto-chat-selected-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.openkoto-chat-selected-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.openkoto-chat-import-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: var(--text-main);
+  transition: all 0.15s;
+}
+
+.openkoto-chat-import-btn:hover {
+  background: #e2e8f0;
+}
+
+.openkoto-chat-import-btn.primary {
+  background: linear-gradient(135deg, #d90057 0%, #7c3aed 100%);
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(217, 0, 87, 0.25);
+}
+
+.openkoto-chat-import-btn.primary:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+/* Dark theme styles for chat importer */
+body.dark-theme .openkoto-chat-char-tab {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme .openkoto-chat-char-tab.active {
+  background: rgba(217, 0, 87, 0.2);
+  border-color: var(--primary-pink);
+}
+
+body.dark-theme .openkoto-chat-toolbar {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme .openkoto-chat-tool-btn {
+  background: #1e1b2e;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+}
+
+body.dark-theme .openkoto-chat-msg-row {
+  background: #181528;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-theme .openkoto-chat-msg-row:hover {
+  background: #201c34;
+}
+
+body.dark-theme .openkoto-chat-msg-row.selected {
+  background: rgba(217, 0, 87, 0.15);
+}
+
+body.dark-theme .openkoto-chat-msg-text {
+  color: #f1f5f9;
+}
+
+body.dark-theme .openkoto-chat-quick-import-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+}
+
+body.dark-theme .openkoto-chat-empty {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme .openkoto-chat-selected-bar {
+  background: #181528;
+  border-color: rgba(217, 0, 87, 0.4);
+}
+
+body.dark-theme .openkoto-chat-import-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+}
+
 

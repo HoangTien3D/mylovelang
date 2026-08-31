@@ -8,8 +8,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Otome Lingua" />
   <meta name="theme-color" content="#455A9F" />
+  <meta name="description" content="A Duolingo competitor disguised as an Otome dating simulation with 10-tier difficulty progression, Story Mode date scenarios, OpenKoto AI Media Learning Lab in Cẩm Nang, Gemini API integration, and analytics dashboard." />
+  <meta property="og:title" content="Otome Lingua" />
+  <meta property="og:description" content="A Duolingo competitor disguised as an Otome dating simulation with 10-tier difficulty progression, Story Mode date scenarios, OpenKoto AI Media Learning Lab in Cẩm Nang, Gemini API integration, and analytics dashboard." />
   <link rel="manifest" href="/manifest.webmanifest" />
-  <title>Otome | My Love Language</title>
+  <title>Otome Lingua</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -139,7 +142,7 @@
       <section class="view-section" id="view-story">
         <div class="section-header">
           <h2 class="section-title">Story: Date Scenarios</h2>
-          <p class="section-subtitle">Take part in immersive date challenges. Get 10/15 correct to deepen your romance!</p>
+          <p class="section-subtitle">Take part in immersive date challenges. Get 5/7 correct to deepen your romance!</p>
         </div>
 
         <!-- Story Date Scenarios Container (Rendered by app.js) -->
@@ -148,28 +151,27 @@
         </div>
       </section>
 
-      <!-- VIEW 3: LANGUAGE GUIDEBOOK -->
+      <!-- VIEW 3: OPENKOTO AI MEDIA LAB -->
       <section class="view-section" id="view-progress">
         <div class="section-header">
-          <h2 class="section-title">Language Guidebook</h2>
-          <p class="section-subtitle">Special letters, typing rules, word forms & romance vocabulary</p>
+          <h2 class="section-title" id="guidebookMainTitle">✨ OpenKoto AI Media Lab</h2>
+          <p class="section-subtitle" id="guidebookMainSub">Transform images, voice notes, audio, videos &amp; lyrics into interactive AI lessons &amp; flashcards</p>
         </div>
 
-        <!-- Guidebook Language Switcher Tabs -->
-        <div class="guide-lang-tabs">
-          <button class="guide-tab-btn active" id="guideTabViBtn" type="button" onclick="setGuidebookLang('vi')">
-            🇻🇳 Tiếng Việt
+        <!-- OpenKoto Main Sub-Mode Navigation -->
+        <div class="openkoto-nav-bar" id="guidebookSubNavBar">
+          <button class="openkoto-nav-btn active" id="guideSubNavOpenkoto" type="button" onclick="setGuidebookSubMode('openkoto')">
+            <span class="material-symbols-outlined" style="font-size:17px;">auto_awesome</span>
+            <span>AI Media Lab</span>
           </button>
-          <button class="guide-tab-btn" id="guideTabEnBtn" type="button" onclick="setGuidebookLang('en')">
-            🇬🇧 English
-          </button>
-          <button class="guide-tab-btn" id="guideTabJaBtn" type="button" onclick="setGuidebookLang('ja')">
-            🇯🇵 日本語
+          <button class="openkoto-nav-btn" id="guideSubNavLibrary" type="button" onclick="setGuidebookSubMode('library')">
+            <span class="material-symbols-outlined" style="font-size:17px;">collections_bookmark</span>
+            <span>Saved Deck &amp; Library</span>
           </button>
         </div>
 
         <div class="guidebook-container" id="guidebookContainer">
-          <!-- Populated dynamically by app.js -->
+          <!-- Populated dynamically by app.js (OpenKoto Studio or Saved Library) -->
         </div>
       </section>
 
@@ -316,48 +318,7 @@
           </button>
         </div>
 
-        <!-- Subdomain & Direct Routes Quick Navigator -->
-        <div class="settings-group">
-          <div class="settings-label">
-            <span>🌐 App Domains &amp; Sub-Routes</span>
-          </div>
-          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
-            Direct paths and subdomain routes mapped across the application:
-          </p>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <button class="primary-btn" type="button" onclick="navigateRoute({view:'landing'})" style="padding:8px 14px; font-size:12px; background:rgba(69,90,159,0.1); color:var(--text-main); border:1px solid rgba(69,90,159,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
-              <span>🏠 Main Domain (Landing / Home)</span>
-              <code style="font-size:11px; opacity:0.8;">/</code>
-            </button>
-            <button class="primary-btn" type="button" onclick="navigateRoute({view:'chats'})" style="padding:8px 14px; font-size:12px; background:rgba(217,0,87,0.08); color:var(--primary-pink); border:1px solid rgba(217,0,87,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
-              <span>💬 Chats Subdomain / Route</span>
-              <code style="font-size:11px; opacity:0.8;">/chats</code>
-            </button>
-            <button class="primary-btn" type="button" onclick="navigateRoute({view:'story'})" style="padding:8px 14px; font-size:12px; background:rgba(217,0,87,0.08); color:var(--primary-pink); border:1px solid rgba(217,0,87,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
-              <span>📖 Story Date Scenarios Subdomain / Route</span>
-              <code style="font-size:11px; opacity:0.8;">/story</code>
-            </button>
-            <button class="primary-btn" type="button" onclick="navigateRoute({view:'guidebook'})" style="padding:8px 14px; font-size:12px; background:rgba(16,185,129,0.08); color:var(--accent-emerald); border:1px solid rgba(16,185,129,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
-              <span>📖 Guidebook Subdomain / Route</span>
-              <code style="font-size:11px; opacity:0.8;">/guidebook</code>
-            </button>
-            <button class="primary-btn" type="button" onclick="navigateRoute({view:'settings'})" style="padding:8px 14px; font-size:12px; background:rgba(112,0,217,0.08); color:#7000d9; border:1px solid rgba(112,0,217,0.25); text-align:left; display:flex; justify-content:space-between; align-items:center;">
-              <span>⚙️ Settings Subdomain / Route</span>
-              <code style="font-size:11px; opacity:0.8;">/settings</code>
-            </button>
-            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px; margin-top:4px;">
-              <button class="primary-btn" type="button" onclick="navigateRoute({view:'chat_single', charId:'ado'})" style="padding:6px 8px; font-size:11px; background:rgba(69,90,159,0.08); color:var(--text-main); border:1px solid rgba(69,90,159,0.2);">
-                /chats/ado
-              </button>
-              <button class="primary-btn" type="button" onclick="navigateRoute({view:'chat_single', charId:'kou'})" style="padding:6px 8px; font-size:11px; background:rgba(69,90,159,0.08); color:var(--text-main); border:1px solid rgba(69,90,159,0.2);">
-                /chats/kou
-              </button>
-              <button class="primary-btn" type="button" onclick="navigateRoute({view:'chat_single', charId:'ren'})" style="padding:6px 8px; font-size:11px; background:rgba(69,90,159,0.08); color:var(--text-main); border:1px solid rgba(69,90,159,0.2);">
-                /chats/ren
-              </button>
-            </div>
-          </div>
-        </div>
+
 
         <!-- Hidden Gemini API key block for system compatibility -->
         <div class="settings-group" id="geminiApiKeyGroup" style="display:none;">
@@ -418,6 +379,9 @@
             <button id="romajiToggleBtn" type="button" class="vn-romaji-toggle-btn" onclick="toggleRomajiSetting()" title="Toggle Romaji">
               <span class="material-symbols-outlined" style="font-size:17px;">translate</span>
             </button>
+            <button id="vnExportToMediaLabBtn" type="button" class="vn-romaji-toggle-btn" onclick="exportCurrentChatToMediaLab()" title="Import & Study Chat in AI Media Lab">
+              <span class="material-symbols-outlined" style="font-size:17px;">auto_awesome</span>
+            </button>
             <button id="vnFullscreenBtn" type="button" class="vn-backlog-btn" title="Fullscreen / Hide Browser Bar" onclick="toggleAppFullscreen()">
               <span class="material-symbols-outlined" style="font-size:17px;" id="vnFullscreenIcon">fullscreen</span>
             </button>
@@ -465,6 +429,10 @@
                 <div class="vn-bubble-speaker" id="companionSpeakerTag">
                   <span id="companionSpeakerName">Ado</span>
                   <span id="companionEmotionBadge" class="vn-emotion-badge emotion-normal" style="display:none;">💬 Normal</span>
+                  <button type="button" class="vn-bubble-import-btn" id="vnBubbleImportBtn" onclick="importCurrentSpeechBubbleToMediaLab()" title="Import speech into AI Media Lab">
+                    <span class="material-symbols-outlined" style="font-size:13px;">auto_awesome</span>
+                    <span>Import</span>
+                  </button>
                 </div>
                 <div class="vn-bubble-content">
                   <span id="companionSpeechText">Này, cậu lại đi trễ đấy à? Tớ đã chuẩn bị sẵn tài liệu học tập cho cậu rồi...</span>
@@ -626,25 +594,30 @@
 
     </main>
 
-    <!-- Bottom Tab Navigation Bar -->
-    <nav class="tab-bar">
-      <button class="tab-btn active" data-tab="chats" onclick="switchTab('chats')">
-        <span class="tab-icon material-symbols-outlined">forum</span>
-        <span>Chats</span>
+    <!-- Bottom Tab Navigation Dock with Separate Circle Home Button -->
+    <div class="bottom-nav-dock">
+      <button class="nav-circle-home-btn" id="tabBtnLanding" type="button" onclick="returnToLandingPage()" title="Return to Title / Landing Screen" aria-label="Home">
+        <span class="material-symbols-outlined">home</span>
       </button>
-      <button class="tab-btn" data-tab="story" onclick="switchTab('story')">
-        <span class="tab-icon material-symbols-outlined">auto_stories</span>
-        <span>Story</span>
-      </button>
-      <button class="tab-btn" data-tab="progress" onclick="switchTab('progress')">
-        <span class="tab-icon material-symbols-outlined">menu_book</span>
-        <span>Guidebook</span>
-      </button>
-      <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">
-        <span class="tab-icon material-symbols-outlined">settings</span>
-        <span>Settings</span>
-      </button>
-    </nav>
+      <nav class="tab-bar">
+        <button class="tab-btn active" data-tab="chats" onclick="switchTab('chats')">
+          <span class="tab-icon material-symbols-outlined">forum</span>
+          <span>Chats</span>
+        </button>
+        <button class="tab-btn" data-tab="story" onclick="switchTab('story')">
+          <span class="tab-icon material-symbols-outlined">auto_stories</span>
+          <span>Story</span>
+        </button>
+        <button class="tab-btn" data-tab="progress" onclick="switchTab('progress')">
+          <span class="tab-icon material-symbols-outlined">auto_awesome</span>
+          <span>AI Media Lab</span>
+        </button>
+        <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">
+          <span class="tab-icon material-symbols-outlined">settings</span>
+          <span>Settings</span>
+        </button>
+      </nav>
+    </div>
   </div>
   </div> <!-- Close app-layout-wrapper -->
 
