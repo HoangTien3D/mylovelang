@@ -5509,7 +5509,7 @@ function renderStoryMode() {
       name: "Ado", 
       role: "Class Vice-President", 
       color: "pink", 
-      avatar: SVG_AVATARS.ado,
+      avatar: "/assets/characters/ado_avatar.png",
       teasers: {
         1: "“Don't let your guard down during our library study session... I'm grading you!”",
         2: "“A coffee break together? Well, I suppose you've earned a short chat.”",
@@ -5523,7 +5523,7 @@ function renderStoryMode() {
       name: "Kou", 
       role: "Gentle Junior Artist", 
       color: "blue", 
-      avatar: SVG_AVATARS.kou,
+      avatar: "/assets/characters/kou_avatar.png",
       teasers: {
         1: "“Senpai, look at these art books with me in the library corner!”",
         2: "“I ordered extra whipped cream on our lattes so we could share sweets!”",
@@ -5537,7 +5537,7 @@ function renderStoryMode() {
       name: "Ren", 
       role: "Charming Musician Senior", 
       color: "purple", 
-      avatar: SVG_AVATARS.ren,
+      avatar: "/assets/characters/ren_avatar.png",
       teasers: {
         1: "“Whispering in the library stacks? That's my favorite secret melody.”",
         2: "“Rainy afternoon cafe date with warm espresso... perfect atmosphere with you.”",
@@ -5565,7 +5565,7 @@ function renderStoryMode() {
       return `
         <div class="story-partner-choice-card" onclick="startStoryScenario(${sc.id}, '${c.id}')">
           <div class="story-partner-avatar-wrap">
-            <img src="${c.avatar}" alt="${c.name}" class="story-partner-avatar-img" />
+            <img src="${c.avatar}" onerror="this.onerror=null; this.src='/assets/characters/${c.id}_avatar.svg';" alt="${c.name}" class="story-partner-avatar-img" />
           </div>
           <div class="story-partner-char-name">${c.name}</div>
           <div class="story-partner-char-role">${c.role}</div>
