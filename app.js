@@ -2260,13 +2260,17 @@ function logDashboardEvent(msg) {
   box.scrollTop = box.scrollHeight;
 }
 
-// Render Chatrooms List
+// Render Chatrooms List Carousel
 function renderChatList() {
   const container = document.getElementById("chatListContainer");
+  const dotsContainer = document.getElementById("messengerCarouselIndicators");
   if (!container) return;
   container.innerHTML = "";
 
-  Object.values(CHARACTERS).forEach((char) => {
+  const charList = Object.values(CHARACTERS);
+  const totalCards = charList.length + 1; // Includes future update card
+
+  charList.forEach((char, idx) => {
     const affectionPct = userState.affection[char.id] || 0;
     const unreadCount = userState.unreadMessages[char.id] || 0;
     const isPout = userState.isPouting[char.id] || false;
@@ -2288,6 +2292,7 @@ function renderChatList() {
 
     const card = document.createElement("div");
     card.className = "chat-card square-char-card";
+    card.setAttribute("data-card-index", idx);
     card.onclick = () => openChatroom(char.id);
 
     card.innerHTML = `
@@ -2310,8 +2315,16 @@ function renderChatList() {
           <span class="flag-icon">${char.flag}</span>
         </div>
         <div class="square-char-role">${char.archetype || char.role}</div>
+        
+        <div class="square-aff-bar-row">
+          <div class="square-aff-bar-wrap">
+            <div class="square-aff-bar-fill" style="width: ${affectionPct}%;"></div>
+          </div>
+          <span class="square-aff-pct">${affectionPct}%</span>
+        </div>
+
         <div class="square-action-row">
-          <span class="square-snippet">${isPout ? 'Waiting for reply...' : (lastMsg || 'Tap to chat')}</span>
+          <span class="square-snippet" title="${lastMsg || ''}">${isPout ? 'Waiting for your reply...' : (lastMsg || 'Tap to start conversation')}</span>
           <button class="square-chat-btn" type="button" aria-label="Chat with ${char.name}" onclick="event.stopPropagation(); openChatroom('${char.id}');">
             <span class="material-symbols-outlined">chat</span>
           </button>
@@ -2321,7 +2334,180 @@ function renderChatList() {
 
     container.appendChild(card);
   });
+
+  // Future Update Locked Dark Card with Cross
+  const lockedCard = document.createElement("div");
+  lockedCard.className = "chat-card square-char-card locked-future-card";
+  lockedCard.setAttribute("data-card-index", charList.length);
+  lockedCard.onclick = () => openFutureCharacterModal();
+
+  lockedCard.innerHTML = `
+    <div class="square-pfp-bg-wrap locked-pfp-bg-wrap">
+      <div class="locked-dark-backdrop"></div>
+      <div class="locked-card-scrim"></div>
+    </div>
+
+    <div class="square-card-top-badges">
+      <div class="square-status-badge locked-status-badge">
+        <span class="material-symbols-outlined" style="font-size:12px; color:#a78bfa;">lock</span>
+        <span>Coming Soon</span>
+      </div>
+      <span class="square-affection-pill locked-pill">
+        <span class="material-symbols-outlined" style="font-size:12px; color:#c4b5fd;">auto_awesome</span>
+        <span>Expansion</span>
+      </span>
+    </div>
+
+    <!-- Centered Dark Cross / Plus Feature -->
+    <div class="locked-cross-center">
+      <div class="locked-cross-box">
+        <span class="material-symbols-outlined locked-cross-glyph">add</span>
+      </div>
+      <span class="locked-cross-tag">Future Update</span>
+    </div>
+
+    <div class="square-card-bottom-info">
+      <div class="square-char-name locked-name">
+        <span>New Companion</span>
+        <span class="locked-name-icon">🔒</span>
+      </div>
+      <div class="square-char-role locked-role">Upcoming Story &amp; Love Interest</div>
+      <div class="square-action-row">
+        <span class="square-snippet locked-snippet">New character storyline currently in development</span>
+        <button class="square-chat-btn locked-chat-btn" type="button" aria-label="Future update info" onclick="event.stopPropagation(); openFutureCharacterModal();">
+          <span class="material-symbols-outlined">lock</span>
+        </button>
+      </div>
+    </div>
+  `;
+
+  container.appendChild(lockedCard);
+
+  // Render Carousel Dots Indicators
+  if (dotsContainer) {
+    dotsContainer.innerHTML = "";
+    for (let i = 0; i < totalCards; i++) {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = `carousel-dot ${i === 0 ? 'active' : ''}`;
+      dot.setAttribute("aria-label", i < charList.length ? `Go to ${charList[i].name}` : "Go to Coming Soon card");
+      dot.onclick = () => scrollToMessengerCard(i);
+      dotsContainer.appendChild(dot);
+    }
+  }
+
+  // Bind scroll event to update indicators
+  if (!container.dataset.scrollBound) {
+    container.dataset.scrollBound = "true";
+    container.addEventListener("scroll", updateMessengerCarouselIndicators, { passive: true });
+  }
+
+  // Initial indicator update
+  updateMessengerCarouselIndicators();
 }
+
+function updateMessengerCarouselIndicators() {
+  const container = document.getElementById("chatListContainer");
+  const dotsContainer = document.getElementById("messengerCarouselIndicators");
+  if (!container || !dotsContainer) return;
+  const cards = container.querySelectorAll(".square-char-card");
+  if (!cards.length) return;
+
+  const scrollLeft = container.scrollLeft;
+  const center = scrollLeft + container.clientWidth / 2;
+
+  let activeIndex = 0;
+  let minDistance = Infinity;
+
+  cards.forEach((card, idx) => {
+    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+    const dist = Math.abs(center - cardCenter);
+    if (dist < minDistance) {
+      minDistance = dist;
+      activeIndex = idx;
+    }
+  });
+
+  const dots = dotsContainer.querySelectorAll(".carousel-dot");
+  dots.forEach((dot, idx) => {
+    dot.classList.toggle("active", idx === activeIndex);
+  });
+
+  const prevBtn = document.getElementById("msgCarouselPrev");
+  const nextBtn = document.getElementById("msgCarouselNext");
+  if (prevBtn) prevBtn.disabled = container.scrollLeft <= 5;
+  if (nextBtn) nextBtn.disabled = container.scrollLeft + container.clientWidth >= container.scrollWidth - 5;
+}
+
+window.scrollMessengerCarousel = function(direction) {
+  const container = document.getElementById("chatListContainer");
+  if (!container) return;
+  const cards = container.querySelectorAll(".square-char-card");
+  if (!cards.length) return;
+  const cardWidth = (cards[0].offsetWidth || 340) + 20;
+  container.scrollBy({ left: direction * cardWidth, behavior: "smooth" });
+};
+
+window.scrollToMessengerCard = function(index) {
+  const container = document.getElementById("chatListContainer");
+  if (!container) return;
+  const cards = container.querySelectorAll(".square-char-card");
+  if (cards[index]) {
+    cards[index].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }
+};
+
+window.openFutureCharacterModal = function() {
+  // Check if modal already exists
+  let modal = document.getElementById("futureCharModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "futureCharModal";
+    modal.className = "locked-modal-backdrop";
+    modal.onclick = (e) => {
+      if (e.target === modal) closeFutureCharacterModal();
+    };
+    modal.innerHTML = `
+      <div class="locked-modal-content">
+        <div class="locked-modal-cross-wrap">
+          <span class="material-symbols-outlined locked-modal-cross">add</span>
+        </div>
+        <h3 class="locked-modal-title">New Love Interest Coming Soon</h3>
+        <p class="locked-modal-desc">
+          We're crafting brand new character personalities, interactive voice lines, and romantic story date scenarios for future updates!
+        </p>
+        <div class="locked-modal-features">
+          <div class="locked-modal-feat-item">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <span>New Voice Lines &amp; AI Dialogue</span>
+          </div>
+          <div class="locked-modal-feat-item">
+            <span class="material-symbols-outlined">favorite</span>
+            <span>Unique Date Challenges &amp; Scenarios</span>
+          </div>
+          <div class="locked-modal-feat-item">
+            <span class="material-symbols-outlined">translate</span>
+            <span>Advanced Fluency &amp; Grammar Drills</span>
+          </div>
+        </div>
+        <button type="button" class="locked-modal-close-btn" onclick="closeFutureCharacterModal()">
+          <span>Got it!</span>
+        </button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  requestAnimationFrame(() => {
+    modal.classList.add("active");
+  });
+};
+
+window.closeFutureCharacterModal = function() {
+  const modal = document.getElementById("futureCharModal");
+  if (modal) {
+    modal.classList.remove("active");
+  }
+};
 
 // Render Characters Tab
 function renderCharactersList() {
@@ -2632,7 +2818,7 @@ function importSingleChatMsgToMediaLab(charId, msgIndex, autoAnalyze = true) {
   // Visual toast feedback
   const toast = document.createElement("div");
   toast.className = "reset-success-toast";
-  toast.style.cssText = "position:fixed; top:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; align-items:center; gap:8px; background:linear-gradient(135deg, #d90057 0%, #7c3aed 100%); color:#ffffff; font-weight:800; font-size:13.5px; padding:12px 22px; border-radius:30px; box-shadow:0 8px 24px rgba(217,0,87,0.45); pointer-events:none;";
+  toast.style.cssText = "position:fixed; top:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; align-items:center; gap:8px; background:linear-gradient(135deg, #364895 0%, #9083C4 100%); color:#ffffff; font-weight:800; font-size:13.5px; padding:12px 22px; border-radius:30px; box-shadow:0 8px 24px rgba(54,72,149,0.45); pointer-events:none;";
   toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:20px;">auto_awesome</span> <span>Imported message to <strong>AI Media Lab</strong>!</span>`;
   document.body.appendChild(toast);
   setTimeout(() => {
@@ -2685,7 +2871,7 @@ function importCurrentSpeechBubbleToMediaLab() {
 
   const toast = document.createElement("div");
   toast.className = "reset-success-toast";
-  toast.style.cssText = "position:fixed; top:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; align-items:center; gap:8px; background:linear-gradient(135deg, #d90057 0%, #7c3aed 100%); color:#ffffff; font-weight:800; font-size:13.5px; padding:12px 22px; border-radius:30px; box-shadow:0 8px 24px rgba(217,0,87,0.45); pointer-events:none;";
+  toast.style.cssText = "position:fixed; top:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; align-items:center; gap:8px; background:linear-gradient(135deg, #364895 0%, #9083C4 100%); color:#ffffff; font-weight:800; font-size:13.5px; padding:12px 22px; border-radius:30px; box-shadow:0 8px 24px rgba(54,72,149,0.45); pointer-events:none;";
   toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:20px;">auto_awesome</span> <span>Imported message to <strong>AI Media Lab</strong>!</span>`;
   document.body.appendChild(toast);
   setTimeout(() => { toast.remove(); }, 3500);
@@ -3602,7 +3788,7 @@ function renderOpenkotoStudioView(container) {
         <!-- 3. LIVE VOICE RECORDER -->
         ${openkotoState.activeSource === "voice" ? `
           <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; background:#fdfbff; border:1.5px dashed rgba(217,0,87,0.35); border-radius:16px; text-align:center;">
-            <button class="primary-btn" type="button" onclick="toggleOpenkotoVoiceRecord()" style="width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:${openkotoState.isRecording ? "#ef4444" : "linear-gradient(135deg, #d90057 0%, #7c3aed 100%)"}; box-shadow:0 4px 20px ${openkotoState.isRecording ? "rgba(239,68,68,0.5)" : "rgba(217,0,87,0.4)"}; margin-bottom:12px;">
+            <button class="primary-btn" type="button" onclick="toggleOpenkotoVoiceRecord()" style="width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:${openkotoState.isRecording ? "#ef4444" : "linear-gradient(135deg, #364895 0%, #9083C4 100%)"}; box-shadow:0 4px 20px ${openkotoState.isRecording ? "rgba(239,68,68,0.5)" : "rgba(54,72,149,0.4)"}; margin-bottom:12px;">
               <span class="material-symbols-outlined" style="font-size:32px; color:#ffffff;">
                 ${openkotoState.isRecording ? "stop" : "mic"}
               </span>
@@ -3637,27 +3823,6 @@ function renderOpenkotoStudioView(container) {
           </div>
         ` : ""}
 
-        <!-- Quick 1-Click Sample Presets -->
-        <div class="openkoto-presets-deck">
-          <div class="openkoto-presets-title">
-            <span class="material-symbols-outlined" style="font-size:15px; color:var(--primary-pink);">flash_on</span>
-            <span>Or try instant 1-click sample media:</span>
-          </div>
-          <div class="openkoto-presets-grid">
-            <button class="openkoto-preset-chip" type="button" onclick="applyOpenkotoPreset('cafe_date')">
-              ☕ Cafe Date (VI)
-            </button>
-            <button class="openkoto-preset-chip" type="button" onclick="applyOpenkotoPreset('anime_romance')">
-              🌸 Anime Dialogue (JA)
-            </button>
-            <button class="openkoto-preset-chip" type="button" onclick="applyOpenkotoPreset('kpop_lyrics')">
-              🎵 Love Ballad (KO)
-            </button>
-            <button class="openkoto-preset-chip" type="button" onclick="applyOpenkotoPreset('tea_poetry')">
-              🍵 Tea Poetry (ZH)
-            </button>
-          </div>
-        </div>
 
         <!-- Custom Controls Grid -->
         <div class="openkoto-controls-grid">
@@ -4277,7 +4442,7 @@ function renderChatHistory() {
               ${romajiHtml}
               <div class="msg-action-row" style="display:flex; align-items:center; gap:6px; margin-top:6px; flex-wrap:wrap;">
                 ${(msg.translation || msg.tip || msg.fix) ? `<button type="button" class="assist-toggle-btn">Translation & Tips</button>` : ''}
-                ${msg.text ? `<button type="button" class="msg-study-media-btn" onclick="importSingleChatMsgToMediaLab('${activeCharacterId}', ${idx})" title="Import message to AI Media Lab for deep study & breakdown"><span class="material-symbols-outlined" style="font-size:14px;">auto_awesome</span> <span>Import to Media Lab</span></button>` : ''}
+                ${msg.text ? `<button type="button" class="msg-study-media-btn" onclick="importSingleChatMsgToMediaLab('${activeCharacterId}', ${idx})" title="Import message to AI Media Lab for deep study & breakdown"><span class="material-symbols-outlined" style="font-size:16px;">auto_awesome</span> <span>Import to Media Lab</span></button>` : ''}
               </div>
               ${msg.translation ? `<div class="translation-text">${cleanEmojiText(msg.translation)}</div>` : ""}
               ${msg.tip ? `<div class="tip-card ${colorClass}"><div class="tip-title ${colorClass}">${tipTitleText}</div>${cleanEmojiText(msg.tip)}</div>` : ""}
@@ -4308,7 +4473,7 @@ function renderChatHistory() {
               ${userGifHtml}
               ${msg.text && msg.text !== "[Sent a GIF 🖼️]" ? `
                 <div class="msg-action-row" style="display:flex; justify-content:flex-end; gap:6px; margin-top:6px;">
-                  <button type="button" class="msg-study-media-btn user-side" onclick="importSingleChatMsgToMediaLab('${activeCharacterId}', ${idx})" title="Import message to AI Media Lab"><span class="material-symbols-outlined" style="font-size:14px;">auto_awesome</span> <span>Import to Media Lab</span></button>
+                  <button type="button" class="msg-study-media-btn user-side" onclick="importSingleChatMsgToMediaLab('${activeCharacterId}', ${idx})" title="Import message to AI Media Lab"><span class="material-symbols-outlined" style="font-size:16px;">auto_awesome</span> <span>Import to Media Lab</span></button>
                 </div>
               ` : ''}
             </div>
@@ -5594,7 +5759,7 @@ function renderStoryMode() {
         </div>
 
         <div class="story-scenario-preview-card">
-          <div class="story-scenario-preview-bg" style="background-image: url('${bgSvg}');"></div>
+          <div class="story-scenario-preview-bg" style="background-image: url('${sc.bgImage || `/assets/scenarios/scenario_${sc.id}.jpg`}'), url('${bgSvg}');"></div>
           <div class="story-scenario-preview-info">
             <div class="story-square-level-tag" style="width: fit-content;">Level ${sc.level} Date</div>
             <div class="story-scenario-preview-title">
@@ -5637,7 +5802,7 @@ function renderStoryMode() {
 
     return `
       <div class="story-scenario-square ${clearedByAny ? 'passed' : ''}" onclick="openStoryPartnerSelect(${sc.id})" title="Click to choose partner and start ${sc.title}">
-        <div class="story-square-backdrop" style="background-image: url('${bgSvg}');"></div>
+        <div class="story-square-backdrop" style="background-image: url('${sc.bgImage || `/assets/scenarios/scenario_${sc.id}.jpg`}'), url('${bgSvg}');"></div>
         <div class="story-square-gradient-overlay"></div>
 
         <div class="story-square-top-row">

@@ -126,15 +126,30 @@
 
       <!-- VIEW 1: CHATROOMS LIST -->
       <section class="view-section active" id="view-chats">
-        <div class="section-header">
-          <h2 class="section-title">
-            <span>Messenger Chats</span>
-          </h2>
-          <p class="section-subtitle">Select a Love Interest to start learning & chatting</p>
+        <div class="section-header messenger-section-header">
+          <div class="messenger-header-text">
+            <h2 class="section-title">
+              <span>Messenger Chats</span>
+            </h2>
+            <p class="section-subtitle">Swipe or scroll to select a Love Interest and chat</p>
+          </div>
+          <div class="messenger-carousel-arrows">
+            <button class="messenger-arrow-btn" id="msgCarouselPrev" type="button" aria-label="Previous character" onclick="scrollMessengerCarousel(-1)">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button class="messenger-arrow-btn" id="msgCarouselNext" type="button" aria-label="Next character" onclick="scrollMessengerCarousel(1)">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
         </div>
 
-        <div class="chat-list" id="chatListContainer">
-          <!-- Populated dynamically by app.js -->
+        <div class="messenger-carousel-outer">
+          <div class="chat-list messenger-carousel" id="chatListContainer">
+            <!-- Populated dynamically by app.js -->
+          </div>
+          <div class="messenger-carousel-indicators" id="messengerCarouselIndicators">
+            <!-- Dots populated dynamically by app.js -->
+          </div>
         </div>
       </section>
 
