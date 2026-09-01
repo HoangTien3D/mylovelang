@@ -60,31 +60,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       process.env.GEMINI_API_KEY ||
       clientApiKey ||
       process.env.VITE_OPENROUTER_API_KEY ||
-      process.env.OPENROUTER_API_KEY;
+      process.env.OPENROUTER_API_KEY ||
+      process.env.VITE_GEMINI_API_KEY;
 
     let parsedData = null;
     let usedModel = "gemini-flash";
 
     if (apiKey) {
-      try {
-        const ai = new GoogleGenAI({
-          apiKey: apiKey,
-          httpOptions: {
-            headers: {
-              "User-Agent": "aistudio-build",
-            },
-          },
-        });
+      const trimmedHistory = (recentHistory || [])
+        .slice(-4)
+        .map((h: any) => `${h.sender === "user" ? userName : (h.speakerName || characterName || "LI")}: ${h.text}`)
+        .join("\n");
 
-        const trimmedHistory = (recentHistory || [])
-          .slice(-4)
-          .map((h: any) => `${h.sender === "user" ? userName : (h.speakerName || characterName || "LI")}: ${h.text}`)
-          .join("\n");
+      let systemInstruction = "";
 
-        let systemInstruction = "";
-
-        if (isGroup || characterId === "group") {
-          systemInstruction = `You are running a 3-way language exchange group chat between love interests competing for the user's attention and romantic affection:
+      if (isGroup || characterId === "group") {
+        systemInstruction = `You are running a 3-way language exchange group chat between love interests competing for the user's attention and romantic affection:
 1. Ado (Classmate: strict, reliable, tsundere, acts demanding about studies/duties but easily flustered and soft inside, addresses user as classmate "cậu", calls himself "tớ")
 2. Kou (Underclassman/Junior: cute, innocent, clingy, eager to please, addresses user as "${userOlderHonorific}" e.g. "${userOlderHonorificCap} ơi", calls himself "em" or "Kou")
 3. Ren (Senior: aggressive, flirty, bully & assertive, teasing, confident, addresses user as "em" / "nhóc", calls himself "anh")
@@ -154,7 +145,6 @@ Analyze "${userText}" and classify its language quality into 'evalColor' ("red",
 
 5. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation), e.g., ["Cảm", "ơn", "hai", "cậu", "rất", "vui", "nói", "chuyện", "nhé", "ạ"]. Do NOT suggest full sentences or multi-word phrases!
 6. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options without emojis in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào hai cậu!", "translation": "Hello both of you!"}, {"text": "Cảm ơn nhé!", "translation": "Thank you!"}, {"text": "Đi chơi thôi!", "translation": "Let's go play!"}].
-7. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for popular pop culture or meme GIFs matching your emotion (e.g., "shrek happy", "ishowspeed hype", "funny cat reaction", "popular meme reaction", "steve harvey shock"). Only include this ONCE IN A WHILE (occasionally) when a GIF reaction is truly fitting!
 
 Return ONLY valid JSON matching this schema:
 {
@@ -188,22 +178,21 @@ Return ONLY valid JSON matching this schema:
     { "text": "Đi chơi thôi!", "translation": "Let's go hang out!" }
   ],
   "contextualChipsPrompt": "Build your reply:",
-  "contextualChips": ["Cảm", "ơn", "hai", "cậu", "rất", "vui", "nói", "chuyện", "nhé", "ạ"],
-  "gifQuery": "shrek happy"
+  "contextualChips": ["Cảm", "ơn", "hai", "cậu", "rất", "vui", "nói", "chuyện", "nhé", "ạ"]
 }`;
+      } else {
+        let charPersona = "";
+        if (characterId === "ado") {
+          charPersona = `Ado (Classmate): Strict, reliable, tsundere. Acts strict about studies/duties, easily flustered when complimented, stammers 'b-betsu ni...' or 'It's not like I care!', but secretly looks out for user and cares deeply. In Vietnamese, Ado calls the user 'cậu' and refers to himself as 'tớ' or 'Ado'.`;
+        } else if (characterId === "kou") {
+          charPersona = `Kou (Underclassman/Junior): Cute, innocent, extremely clingy, eager to please. In Vietnamese, Kou calls the user '${userOlderHonorific}' (e.g. '${userOlderHonorificCap} ơi', '${userOlderHonorific} có rảnh không?') and refers to himself as 'em' or 'Kou'. CRITICAL: NEVER call the user 'tiền bối' in Vietnamese! Always use '${userOlderHonorific}'. Always seeks user's attention, gets worried if ignored.`;
+        } else if (characterId === "ren") {
+          charPersona = `Ren (Senior): Aggressive, flirty, bully & assertive. Teases user playfully, refers to himself as 'anh', calls user 'em' or playfully 'nhóc' / 'bé', confident, loves getting close and making user blush.`;
         } else {
-          let charPersona = "";
-          if (characterId === "ado") {
-            charPersona = `Ado (Classmate): Strict, reliable, tsundere. Acts strict about studies/duties, easily flustered when complimented, stammers 'b-betsu ni...' or 'It's not like I care!', but secretly looks out for user and cares deeply. In Vietnamese, Ado calls the user 'cậu' and refers to himself as 'tớ' or 'Ado'.`;
-          } else if (characterId === "kou") {
-            charPersona = `Kou (Underclassman/Junior): Cute, innocent, extremely clingy, eager to please. In Vietnamese, Kou calls the user '${userOlderHonorific}' (e.g. '${userOlderHonorificCap} ơi', '${userOlderHonorific} có rảnh không?') and refers to himself as 'em' or 'Kou'. CRITICAL: NEVER call the user 'tiền bối' in Vietnamese! Always use '${userOlderHonorific}'. Always seeks user's attention, gets worried if ignored.`;
-          } else if (characterId === "ren") {
-            charPersona = `Ren (Senior): Aggressive, flirty, bully & assertive. Teases user playfully, refers to himself as 'anh', calls user 'em' or playfully 'nhóc' / 'bé', confident, loves getting close and making user blush.`;
-          } else {
-            charPersona = `${characterName}: Romantic love interest in a dating sim.`;
-          }
+          charPersona = `${characterName}: Romantic love interest in a dating sim.`;
+        }
 
-          systemInstruction = `You are playing the character ${characterName} in an Otome romance dating sim chat game.
+        systemInstruction = `You are playing the character ${characterName} in an Otome romance dating sim chat game.
 CHARACTER PERSONA & TROPE:
 ${charPersona}
 
@@ -235,7 +224,8 @@ ${trimmedHistory}
 Instructions:
 1. Ultra-Simple Beginner Language (A1 Level): Keep your in-character response extremely short, simple, and elementary (strictly 3 to 8 words maximum, e.g., "Chào ${userOlderHonorific} nha!", "Kou nhớ ${userOlderHonorific} lắm!", "Đi chơi thôi nào!", "Ngoan quá!", "Hừm... Tốt lắm.", "Chào nhóc nhé."). Ban long sentences, complicated vocabulary, or dense grammar!
 2. Strict No-Emoji Rule: Do NOT include emojis in character responses or dialogue!
-3. Character Emotion: Set 'emotion' to one of ["fear", "happy", "angry", "pout", "sad", "normal"] matching your reaction and expression.
+3. Character Emotion: Set 'emotion' to one of ["idle", "fear", "happy", "angry", "pout", "sad", "normal"] matching your reaction and expression.
+   - "idle": relaxed listening pause, quiet thoughtful moment, gentle resting pose
    - "happy": cheerful, praised, excited, warm affection
    - "pout": tsundere blush, shy stammer, denying feelings, cute sulk
    - "angry": strict scolding, lecture mode, feisty annoyance
@@ -275,7 +265,6 @@ Analyze "${userText}" and classify its language quality into 'evalColor' ("red",
 
 7. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation), e.g., ["Thank", "you", "so", "much", "I", "am", "happy", "to", "see", "you", "too"]. Do NOT suggest full sentences or multi-word phrases!
 8. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options without emojis in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào Ado!", "translation": "Hello Ado!"}, {"text": "Đi chơi nhé!", "translation": "Let's hang out!"}, {"text": "Cảm ơn em!", "translation": "Thank you!"}].
-9. Optional Klipy GIF Search Query: You can optionally include 'gifQuery' with a short search query for popular pop culture or meme GIFs matching your emotion (e.g., "shrek happy", "ishowspeed hype", "funny cat reaction", "popular meme reaction", "steve harvey shock"). Only include this ONCE IN A WHILE (occasionally) when a GIF reaction is truly fitting!
 
 Return ONLY valid JSON matching this schema:
 {
@@ -294,45 +283,115 @@ Return ONLY valid JSON matching this schema:
     { "text": "Option 3 in 2-5 words", "translation": "English translation 3" }
   ],
   "contextualChipsPrompt": "Next turn prompt guide",
-  "contextualChips": ["word1", "word2", "word3", "word4", "word5", "word6"],
-  "gifQuery": "shrek happy"
+  "contextualChips": ["word1", "word2", "word3", "word4", "word5", "word6"]
 }`;
-        }
+      }
 
-        let responseText: string | undefined = undefined;
+      // 1. Try OpenRouter if API Key is OpenRouter (sk-...)
+      if (apiKey.startsWith("sk-") || apiKey.includes("openrouter") || apiKey.includes("or-")) {
+        try {
+          const openRouterModels = [
+            "google/gemini-2.5-flash",
+            "google/gemini-flash-1.5",
+            "meta-llama/llama-3.3-70b-instruct",
+            "openai/gpt-4o-mini"
+          ];
 
-        for (const modelName of FREE_GEMINI_MODELS) {
-          try {
-            const response = await ai.models.generateContent({
-              model: modelName,
-              contents: `User message: "${userText}"`,
-              config: {
-                systemInstruction,
-                responseMimeType: "application/json",
-                temperature: 0.7,
-              },
-            });
+          const messages = [
+            { role: "system", content: systemInstruction },
+            { role: "user", content: `User message: "${userText}"` }
+          ];
 
-            if (response && response.text) {
-              responseText = response.text;
-              usedModel = modelName;
-              break;
+          for (const orModel of openRouterModels) {
+            try {
+              const orResp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${apiKey}`,
+                  "HTTP-Referer": "https://aistudio-build.app",
+                  "X-Title": "Otome Romance Chat"
+                },
+                body: JSON.stringify({
+                  model: orModel,
+                  messages: messages,
+                  temperature: 0.7,
+                  response_format: { type: "json_object" }
+                })
+              });
+
+              if (orResp.ok) {
+                const orJson: any = await orResp.json();
+                const content = orJson?.choices?.[0]?.message?.content;
+                if (content) {
+                  try {
+                    parsedData = JSON.parse(content);
+                  } catch {
+                    const cleaned = content.replace(/```json/g, "").replace(/```/g, "").trim();
+                    parsedData = JSON.parse(cleaned);
+                  }
+                  if (parsedData) {
+                    usedModel = `openrouter-${orModel}`;
+                    break;
+                  }
+                }
+              }
+            } catch (err: any) {
+              console.warn(`[OpenRouter Chat] Failed with ${orModel}:`, err?.message);
             }
-          } catch (e) {
-            // try next model
           }
+        } catch (e: any) {
+          console.warn("[OpenRouter Chat] Error:", e?.message);
         }
+      }
 
-        if (responseText) {
-          try {
-            parsedData = JSON.parse(responseText);
-          } catch {
-            const cleaned = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
-            parsedData = JSON.parse(cleaned);
+      // 2. Try GoogleGenAI
+      if (!parsedData) {
+        try {
+          const ai = new GoogleGenAI({
+            apiKey: apiKey.startsWith("sk-") && process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY : apiKey,
+            httpOptions: {
+              headers: {
+                "User-Agent": "aistudio-build",
+              },
+            },
+          });
+
+          let responseText: string | undefined = undefined;
+
+          for (const modelName of FREE_GEMINI_MODELS) {
+            try {
+              const response = await ai.models.generateContent({
+                model: modelName,
+                contents: `User message: "${userText}"`,
+                config: {
+                  systemInstruction,
+                  responseMimeType: "application/json",
+                  temperature: 0.7,
+                },
+              });
+
+              if (response && response.text) {
+                responseText = response.text;
+                usedModel = modelName;
+                break;
+              }
+            } catch (e) {
+              // try next model
+            }
           }
+
+          if (responseText) {
+            try {
+              parsedData = JSON.parse(responseText);
+            } catch {
+              const cleaned = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
+              parsedData = JSON.parse(cleaned);
+            }
+          }
+        } catch (err: any) {
+          console.warn("[Gemini API] AI call failed, using fallback:", err?.message);
         }
-      } catch (err: any) {
-        console.warn("[Gemini API] AI call failed, using fallback:", err?.message);
       }
     }
 

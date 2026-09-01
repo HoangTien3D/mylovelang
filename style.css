@@ -492,25 +492,32 @@ body {
   .vn-input-section.chat-controls {
     padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px;
     gap: 6px;
+    pointer-events: auto !important;
   }
 
   .text-input-bar {
     gap: 6px;
+    pointer-events: auto !important;
   }
 
   .chat-input {
     padding: 8px 12px;
-    font-size: 13.5px;
-    min-height: 40px;
-    height: 40px;
-    border-radius: 16px;
+    font-size: 16px;
+    min-height: 44px;
+    height: 44px;
+    border-radius: 18px;
+    pointer-events: auto !important;
+    user-select: text !important;
+    -webkit-user-select: text !important;
   }
 
   .send-btn {
-    width: 40px;
-    height: 40px;
-    flex: 0 0 40px;
-    font-size: 15px;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    font-size: 16px;
+    pointer-events: auto !important;
+    touch-action: manipulation;
   }
 }
 
@@ -1027,12 +1034,96 @@ body {
   scroll-snap-align: center;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+  #view-chats.view-section,
+  #view-story.view-section {
+    padding: 12px 16px 24px 16px !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .messenger-carousel-outer,
+  .story-carousel-outer {
+    margin: 0 -16px !important;
+    width: calc(100% + 32px) !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+
+  .chat-list.messenger-carousel,
+  .story-squares-carousel {
+    padding: 6px 16px 22px 16px !important;
+    gap: 14px !important;
+    scroll-padding: 0 16px !important;
+    scroll-snap-type: x mandatory !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
   .square-char-card {
-    flex: 0 0 min(330px, 86vw);
-    width: min(330px, 86vw);
-    min-height: 340px;
-    padding: 12px 12px 14px 12px;
+    flex: 0 0 calc(100vw - 32px) !important;
+    width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+    min-height: clamp(400px, calc(100dvh - 210px), 580px) !important;
+    height: auto !important;
+    aspect-ratio: unset !important;
+    border-radius: 24px !important;
+    padding: 16px 16px 18px 16px !important;
+    scroll-snap-align: center !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .square-pfp-img {
+    object-position: center 18% !important;
+  }
+
+  .square-char-name {
+    font-size: 26px !important;
+  }
+
+  .square-char-role {
+    font-size: 13px !important;
+    padding: 3px 10px !important;
+  }
+
+  .square-snippet {
+    font-size: 13px !important;
+    padding: 7px 12px !important;
+  }
+
+  .square-chat-btn {
+    width: 42px !important;
+    height: 42px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  #view-chats.view-section,
+  #view-story.view-section {
+    padding: 10px 12px 20px 12px !important;
+  }
+
+  .messenger-carousel-outer,
+  .story-carousel-outer {
+    margin: 0 -12px !important;
+    width: calc(100% + 24px) !important;
+  }
+
+  .chat-list.messenger-carousel,
+  .story-squares-carousel {
+    padding: 6px 12px 18px 12px !important;
+    scroll-padding: 0 12px !important;
+  }
+
+  .square-char-card {
+    flex: 0 0 calc(100vw - 24px) !important;
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    padding: 14px 14px 16px 14px !important;
   }
 }
 
@@ -1812,6 +1903,10 @@ body {
   overflow: hidden;
 }
 
+.vn-chat-interface-panel > * {
+  pointer-events: auto;
+}
+
 .vn-dialogue-scroll-area {
   position: relative;
   width: 100%;
@@ -2389,7 +2484,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  z-index: 40;
+  position: relative;
+  z-index: 50;
+  pointer-events: auto !important;
   flex-shrink: 0;
   width: 100%;
   max-width: 860px;
@@ -2758,6 +2855,7 @@ body {
   gap: 6px;
   box-shadow: 0 -4px 16px rgba(31, 21, 46, 0.03);
   transition: all 0.25s ease;
+  pointer-events: auto !important;
 }
 
 .chat-controls.collapsed {
@@ -2792,6 +2890,9 @@ body {
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(31, 21, 46, 0.05);
   transition: all 0.2s ease;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(217, 0, 87, 0.15);
 }
 
 .input-collapsed-bar:hover {
@@ -2804,6 +2905,9 @@ body {
   margin-left: auto;
   padding: 6px 8px;
   color: var(--text-muted);
+  cursor: pointer;
+  pointer-events: auto !important;
+  touch-action: manipulation;
 }
 
 .collapse-toggle-btn:hover {
@@ -2835,6 +2939,7 @@ body {
   gap: 6px;
   align-items: center;
   margin-bottom: 2px;
+  pointer-events: auto !important;
 }
 
 .mode-tab-btn {
@@ -2842,21 +2947,8 @@ body {
   border: 1px solid rgba(160, 140, 190, 0.25);
   color: var(--text-muted);
   border-radius: 10px;
-  corner-shape: scoop;
-  -webkit-corner-shape: scoop;
-  -webkit-mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
-                radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
-                radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
-                radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
-  -webkit-mask-size: 51% 51%;
-  -webkit-mask-repeat: no-repeat;
-  mask: radial-gradient(circle 6px at 0 0, transparent 98%, #000 100%) top left,
-        radial-gradient(circle 6px at 100% 0, transparent 98%, #000 100%) top right,
-        radial-gradient(circle 6px at 0 100%, transparent 98%, #000 100%) bottom left,
-        radial-gradient(circle 6px at 100% 100%, transparent 98%, #000 100%) bottom right;
-  mask-size: 51% 51%;
-  mask-repeat: no-repeat;
   padding: 6px 12px;
+  min-height: 36px;
   font-size: 12.5px;
   font-weight: 800;
   cursor: pointer;
@@ -2865,6 +2957,11 @@ body {
   gap: 4px;
   transition: all 0.2s ease;
   white-space: nowrap;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(217, 0, 87, 0.15);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .mode-tab-btn:hover {
@@ -2880,43 +2977,27 @@ body {
   box-shadow: 0 2px 8px rgba(217, 0, 87, 0.25);
 }
 
-.mode-tab-btn.gif-icon-btn {
-  padding: 6px 10px;
-  font-size: 14px;
-}
-
 /* Starter Choice (Beginner 3 Options - Multiple Choice Ticket Option Buttons) */
 .starter-choice-container {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  pointer-events: auto !important;
 }
 
 .starter-options-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  pointer-events: auto !important;
 }
 
 .starter-option-card {
   background: rgba(255, 255, 255, 0.95);
   border: 1.5px solid rgba(217, 0, 87, 0.18);
   border-radius: 14px;
-  corner-shape: scoop;
-  -webkit-corner-shape: scoop;
-  -webkit-mask: radial-gradient(circle 10px at 0 0, transparent 98%, #000 100%) top left,
-                radial-gradient(circle 10px at 100% 0, transparent 98%, #000 100%) top right,
-                radial-gradient(circle 10px at 0 100%, transparent 98%, #000 100%) bottom left,
-                radial-gradient(circle 10px at 100% 100%, transparent 98%, #000 100%) bottom right;
-  -webkit-mask-size: 51% 51%;
-  -webkit-mask-repeat: no-repeat;
-  mask: radial-gradient(circle 10px at 0 0, transparent 98%, #000 100%) top left,
-        radial-gradient(circle 10px at 100% 0, transparent 98%, #000 100%) top right,
-        radial-gradient(circle 10px at 0 100%, transparent 98%, #000 100%) bottom left,
-        radial-gradient(circle 10px at 100% 100%, transparent 98%, #000 100%) bottom right;
-  mask-size: 51% 51%;
-  mask-repeat: no-repeat;
   padding: 10px 16px;
+  min-height: 48px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -2925,6 +3006,11 @@ body {
   text-align: left;
   transition: all 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
   box-shadow: 0 1px 4px rgba(31, 21, 46, 0.04);
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(217, 0, 87, 0.15);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .starter-option-card:hover {
@@ -2943,6 +3029,7 @@ body {
   flex-direction: column;
   gap: 3px;
   flex: 1;
+  pointer-events: none; /* Let parent card handle click/tap smoothly */
 }
 
 .starter-option-text {
@@ -2979,6 +3066,7 @@ body {
   font-weight: 800;
   flex-shrink: 0;
   transition: all 0.2s ease;
+  pointer-events: none;
 }
 
 .starter-option-card:hover .starter-option-send-icon {
@@ -2992,6 +3080,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  pointer-events: auto !important;
 }
 
 .prompt-guide {
@@ -3017,6 +3106,7 @@ body {
   align-items: center;
   font-size: 14px;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+  pointer-events: auto !important;
 }
 
 .word-chips-grid {
@@ -3024,19 +3114,26 @@ body {
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 3px;
+  pointer-events: auto !important;
 }
 
 .word-chip {
   background: #ffffff;
   border: 1px solid rgba(160, 140, 190, 0.35);
   color: var(--text-main);
-  padding: 5px 11px;
+  padding: 6px 12px;
+  min-height: 36px;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(217, 0, 87, 0.15);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .word-chip:hover {
@@ -3047,6 +3144,10 @@ body {
   transform: translateY(-1px);
 }
 
+.word-chip:active {
+  transform: scale(0.95);
+}
+
 /* Tier 8-10 Free Form Text Input */
 .text-input-bar {
   display: flex;
@@ -3055,17 +3156,18 @@ body {
   padding: 2px 0;
   width: 100%;
   box-sizing: border-box;
+  pointer-events: auto !important;
 }
 
 .chat-input {
   flex: 1 1 0%;
-  min-width: 0; /* Prevents flex children from overflowing on mobile */
+  min-width: 0;
   background: #f8f5fc;
   border: 1.5px solid rgba(160, 140, 190, 0.35);
   color: var(--text-main);
   padding: 10px 14px;
   border-radius: 18px;
-  font-size: 14px;
+  font-size: 15px;
   min-height: 44px;
   height: 44px;
   outline: none;
@@ -3073,6 +3175,10 @@ body {
   font-family: inherit;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
   box-sizing: border-box;
+  pointer-events: auto !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  touch-action: manipulation;
 }
 
 .chat-input:focus {
@@ -3098,10 +3204,17 @@ body {
   box-shadow: 0 3px 10px rgba(217, 0, 87, 0.3);
   transition: all 0.2s ease;
   box-sizing: border-box;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(217, 0, 87, 0.15);
 }
 
 .send-btn:hover {
   transform: scale(1.06);
+}
+
+.send-btn:active {
+  transform: scale(0.92);
 }
 
 /* CHARACTERS VIEW */
@@ -8273,12 +8386,29 @@ body.dark-theme .story-section-title {
   scroll-snap-align: center;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .story-scenario-square {
-    flex: 0 0 min(330px, 86vw);
-    width: min(330px, 86vw);
-    min-height: 340px;
-    padding: 14px 14px 16px 14px;
+    flex: 0 0 calc(100vw - 32px) !important;
+    width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+    min-height: clamp(400px, calc(100dvh - 210px), 580px) !important;
+    height: auto !important;
+    aspect-ratio: unset !important;
+    border-radius: 24px !important;
+    padding: 16px 16px 18px 16px !important;
+    scroll-snap-align: center !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .story-scenario-square {
+    flex: 0 0 calc(100vw - 24px) !important;
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    padding: 14px 14px 16px 14px !important;
   }
 }
 

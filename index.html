@@ -456,9 +456,6 @@
                 <div class="vn-bubble-content">
                   <span id="companionSpeechText">Này, cậu lại đi trễ đấy à? Tớ đã chuẩn bị sẵn tài liệu học tập cho cậu rồi...</span>
                   <div id="companionSpeechRomaji" class="vn-bubble-romaji" style="display:none;"></div>
-                  <div id="companionSpeechGifWrapper" class="vn-bubble-gif-wrapper" style="display:none;">
-                    <img id="companionSpeechGif" class="vn-bubble-gif-img" src="" alt="GIF" />
-                  </div>
                 </div>
               </div>
 
@@ -534,9 +531,6 @@
                 </button>
                 <button id="openGrammarHintsBtn" class="mode-tab-btn grammar-hint-toggle-btn" type="button" onclick="toggleGrammarDrawer(true)" title="Grammar & Formula Drawer">
                   <span class="material-symbols-outlined" style="font-size:16px; color:#d97706;">school</span>
-                </button>
-                <button id="openGifModalBtn" class="mode-tab-btn gif-icon-btn" type="button" onclick="openKlipyGifModal()" title="Send GIF">
-                  <span class="material-symbols-outlined" style="font-size:16px;">gif_box</span>
                 </button>
                 <button id="collapseInputBtn" class="mode-tab-btn collapse-toggle-btn" type="button" onclick="toggleInputUiCollapse()" title="Collapse / Expand Input UI">
                   <span class="material-symbols-outlined" id="collapseInputIcon" style="font-size:16px;">expand_more</span>
@@ -874,44 +868,6 @@
     <div class="dash-log-box" id="dashLogBox">
       [SYSTEM] Secret Dashboard Initialized.<br/>
       [KEYBIND] CTRL + SHIFT + ALT active listener attached.<br/>
-    </div>
-  </div>
-
-  <!-- KLIPY GIF BENTO DRAWER (SLIDES FROM BOTTOM) -->
-  <div id="klipyGifModal" class="bento-drawer-backdrop" style="display:none;" onclick="if(event.target===this) closeKlipyGifModal()">
-    <div class="bento-drawer-sheet">
-      <div class="bento-drawer-handle"></div>
-
-      <div class="bento-drawer-header">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:20px;">🖼️</span>
-          <div>
-            <h3 style="margin:0; font-size:16px; font-weight:800; color:var(--text-heading); line-height:1.2;">Klipy GIF Library</h3>
-            <span style="font-size:10.5px; color:var(--accent-violet); font-weight:700;">Select a GIF to send to your LI</span>
-          </div>
-        </div>
-        <button type="button" onclick="closeKlipyGifModal()" class="bento-close-btn" title="Close">&times;</button>
-      </div>
-
-      <!-- GIF Search Bar & Quick Tag Chips -->
-      <div class="bento-search-box">
-        <input type="text" id="klipySearchInput" placeholder="Search Klipy GIFs (shrek, speed, memes)..." onkeydown="if(event.key==='Enter') searchKlipyGifsInModal()" />
-        <button type="button" onclick="searchKlipyGifsInModal()" class="bento-search-btn">Search</button>
-      </div>
-
-      <div class="bento-tags-row">
-        <button type="button" class="bento-tag-chip" onclick="quickSearchKlipyGif('shrek meme')">🧅 Shrek</button>
-        <button type="button" class="bento-tag-chip" onclick="quickSearchKlipyGif('ishowspeed meme')">⚡ Speed</button>
-        <button type="button" class="bento-tag-chip" onclick="quickSearchKlipyGif('funny cat meme')">🐱 Cat Meme</button>
-        <button type="button" class="bento-tag-chip" onclick="quickSearchKlipyGif('laughing meme reaction')">😂 Laugh</button>
-        <button type="button" class="bento-tag-chip" onclick="quickSearchKlipyGif('hype meme reaction')">🔥 Hype</button>
-        <button type="button" class="bento-tag-chip" onclick="quickSearchKlipyGif('side eye meme')">👀 Side Eye</button>
-      </div>
-
-      <!-- Bento Box GIF Grid -->
-      <div id="klipyGifGrid" class="bento-grid-container">
-        <!-- Dynamically filled with Bento Cards in app.js -->
-      </div>
     </div>
   </div>
 

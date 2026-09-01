@@ -2947,6 +2947,202 @@ function clearOpenkotoMedia() {
 window.clearOpenkotoMedia = clearOpenkotoMedia;
 
 // Generate OpenKoto AI Learning Pack
+// Generate Client-Side Fallback OpenKoto Lesson if offline/server error
+function buildClientFallbackLesson(targetLang, mediaType, customFocus, text) {
+  const langNames = {
+    vi: "Vietnamese",
+    en: "English",
+    ja: "Japanese",
+    ko: "Korean",
+    zh: "Mandarin Chinese"
+  };
+  const langName = langNames[targetLang] || "Vietnamese";
+  
+  if (targetLang === "ja") {
+    return {
+      title: "メディア学習: " + (customFocus || "Daily Romance Dialogue"),
+      summary: "Explore essential Japanese expressions, polite and romantic nuances, and sentence structure.",
+      level: "Beginner (N5/A1)",
+      language: langName,
+      mediaType: mediaType || "text",
+      estimatedStudyTime: "6 mins",
+      sentences: [
+        {
+          index: 1,
+          original: text && text.trim() ? text.trim().slice(0, 50) : "一緒にカフェに行きませんか？",
+          phonetic: "Issho ni kafe ni ikimasen ka?",
+          translation: "Would you like to go to a cafe together?",
+          grammarNote: "Polite invitation using negative form 〜ませんか (masen ka).",
+          tokens: [
+            { word: "一緒に", lemma: "一緒", pos: "Adverb", phonetic: "issho ni", meaning: "together", note: "Used for joint actions." },
+            { word: "カフェ", lemma: "カフェ", pos: "Noun", phonetic: "kafe", meaning: "cafe", note: "Katakana loanword." },
+            { word: "に", lemma: "に", pos: "Particle", phonetic: "ni", meaning: "to/at", note: "Destination marker." },
+            { word: "行きませんか", lemma: "行く", pos: "Verb", phonetic: "ikimasen ka", meaning: "won't we go?", note: "Inviting someone gently." }
+          ]
+        },
+        {
+          index: 2,
+          original: "楽しみにしています！",
+          phonetic: "Tanoshimi ni shiteimasu!",
+          translation: "I'm looking forward to it!",
+          grammarNote: "Natural expression showing positive anticipation.",
+          tokens: [
+            { word: "楽しみに", lemma: "楽しみ", pos: "Noun", phonetic: "tanoshimi ni", meaning: "with anticipation", note: "Adverbial form." },
+            { word: "しています", lemma: "する", pos: "Verb", phonetic: "shiteimasu", meaning: "doing / am", note: "Continuous polite state." }
+          ]
+        }
+      ],
+      coreVocabulary: [
+        { word: "一緒", phonetic: "issho", pos: "Noun", meaning: "together", difficulty: "N5", example: "一緒に行こう！", exampleTranslation: "Let's go together!" },
+        { word: "カフェ", phonetic: "kafe", pos: "Noun", meaning: "cafe", difficulty: "N5", example: "駅前のカフェ", exampleTranslation: "The cafe in front of the station." },
+        { word: "楽しみ", phonetic: "tanoshimi", pos: "Noun", meaning: "pleasure / anticipation", difficulty: "N5", example: "明日が楽しみです。", exampleTranslation: "I'm excited for tomorrow." }
+      ],
+      grammarPoints: [
+        {
+          title: "Polite Invitation: 〜ませんか (masen ka)",
+          pattern: "Verb [Stem] + ませんか",
+          explanation: "Used to gently and courteously invite someone to do something together without sounding pushy.",
+          romanceContext: "Standard polite romantic invitation for initial dates."
+        }
+      ],
+      culturalInsights: [
+        {
+          title: "Indirect Invitations in Japanese Dating",
+          category: "Romance & Etiquette",
+          description: "Phrasing invitations in the negative (won't you?) allows the other person to easily decline without losing face."
+        }
+      ],
+      quizzes: [
+        {
+          type: "multiple_choice",
+          question: "What does '一緒に' (issho ni) mean in this sentence?",
+          options: ["Alone", "Together", "Quickly", "Tomorrow"],
+          correctIndex: 1,
+          explanation: "'一緒に' means together with someone."
+        },
+        {
+          type: "sentence_scramble",
+          targetSentence: "一緒に カフェ に 行きませんか",
+          translation: "Would you like to go to a cafe together?",
+          scrambledWords: ["行きませんか", "に", "一緒に", "カフェ"],
+          correctWords: ["一緒に", "カフェ", "に", "行きませんか"]
+        },
+        {
+          type: "cloze",
+          sentenceWithBlank: "明日が ___ です。(I am looking forward to tomorrow.)",
+          blankWord: "楽しみ",
+          options: ["楽しみ", "悲しみ", "怒り", "静か"],
+          correctIndex: 0,
+          explanation: "'楽しみ' (tanoshimi) expresses looking forward to something."
+        },
+        {
+          type: "roleplay",
+          scenario: "Ado looks over at your notes in the library.",
+          characterPrompt: "Ado: 'B-betsu ni... If you need help with this chapter, you can just ask me.'",
+          characterName: "Ado",
+          options: [
+            { reply: "Arigatou! Let's study together.", feedback: "Ado blushes slightly: 'Hmph, fine. Make sure you pay attention!'" },
+            { reply: "I'm fine on my own.", feedback: "Ado pouts: 'Suit yourself... don't come crying if the test is hard.'" }
+          ]
+        }
+      ]
+    };
+  }
+
+  // Default: Vietnamese / General
+  return {
+    title: "Bài Học Tương Tác: " + (customFocus || "Giao Tiếp Tình Cảm"),
+    summary: "Khám phá từ vựng trọng tâm, cấu trúc xưng hô tự nhiên và mẫu câu biểu cảm trong tiếng Việt.",
+    level: "Cơ Bản (A1/A2)",
+    language: langName,
+    mediaType: mediaType || "text",
+    estimatedStudyTime: "5-8 phút",
+    sentences: [
+      {
+        index: 1,
+        original: text && text.trim() ? text.trim().slice(0, 60) : "Hôm nay cậu có rảnh không, chúng mình cùng đi dạo nhé?",
+        phonetic: "Hom nay cau co ranh khong, chung minh cung di dao nhe?",
+        translation: "Are you free today, shall we go for a walk together?",
+        grammarNote: "Cấu trúc rủ rê thân mật bằng trợ từ 'nhé' và xưng hô 'cậu - mình'.",
+        tokens: [
+          { word: "Hôm nay", lemma: "hôm nay", pos: "Danh từ", phonetic: "hom nay", meaning: "today", note: "Thời điểm hiện tại." },
+          { word: "cậu", lemma: "cậu", pos: "Đại từ", phonetic: "cau", meaning: "you (classmate)", note: "Xưng hô ngang hàng thân thiện." },
+          { word: "có rảnh không", lemma: "rảnh", pos: "Cụm vị từ", phonetic: "co ranh khong", meaning: "are you free?", note: "Câu hỏi thăm thời gian rảnh." },
+          { word: "đi dạo", lemma: "đi dạo", pos: "Động từ", phonetic: "di dao", meaning: "stroll / walk", note: "Hoạt động dạo phố thư giãn." },
+          { word: "nhé", lemma: "nhé", pos: "Trợ từ", phonetic: "nhe", meaning: "okay? / shall we?", note: "Tạo cảm giác ngọt ngào, mời gọi." }
+        ]
+      },
+      {
+        index: 2,
+        original: "Mình rất muốn được trò chuyện cùng cậu nhiều hơn.",
+        phonetic: "Minh rat muon duoc tro chuyen cung cau nhieu hon.",
+        translation: "I really want to talk with you more.",
+        grammarNote: "Bày tỏ mong muốn chân thành với 'rất muốn' và 'nhiều hơn'.",
+        tokens: [
+          { word: "Mình", lemma: "mình", pos: "Đại từ", phonetic: "minh", meaning: "I / me", note: "Xưng hô gần gũi." },
+          { word: "rất muốn", lemma: "muốn", pos: "Cụm động từ", phonetic: "rat muon", meaning: "really want to", note: "Biểu đạt nguyện vọng." },
+          { word: "trò chuyện", lemma: "trò chuyện", pos: "Động từ", phonetic: "tro chuyen", meaning: "to chat / converse", note: "Nói chuyện thân mật." },
+          { word: "nhiều hơn", lemma: "nhiều", pos: "Phó từ", phonetic: "nhieu hon", meaning: "more", note: "So sánh mức độ tăng thêm." }
+        ]
+      }
+    ],
+    coreVocabulary: [
+      { word: "Hôm nay", phonetic: "hom nay", pos: "Danh từ", meaning: "today", difficulty: "A1", example: "Hôm nay thời tiết đẹp quá.", exampleTranslation: "The weather is so nice today." },
+      { word: "Đi dạo", phonetic: "di dao", pos: "Động từ", meaning: "go for a walk", difficulty: "A1", example: "Chúng mình đi dạo một chút nhé.", exampleTranslation: "Let's take a short walk." },
+      { word: "Trò chuyện", phonetic: "tro chuyen", pos: "Động từ", meaning: "chat / talk", difficulty: "A2", example: "Tớ thích trò chuyện với cậu.", exampleTranslation: "I love chatting with you." }
+    ],
+    grammarPoints: [
+      {
+        title: "Cấu trúc rủ rê thân mật: ... nhé?",
+        pattern: "[Mệnh đề hành động] + nhé?",
+        explanation: "Trợ từ 'nhé' đặt cuối câu để biến câu trần thuật thành lời rủ rê dịu dàng, đáng yêu.",
+        romanceContext: "Cực kỳ phổ biến khi nhắn tin với crush hoặc người thương."
+      }
+    ],
+    culturalInsights: [
+      {
+        title: "Nghệ thuật xưng hô trong tình cảm",
+        category: "Giao Tiếp & Tình Cảm",
+        description: "Từ xưng hô 'cậu - mình' mang nét học đường trong sáng, chuyển dần sang 'anh - em' khi mối quan hệ tiến triển sâu sắc hơn."
+      }
+    ],
+    quizzes: [
+      {
+        type: "multiple_choice",
+        question: "Từ 'đi dạo' trong bài học có nghĩa là gì?",
+        options: ["Đi ngủ", "Đi dạo / tản bộ", "Đi ăn", "Đi học"],
+        correctIndex: 1,
+        explanation: "'Đi dạo' nghĩa là đi bách bộ, tản bộ thong thả."
+      },
+      {
+        type: "sentence_scramble",
+        targetSentence: "Hôm nay cậu có rảnh không",
+        translation: "Are you free today?",
+        scrambledWords: ["rảnh không", "cậu", "Hôm nay", "có"],
+        correctWords: ["Hôm nay", "cậu", "có", "rảnh không"]
+      },
+      {
+        type: "cloze",
+        sentenceWithBlank: "Chúng mình cùng đi dạo ___?",
+        blankWord: "nhé",
+        options: ["nhé", "không", "gì", "đâu"],
+        correctIndex: 0,
+        explanation: "Trợ từ 'nhé' dùng để rủ rê một cách ngọt ngào, nhẹ nhàng."
+      },
+      {
+        type: "roleplay",
+        scenario: "Kou rụt rè đưa cho bạn một ly trà sữa sau giờ học.",
+        characterPrompt: "Kou: 'Em mua cho cậu này... Cậu có muốn uống cùng em không ạ?'",
+        characterName: "Kou",
+        options: [
+          { reply: "Cảm ơn Kou nhé, chúng mình cùng uống!", feedback: "Kou cười rạng rỡ: 'Dạ! Em vui lắm ạ!'" },
+          { reply: "Để lát nữa tớ uống nha.", feedback: "Kou chớp mắt: 'Vâng ạ, khi nào cậu uống nhớ nhắn em nhé!'" }
+        ]
+      }
+    ]
+  };
+}
+
 async function generateOpenkotoLesson() {
   const textInput = document.getElementById("openkotoTextInput");
   if (textInput) {
@@ -2965,6 +3161,7 @@ async function generateOpenkotoLesson() {
   renderGuidebook();
 
   try {
+    const key = typeof getOpenRouterApiKey === "function" ? getOpenRouterApiKey() : (userState.openRouterKey || "");
     const payload = {
       mediaType: openkotoState.mediaType || "text",
       targetLanguage: openkotoState.targetLang || "vi",
@@ -2973,38 +3170,54 @@ async function generateOpenkotoLesson() {
       mimeType: openkotoState.mediaMimeType,
       fileName: openkotoState.fileName,
       customFocus: openkotoState.customFocus,
-      apiKey: userState.openRouterKey || ""
+      apiKey: key
     };
 
-    const resp = await fetch("/api/media-learning", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    let lessonData = null;
 
-    const resData = await resp.json();
-    if (resData && resData.success && resData.data) {
-      openkotoState.activeLesson = resData.data;
-      openkotoState.activeLesson.id = "lesson_" + Date.now();
-      openkotoState.activeLesson.createdAt = new Date().toISOString();
-      
-      // Auto-initialize Scramble Quiz
-      if (openkotoState.activeLesson.quizzes) {
-        const scrambleQuiz = openkotoState.activeLesson.quizzes.find((q) => q.type === "sentence_scramble");
-        if (scrambleQuiz) {
-          openkotoState.activeQuizState.scramblePicked = [];
-          openkotoState.activeQuizState.scrambleRemaining = [...(scrambleQuiz.scrambledWords || [])];
+    try {
+      const resp = await fetch("/api/media-learning", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (resp.ok) {
+        const resData = await resp.json();
+        if (resData && resData.success && resData.data) {
+          lessonData = resData.data;
         }
       }
-      openkotoState.activeQuizState.answered = {};
-      openkotoState.activeQuizState.roleplayAnswered = null;
-      openkotoState.activeQuizState.score = 0;
-    } else {
-      alert("Could not generate lesson: " + (resData?.error || "Unknown server response"));
+    } catch (netErr) {
+      console.warn("[OpenKoto] Server endpoint unreachable, using client engine:", netErr);
     }
+
+    if (!lessonData) {
+      lessonData = buildClientFallbackLesson(
+        openkotoState.targetLang || "vi",
+        openkotoState.mediaType || "text",
+        openkotoState.customFocus,
+        openkotoState.pastedText
+      );
+    }
+
+    openkotoState.activeLesson = lessonData;
+    openkotoState.activeLesson.id = "lesson_" + Date.now();
+    openkotoState.activeLesson.createdAt = new Date().toISOString();
+    
+    // Auto-initialize Scramble Quiz
+    if (openkotoState.activeLesson.quizzes) {
+      const scrambleQuiz = openkotoState.activeLesson.quizzes.find((q) => q.type === "sentence_scramble");
+      if (scrambleQuiz) {
+        openkotoState.activeQuizState.scramblePicked = [];
+        openkotoState.activeQuizState.scrambleRemaining = [...(scrambleQuiz.scrambledWords || [])];
+      }
+    }
+    openkotoState.activeQuizState.answered = {};
+    openkotoState.activeQuizState.roleplayAnswered = null;
+    openkotoState.activeQuizState.score = 0;
   } catch (err) {
-    console.error("[OpenKoto] Request failed:", err);
-    alert("Network error processing media. Falling back to local engine.");
+    console.error("[OpenKoto] Generation error:", err);
   } finally {
     openkotoState.isLoading = false;
     renderGuidebook();
@@ -3970,35 +4183,6 @@ function openChatroom(charId, updateUrl = true) {
 
 window.openChatroom = openChatroom;
 
-// Klipy GIF API Helper Function
-async function fetchKlipyGif(query, characterId) {
-  try {
-    let q = (query || "").trim();
-    if (!q) {
-      if (characterId === "bao") q = "funny coffee meme";
-      else if (characterId === "julian") q = "shrek reaction meme";
-      else if (characterId === "ren") q = "ishowspeed reaction meme";
-      else q = "trending meme reaction";
-    }
-
-    const res = await fetch(`/api/klipy-gif?q=${encodeURIComponent(q)}&characterId=${characterId || ""}&limit=8`);
-    if (!res.ok) return null;
-    const json = await res.json();
-
-    if (json.success && json.randomGif && json.randomGif.url) {
-      return json.randomGif.url;
-    }
-    if (json.success && json.gifs && json.gifs.length > 0) {
-      return json.gifs[Math.floor(Math.random() * json.gifs.length)].url;
-    }
-    return null;
-  } catch (e) {
-    console.warn("fetchKlipyGif error:", e);
-    return null;
-  }
-}
-window.fetchKlipyGif = fetchKlipyGif;
-
 // Render Chat History Messages
 let currentVnSpeechText = "";
 let currentVnSpeechLang = "vi-VN";
@@ -4010,9 +4194,6 @@ function updateVnDialogueBox(latestLiMsg, char) {
   const emotionBadgeEl = document.getElementById("companionEmotionBadge");
   const speechTextEl = document.getElementById("companionSpeechText");
   const bubbleRomajiEl = document.getElementById("companionSpeechRomaji");
-  const bubbleGifWrapperEl = document.getElementById("companionSpeechGifWrapper");
-  const bubbleGifImgEl = document.getElementById("companionSpeechGif");
-
 
   // 2. Dedicated Language Insight Box (Roomy & Clean)
   const insightBoxEl = document.getElementById("vnDialogueBox");
@@ -4118,16 +4299,6 @@ function updateVnDialogueBox(latestLiMsg, char) {
       bubbleRomajiEl.style.display = "inline-block";
     } else {
       bubbleRomajiEl.style.display = "none";
-    }
-  }
-
-  // GIF inside speech bubble
-  if (bubbleGifWrapperEl && bubbleGifImgEl) {
-    if (latestLiMsg && latestLiMsg.gifUrl) {
-      bubbleGifImgEl.src = latestLiMsg.gifUrl;
-      bubbleGifWrapperEl.style.display = "block";
-    } else {
-      bubbleGifWrapperEl.style.display = "none";
     }
   }
 
@@ -4332,23 +4503,8 @@ function renderChatHistory() {
         }
       }
 
-      if (msg.isGifOnly || (!msg.text && msg.gifUrl)) {
-        // Pure standalone GIF message without container box wrapper
-        group.innerHTML = `
-          <img src="${speakerAvatar}" class="msg-avatar" alt="${speakerName}" />
-          <div class="msg-body">
-            <div class="msg-sender" ${speakerStyle}>${speakerName}</div>
-            <img src="${msg.gifUrl}" alt="Klipy GIF" class="standalone-gif-img" style="max-width:240px; width:100%; height:auto; border-radius:16px; display:block; box-shadow:0 4px 14px rgba(0,0,0,0.12); border:none; margin-top:2px;" loading="lazy" />
-            <div class="msg-time">${msg.time || ""}</div>
-          </div>
-        `;
-      } else {
         const romajiHtml = (msg.romaji && showRomaji)
           ? `<div class="romaji-text" style="font-size:12.5px; color:var(--accent-violet); font-weight:700; margin-top:4px; margin-bottom:2px; background:rgba(124, 58, 237, 0.08); border:1px solid rgba(124, 58, 237, 0.2); padding:3px 8px; border-radius:6px; display:inline-block;">${cleanEmojiText(msg.romaji)}</div>`
-          : "";
-
-        const gifHtml = msg.gifUrl
-          ? `<img src="${msg.gifUrl}" alt="Klipy GIF" class="standalone-gif-img" style="max-width:240px; width:100%; height:auto; border-radius:14px; display:block; margin-top:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1);" loading="lazy" />`
           : "";
 
         const colorClass = msg.evalColor || (msg.fix && !msg.fix.startsWith("Spot") ? "red" : "green");
@@ -4369,7 +4525,6 @@ function renderChatHistory() {
             <div class="msg-sender" ${speakerStyle}>${speakerName}</div>
             <div class="msg-bubble">
               <div style="font-size:15px; font-weight:700;">${wrapInteractiveScaffoldWords(cleanEmojiText(msg.text), userState.targetLanguage || "vi")}</div>
-              ${gifHtml}
               ${romajiHtml}
               <div class="msg-action-row" style="display:flex; align-items:center; gap:6px; margin-top:6px; flex-wrap:wrap;">
                 ${(msg.translation || msg.tip || msg.fix) ? `<button type="button" class="assist-toggle-btn">Translation & Tips</button>` : ''}
@@ -4382,36 +4537,20 @@ function renderChatHistory() {
             <div class="msg-time">${msg.time || "11:42 PM"}</div>
           </div>
         `;
-      }
     } else {
-      if (msg.isGifOnly || ((!msg.text || msg.text === "[Sent a GIF 🖼️]") && msg.gifUrl)) {
-        // Pure standalone GIF message for user without container box wrapper
-        group.innerHTML = `
-          <div class="msg-body" style="align-items:flex-end;">
-            <img src="${msg.gifUrl}" alt="Klipy GIF" class="standalone-gif-img" style="max-width:240px; width:100%; height:auto; border-radius:16px; display:block; box-shadow:0 4px 14px rgba(0,0,0,0.12); border:none; margin-top:2px;" loading="lazy" />
-            <div class="msg-time">${msg.time || ""}</div>
+      group.innerHTML = `
+        <div class="msg-body">
+          <div class="msg-bubble">
+            <div>${cleanEmojiText(msg.text)}</div>
+            ${msg.text ? `
+              <div class="msg-action-row" style="display:flex; justify-content:flex-end; gap:6px; margin-top:6px;">
+                <button type="button" class="msg-study-media-btn user-side" onclick="importSingleChatMsgToMediaLab('${activeCharacterId}', ${idx})" title="Import message to AI Media Lab"><span class="material-symbols-outlined" style="font-size:16px;">auto_awesome</span> <span>Import to Media Lab</span></button>
+              </div>
+            ` : ''}
           </div>
-        `;
-      } else {
-        const userGifHtml = msg.gifUrl
-          ? `<img src="${msg.gifUrl}" alt="Klipy GIF" class="standalone-gif-img" style="max-width:240px; width:100%; height:auto; border-radius:14px; display:block; margin-top:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1);" loading="lazy" />`
-          : "";
-
-        group.innerHTML = `
-          <div class="msg-body">
-            <div class="msg-bubble">
-              <div>${cleanEmojiText(msg.text)}</div>
-              ${userGifHtml}
-              ${msg.text && msg.text !== "[Sent a GIF 🖼️]" ? `
-                <div class="msg-action-row" style="display:flex; justify-content:flex-end; gap:6px; margin-top:6px;">
-                  <button type="button" class="msg-study-media-btn user-side" onclick="importSingleChatMsgToMediaLab('${activeCharacterId}', ${idx})" title="Import message to AI Media Lab"><span class="material-symbols-outlined" style="font-size:16px;">auto_awesome</span> <span>Import to Media Lab</span></button>
-                </div>
-              ` : ''}
-            </div>
-            <div class="msg-time">${msg.time || "11:42 PM"}</div>
-          </div>
-        `;
-      }
+          <div class="msg-time">${msg.time || "11:42 PM"}</div>
+        </div>
+      `;
     }
 
     container.appendChild(group);
@@ -5109,15 +5248,6 @@ async function triggerLLMResponse(userText, tierObj) {
   removeTypingIndicator();
 
   if (responseData) {
-    // Only fetch/send a GIF ONCE IN A WHILE (~20% chance) or if user explicitly asked for a GIF
-    const userWantsGif = /gif|meme|photo|picture|shrek|speed/i.test(userText || "");
-    const shouldSendGif = userWantsGif || (responseData.gifQuery && Math.random() < 0.22);
-
-    let responseGifUrl = null;
-    if (shouldSendGif) {
-      responseGifUrl = await fetchKlipyGif(responseData.gifQuery || null, charId);
-    }
-
     showGrammarFeedback(
       responseData.evalColor,
       responseData.isCorrect !== false,
@@ -5149,16 +5279,6 @@ async function triggerLLMResponse(userText, tierObj) {
       emotion: charEmotion,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     });
-
-    // Send GIF as a SEPARATE message entry if triggered
-    if (responseGifUrl) {
-      history.push({
-        sender: "li",
-        isGifOnly: true,
-        gifUrl: responseGifUrl,
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      });
-    }
 
     userState.chatHistories[charId] = history;
     lastMessageWasLi[charId] = true;
@@ -5812,11 +5932,7 @@ function renderStoryMode() {
       </div>
 
       <div class="messenger-section-header story-carousel-header">
-        <div class="messenger-header-text">
-          <div class="story-section-title" style="margin:0;">
-            <span>5 Date Scenarios + Expansion:</span>
-          </div>
-        </div>
+       
         <div class="messenger-carousel-arrows">
           <button class="messenger-arrow-btn" id="storyCarouselPrev" type="button" aria-label="Previous date scenario" onclick="scrollStoryCarousel(-1)">
             <span class="material-symbols-outlined">chevron_left</span>
@@ -7257,151 +7373,3 @@ async function uploadAnalyticsToConvex() {
   }
 }
 
-// Klipy GIF Modal UI Controls
-let currentKlipyGifs = [];
-
-async function openKlipyGifModal(defaultQuery) {
-  const modal = document.getElementById("klipyGifModal");
-  if (modal) modal.style.display = "flex";
-
-  const charId = activeCharacterId || "bao";
-  const initialQuery = defaultQuery || (charId === "bao" ? "funny coffee meme" : charId === "julian" ? "shrek meme" : charId === "ren" ? "ishowspeed meme" : "trending meme");
-
-  const input = document.getElementById("klipySearchInput");
-  if (input) input.value = initialQuery;
-
-  await searchKlipyGifsInModal();
-}
-window.openKlipyGifModal = openKlipyGifModal;
-
-function closeKlipyGifModal() {
-  const modal = document.getElementById("klipyGifModal");
-  if (modal) modal.style.display = "none";
-}
-window.closeKlipyGifModal = closeKlipyGifModal;
-
-async function quickSearchKlipyGif(tag) {
-  const input = document.getElementById("klipySearchInput");
-  if (input) input.value = tag;
-  await searchKlipyGifsInModal();
-}
-window.quickSearchKlipyGif = quickSearchKlipyGif;
-
-async function searchKlipyGifsInModal() {
-  const input = document.getElementById("klipySearchInput");
-  const query = input ? input.value.trim() : "shrek meme";
-  const grid = document.getElementById("klipyGifGrid");
-  if (!grid) return;
-
-  grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:30px; color:var(--text-muted); font-size:13px;">Searching Klipy GIF library... 🖼️</div>`;
-
-  try {
-    const res = await fetch(`/api/klipy-gif?q=${encodeURIComponent(query)}&limit=12`);
-    if (!res.ok) throw new Error("Klipy GIF search failed");
-    const json = await res.json();
-
-    if (json.success && json.gifs && json.gifs.length > 0) {
-      currentKlipyGifs = json.gifs;
-      grid.innerHTML = "";
-      json.gifs.forEach((gif, index) => {
-        const item = document.createElement("div");
-        const isFeatured = (index === 0 || index === 5);
-        item.className = isFeatured ? "bento-card bento-card-featured" : "bento-card";
-        item.innerHTML = `
-          <img src="${gif.url}" alt="${gif.title}" class="bento-card-img" loading="lazy" />
-          <div class="bento-card-overlay">
-            <span class="bento-card-title">${gif.title || 'Klipy GIF'}</span>
-          </div>
-        `;
-        item.onclick = () => { sendUserKlipyGif(gif.url, gif.title); };
-        grid.appendChild(item);
-      });
-    } else {
-      grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:30px; color:var(--text-muted); font-size:13px;">No GIFs found on Klipy for "${query}". Try searching "shrek", "ishowspeed", or "memes"!</div>`;
-    }
-  } catch (err) {
-    grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:30px; color:var(--primary-pink); font-size:13px;">Failed to load Klipy GIFs. Check internet connection.</div>`;
-  }
-}
-window.searchKlipyGifsInModal = searchKlipyGifsInModal;
-
-async function sendUserKlipyGif(gifUrl, gifTitle) {
-  closeKlipyGifModal();
-  const charId = activeCharacterId || "bao";
-  const char = CHARACTERS[charId] || CHARACTERS.bao;
-
-  if (!userState.chatHistories[charId]) userState.chatHistories[charId] = [];
-
-  const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  userState.chatHistories[charId].push({
-    sender: "user",
-    isGifOnly: true,
-    gifUrl: gifUrl,
-    gifTitle: gifTitle,
-    time: timeStr
-  });
-
-  lastUserReplyTime[charId] = Date.now();
-  lastMessageWasLi[charId] = false;
-  if (userState.isPouting) userState.isPouting[charId] = false;
-
-  renderChatHistory();
-  saveLocalState();
-
-  // Love Interest reacts enthusiastic to user's Klipy GIF!
-  showTypingIndicator(char);
-  setTimeout(async () => {
-    removeTypingIndicator();
-
-    // 25% chance LI also sends a reaction GIF
-    const liReactionGif = (Math.random() < 0.25) ? await fetchKlipyGif("funny reaction meme", charId) : null;
-
-    let reactionText = "Aww! What a funny GIF! You always know how to make me laugh! 😂❤️";
-    let reactionTrans = "Aww! What a funny GIF! You always know how to make me laugh! 😂❤️";
-    const targetLang = userState.targetLanguage || "vi";
-
-    if (charId === "bao") {
-      if (targetLang === "vi") {
-        reactionText = "Trời ơi! GIF em gửi buồn cười xỉu luôn! 🤣 Làm anh muốn pha cho em ly cà phê hình trái tim liền nè! ☕❤️";
-        reactionTrans = "Oh my goodness! The GIF you sent is hilarious! 🤣 Makes me want to brew you a heart-latte right away! ☕❤️";
-      } else {
-        reactionText = "Aww! That GIF you sent is hilarious! 🤣 It makes me want to brew a special heart-latte for you right now! ☕❤️";
-        reactionTrans = "Aww! That GIF you sent is hilarious! 🤣 It makes me want to brew a special heart-latte for you right now!";
-      }
-    } else if (charId === "julian") {
-      if (targetLang === "en") {
-        reactionText = "Ah, what a delightful and witty GIF! You truly bring joy to my day, MC. ✨";
-        reactionTrans = "Ah, what a delightful and witty GIF! You truly bring joy to my day, MC. ✨";
-      } else {
-        reactionText = "Thật là một GIF vô cùng hài hước! Em luôn biết cách khiến anh mỉm cười đó, MC. ✨";
-        reactionTrans = "What an incredibly funny GIF! You always know how to make me smile, MC. ✨";
-      }
-    }
-
-    userState.chatHistories[charId].push({
-      sender: "li",
-      text: reactionText,
-      translation: reactionTrans,
-      tip: "Sending memes & GIFs boosts affection!",
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    });
-
-    if (liReactionGif) {
-      userState.chatHistories[charId].push({
-        sender: "li",
-        isGifOnly: true,
-        gifUrl: liReactionGif,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      });
-    }
-
-    lastLiCheckupTime[charId] = Date.now();
-    lastMessageWasLi[charId] = true;
-    increaseAffection(charId, 1.0);
-
-    renderChatHistory();
-    saveLocalState();
-    renderChatList();
-  }, 1200);
-}
-window.sendUserKlipyGif = sendUserKlipyGif;
