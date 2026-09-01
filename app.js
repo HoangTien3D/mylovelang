@@ -753,7 +753,7 @@ let userState = {
 // OpenKoto Guidebook State
 let currentGuidebookSubMode = "openkoto"; // 'openkoto' | 'library'
 let openkotoState = {
-  activeSource: "upload", // 'upload' | 'text' | 'chat' | 'voice' | 'camera'
+  activeSource: "upload", // 'upload' | 'text' | 'chat' | 'camera'
   selectedChatChar: "ado",
   selectedChatMsgs: [],
   mediaFile: null,
@@ -776,9 +776,6 @@ let openkotoState = {
   },
   bilingualVisible: true,
   phoneticsVisible: true,
-  isRecording: false,
-  mediaRecorder: null,
-  audioChunks: [],
   savedLessons: JSON.parse(localStorage.getItem("openkoto_saved_lessons") || "[]"),
   savedFlashcards: JSON.parse(localStorage.getItem("openkoto_saved_flashcards") || "[]")
 };
@@ -2949,51 +2946,6 @@ function clearOpenkotoMedia() {
 }
 window.clearOpenkotoMedia = clearOpenkotoMedia;
 
-// Live Microphone Voice Recording
-async function toggleOpenkotoVoiceRecord() {
-  if (openkotoState.isRecording) {
-    // Stop recording
-    if (openkotoState.mediaRecorder && openkotoState.mediaRecorder.state !== "inactive") {
-      openkotoState.mediaRecorder.stop();
-    }
-    openkotoState.isRecording = false;
-    renderGuidebook();
-  } else {
-    // Start recording
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      openkotoState.audioChunks = [];
-      const recorder = new MediaRecorder(stream);
-      openkotoState.mediaRecorder = recorder;
-      
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) openkotoState.audioChunks.push(e.data);
-      };
-
-      recorder.onstop = () => {
-        const audioBlob = new Blob(openkotoState.audioChunks, { type: "audio/webm" });
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          openkotoState.mediaBase64 = e.target.result;
-          openkotoState.mediaMimeType = "audio/webm";
-          openkotoState.mediaType = "audio";
-          openkotoState.fileName = `Voice_Recording_${new Date().toLocaleTimeString()}.webm`;
-          renderGuidebook();
-        };
-        reader.readAsDataURL(audioBlob);
-        stream.getTracks().forEach((track) => track.stop());
-      };
-
-      recorder.start();
-      openkotoState.isRecording = true;
-      renderGuidebook();
-    } catch (err) {
-      alert("Microphone permission denied or not supported on this device.");
-    }
-  }
-}
-window.toggleOpenkotoVoiceRecord = toggleOpenkotoVoiceRecord;
-
 // Generate OpenKoto AI Learning Pack
 async function generateOpenkotoLesson() {
   const textInput = document.getElementById("openkotoTextInput");
@@ -3644,10 +3596,6 @@ function renderOpenkotoStudioView(container) {
             <span class="material-symbols-outlined">forum</span>
             <span>Import Chat</span>
           </button>
-          <button class="openkoto-source-btn ${openkotoState.activeSource === "voice" ? "active" : ""}" type="button" onclick="setOpenkotoSource('voice')">
-            <span class="material-symbols-outlined">mic</span>
-            <span>Voice Record</span>
-          </button>
           <button class="openkoto-source-btn ${openkotoState.activeSource === "camera" ? "active" : ""}" type="button" onclick="setOpenkotoSource('camera')">
             <span class="material-symbols-outlined">photo_camera</span>
             <span>Take Photo</span>
@@ -3784,23 +3732,6 @@ function renderOpenkotoStudioView(container) {
             </div>
           `;
         })() : ""}
-
-        <!-- 3. LIVE VOICE RECORDER -->
-        ${openkotoState.activeSource === "voice" ? `
-          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; background:#fdfbff; border:1.5px dashed rgba(217,0,87,0.35); border-radius:16px; text-align:center;">
-            <button class="primary-btn" type="button" onclick="toggleOpenkotoVoiceRecord()" style="width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:${openkotoState.isRecording ? "#ef4444" : "linear-gradient(135deg, #364895 0%, #9083C4 100%)"}; box-shadow:0 4px 20px ${openkotoState.isRecording ? "rgba(239,68,68,0.5)" : "rgba(54,72,149,0.4)"}; margin-bottom:12px;">
-              <span class="material-symbols-outlined" style="font-size:32px; color:#ffffff;">
-                ${openkotoState.isRecording ? "stop" : "mic"}
-              </span>
-            </button>
-            <div style="font-size:13.5px; font-weight:800; color:var(--text-main);">
-              ${openkotoState.isRecording ? "🔴 Recording speech... Tap to finish" : "Tap microphone to record foreign speech"}
-            </div>
-            <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">
-              AI will transcribe and generate vocabulary, phonetics &amp; quizzes automatically!
-            </div>
-          </div>
-        ` : ""}
 
         <!-- 4. CAMERA SNAPSHOT -->
         ${openkotoState.activeSource === "camera" ? `
@@ -5788,8 +5719,8 @@ function renderStoryMode() {
     return;
   }
 
-  // 3. DEFAULT VIEW: DATE SCENARIOS AS SQUARES
-  const squaresHtml = STORY_SCENARIOS.map(sc => {
+  // 3. DEFAULT VIEW: DATE SCENARIOS AS SQUARE CAROUSEL
+  const squaresHtml = STORY_SCENARIOS.map((sc, idx) => {
     const bgKey = getScenarioBackgroundKey(sc.id);
     const bgSvg = (window.VN_SCENERY_SVGS && window.VN_SCENERY_SVGS[bgKey]) || "";
 
@@ -5801,7 +5732,7 @@ function renderStoryMode() {
     });
 
     return `
-      <div class="story-scenario-square ${clearedByAny ? 'passed' : ''}" onclick="openStoryPartnerSelect(${sc.id})" title="Click to choose partner and start ${sc.title}">
+      <div class="story-scenario-square ${clearedByAny ? 'passed' : ''}" data-scenario-idx="${idx}" onclick="openStoryPartnerSelect(${sc.id})" title="Click to choose partner and start ${sc.title}">
         <div class="story-square-backdrop" style="background-image: url('${sc.bgImage || `/assets/scenarios/scenario_${sc.id}.jpg`}'), url('${bgSvg}');"></div>
         <div class="story-square-gradient-overlay"></div>
 
@@ -5831,28 +5762,215 @@ function renderStoryMode() {
     `;
   }).join("");
 
+  const futureScenarioCardHtml = `
+    <div class="story-scenario-square locked-future-scenario-card" data-scenario-idx="5" onclick="openFutureScenarioModal()" title="Coming Soon: Future Expansion Scenarios">
+      <div class="story-square-backdrop locked-scenario-dark-bg">
+        <div class="locked-dark-backdrop"></div>
+        <div class="locked-card-scrim"></div>
+      </div>
+      <div class="story-square-gradient-overlay"></div>
+
+      <div class="story-square-top-row">
+        <div class="story-square-level-tag locked-level-tag">Level 6+</div>
+        <div class="story-square-status-pill locked-status-pill">
+          <span class="material-symbols-outlined" style="font-size:13px; color:#a78bfa;">lock</span>
+          <span>Coming Soon</span>
+        </div>
+      </div>
+
+      <!-- Centered Glowing Dark Cross / Plus Emblem -->
+      <div class="locked-cross-center">
+        <div class="locked-cross-box">
+          <span class="material-symbols-outlined locked-cross-glyph">add</span>
+        </div>
+        <span class="locked-cross-tag">Future Update</span>
+      </div>
+
+      <div class="story-square-bottom-content">
+        <div class="story-square-title locked-name">Special Date Episodes</div>
+        <div class="story-square-loc locked-role">📍 Secret Hot Springs &amp; Travel</div>
+        <div class="story-square-action-row">
+          <span class="story-square-theme-tag locked-snippet">Upcoming Romance Stories</span>
+          <div class="story-square-select-btn locked-select-btn">
+            <span>Expansion</span>
+            <span class="material-symbols-outlined" style="font-size:14px;">lock</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
   container.innerHTML = `
     <div class="story-squares-wrapper">
       <div class="story-hub-hero">
         <div class="story-hero-badge">💕 VISUAL NOVEL DATE SCENARIOS</div>
         <h2 class="story-hero-title">Choose Your Date Scenario</h2>
         <p class="story-hero-subtitle">
-          Select a date setting below to begin your visual novel experience. 
-          Pick a scenario first, then choose which love interest (Ado, Kou, or Ren) to take on the date!
+          Swipe or scroll through the date settings below to begin your visual novel experience. 
+          Pick a scenario, then choose which love interest (Ado, Kou, or Ren) to take on the date!
         </p>
       </div>
 
-      <div class="story-section-title">
-        <span>5 Date Scenarios (Square Selection):</span>
+      <div class="messenger-section-header story-carousel-header">
+        <div class="messenger-header-text">
+          <div class="story-section-title" style="margin:0;">
+            <span>5 Date Scenarios + Expansion:</span>
+          </div>
+        </div>
+        <div class="messenger-carousel-arrows">
+          <button class="messenger-arrow-btn" id="storyCarouselPrev" type="button" aria-label="Previous date scenario" onclick="scrollStoryCarousel(-1)">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button class="messenger-arrow-btn" id="storyCarouselNext" type="button" aria-label="Next date scenario" onclick="scrollStoryCarousel(1)">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
       </div>
 
-      <div class="story-squares-grid">
-        ${squaresHtml}
+      <div class="messenger-carousel-outer story-carousel-outer">
+        <div class="story-squares-carousel" id="storyCarouselContainer">
+          ${squaresHtml}
+          ${futureScenarioCardHtml}
+        </div>
+        <div class="messenger-carousel-indicators" id="storyCarouselIndicators">
+          <!-- Dots populated dynamically -->
+        </div>
       </div>
     </div>
   `;
+
+  // Initialize carousel indicators & scroll listener
+  setTimeout(() => {
+    initStoryCarousel();
+  }, 50);
 }
 window.renderStoryMode = renderStoryMode;
+
+function initStoryCarousel() {
+  const container = document.getElementById("storyCarouselContainer");
+  const dotsContainer = document.getElementById("storyCarouselIndicators");
+  if (!container || !dotsContainer) return;
+
+  const cards = container.querySelectorAll(".story-scenario-square");
+  if (!cards.length) return;
+
+  dotsContainer.innerHTML = Array.from({ length: cards.length }).map((_, idx) => `
+    <button class="carousel-dot ${idx === 0 ? 'active' : ''}" type="button" aria-label="Go to scenario ${idx + 1}" onclick="scrollToStoryCard(${idx})"></button>
+  `).join("");
+
+  container.removeEventListener("scroll", updateStoryCarouselIndicators);
+  container.addEventListener("scroll", updateStoryCarouselIndicators, { passive: true });
+  updateStoryCarouselIndicators();
+}
+
+function updateStoryCarouselIndicators() {
+  const container = document.getElementById("storyCarouselContainer");
+  const dotsContainer = document.getElementById("storyCarouselIndicators");
+  if (!container || !dotsContainer) return;
+
+  const cards = container.querySelectorAll(".story-scenario-square");
+  if (!cards.length) return;
+
+  const scrollLeft = container.scrollLeft;
+  const containerWidth = container.clientWidth;
+  const center = scrollLeft + containerWidth / 2;
+
+  let activeIndex = 0;
+  let minDistance = Infinity;
+
+  cards.forEach((card, idx) => {
+    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+    const dist = Math.abs(center - cardCenter);
+    if (dist < minDistance) {
+      minDistance = dist;
+      activeIndex = idx;
+    }
+  });
+
+  const dots = dotsContainer.querySelectorAll(".carousel-dot");
+  dots.forEach((dot, idx) => {
+    dot.classList.toggle("active", idx === activeIndex);
+  });
+
+  const prevBtn = document.getElementById("storyCarouselPrev");
+  const nextBtn = document.getElementById("storyCarouselNext");
+  if (prevBtn) prevBtn.disabled = container.scrollLeft <= 5;
+  if (nextBtn) nextBtn.disabled = container.scrollLeft + container.clientWidth >= container.scrollWidth - 5;
+}
+window.updateStoryCarouselIndicators = updateStoryCarouselIndicators;
+
+window.scrollStoryCarousel = function(direction) {
+  const container = document.getElementById("storyCarouselContainer");
+  if (!container) return;
+  const cards = container.querySelectorAll(".story-scenario-square");
+  if (!cards.length) return;
+  const cardWidth = (cards[0].offsetWidth || 340) + 20;
+  container.scrollBy({ left: direction * cardWidth, behavior: "smooth" });
+};
+
+window.scrollToStoryCard = function(index) {
+  const container = document.getElementById("storyCarouselContainer");
+  if (!container) return;
+  const cards = container.querySelectorAll(".story-scenario-square");
+  if (cards[index]) {
+    cards[index].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }
+};
+
+window.openFutureScenarioModal = function() {
+  let modal = document.getElementById("futureScenarioModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "futureScenarioModal";
+    modal.className = "locked-modal-backdrop";
+    modal.onclick = function(e) {
+      if (e.target === modal) window.closeFutureScenarioModal();
+    };
+    modal.innerHTML = `
+      <div class="locked-modal-content">
+        <div class="locked-modal-cross-wrap">
+          <span class="material-symbols-outlined locked-modal-cross">add</span>
+        </div>
+        <h3 class="locked-modal-title">Upcoming Date Scenarios</h3>
+        <p class="locked-modal-desc">
+          Brand-new romantic destinations, interactive visual novel storylines, and seasonal events are currently in development for future updates!
+        </p>
+        <div class="locked-modal-features">
+          <div class="locked-modal-feat-item">
+            <span class="material-symbols-outlined">hot_tub</span>
+            <span>Level 6: Starlit Mountain Hot Springs Getaway</span>
+          </div>
+          <div class="locked-modal-feat-item">
+            <span class="material-symbols-outlined">attractions</span>
+            <span>Level 7: Midnight Amusement Park &amp; Ferris Wheel</span>
+          </div>
+          <div class="locked-modal-feat-item">
+            <span class="material-symbols-outlined">beach_access</span>
+            <span>Level 8: Summer Beach House Vacation</span>
+          </div>
+          <div class="locked-modal-feat-item">
+            <span class="material-symbols-outlined">videogame_asset</span>
+            <span>Level 9: Rainy Arcade &amp; Purikura Photo Booth</span>
+          </div>
+        </div>
+        <button class="locked-modal-close-btn" type="button" onclick="window.closeFutureScenarioModal()">
+          <span>Got it! Stay Tuned</span>
+        </button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  requestAnimationFrame(() => {
+    modal.classList.add("active");
+  });
+};
+
+window.closeFutureScenarioModal = function() {
+  const modal = document.getElementById("futureScenarioModal");
+  if (modal) {
+    modal.classList.remove("active");
+  }
+};
 
 
 function getScenarioBackgroundKey(scenarioId) {
@@ -6463,17 +6581,64 @@ function completeStoryScenario() {
 }
 window.completeStoryScenario = completeStoryScenario;
 
+window.showVnExitConfirmModal = function() {
+  let modal = document.getElementById("vnExitConfirmModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "vnExitConfirmModal";
+    modal.className = "locked-modal-backdrop vn-exit-modal-backdrop";
+    modal.onclick = function(e) {
+      if (e.target === modal) window.closeVnExitConfirmModal();
+    };
+    modal.innerHTML = `
+      <div class="locked-modal-content vn-exit-modal-content">
+        <div class="vn-exit-modal-icon-wrap">
+          <span class="material-symbols-outlined vn-exit-modal-icon">arrow_back</span>
+        </div>
+        <h3 class="locked-modal-title">Leave Date Scenario?</h3>
+        <p class="locked-modal-desc">
+          Are you sure you want to return to the Date Hub? Any unsaved score for this current date round will be reset.
+        </p>
+        <div class="vn-exit-modal-btn-row">
+          <button type="button" class="vn-exit-stay-btn" onclick="window.closeVnExitConfirmModal()">
+            <span>Stay on Date</span>
+          </button>
+          <button type="button" class="vn-exit-leave-btn" onclick="window.confirmExitStoryNow()">
+            <span>Exit to Hub</span>
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  requestAnimationFrame(() => {
+    modal.classList.add("active");
+  });
+};
+
+window.closeVnExitConfirmModal = function() {
+  const modal = document.getElementById("vnExitConfirmModal");
+  if (modal) {
+    modal.classList.remove("active");
+  }
+};
+
+window.confirmExitStoryNow = function() {
+  window.closeVnExitConfirmModal();
+  if (typeof playVNSound === "function") playVNSound("click");
+  activeStorySession = null;
+  renderStoryMode();
+};
+
 function exitStoryGameplay(confirmExit = true) {
   if (confirmExit && activeStorySession && activeStorySession.currentQuestionIdx < (activeStorySession.questions.length - 1)) {
-    if (!confirm("Are you sure you want to leave this date? Progress for this round will be lost.")) {
-      return;
-    }
+    window.showVnExitConfirmModal();
+    return;
   }
-  playVNSound("click");
+  if (typeof playVNSound === "function") playVNSound("click");
   activeStorySession = null;
   renderStoryMode();
 }
-window.exitStoryGameplay = exitStoryGameplay;
 window.exitStoryGameplay = exitStoryGameplay;
 
 // ==========================================================================

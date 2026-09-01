@@ -170,7 +170,7 @@
       <section class="view-section" id="view-progress">
         <div class="section-header">
           <h2 class="section-title" id="guidebookMainTitle">✨ Text/Media Analysis</h2>
-          <p class="section-subtitle" id="guidebookMainSub">Transform images, voice notes, audio, videos &amp; lyrics into interactive AI lessons &amp; flashcards</p>
+          <p class="section-subtitle" id="guidebookMainSub">Transform images, audio files, videos, dialogue &amp; lyrics into interactive AI lessons &amp; flashcards</p>
         </div>
 
         <!-- OpenKoto Main Sub-Mode Navigation -->
@@ -197,25 +197,63 @@
           <p class="section-subtitle">Customize theme, language preferences & story progress</p>
         </div>
 
-        <!-- Target Learning Language Setting -->
+        <!-- Unified Language Preferences Panel (Target Learning Language + App UI Language) -->
         <div class="settings-group">
           <div class="settings-label">
-            <span>🎯 Target Learning Language</span>
-            <span id="targetLangStatusBadge" class="status-chip-badge">🇻🇳 Vietnamese</span>
+            <span>🌐 Language Preferences</span>
           </div>
-          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
-            Select the language you want to learn with Ado, Kou & Ren across all chats, sentence builders, and guidebooks:
+          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:16px;">
+            Configure your target learning language for chats and story dates, as well as your general app interface language.
           </p>
-          <div class="setting-options-grid">
-            <button type="button" class="option-pill-btn active" id="settingTargetViBtn" onclick="setAppTargetLanguage('vi')">
-              🇻🇳 Vietnamese (Tiếng Việt)
-            </button>
-            <button type="button" class="option-pill-btn" id="settingTargetEnBtn" onclick="setAppTargetLanguage('en')">
-              🇬🇧 English (English)
-            </button>
-            <button type="button" class="option-pill-btn" id="settingTargetJaBtn" onclick="setAppTargetLanguage('ja')">
-              🇯🇵 Japanese (日本語)
-            </button>
+
+          <!-- 1. Target Learning Language Subsection -->
+          <div class="settings-subgroup">
+            <div class="settings-subgroup-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:13.5px; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:6px;">
+                <span>🎯 Target Learning Language</span>
+              </span>
+              <span id="targetLangStatusBadge" class="status-chip-badge">🇻🇳 Vietnamese</span>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:10px;">
+              Select the language you want to learn with Ado, Kou &amp; Ren across all chats, sentence builders, and guidebooks:
+            </p>
+            <div class="setting-options-grid">
+              <button type="button" class="option-pill-btn active" id="settingTargetViBtn" onclick="setAppTargetLanguage('vi')">
+                🇻🇳 Vietnamese (Tiếng Việt)
+              </button>
+              <button type="button" class="option-pill-btn" id="settingTargetEnBtn" onclick="setAppTargetLanguage('en')">
+                🇬🇧 English (English)
+              </button>
+              <button type="button" class="option-pill-btn" id="settingTargetJaBtn" onclick="setAppTargetLanguage('ja')">
+                🇯🇵 Japanese (日本語)
+              </button>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div style="height:1px; background:rgba(160, 140, 190, 0.2); margin:18px 0;"></div>
+
+          <!-- 2. App Interface Language Subsection -->
+          <div class="settings-subgroup">
+            <div class="settings-subgroup-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:13.5px; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:6px;">
+                <span>📱 App / UI Language (Ngôn ngữ giao diện)</span>
+              </span>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:10px;">
+              Select your preferred interface language across all menus, buttons, and guides:
+            </p>
+            <div class="setting-options-grid">
+              <button type="button" class="option-pill-btn active" id="settingLangEnBtn" onclick="setAppUiLanguage('en')">
+                🇬🇧 English
+              </button>
+              <button type="button" class="option-pill-btn" id="settingLangViBtn" onclick="setAppUiLanguage('vi')">
+                🇻🇳 Tiếng Việt
+              </button>
+              <button type="button" class="option-pill-btn" id="settingLangJaBtn" onclick="setAppUiLanguage('ja')">
+                🇯🇵 日本語
+              </button>
+            </div>
           </div>
         </div>
 
@@ -257,36 +295,15 @@
               ✨ Open Full Language &amp; Character Setup Menu
             </button>
             <div id="profileSavedToast" class="reset-success-toast" style="display:none; background:rgba(16,185,129,0.15); color:var(--accent-emerald); border:1px solid rgba(16,185,129,0.3);">
-              ✓ Profile settings updated! Ado, Kou & Ren will now address you accordingly.
+              ✓ Profile settings updated! Ado, Kou &amp; Ren will now address you accordingly.
             </div>
-          </div>
-        </div>
-
-        <!-- Language Preference Setting -->
-        <div class="settings-group">
-          <div class="settings-label">
-            <span>🌐 App Language / Ngôn Ngữ</span>
-          </div>
-          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
-            Select your preferred interface language across all menus and guides:
-          </p>
-          <div class="setting-options-grid">
-            <button type="button" class="option-pill-btn active" id="settingLangEnBtn" onclick="setAppUiLanguage('en')">
-              🇬🇧 English
-            </button>
-            <button type="button" class="option-pill-btn" id="settingLangViBtn" onclick="setAppUiLanguage('vi')">
-              🇻🇳 Tiếng Việt
-            </button>
-            <button type="button" class="option-pill-btn" id="settingLangJaBtn" onclick="setAppUiLanguage('ja')">
-              🇯🇵 日本語
-            </button>
           </div>
         </div>
 
         <!-- Dark Mode / Theme Setting -->
         <div class="settings-group">
           <div class="settings-label">
-            <span>🌙 Appearance & Theme</span>
+            <span>🌙 Appearance &amp; Theme</span>
             <span id="themeStatusBadge" class="status-chip-badge">Light Mode</span>
           </div>
           <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
@@ -318,19 +335,6 @@
           <div style="margin-top:10px; padding:10px 12px; background:rgba(69,90,159,0.08); border-radius:12px; border:1px solid rgba(69,90,159,0.2); font-size:12px; color:var(--text-main); line-height:1.45;">
             <strong>💡 iPhone / iPad tip:</strong> In Safari, tap the <strong>Share</strong> button (⎋) and select <strong>"Add to Home Screen"</strong> (⊞) to run Otome Lingua as a standalone full screen app with zero browser bars!
           </div>
-        </div>
-
-        <!-- Return to Landing / Title Screen -->
-        <div class="settings-group">
-          <div class="settings-label">
-            <span>🏠 Title &amp; Landing Screen</span>
-          </div>
-          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
-            Return to the main landing page and hero graphic:
-          </p>
-          <button class="primary-btn" id="returnToTitleBtn" type="button" onclick="returnToLandingPage()" style="background:linear-gradient(135deg, #7000d9 0%, #455A9F 100%);">
-            🏠 Return to Title Screen
-          </button>
         </div>
 
 
