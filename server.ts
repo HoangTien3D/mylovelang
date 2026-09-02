@@ -21,6 +21,10 @@ async function startServer() {
   app.post("/api/sync-user", (req, res) => syncUserHandler(req as any, res as any));
   app.post("/api/media-learning", (req, res) => mediaLearningHandler(req as any, res as any));
 
+  // Serve custom chibi stickers directly from public/stickers or stickers folder
+  app.use("/stickers", express.static(path.join(process.cwd(), "public", "stickers")));
+  app.use("/stickers", express.static(path.join(process.cwd(), "stickers")));
+
   // Vite middleware setup
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

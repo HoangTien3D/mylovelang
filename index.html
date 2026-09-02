@@ -401,6 +401,9 @@
             <button id="vnExportToMediaLabBtn" type="button" class="vn-romaji-toggle-btn" onclick="exportCurrentChatToMediaLab()" title="Import & Study Chat in AI Media Lab">
               <span class="material-symbols-outlined" style="font-size:17px;">auto_awesome</span>
             </button>
+            <button id="vnMotivatorBtn" type="button" class="vn-romaji-toggle-btn" onclick="requestChibiMotivatorSticker()" title="Ask Love Interest for a Motivator Sticker 💕">
+              <span class="material-symbols-outlined" style="font-size:17px; color:var(--primary-pink);">favorite</span>
+            </button>
             <button id="vnFullscreenBtn" type="button" class="vn-backlog-btn" title="Fullscreen / Hide Browser Bar" onclick="toggleAppFullscreen()">
               <span class="material-symbols-outlined" style="font-size:17px;" id="vnFullscreenIcon">fullscreen</span>
             </button>
@@ -456,6 +459,7 @@
                 <div class="vn-bubble-content">
                   <span id="companionSpeechText">Này, cậu lại đi trễ đấy à? Tớ đã chuẩn bị sẵn tài liệu học tập cho cậu rồi...</span>
                   <div id="companionSpeechRomaji" class="vn-bubble-romaji" style="display:none;"></div>
+                  <div id="companionSpeechSticker" class="vn-speech-sticker-wrap" style="display:none;"></div>
                 </div>
               </div>
 
