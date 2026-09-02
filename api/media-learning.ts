@@ -1,9 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 
-const FREE_GEMINI_MODELS = [
-  "gemini-3.7-flash",
+const FAST_GEMINI_MODELS = [
   "gemini-3.1-flash-lite",
+  "gemini-3.8-flash",
   "gemini-flash-latest",
 ];
 
@@ -56,86 +56,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let parsedData = null;
     let usedModel = "gemini-flash";
 
-    if (apiKey) {
-      // 1. If OpenRouter API Key (sk-...)
-      if (apiKey.startsWith("sk-") || apiKey.includes("openrouter") || apiKey.includes("or-")) {
-        try {
-          const openRouterModels = [
-            "google/gemini-2.5-flash",
-            "google/gemini-flash-1.5",
-            "meta-llama/llama-3.3-70b-instruct",
-            "openai/gpt-4o-mini"
-          ];
-
-          let userPrompt = `Please analyze this media for OpenKoto language learning in ${targetLangName} with focus on "${customFocus}".`;
-          if (fileName) userPrompt += ` File name: "${fileName}".`;
-          if (text && text.trim().length > 0) {
-            userPrompt += `\n\nProvided Text / Transcript / Media Content:\n"""\n${text}\n"""`;
-          } else if (!mediaBase64) {
-            userPrompt += `\n\nGenerate an immersive romance media learning experience in ${targetLangName} around the theme: "${customFocus}".`;
-          }
-
-          const messages = [
-            { role: "system", content: systemInstruction },
-            { role: "user", content: userPrompt }
-          ];
-
-          for (const orModel of openRouterModels) {
-            try {
-              const orResp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${apiKey}`,
-                  "HTTP-Referer": "https://aistudio-build.app",
-                  "X-Title": "Otome OpenKoto Language Learning"
-                },
-                body: JSON.stringify({
-                  model: orModel,
-                  messages: messages,
-                  temperature: 0.6,
-                  response_format: { type: "json_object" }
-                })
-              });
-
-              if (orResp.ok) {
-                const orJson: any = await orResp.json();
-                const content = orJson?.choices?.[0]?.message?.content;
-                if (content) {
-                  try {
-                    parsedData = JSON.parse(content);
-                  } catch {
-                    const cleaned = content.replace(/```json/g, "").replace(/```/g, "").trim();
-                    parsedData = JSON.parse(cleaned);
-                  }
-                  if (parsedData) {
-                    usedModel = `openrouter-${orModel}`;
-                    break;
-                  }
-                }
-              }
-            } catch (err: any) {
-              console.warn(`[OpenRouter Media AI] Failed with ${orModel}:`, err?.message);
-            }
-          }
-        } catch (e: any) {
-          console.warn("[OpenRouter Media] Error:", e?.message);
-        }
-      }
-
-      // 2. If Gemini API Key or fallback
-      if (!parsedData) {
-        try {
-          const ai = new GoogleGenAI({
-            apiKey: apiKey.startsWith("sk-") && process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY : apiKey,
-            httpOptions: {
-              headers: {
-                "User-Agent": "aistudio-build",
-              },
-            },
-          });
-
-        const systemInstruction = `You are OpenKoto AI - an advanced multimodal language learning intelligence inspired by openkoto/TextLingo.
+    const systemInstruction = `You are OpenKoto AI - an advanced multimodal language learning intelligence inspired by openkoto/TextLingo.
 Your mission is to transform any user-uploaded media (photo of signs/manga/text, audio clip, video subtitles, song lyrics, article, dialogue, or story) into a comprehensive, highly interactive language learning experience tailored for learners of ${targetLangName} (${targetLanguage}).
 
 LEARNING FOCUS & CONTEXT: "${customFocus}".
@@ -256,6 +177,85 @@ OUTPUT STRICT VALID JSON matching this exact schema:
   ]
 }`;
 
+    if (apiKey) {
+      // 1. If OpenRouter API Key (sk-...)
+      if (apiKey.startsWith("sk-") || apiKey.includes("openrouter") || apiKey.includes("or-")) {
+        try {
+          const openRouterModels = [
+            "google/gemini-2.5-flash",
+            "google/gemini-flash-1.5",
+            "meta-llama/llama-3.3-70b-instruct",
+            "openai/gpt-4o-mini"
+          ];
+
+          let userPrompt = `Please analyze this media for OpenKoto language learning in ${targetLangName} with focus on "${customFocus}".`;
+          if (fileName) userPrompt += ` File name: "${fileName}".`;
+          if (text && text.trim().length > 0) {
+            userPrompt += `\n\nProvided Text / Transcript / Media Content:\n"""\n${text}\n"""`;
+          } else if (!mediaBase64) {
+            userPrompt += `\n\nGenerate an immersive romance media learning experience in ${targetLangName} around the theme: "${customFocus}".`;
+          }
+
+          const messages = [
+            { role: "system", content: systemInstruction },
+            { role: "user", content: userPrompt }
+          ];
+
+          for (const orModel of openRouterModels) {
+            try {
+              const orResp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${apiKey}`,
+                  "HTTP-Referer": "https://aistudio-build.app",
+                  "X-Title": "Otome OpenKoto Language Learning"
+                },
+                body: JSON.stringify({
+                  model: orModel,
+                  messages: messages,
+                  temperature: 0.6,
+                  response_format: { type: "json_object" }
+                })
+              });
+
+              if (orResp.ok) {
+                const orJson: any = await orResp.json();
+                const content = orJson?.choices?.[0]?.message?.content;
+                if (content) {
+                  try {
+                    parsedData = JSON.parse(content);
+                  } catch {
+                    const cleaned = content.replace(/```json/g, "").replace(/```/g, "").trim();
+                    parsedData = JSON.parse(cleaned);
+                  }
+                  if (parsedData) {
+                    usedModel = `openrouter-${orModel}`;
+                    break;
+                  }
+                }
+              }
+            } catch (err: any) {
+              console.warn(`[OpenRouter Media AI] Failed with ${orModel}:`, err?.message);
+            }
+          }
+        } catch (e: any) {
+          console.warn("[OpenRouter Media] Error:", e?.message);
+        }
+      }
+
+      // 2. If Gemini API Key or fallback
+      if (!parsedData) {
+        try {
+          const ai = new GoogleGenAI({
+            apiKey: apiKey.startsWith("sk-") && process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY : apiKey,
+            httpOptions: {
+              headers: {
+                "User-Agent": "aistudio-build",
+              },
+            },
+          });
+
         const contentsPayload: any[] = [];
 
         // Check if there is base64 media (image or audio)
@@ -283,8 +283,12 @@ OUTPUT STRICT VALID JSON matching this exact schema:
 
         let responseText: string | undefined = undefined;
 
-        for (const modelName of FREE_GEMINI_MODELS) {
+        for (const modelName of FAST_GEMINI_MODELS) {
           try {
+            const thinkingLevel = modelName.includes("flash-lite")
+              ? ThinkingLevel.MINIMAL
+              : ThinkingLevel.LOW;
+
             const response = await ai.models.generateContent({
               model: modelName,
               contents: contentsPayload.length === 1 ? contentsPayload[0].text : { parts: contentsPayload },
@@ -292,6 +296,9 @@ OUTPUT STRICT VALID JSON matching this exact schema:
                 systemInstruction,
                 responseMimeType: "application/json",
                 temperature: 0.6,
+                thinkingConfig: {
+                  thinkingLevel,
+                },
               },
             });
 

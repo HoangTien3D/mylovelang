@@ -4184,7 +4184,7 @@ function openChatroom(charId, updateUrl = true) {
 window.openChatroom = openChatroom;
 
 // ==========================================================================
-// CHIBI MOTIVATOR STICKERS (256x256px) SYSTEM
+// CHIBI MOTIVATOR POP-UP STICKER SYSTEM (Temporary animation, zero clutter)
 // User can drop custom chibi_kou.png, chibi_ren.png, chibi_ado.png into /public/stickers/
 // ==========================================================================
 
@@ -4255,11 +4255,73 @@ function createHeartBurstAtElement(el) {
   } catch (e) {}
 }
 
+let chibiStickerDismissTimer = null;
+
+function dismissChibiStickerPopup() {
+  const overlay = document.getElementById("chibiStickerPopupOverlay");
+  if (!overlay) return;
+  if (chibiStickerDismissTimer) {
+    clearTimeout(chibiStickerDismissTimer);
+    chibiStickerDismissTimer = null;
+  }
+  const card = overlay.querySelector(".chibi-popup-card");
+  const backdrop = overlay.querySelector(".chibi-popup-backdrop");
+  if (card) card.classList.add("is-closing");
+  if (backdrop) backdrop.classList.add("is-closing");
+  setTimeout(() => {
+    if (overlay && overlay.parentNode) {
+      overlay.parentNode.removeChild(overlay);
+    }
+  }, 340);
+}
+window.dismissChibiStickerPopup = dismissChibiStickerPopup;
+
+function showChibiStickerPopup(speakerId, customSrc, customCaption) {
+  dismissChibiStickerPopup();
+
+  const stickerInfo = getChibiStickerForCharacter(speakerId);
+  const src = customSrc || stickerInfo.src;
+  const caption = customCaption || stickerInfo.caption;
+  const charName = stickerInfo.name;
+
+  const overlay = document.createElement("div");
+  overlay.id = "chibiStickerPopupOverlay";
+  overlay.className = "chibi-sticker-popup-overlay";
+  overlay.innerHTML = `
+    <div class="chibi-popup-backdrop" onclick="dismissChibiStickerPopup()"></div>
+    <div class="chibi-popup-card" onclick="event.stopPropagation()">
+      <button type="button" class="chibi-popup-close-btn" onclick="dismissChibiStickerPopup()" title="Close">✕</button>
+      <img src="${src}" class="chibi-popup-img" alt="${charName} Chibi Sticker" onerror="this.onerror=null; this.src='${stickerInfo.src}';" onclick="handleChibiStickerTap('${speakerId}', '${cleanEmojiText(caption)}', this)" />
+      <div class="chibi-popup-speaker">
+        <span>✨ ${charName}</span>
+        <span style="font-size:11px; opacity:0.8; font-weight:700;">(Chibi Motivator)</span>
+      </div>
+      <div class="chibi-popup-quote">"${cleanEmojiText(caption)}"</div>
+      <div class="chibi-popup-timer-wrap">
+        <div class="chibi-popup-timer-bar"></div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  playStickerCheerChime();
+  const card = overlay.querySelector(".chibi-popup-card");
+  if (card) createHeartBurstAtElement(card);
+
+  // Auto-dismiss smoothly after 3.6 seconds so it goes away without taking mobile space
+  chibiStickerDismissTimer = setTimeout(() => {
+    dismissChibiStickerPopup();
+  }, 3600);
+}
+window.showChibiStickerPopup = showChibiStickerPopup;
+
 function handleChibiStickerTap(speakerId, customCaption, el) {
   if (el) {
-    el.classList.remove("chibi-sticker-animated");
-    void el.offsetWidth;
-    el.classList.add("chibi-sticker-animated");
+    el.style.transform = "scale(0.92)";
+    setTimeout(() => {
+      el.style.transform = "scale(1.08) rotate(-3deg)";
+    }, 120);
   }
   
   createHeartBurstAtElement(el);
@@ -4276,9 +4338,8 @@ function requestChibiMotivatorSticker() {
   const speakerId = char.id === "group" ? (Math.random() < 0.5 ? "kou" : "ren") : char.id;
   const stickerData = getChibiStickerForCharacter(speakerId);
 
-  // Play instant cheerful chime & heart burst
-  playStickerCheerChime();
-  createHeartBurstAtElement(document.getElementById("vnMotivatorBtn"));
+  // Trigger pop-up animation instantly on tap
+  showChibiStickerPopup(speakerId, stickerData.src, stickerData.caption);
 
   const targetLang = userState.targetLanguage || "vi";
   let promptText = "Cố lên cùng tớ nhé! Gửi sticker cho tớ đi!";
@@ -4409,24 +4470,12 @@ function updateVnDialogueBox(latestLiMsg, char) {
     }
   }
 
-  // Render Chibi Motivator Sticker on Speech Bubble if present
+  // Chibi Motivator Stickers are displayed via the temporary pop-up animation that smoothly goes away,
+  // keeping the VN speech bubble clean and spacious on mobile.
   const stickerWrapEl = document.getElementById("companionSpeechSticker");
   if (stickerWrapEl) {
-    if (latestLiMsg && latestLiMsg.sticker) {
-      const speakerStickerId = latestLiMsg.speaker || speakerId;
-      const stickerInfo = getChibiStickerForCharacter(speakerStickerId);
-      const stickerCap = latestLiMsg.stickerCaption || stickerInfo.caption;
-      stickerWrapEl.innerHTML = `
-        <div class="chibi-sticker-wrapper chibi-sticker-animated" onclick="handleChibiStickerTap('${speakerStickerId}', '${cleanEmojiText(stickerCap)}', this)" title="Chibi Motivator Sticker! Tap to interact">
-          <img src="${latestLiMsg.sticker}" class="chibi-texting-sticker" width="256" height="256" alt="${speakerName} Chibi Motivator Sticker" loading="lazy" onerror="this.onerror=null; this.src='${stickerInfo.src}';" />
-          <div class="chibi-sticker-badge">✨ ${cleanEmojiText(stickerCap)}</div>
-        </div>
-      `;
-      stickerWrapEl.style.display = "flex";
-    } else {
-      stickerWrapEl.style.display = "none";
-      stickerWrapEl.innerHTML = "";
-    }
+    stickerWrapEl.style.display = "none";
+    stickerWrapEl.innerHTML = "";
   }
 
   // Ensure speech bubble is visible and stays until next message!
@@ -4575,8 +4624,8 @@ function renderChatHistory() {
           text: "MC! I prepared fresh notes for our study session today... What would you like to practice?",
           translation: "MC! I prepared fresh notes for our study session today... What would you like to practice?",
           tip: "Ado is eager to study with you.",
-          sticker: "/stickers/chibi_ado.png",
-          stickerCaption: "Cố lên nhé! Tớ đã chuẩn bị tài liệu rồi, cậu làm được mà! 📚",
+          sticker: null,
+          stickerCaption: null,
           time: "Just now",
         },
         {
@@ -4586,13 +4635,12 @@ function renderChatHistory() {
           text: "Senpai, I wanted to practice speaking with you too today! Are you ready?",
           translation: "Senpai, I wanted to practice speaking with you too today! Are you ready?",
           tip: "Kou is happy to practice speaking together.",
-          sticker: "/stickers/chibi_kou.png",
-          stickerCaption: "Chị giỏi lắm! Kou luôn ở đây cổ vũ chị! 💕",
+          sticker: null,
+          stickerCaption: null,
           time: "Just now",
         }
       ];
     } else {
-      const defaultSticker = getChibiStickerForCharacter(char.id);
       history = [
         {
           sender: "li",
@@ -4602,8 +4650,8 @@ function renderChatHistory() {
           romaji: char.romaji || null,
           translation: char.greetingTranslation,
           tip: char.greetingTip,
-          sticker: defaultSticker.src,
-          stickerCaption: defaultSticker.caption,
+          sticker: null,
+          stickerCaption: null,
           time: "Just now",
         },
       ];
@@ -4660,9 +4708,10 @@ function renderChatHistory() {
         const stickerCap = msg.stickerCaption || stickerInfo.caption;
 
         const stickerHtml = msg.sticker ? `
-          <div class="chibi-sticker-wrapper chibi-sticker-animated" onclick="handleChibiStickerTap('${speakerStickerId}', '${cleanEmojiText(stickerCap)}', this)" title="Chibi Motivator Sticker! Tap to interact">
-            <img src="${msg.sticker}" class="chibi-texting-sticker" width="256" height="256" alt="${speakerName} Chibi Motivator Sticker" loading="lazy" onerror="this.onerror=null; this.src='${stickerInfo.src}';" />
-            <div class="chibi-sticker-badge">✨ ${cleanEmojiText(stickerCap)}</div>
+          <div class="chibi-sticker-pill" onclick="showChibiStickerPopup('${speakerStickerId}', '${msg.sticker}', '${cleanEmojiText(stickerCap)}')" title="View Motivator Sticker Popup">
+            <span class="material-symbols-outlined" style="font-size:15px; color:var(--primary-pink);">favorite</span>
+            <span><strong>${speakerName}:</strong> "${cleanEmojiText(stickerCap)}"</span>
+            <span class="chibi-sticker-pill-tag">✨ Pop-up</span>
           </div>
         ` : '';
 
@@ -5349,6 +5398,18 @@ async function triggerLLMResponse(userText, tierObj) {
     
     const history = userState.chatHistories[charId] || [];
 
+    // Provide up to the last 18 messages for full context awareness
+    const cleanHistory = (history || [])
+      .filter(h => h && (h.text || h.characterResponse))
+      .slice(-18)
+      .map(h => ({
+        sender: h.sender,
+        speaker: h.speaker,
+        speakerName: h.speakerName || (h.sender === "user" ? (userState.userProfile?.name || "MC") : (char.name || "LI")),
+        text: h.text || h.characterResponse || "",
+        emotion: h.emotion || null
+      }));
+
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: {
@@ -5362,7 +5423,7 @@ async function triggerLLMResponse(userText, tierObj) {
         isGroup: char.isGroup || false,
         userText: userText,
         tierLevel: tierObj ? tierObj.level : 1,
-        recentHistory: history.slice(-4),
+        recentHistory: cleanHistory,
         apiKey: getOpenRouterApiKey(),
         userProfile: userState.userProfile || { name: "MC", pronouns: "she/her", age: "20" },
       }),
@@ -5419,19 +5480,42 @@ async function triggerLLMResponse(userText, tierObj) {
     const isGroupResponse = (charId === "group" || char.isGroup) && responseData.isGroup && Array.isArray(responseData.groupResponses);
     const userWantsMotivation = /cố lên|cheer|motivat|sticker|chibi|help|giúp|mệt|tired|buồn|sad|nản|khó|ủng hộ|yêu|thích|nhớ|động lực|send me/i.test(userText || "");
 
+    // Track turns since last sticker to ensure stickers only appear OCCASIONALLY (never spamming or crowding mobile screens)
+    userState.turnsSinceLastSticker = (userState.turnsSinceLastSticker || 0) + 1;
+    const canSendOccasional = userState.turnsSinceLastSticker >= 4;
+    let stickerToPopup = null;
+
     if (isGroupResponse && responseData.groupResponses.length > 0) {
       responseData.groupResponses.forEach((gResp, gIdx) => {
         const speakerKey = (gResp.speaker || "ado").toLowerCase();
         const speakerName = gResp.speakerName || (speakerKey === "ren" ? "Ren" : speakerKey === "kou" || speakerKey === "julian" ? "Kou" : "Ado");
         let gEmotion = gResp.emotion ? gResp.emotion.toLowerCase().trim() : "normal";
 
-        let shouldSendSticker = gResp.sendSticker === true;
-        if (!shouldSendSticker) {
-          if (userWantsMotivation && gIdx === 0) shouldSendSticker = true;
-          else if (responseData.evalColor === "green" && Math.random() < 0.45) shouldSendSticker = true;
+        let shouldSendSticker = false;
+        if (userWantsMotivation && gIdx === 0) {
+          shouldSendSticker = true;
+          userState.turnsSinceLastSticker = 0;
+        } else if (canSendOccasional && !stickerToPopup) {
+          if (gResp.sendSticker === true) {
+            shouldSendSticker = Math.random() < 0.35;
+          } else if (responseData.evalColor === "green" && gEmotion === "happy") {
+            shouldSendSticker = Math.random() < 0.20;
+          }
+          if (shouldSendSticker) {
+            userState.turnsSinceLastSticker = 0;
+          }
         }
 
         const stickerData = getChibiStickerForCharacter(speakerKey);
+        const caption = shouldSendSticker ? (gResp.stickerCaption || stickerData.caption) : null;
+
+        if (shouldSendSticker && !stickerToPopup) {
+          stickerToPopup = {
+            speaker: speakerKey,
+            src: stickerData.src,
+            caption: caption
+          };
+        }
 
         history.push({
           sender: "li",
@@ -5444,23 +5528,36 @@ async function triggerLLMResponse(userText, tierObj) {
           evalColor: responseData.evalColor || "green",
           emotion: gEmotion,
           sticker: shouldSendSticker ? stickerData.src : null,
-          stickerCaption: shouldSendSticker ? (gResp.stickerCaption || stickerData.caption) : null,
+          stickerCaption: caption,
           time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         });
       });
     } else {
-      let shouldSendSticker = responseData.sendSticker === true;
-      if (!shouldSendSticker) {
-        if (userWantsMotivation) {
-          shouldSendSticker = true;
-        } else if (responseData.evalColor === "green" && Math.random() < 0.55) {
-          shouldSendSticker = true;
-        } else if (charEmotion === "happy" && Math.random() < 0.35) {
-          shouldSendSticker = true;
+      let shouldSendSticker = false;
+      if (userWantsMotivation) {
+        shouldSendSticker = true;
+        userState.turnsSinceLastSticker = 0;
+      } else if (canSendOccasional) {
+        if (responseData.sendSticker === true) {
+          shouldSendSticker = Math.random() < 0.35;
+        } else if (responseData.evalColor === "green" && charEmotion === "happy") {
+          shouldSendSticker = Math.random() < 0.20;
+        }
+        if (shouldSendSticker) {
+          userState.turnsSinceLastSticker = 0;
         }
       }
 
       const stickerData = getChibiStickerForCharacter(charId);
+      const caption = shouldSendSticker ? (responseData.stickerCaption || stickerData.caption) : null;
+
+      if (shouldSendSticker) {
+        stickerToPopup = {
+          speaker: charId,
+          src: stickerData.src,
+          caption: caption
+        };
+      }
 
       history.push({
         sender: "li",
@@ -5474,7 +5571,7 @@ async function triggerLLMResponse(userText, tierObj) {
         evalColor: responseData.evalColor || "green",
         emotion: charEmotion,
         sticker: shouldSendSticker ? stickerData.src : null,
-        stickerCaption: shouldSendSticker ? (responseData.stickerCaption || stickerData.caption) : null,
+        stickerCaption: caption,
         time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       });
     }
@@ -5486,6 +5583,13 @@ async function triggerLLMResponse(userText, tierObj) {
     checkTierLevelUp(charId);
     saveLocalState();
     renderChatHistory();
+
+    // Trigger floating pop-up sticker animation if occasional sticker was awarded
+    if (stickerToPopup) {
+      setTimeout(() => {
+        showChibiStickerPopup(stickerToPopup.speaker, stickerToPopup.src, stickerToPopup.caption);
+      }, 250);
+    }
 
     const latestMsg = history[history.length - 1];
     updateVnDialogueBox(latestMsg, char);
@@ -5509,6 +5613,8 @@ function generateInCharacterFallback(char, userText, tierObj) {
   let fallbackEncouragement = "Awesome effort! Excellent vocabulary usage.";
 
   const slangRegex = /\b(idk|gonna|wanna|u|r|ko|được ko|bùn|chơi luôn|vcl|vl|omg|imho|idfc|tbh|omw)\b/i;
+  const fallbackWantsSticker = /cố lên|cheer|motivat|sticker|chibi|nản|mệt|tired|động lực|send me/i.test(userText || "");
+
   if (slangRegex.test(normText)) {
     evalColor = "yellow";
     fallbackFix = "Standard formal term: Expand abbreviations into full formal terms (e.g. 'I do not know' or 'Được không')";
@@ -5544,7 +5650,7 @@ function generateInCharacterFallback(char, userText, tierObj) {
       isCorrect: evalColor !== "red",
       correction: fallbackFix,
       encouragement: fallbackEncouragement,
-      sendSticker: true,
+      sendSticker: fallbackWantsSticker,
       stickerCaption: "Cố lên nhé! Tớ đã chuẩn bị tài liệu rồi, cậu làm được mà! 📚",
       starterOptions: [
         { text: "Chào Ado, tiền bối cũng nhớ Ado!", translation: "Hello Ado, I miss you too!" },
@@ -5577,7 +5683,7 @@ function generateInCharacterFallback(char, userText, tierObj) {
       isCorrect: evalColor !== "red",
       correction: fallbackFix,
       encouragement: fallbackEncouragement,
-      sendSticker: true,
+      sendSticker: fallbackWantsSticker,
       stickerCaption: "Chị giỏi lắm! Kou luôn ở đây cổ vũ chị! 💕",
       starterOptions: [
         { text: "Cảm ơn Kou nhé, tớ sẽ cố gắng!", translation: "Thanks Kou, I will do my best!" },
@@ -5610,7 +5716,7 @@ function generateInCharacterFallback(char, userText, tierObj) {
       isCorrect: evalColor !== "red",
       correction: fallbackFix,
       encouragement: fallbackEncouragement,
-      sendSticker: true,
+      sendSticker: fallbackWantsSticker,
       stickerCaption: "Làm tốt lắm, nhóc! Nhìn anh mà lấy động lực này. 💜",
       starterOptions: [
         { text: "Em chào anh Ren nhé!", translation: "Hello Ren!" },

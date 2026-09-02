@@ -1,10 +1,11 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 
-// Free Google Gemini Models Fallback List
-const FREE_GEMINI_MODELS = [
-  "gemini-3.6-flash",
+// Ultra-fast Gemini models optimized for instant conversational chat
+// gemini-3.1-flash-lite is the lowest-latency model with ThinkingLevel.MINIMAL by default
+const FAST_GEMINI_MODELS = [
   "gemini-3.1-flash-lite",
+  "gemini-3.8-flash",
   "gemini-flash-latest",
 ];
 
@@ -67,10 +68,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let usedModel = "gemini-flash";
 
     if (apiKey) {
-      const trimmedHistory = (recentHistory || [])
-        .slice(-4)
-        .map((h: any) => `${h.sender === "user" ? userName : (h.speakerName || characterName || "LI")}: ${h.text}`)
-        .join("\n");
+      // Process recent conversation history for deep context awareness
+      let priorHistoryItems: any[] = Array.isArray(recentHistory) ? [...recentHistory] : [];
+
+      // If the last entry in recentHistory is the current userText (because the frontend logged it before sending),
+      // remove it from prior history so it represents past conversation context without duplicating the current turn
+      if (
+        priorHistoryItems.length > 0 &&
+        priorHistoryItems[priorHistoryItems.length - 1]?.sender === "user" &&
+        priorHistoryItems[priorHistoryItems.length - 1]?.text?.trim() === userText.trim()
+      ) {
+        priorHistoryItems.pop();
+      }
+
+      // Keep up to 14 prior messages for rich contextual grounding
+      priorHistoryItems = priorHistoryItems.slice(-14);
+
+      const formattedConversationHistory = priorHistoryItems.length > 0
+        ? priorHistoryItems
+            .map((h: any) => {
+              const speaker = h.sender === "user"
+                ? userName
+                : (h.speakerName || characterName || "Love Interest");
+              return `[${speaker}]: ${h.text || ""}`;
+            })
+            .join("\n")
+        : "(Start of conversation. No previous messages yet.)";
 
       let systemInstruction = "";
 
@@ -99,13 +122,17 @@ Do NOT use emojis in texting or character dialogue! Keep all character text, rep
 USER PROFILE: Name: "${userName}", Pronouns: "${userPronouns}", Age: "${userAge}".
 Address and refer to the user directly as "${userName}".
 
-User input: "${userText}"
+RECENT CONVERSATION HISTORY:
+${formattedConversationHistory}
 
-Recent conversation:
-${trimmedHistory}
+LATEST USER INPUT: "${userText}"
 
 Instructions:
-1. Ultra-Simple Beginner Language (A1 Level): Keep responses very short, simple, and natural (strictly 3 to 8 words max, e.g., "Chào ${userOlderHonorific} nha!", "Đi chơi thôi nào!", "Cảm ơn ${userOlderHonorific}!"). Do NOT use complex grammar, subordinate clauses, or long sentences!
+1. CONVERSATIONAL CONTINUITY & CONTEXT (CRITICAL):
+   - You MUST directly continue the ongoing conversation thread shown above!
+   - Directly answer questions asked by ${userName}, follow up on prior discussion topics (e.g. homework, food, hanging out, teasing), and react to their latest message with authentic emotional continuity.
+   - Never reset back to a generic greeting if a conversation is already underway.
+   - Keep responses beginner-friendly and natural: 4 to 12 words per character in ${targetLangName} (1 to 2 short texting sentences).
 2. Strict No-Emoji Rule: Do NOT include emojis in character dialogues, starter options, or chips!
 3. Ensure Ado sounds tsundere/diligent, Kou sounds cute/clingy, and Ren sounds flirty/assertive.
 4. EMOTION CLASSIFICATION: For each character speaking, assign one exact 'emotion' from ["fear", "happy", "angry", "pout", "sad", "normal"]:
@@ -143,16 +170,16 @@ Analyze "${userText}" and classify its language quality into 'evalColor' ("red",
    - Set 'tip': An insightful breakdown praising their grammar/vocab selection, explaining WHY it sounds natural, authentic, or contextually fitting.
    - Set 'encouragement': "Excellent grammar and natural vocabulary usage!"
 
-5. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation), e.g., ["Cảm", "ơn", "hai", "cậu", "rất", "vui", "nói", "chuyện", "nhé", "ạ"]. Do NOT suggest full sentences or multi-word phrases!
-6. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options without emojis in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào hai cậu!", "translation": "Hello both of you!"}, {"text": "Cảm ơn nhé!", "translation": "Thank you!"}, {"text": "Đi chơi thôi!", "translation": "Let's go play!"}].
+5. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation) relevant to the current conversation topic, e.g., ["Cảm", "ơn", "hai", "cậu", "rất", "vui", "nói", "chuyện", "nhé", "ạ"].
+6. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options without emojis in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') directly tailored to reply to what the characters just said!
 
-7. CHIBI MOTIVATOR STICKER (CRITICAL):
-Each character has their own special 256x256 chibi motivator sticker (named chibi_ado.png, chibi_kou.png, chibi_ren.png) that they love sending in chat as a texting motivator!
-- Send a sticker ('sendSticker': true) whenever:
-  * User achieves 'evalColor' === 'green' or good grammar.
-  * You or another character are praising, encouraging, cheering, or motivating the user (e.g. "Cố lên!", "Fighting!", "Proud of you!").
-  * Or when user asks for motivation, cheer, or feels unsure.
-- If sending a sticker, provide a short encouraging 'stickerCaption'. Otherwise set 'sendSticker': false.
+7. CHIBI MOTIVATOR STICKER (OCCASIONAL ONLY):
+Characters have a special chibi motivator sticker (named chibi_ado.png, chibi_kou.png, chibi_ren.png).
+CRITICAL: Do NOT send a sticker on every turn! Send it OCCASIONALLY (roughly 1 out of every 5-6 messages, ~15-20% of the time) only when:
+  * The user explicitly asks for encouragement, motivation, cheering up, or a sticker (e.g. "cố lên", "cheer me up", "send sticker", "mệt quá", "nản quá").
+  * Or when a character is having a rare moment of extraordinary excitement or celebration.
+Most of the time, 'sendSticker' MUST be false!
+If sending a sticker, provide a short encouraging 'stickerCaption'. Otherwise set 'sendSticker': false and 'stickerCaption': null.
 
 Return ONLY valid JSON matching this schema:
 {
@@ -161,7 +188,7 @@ Return ONLY valid JSON matching this schema:
     {
       "speaker": "ado",
       "speakerName": "Ado",
-      "text": "Short 3-6 word response from Ado in ${targetLangName} without emojis",
+      "text": "Short response from Ado in ${targetLangName} without emojis (continuing context)",
       "emotion": "pout",
       "translation": "Full English translation",
       "tip": "Short language tip from Ado",
@@ -171,12 +198,12 @@ Return ONLY valid JSON matching this schema:
     {
       "speaker": "kou",
       "speakerName": "Kou",
-      "text": "Short 3-6 word response from Kou in ${targetLangName} without emojis",
+      "text": "Short response from Kou in ${targetLangName} without emojis (continuing context)",
       "emotion": "happy",
       "translation": "Full English translation",
       "tip": "Short language tip from Kou",
-      "sendSticker": true,
-      "stickerCaption": "Chị giỏi quá! Cố lên nhé! 💕"
+      "sendSticker": false,
+      "stickerCaption": null
     }
   ],
   "evalColor": "green",
@@ -185,9 +212,9 @@ Return ONLY valid JSON matching this schema:
   "tip": "Insightful breakdown explaining grammar, slang, or vocabulary choice",
   "encouragement": "Positive praise or feedback title sentence",
   "starterOptions": [
-    { "text": "Chào hai cậu!", "translation": "Hello both of you!" },
-    { "text": "Cảm ơn nhé!", "translation": "Thank you!" },
-    { "text": "Đi chơi thôi!", "translation": "Let's go hang out!" }
+    { "text": "Relevant reply 1", "translation": "English translation 1" },
+    { "text": "Relevant reply 2", "translation": "English translation 2" },
+    { "text": "Relevant reply 3", "translation": "English translation 3" }
   ],
   "contextualChipsPrompt": "Build your reply:",
   "contextualChips": ["Cảm", "ơn", "hai", "cậu", "rất", "vui", "nói", "chuyện", "nhé", "ạ"]
@@ -228,13 +255,17 @@ Do NOT use emojis in texting or character dialogue! Keep all character text, rep
 USER PROFILE: Name: "${userName}", Pronouns: "${userPronouns}", Age: "${userAge}".
 Address the user directly as "${userName}" or using appropriate natural Vietnamese terms (${userOlderHonorific} / em / cậu).
 
-User input: "${userText}"
+RECENT CONVERSATION HISTORY:
+${formattedConversationHistory}
 
-Recent conversation:
-${trimmedHistory}
+LATEST USER INPUT: "${userText}"
 
 Instructions:
-1. Ultra-Simple Beginner Language (A1 Level): Keep your in-character response extremely short, simple, and elementary (strictly 3 to 8 words maximum, e.g., "Chào ${userOlderHonorific} nha!", "Kou nhớ ${userOlderHonorific} lắm!", "Đi chơi thôi nào!", "Ngoan quá!", "Hừm... Tốt lắm.", "Chào nhóc nhé."). Ban long sentences, complicated vocabulary, or dense grammar!
+1. CONVERSATIONAL CONTINUITY & CONTEXT MEMORY (CRITICAL):
+   - You MUST maintain strict continuity with the ongoing conversation history shown above!
+   - If ${userName} asked a question, answer it directly in character. If they reacted to something you said earlier, acknowledge it. If they teased you, banter back.
+   - Never reset back to a generic greeting ("Chào...", "Hello...") if a conversation is already taking place.
+   - Keep replies natural, charming, and beginner-friendly: 4 to 12 words in ${targetLangName} (1 to 2 short conversational texting sentences).
 2. Strict No-Emoji Rule: Do NOT include emojis in character responses or dialogue!
 3. Character Emotion: Set 'emotion' to one of ["idle", "fear", "happy", "angry", "pout", "sad", "normal"] matching your reaction and expression.
    - "idle": relaxed listening pause, quiet thoughtful moment, gentle resting pose
@@ -275,22 +306,22 @@ Analyze "${userText}" and classify its language quality into 'evalColor' ("red",
    - Set 'tip': An insightful breakdown praising their grammar/vocab selection, explaining WHY it sounds natural, authentic, or contextually fitting.
    - Set 'encouragement': "Excellent grammar and natural vocabulary usage!"
 
-7. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. CRITICAL: Each item in 'contextualChips' MUST be a single word (or particle/punctuation), e.g., ["Thank", "you", "so", "much", "I", "am", "happy", "to", "see", "you", "too"]. Do NOT suggest full sentences or multi-word phrases!
-8. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options without emojis in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') for complete beginners to pick with 1 click. E.g. [{"text": "Chào Ado!", "translation": "Hello Ado!"}, {"text": "Đi chơi nhé!", "translation": "Let's hang out!"}, {"text": "Cảm ơn em!", "translation": "Thank you!"}].
-9. CHIBI MOTIVATOR STICKER (CRITICAL):
-You have a special 256x256 texting chibi sticker of yourself (named chibi_ado.png, chibi_kou.png, or chibi_ren.png) that you send as a motivator!
-- Send your sticker ('sendSticker': true) whenever:
-  * The user's input achieves 'evalColor' === 'green' ("Spot on!", good grammar, natural vocabulary).
-  * You are praising, encouraging, cheering, or motivating them (e.g., "Cố lên!", "Fighting!", "Proud of you!", "Em giỏi lắm!").
-  * Or when user expresses fatigue/doubts or asks for motivation, cheer, or when your emotion is 'happy'.
-- If sending a sticker, set 'sendSticker': true and provide a warm in-character cheer in 'stickerCaption'. Otherwise set 'sendSticker': false.
+7. Provide 6-10 individual single words in ${targetLangName} (NOT full sentences or multi-word phrases) for ${userName} to combine and build a custom sentence in 'contextualChips', along with a prompt guide in 'contextualChipsPrompt'. Each item in 'contextualChips' MUST be a single word relevant to what you just talked about!
+8. Provide EXACTLY 3 ultra-short, simple beginner-friendly reply options without emojis in ${targetLangName} in 'starterOptions' (each with 'text' of 2-5 words and English 'translation') directly responding to your character's latest statement.
+9. CHIBI MOTIVATOR STICKER (OCCASIONAL ONLY):
+You have a special chibi texting motivator sticker of yourself (named chibi_ado.png, chibi_kou.png, or chibi_ren.png).
+CRITICAL: Do NOT send your sticker on every turn! Send it OCCASIONALLY (roughly 1 out of every 5-6 messages, ~15-20% of the time) only when:
+  * The user specifically asks for motivation, encouragement, cheering up, or a sticker (e.g., "cố lên", "cheer me up", "gửi sticker", "mệt quá", "nản quá", "khó quá").
+  * Or when you are having a rare moment of extraordinary excitement or celebration over a breakthrough.
+Most of the time, 'sendSticker' MUST be false!
+If sending a sticker, set 'sendSticker': true and provide a warm in-character cheer in 'stickerCaption'. Otherwise set 'sendSticker': false and 'stickerCaption': null.
 
 Return ONLY valid JSON matching this schema:
 {
-  "characterResponse": "short 3-8 word response without emojis in ${targetLangName}",
+  "characterResponse": "natural response without emojis in ${targetLangName} continuing context",
   "emotion": "happy",
-  "sendSticker": true,
-  "stickerCaption": "Short motivational cheer caption (e.g. Cố lên nhé! or Em làm tốt lắm!)",
+  "sendSticker": false,
+  "stickerCaption": null,
   "romaji": "romaji text if Japanese, else null",
   "translation": "English translation",
   "evalColor": "green",
@@ -299,28 +330,95 @@ Return ONLY valid JSON matching this schema:
   "correction": "Grammar correction or standard formal term or 'Spot on!'",
   "encouragement": "Positive praise or feedback title sentence",
   "starterOptions": [
-    { "text": "Option 1 in 2-5 words", "translation": "English translation 1" },
-    { "text": "Option 2 in 2-5 words", "translation": "English translation 2" },
-    { "text": "Option 3 in 2-5 words", "translation": "English translation 3" }
+    { "text": "Relevant reply 1 in 2-5 words", "translation": "English translation 1" },
+    { "text": "Relevant reply 2 in 2-5 words", "translation": "English translation 2" },
+    { "text": "Relevant reply 3 in 2-5 words", "translation": "English translation 3" }
   ],
   "contextualChipsPrompt": "Next turn prompt guide",
   "contextualChips": ["word1", "word2", "word3", "word4", "word5", "word6"]
 }`;
       }
 
-      // 1. Try OpenRouter if API Key is OpenRouter (sk-...)
-      if (apiKey.startsWith("sk-") || apiKey.includes("openrouter") || apiKey.includes("or-")) {
+      // Build explicit conversational prompt for Gemini and OpenRouter
+      const contextualUserPrompt = priorHistoryItems.length > 0
+        ? `[RECENT CONVERSATION HISTORY]\n${formattedConversationHistory}\n\n[LATEST MESSAGE FROM ${userName}]\n"${userText}"\n\nTask: As ${characterName}, respond directly and contextually to ${userName}'s latest message, strictly preserving the flow, topic, and emotional continuity of the ongoing conversation.`
+        : `[LATEST MESSAGE FROM ${userName}]\n"${userText}"\n\nTask: As ${characterName}, respond warmly and in-character to ${userName}'s message.`;
+
+      // 1. Prioritize GoogleGenAI (fast native connection, zero proxy overhead)
+      const geminiKey = process.env.GEMINI_API_KEY || (!apiKey.startsWith("sk-") ? apiKey : null);
+      if (geminiKey) {
+        try {
+          const ai = new GoogleGenAI({
+            apiKey: geminiKey,
+            httpOptions: {
+              headers: {
+                "User-Agent": "aistudio-build",
+              },
+            },
+          });
+
+          let responseText: string | undefined = undefined;
+
+          for (const modelName of FAST_GEMINI_MODELS) {
+            try {
+              const thinkingLevel = modelName.includes("flash-lite")
+                ? ThinkingLevel.MINIMAL
+                : ThinkingLevel.LOW;
+
+              const generatePromise = ai.models.generateContent({
+                model: modelName,
+                contents: contextualUserPrompt,
+                config: {
+                  systemInstruction,
+                  responseMimeType: "application/json",
+                  temperature: 0.7,
+                  thinkingConfig: {
+                    thinkingLevel,
+                  },
+                },
+              });
+
+              // Allow up to 6.5s to comfortably generate rich contextual responses without timing out
+              const timeoutPromise = new Promise<never>((_, reject) =>
+                setTimeout(() => reject(new Error(`Timeout on model ${modelName}`)), 6500)
+              );
+
+              const response = await Promise.race([generatePromise, timeoutPromise]);
+
+              if (response && response.text) {
+                responseText = response.text;
+                usedModel = modelName;
+                break;
+              }
+            } catch (e: any) {
+              console.warn(`[Gemini Fast Model] ${modelName} notice:`, e?.message || e);
+            }
+          }
+
+          if (responseText) {
+            try {
+              parsedData = JSON.parse(responseText);
+            } catch {
+              const cleaned = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
+              parsedData = JSON.parse(cleaned);
+            }
+          }
+        } catch (err: any) {
+          console.warn("[Gemini API] AI call failed, trying backup:", err?.message);
+        }
+      }
+
+      // 2. Try OpenRouter if API Key is OpenRouter (sk-...) and GoogleGenAI didn't produce data
+      if (!parsedData && (apiKey.startsWith("sk-") || apiKey.includes("openrouter") || apiKey.includes("or-"))) {
         try {
           const openRouterModels = [
             "google/gemini-2.5-flash",
-            "google/gemini-flash-1.5",
-            "meta-llama/llama-3.3-70b-instruct",
             "openai/gpt-4o-mini"
           ];
 
           const messages = [
             { role: "system", content: systemInstruction },
-            { role: "user", content: `User message: "${userText}"` }
+            { role: "user", content: contextualUserPrompt }
           ];
 
           for (const orModel of openRouterModels) {
@@ -338,7 +436,8 @@ Return ONLY valid JSON matching this schema:
                   messages: messages,
                   temperature: 0.7,
                   response_format: { type: "json_object" }
-                })
+                }),
+                signal: AbortSignal.timeout(3500)
               });
 
               if (orResp.ok) {
@@ -363,55 +462,6 @@ Return ONLY valid JSON matching this schema:
           }
         } catch (e: any) {
           console.warn("[OpenRouter Chat] Error:", e?.message);
-        }
-      }
-
-      // 2. Try GoogleGenAI
-      if (!parsedData) {
-        try {
-          const ai = new GoogleGenAI({
-            apiKey: apiKey.startsWith("sk-") && process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY : apiKey,
-            httpOptions: {
-              headers: {
-                "User-Agent": "aistudio-build",
-              },
-            },
-          });
-
-          let responseText: string | undefined = undefined;
-
-          for (const modelName of FREE_GEMINI_MODELS) {
-            try {
-              const response = await ai.models.generateContent({
-                model: modelName,
-                contents: `User message: "${userText}"`,
-                config: {
-                  systemInstruction,
-                  responseMimeType: "application/json",
-                  temperature: 0.7,
-                },
-              });
-
-              if (response && response.text) {
-                responseText = response.text;
-                usedModel = modelName;
-                break;
-              }
-            } catch (e) {
-              // try next model
-            }
-          }
-
-          if (responseText) {
-            try {
-              parsedData = JSON.parse(responseText);
-            } catch {
-              const cleaned = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
-              parsedData = JSON.parse(cleaned);
-            }
-          }
-        } catch (err: any) {
-          console.warn("[Gemini API] AI call failed, using fallback:", err?.message);
         }
       }
     }

@@ -1,6 +1,21 @@
 /* Otome Lingua - Refined Light Romance Theme */
 
-@import url('https://fonts.googleapis.com/css2?family=Darumadrop+One&family=Hina+Mincho&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hina+Mincho&display=swap');
+
+/* Local Font Support for Darumadrop One (Can be provided locally via /public/fonts/ or /fonts/) */
+@font-face {
+  font-family: 'Darumadrop One';
+  src: url('/fonts/DarumadropOne-Regular.woff2') format('woff2'),
+       url('/fonts/DarumadropOne-Regular.ttf') format('truetype'),
+       url('/fonts/DarumadropOne.ttf') format('truetype'),
+       url('/fonts/darumadrop.ttf') format('truetype'),
+       local('Darumadrop One'),
+       local('DarumadropOne-Regular'),
+       url('https://fonts.gstatic.com/s/darumadropone/v14/cY9cfjeIW11dpCKgRLi675a87IhH.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --bg-dark: #455A9F;
@@ -10317,92 +10332,223 @@ body.dark-theme .openkoto-chat-import-btn {
 }
 
 /* ==========================================================================
-   CHIBI MOTIVATOR TEXTING STICKERS (256x256px)
+   CHIBI MOTIVATOR POP-UP STICKER SYSTEM (Temporary animation, zero clutter)
    ========================================================================== */
-.chibi-sticker-wrapper {
+.chibi-sticker-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  pointer-events: none;
+}
+
+.chibi-popup-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.38);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  pointer-events: auto;
+  animation: chibiFadeIn 0.28s ease forwards;
+}
+
+.chibi-popup-card {
+  pointer-events: auto;
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin: 6px 0 10px 0;
-  cursor: pointer;
-  position: relative;
+  align-items: center;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.97);
+  border: 2px solid rgba(217, 0, 87, 0.35);
+  border-radius: 22px;
+  padding: 20px 22px 16px 22px;
+  max-width: 320px;
+  width: min(320px, 86vw);
+  box-shadow: 0 20px 48px rgba(217, 0, 87, 0.28), 0 8px 24px rgba(0, 0, 0, 0.16);
+  animation: chibiPopupEnter 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
-  max-width: 100%;
 }
 
-.chibi-texting-sticker {
-  width: 256px;
-  height: 256px;
-  max-width: min(256px, 72vw);
-  max-height: min(256px, 72vw);
+body.dark-theme .chibi-popup-card {
+  background: rgba(26, 22, 44, 0.98);
+  border-color: rgba(217, 0, 87, 0.55);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 35px rgba(217, 0, 87, 0.35);
+}
+
+.chibi-popup-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+  transition: all 0.18s ease;
+  z-index: 3;
+}
+
+.chibi-popup-close-btn:hover {
+  background: rgba(217, 0, 87, 0.18);
+  color: var(--primary-pink);
+  transform: scale(1.1);
+}
+
+body.dark-theme .chibi-popup-close-btn {
+  background: rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+}
+
+.chibi-popup-img {
+  width: 175px;
+  height: 175px;
+  max-width: min(175px, 55vw);
+  max-height: min(175px, 55vw);
   aspect-ratio: 1 / 1;
   object-fit: contain;
-  display: block;
-  filter: drop-shadow(0 8px 18px rgba(15, 23, 42, 0.28));
-  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.28s ease;
-  border-radius: 12px;
+  filter: drop-shadow(0 10px 20px rgba(15, 23, 42, 0.3));
+  margin-bottom: 8px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
 }
 
-.chibi-sticker-wrapper:hover .chibi-texting-sticker {
-  transform: scale(1.06) rotate(-2deg);
-  filter: drop-shadow(0 12px 24px rgba(217, 0, 87, 0.45));
+.chibi-popup-img:hover {
+  transform: scale(1.08) rotate(-3deg);
 }
 
-.chibi-sticker-wrapper:active .chibi-texting-sticker {
-  transform: scale(0.95);
-}
-
-.chibi-sticker-badge {
-  margin-top: 6px;
-  background: linear-gradient(135deg, rgba(217, 0, 87, 0.12), rgba(124, 58, 237, 0.12));
-  border: 1px solid rgba(217, 0, 87, 0.35);
-  color: var(--primary-pink);
-  font-size: 12px;
-  font-weight: 800;
-  padding: 4px 12px;
-  border-radius: 9999px;
-  backdrop-filter: blur(8px);
+.chibi-popup-speaker {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--primary-pink);
+  margin-bottom: 4px;
 }
 
-body.dark-theme .chibi-sticker-badge {
-  background: linear-gradient(135deg, rgba(217, 0, 87, 0.22), rgba(124, 58, 237, 0.22));
+.chibi-popup-quote {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.42;
+  margin-bottom: 12px;
+  max-width: 280px;
+}
+
+body.dark-theme .chibi-popup-quote {
+  color: #f1f5f9;
+}
+
+.chibi-popup-timer-wrap {
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+body.dark-theme .chibi-popup-timer-wrap {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.chibi-popup-timer-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-pink), var(--accent-violet));
+  border-radius: 9999px;
+  animation: chibiTimerShrink 3.5s linear forwards;
+}
+
+.chibi-popup-card.is-closing {
+  animation: chibiPopupExit 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+.chibi-popup-backdrop.is-closing {
+  animation: chibiFadeOut 0.35s ease forwards !important;
+}
+
+/* Compact In-Chat Sticker Pill (Zero Clutter on Mobile) */
+.chibi-sticker-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(217, 0, 87, 0.08), rgba(124, 58, 237, 0.08));
+  border: 1.5px solid rgba(217, 0, 87, 0.25);
+  border-radius: 12px;
+  padding: 4px 10px;
+  margin: 4px 0 6px 0;
+  cursor: pointer;
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-pink);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.chibi-sticker-pill:hover {
+  background: linear-gradient(135deg, rgba(217, 0, 87, 0.16), rgba(124, 58, 237, 0.16));
+  border-color: var(--primary-pink);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(217, 0, 87, 0.18);
+}
+
+.chibi-sticker-pill-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
+body.dark-theme .chibi-sticker-pill {
+  background: linear-gradient(135deg, rgba(217, 0, 87, 0.18), rgba(124, 58, 237, 0.18));
   border-color: rgba(217, 0, 87, 0.45);
   color: #ff7597;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Sticker pop entrance animation */
-@keyframes stickerPopBounce {
-  0% { transform: scale(0.25) rotate(-12deg); opacity: 0; }
-  60% { transform: scale(1.12) rotate(3deg); opacity: 1; }
-  80% { transform: scale(0.96) rotate(-1deg); }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+body.dark-theme .chibi-sticker-pill-tag {
+  color: #cbd5e1;
 }
 
-.chibi-sticker-animated {
-  animation: stickerPopBounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+/* Sticker Animations */
+@keyframes chibiFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Speech bubble sticker representation in Visual Novel Stage */
-.vn-speech-sticker-wrap {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+@keyframes chibiFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
-.vn-speech-sticker-wrap .chibi-texting-sticker {
-  width: 220px;
-  height: 220px;
-  max-width: min(220px, 60vw);
-  max-height: min(220px, 60vw);
+@keyframes chibiPopupEnter {
+  0% { transform: scale(0.3) translateY(35px) rotate(-6deg); opacity: 0; }
+  65% { transform: scale(1.06) translateY(-4px) rotate(1deg); opacity: 1; }
+  85% { transform: scale(0.98) translateY(1px); }
+  100% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
+}
+
+@keyframes chibiPopupExit {
+  0% { transform: scale(1) translateY(0); opacity: 1; }
+  100% { transform: scale(0.65) translateY(-25px); opacity: 0; }
+}
+
+@keyframes chibiTimerShrink {
+  from { width: 100%; }
+  to { width: 0%; }
 }
 
 .floating-sticker-heart {
