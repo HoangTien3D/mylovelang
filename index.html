@@ -203,7 +203,7 @@
             <span>🌐 Language Preferences</span>
           </div>
           <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:16px;">
-            Configure your target learning language for chats and story dates, as well as your general app interface language.
+            Configure your target learning language and general app interface language.
           </p>
 
           <!-- 1. Target Learning Language Subsection -->
@@ -354,9 +354,6 @@
           <div class="settings-label" style="color: var(--primary-pink); display:flex; align-items:center; gap:6px;">
             <span>🔄 Reset Story & Chat Progress</span>
           </div>
-          <p style="font-size:12px; color:var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
-            Wipe all chat histories, reset affection levels back to initial nonchalant states, and restart story choices for a fresh experience.
-          </p>
           <button class="primary-btn reset-action-btn" id="resetStoryBtn" type="button">
             Reset All Story Progress & Replay
           </button>
@@ -445,18 +442,12 @@
             <div class="vn-dialogue-scroll-area" id="vnDialogueScrollArea">
               <!-- Floating Character Speech Bubble -->
               <div class="vn-stage-speech-bubble" id="companionSpeechBubble" style="display:flex;">
-                <div class="vn-bubble-speaker" id="companionSpeakerTag">
-                  <span id="companionSpeakerName">Ado</span>
-                  <button type="button" class="vn-bubble-import-btn" id="vnBubbleImportBtn" onclick="importCurrentSpeechBubbleToMediaLab()" title="Import speech into AI Media Lab">
-                    <span class="material-symbols-outlined" style="font-size:13px;">auto_awesome</span>
-                    <span>Import</span>
-                  </button>
-                </div>
                 <div class="vn-bubble-content">
                   <span id="companionSpeechText">Này, cậu lại đi trễ đấy à? Tớ đã chuẩn bị sẵn tài liệu học tập cho cậu rồi...</span>
                   <div id="companionSpeechRomaji" class="vn-bubble-romaji" style="display:none;"></div>
                   <div id="companionSpeechSticker" class="vn-speech-sticker-wrap" style="display:none;"></div>
                 </div>
+                <button type="button" class="vn-bubble-import-btn" id="vnBubbleImportBtn" onclick="importCurrentSpeechBubbleToMediaLab()" title="Import speech into AI Media Lab">import</button>
               </div>
 
               <!-- Interactive Phonetic & Tone Helper Pill Bar (Collapsible / Toggleable) -->
@@ -518,19 +509,16 @@
                 <span id="inputCollapsedBarText">Show Input Controls</span>
               </div>
 
-              <!-- Input Feature Mode Selector (Switch freely between Starter Options, Sentence Builder, and Free Text) -->
+              <!-- Input Feature Mode Selector (Switch freely between Starter Options, Word Build, and Free Chat) -->
               <div class="input-mode-switcher" id="inputModeSwitcher" style="display:flex; gap:6px; align-items:center;">
                 <button id="modeStarterChoiceBtn" class="mode-tab-btn active" type="button" title="Starter Options">
                   <span class="material-symbols-outlined" style="font-size:16px;">format_list_bulleted</span>
                 </button>
-                <button id="modeSentenceBuilderBtn" class="mode-tab-btn" type="button" title="Sentence Builder">
+                <button id="modeSentenceBuilderBtn" class="mode-tab-btn" type="button" title="Word Build">
                   <span class="material-symbols-outlined" style="font-size:16px;">extension</span>
                 </button>
-                <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" title="Free Text">
+                <button id="modeFreeTextBtn" class="mode-tab-btn" type="button" title="Free Chat">
                   <span class="material-symbols-outlined" style="font-size:16px;">chat</span>
-                </button>
-                <button id="openGrammarHintsBtn" class="mode-tab-btn grammar-hint-toggle-btn" type="button" onclick="toggleGrammarDrawer(true)" title="Grammar & Formula Drawer">
-                  <span class="material-symbols-outlined" style="font-size:16px; color:#d97706;">school</span>
                 </button>
                 <button id="collapseInputBtn" class="mode-tab-btn collapse-toggle-btn" type="button" onclick="toggleInputUiCollapse()" title="Collapse / Expand Input UI">
                   <span class="material-symbols-outlined" id="collapseInputIcon" style="font-size:16px;">expand_more</span>
@@ -539,7 +527,6 @@
 
               <!-- Feature 0: Starter Choice (3 Premade Options for Complete Beginners) -->
               <div class="starter-choice-container" id="starterChoiceContainer">
-                <div class="prompt-guide" id="starterChoicePromptGuide">Choose your response (hover/tap for translation):</div>
                 <div class="starter-options-list" id="starterOptionsList">
                   <!-- 3 premade options rendered dynamically by app.js -->
                 </div>
@@ -559,9 +546,11 @@
               <!-- Feature 2: Free-Form Text Chat -->
               <div class="text-input-bar" id="freeInputContainer" style="display:none;">
                 <input type="text" id="freeChatInput" class="chat-input" placeholder="Type custom message in target language..." />
-                <button class="send-btn" id="sendFreeMsgBtn" type="button" title="Send Message">
-                  <span class="material-symbols-outlined" style="font-size:20px;">send</span>
-                </button>
+                <div class="send-btn-wrap">
+                  <button class="send-btn heart-btn" id="sendFreeMsgBtn" type="button" title="Send Message">
+                    <span class="material-symbols-outlined" style="font-size:18px; margin-left:2px; margin-top:-2px;">send</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -789,9 +778,6 @@
             <span>Start Story</span>
             <span class="material-symbols-outlined" style="font-size:20px;">favorite</span>
           </button>
-          <button type="button" class="setup-skip-btn" id="skipProfileModalBtn" onclick="handleSkipProfileModal()">
-            ⚡ Quick Play (Use Defaults)
-          </button>
         </div>
       </form>
     </div>
@@ -869,6 +855,15 @@
       [KEYBIND] CTRL + SHIFT + ALT active listener attached.<br/>
     </div>
   </div>
+
+  <!-- SVG Global Definitions for Special Shapes -->
+  <svg width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true">
+    <defs>
+      <clipPath id="heartClip" clipPathUnits="objectBoundingBox">
+        <path d="M 0.5, 0.95 C 0.46, 0.91, 0.04, 0.59, 0.04, 0.30 C 0.04, 0.14, 0.16, 0.02, 0.31, 0.02 C 0.41, 0.02, 0.47, 0.08, 0.50, 0.12 C 0.53, 0.08, 0.59, 0.02, 0.69, 0.02 C 0.84, 0.02, 0.96, 0.14, 0.96, 0.30 C 0.96, 0.59, 0.54, 0.91, 0.50, 0.95 Z" />
+      </clipPath>
+    </defs>
+  </svg>
 
   <script type="module" src="/app.js"></script>
 </body>

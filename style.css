@@ -527,10 +527,10 @@ body {
   }
 
   .send-btn {
-    width: 44px;
+    width: 48px;
     height: 44px;
-    flex: 0 0 44px;
-    font-size: 16px;
+    flex: 0 0 48px;
+    font-size: 17px;
     pointer-events: auto !important;
     touch-action: manipulation;
   }
@@ -1987,6 +1987,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  margin-bottom: 52px; /* Lift sprite higher up on mobile version */
   animation: vn-idle-float 4.6s ease-in-out infinite alternate;
   transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
   flex-shrink: 0;
@@ -2056,25 +2057,25 @@ body {
 /* Floating Stage Speech Bubble on Top of the Love Interest (Persists until next message) */
 .vn-stage-speech-bubble {
   position: relative;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   color: #1f152e;
-  border: 1.5px solid rgba(217, 0, 87, 0.32);
-  border-radius: 18px;
-  padding: 12px 18px;
-  font-size: 15.5px;
+  border: 1.5px solid rgba(217, 0, 87, 0.3);
+  border-radius: 14px;
+  padding: 6px 12px;
+  font-size: 15px;
   font-weight: 700;
-  box-shadow: 0 12px 32px rgba(31, 21, 46, 0.12), 0 0 20px rgba(217, 0, 87, 0.08);
+  box-shadow: 0 8px 24px rgba(31, 21, 46, 0.1), 0 0 16px rgba(217, 0, 87, 0.06);
   z-index: 28;
-  text-align: center;
-  max-width: 88%;
+  text-align: left;
+  max-width: min(92%, 520px);
   width: max-content;
-  max-width: min(90%, 520px);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 5px;
+  justify-content: space-between;
+  gap: 10px;
   animation: vn-bubble-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: auto;
   margin: 0 auto 10px auto;
@@ -2099,24 +2100,17 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
-.vn-bubble-speaker {
-  font-size: 13px;
-  font-weight: 800;
-  color: #d90057;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  letter-spacing: 0.2px;
-}
-
 .vn-bubble-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  line-height: 1.5;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1.4;
   color: #1f152e;
-  font-size: 16px;
+  font-size: 15px;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
 }
 
 .vn-bubble-romaji {
@@ -2211,6 +2205,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-end;
+    margin-bottom: 0;
   }
 
   .vn-floating-guy-sprite {
@@ -2218,7 +2213,7 @@ body {
     max-width: 95%;
     object-fit: contain;
     object-position: bottom center;
-    transform: scale(1.16);
+    transform: scale(1.2);
     transform-origin: bottom center;
     filter: drop-shadow(0 16px 36px rgba(31, 21, 46, 0.3)) drop-shadow(0 0 24px rgba(217, 0, 87, 0.18));
   }
@@ -2292,28 +2287,29 @@ body {
     max-width: 100%;
     margin: 0;
     text-align: left;
-    align-items: flex-start;
-    border-radius: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-radius: 14px;
     background: #ffffff;
     border: 1.5px solid rgba(217, 0, 87, 0.22);
-    box-shadow: 0 6px 20px rgba(31, 21, 46, 0.06);
-    padding: 16px 20px;
+    box-shadow: 0 4px 16px rgba(31, 21, 46, 0.05);
+    padding: 8px 14px;
   }
 
   .vn-stage-speech-bubble::after {
     display: none;
   }
 
-  .vn-bubble-speaker {
-    justify-content: flex-start;
-    font-size: 14px;
-  }
-
   .vn-bubble-content {
     align-items: flex-start;
     text-align: left;
-    font-size: 16.5px;
-    width: 100%;
+    font-size: 15.5px;
+    line-height: 1.45;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .vn-insight-box {
@@ -3245,34 +3241,65 @@ body {
   box-shadow: 0 0 10px rgba(217, 0, 87, 0.18);
 }
 
-.send-btn {
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
+.send-btn-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
   flex-shrink: 0;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-pink), var(--accent-violet));
+  filter: drop-shadow(0 3px 8px rgba(217, 0, 87, 0.35));
+  transition: transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.22s ease;
+  pointer-events: auto !important;
+}
+
+.send-btn-wrap:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 5px 14px rgba(217, 0, 87, 0.5));
+}
+
+.send-btn-wrap:active {
+  transform: scale(0.92);
+  filter: drop-shadow(0 2px 5px rgba(217, 0, 87, 0.3));
+}
+
+.send-btn {
+  width: 48px;
+  height: 44px;
+  flex: 0 0 48px;
+  flex-shrink: 0;
+  border-radius: 0;
+  background: linear-gradient(135deg, #ff2d78 0%, #d90057 55%, #b30046 100%);
   border: none;
   color: #fff;
-  font-size: 17px;
+  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 3px 10px rgba(217, 0, 87, 0.3);
-  transition: all 0.2s ease;
+  clip-path: url(#heartClip);
+  -webkit-clip-path: url(#heartClip);
   box-sizing: border-box;
   pointer-events: auto !important;
   touch-action: manipulation;
   -webkit-tap-highlight-color: rgba(217, 0, 87, 0.15);
+  padding: 0;
+  margin: 0;
+  transition: background 0.2s ease, opacity 0.2s ease;
 }
 
-.send-btn:hover {
-  transform: scale(1.06);
+/* Path fallback for direct path rendering */
+@supports not (clip-path: url(#heartClip)) {
+  .send-btn {
+    clip-path: path("M 24 42 C 22 40 2 26 2 13 C 2 6 7.5 1 15 1 C 19.5 1 22.5 3.5 24 5.2 C 25.5 3.5 28.5 1 33 1 C 40.5 1 46 6 46 13 C 46 26 26 40 24 42 Z");
+    -webkit-clip-path: path("M 24 42 C 22 40 2 26 2 13 C 2 6 7.5 1 15 1 C 19.5 1 22.5 3.5 24 5.2 C 25.5 3.5 28.5 1 33 1 C 40.5 1 46 6 46 13 C 46 26 26 40 24 42 Z");
+  }
 }
 
-.send-btn:active {
-  transform: scale(0.92);
+.send-btn .material-symbols-outlined {
+  margin-left: 2px;
+  margin-top: -2px;
+  font-size: 19px !important;
+  display: block;
 }
 
 /* CHARACTERS VIEW */
@@ -5119,10 +5146,10 @@ body.dark-theme .option-pill-btn.active {
   }
 
   .send-btn {
-    width: 48px;
+    width: 52px;
     height: 48px;
-    flex: 0 0 48px;
-    font-size: 19px;
+    flex: 0 0 52px;
+    font-size: 20px;
   }
 
   /* Guidebook, Vocabulary & Grammar on Desktop */
@@ -7248,12 +7275,24 @@ body.dark-theme .option-pill-btn.active {
 .vn-stage-backdrop {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   z-index: 1;
   transform: scale(1.02);
   transition: transform 0.8s ease-out;
+}
+
+.vn-stage-backdrop img,
+.vn-stage-backdrop-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .vn-date-stage:hover .vn-stage-backdrop {
@@ -8351,7 +8390,6 @@ body.dark-theme .option-pill-btn.active {
   font-weight: 700;
   letter-spacing: 0.5px;
   color: #ffffff !important;
-  background: rgba(217, 0, 87, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.25);
   padding: 5px 14px;
   border-radius: 999px;
@@ -8603,16 +8641,33 @@ body.dark-theme .story-section-title {
   inset: 0;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  filter: brightness(0.68) saturate(1.15);
+  filter: brightness(0.72) saturate(1.15);
   transition: filter 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 1;
 }
 
+.story-square-backdrop img,
+.story-square-backdrop-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  transition: filter 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .story-scenario-square:hover .story-square-backdrop {
-  filter: brightness(0.8) saturate(1.25);
+  filter: brightness(0.85) saturate(1.25);
+  transform: scale(1.06);
+}
+
+.story-scenario-square:hover .story-square-backdrop img,
+.story-scenario-square:hover .story-square-backdrop-img {
   transform: scale(1.06);
 }
 
@@ -8800,11 +8855,22 @@ body.dark-theme .story-section-title {
 .story-scenario-preview-bg {
   position: absolute;
   inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
   background-size: cover;
   background-position: center;
   opacity: 0.25;
   filter: saturate(1.2);
   z-index: 1;
+}
+
+.story-scenario-preview-bg img,
+.story-preview-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .story-scenario-preview-info {
@@ -9919,22 +9985,22 @@ body.dark-theme .story-section-title {
 .vn-bubble-import-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  flex-shrink: 0;
   margin-left: auto;
-  padding: 4px 11px;
+  padding: 3px 9px;
   background: linear-gradient(135deg, rgba(54, 72, 149, 0.12) 0%, rgba(144, 131, 196, 0.2) 100%);
   border: 1.5px solid rgba(54, 72, 149, 0.35);
-  border-radius: 10px;
+  border-radius: 8px;
   color: #364895;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(54, 72, 149, 0.1);
+  box-shadow: 0 1px 4px rgba(54, 72, 149, 0.08);
   transition: all 0.2s ease;
-}
-
-.vn-bubble-import-btn .material-symbols-outlined {
-  font-size: 15px !important;
+  white-space: nowrap;
+  align-self: center;
 }
 
 .vn-bubble-import-btn:hover {
@@ -9942,7 +10008,7 @@ body.dark-theme .story-section-title {
   border-color: transparent;
   color: #ffffff;
   transform: translateY(-1px) scale(1.03);
-  box-shadow: 0 4px 12px rgba(54, 72, 149, 0.3);
+  box-shadow: 0 3px 10px rgba(54, 72, 149, 0.25);
 }
 
 body.dark-theme .msg-study-media-btn {

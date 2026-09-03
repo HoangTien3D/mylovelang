@@ -6,7 +6,10 @@
 
 // Helper to convert inline SVG string to clean Data URL
 export function svgDataUrl(svgString) {
-  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString.trim());
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString.trim())
+    .replace(/'/g, "%27")
+    .replace(/\(/g, "%28")
+    .replace(/\)/g, "%29");
 }
 
 // ==========================================================================
@@ -504,6 +507,53 @@ export const VN_SPRITES = {
       <path d="M220 120 Q240 170 260 120" fill="url(#adoHair)"/>
     </svg>`),
 
+    idle: svgDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="500" height="700">
+      <defs>
+        <linearGradient id="adoHairI" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#831843"/>
+          <stop offset="100%" stop-color="#4c0519"/>
+        </linearGradient>
+        <linearGradient id="adoBlazerI" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e1b4b"/>
+          <stop offset="100%" stop-color="#0f172a"/>
+        </linearGradient>
+      </defs>
+      <!-- Blazer Body (Poised Listening Posture) -->
+      <path d="M120 460 C120 380, 180 350, 250 350 C320 350, 380 380, 380 460 L420 700 L80 700 Z" fill="url(#adoBlazerI)"/>
+      <polygon points="210,350 290,350 270,480 230,480" fill="#ffffff"/>
+      <polygon points="240,360 260,360 265,490 250,520 235,490" fill="#be123c"/>
+      <path d="M180 350 L220 460 L180 500 Z" fill="#312e81"/>
+      <path d="M320 350 L280 460 L320 500 Z" fill="#312e81"/>
+      <rect x="160" y="440" width="22" height="12" rx="3" fill="#f59e0b"/>
+
+      <!-- Neck & Face -->
+      <polygon points="220,290 280,290 270,360 230,360" fill="#fce7f3"/>
+      <path d="M170 190 C170 300, 330 300, 330 190 C330 120, 170 120, 170 190 Z" fill="#fdf2f8"/>
+
+      <!-- Calm Attentive Resting Eyes (Gentle Listening Gaze) -->
+      <ellipse cx="215" cy="206" rx="13" ry="14" fill="#831843"/>
+      <circle cx="213" cy="201" r="4.5" fill="#ffffff"/>
+      <ellipse cx="285" cy="206" rx="13" ry="14" fill="#831843"/>
+      <circle cx="283" cy="201" r="4.5" fill="#ffffff"/>
+
+      <!-- Composed Soft Eyebrows -->
+      <path d="M200 186 Q215 180 230 186" stroke="#4c0519" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M270 186 Q285 180 300 186" stroke="#4c0519" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+      <!-- Quiet Serene Closed Mouth (Attentive Non-talking Pose) -->
+      <circle cx="250" cy="225" r="2" fill="#be185d"/>
+      <path d="M244 246 Q250 248 256 246" stroke="#9d174d" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+      <!-- Subtle Soft Blush While Listening -->
+      <ellipse cx="204" cy="226" rx="11" ry="5" fill="#f43f5e" opacity="0.25"/>
+      <ellipse cx="296" cy="226" rx="11" ry="5" fill="#f43f5e" opacity="0.25"/>
+
+      <!-- Hair -->
+      <path d="M160 170 C140 100, 210 50, 250 50 C310 50, 360 100, 340 170 C360 230, 350 300, 340 330 C330 250, 320 200, 320 180 C290 140, 210 140, 180 180 C180 200, 170 250, 160 330 C150 300, 140 230, 160 170 Z" fill="url(#adoHairI)"/>
+      <path d="M190 130 Q250 80 300 140 Q250 120 190 130" fill="#db2777" opacity="0.6"/>
+      <path d="M220 120 Q240 170 260 120" fill="url(#adoHairI)"/>
+    </svg>`),
+
     happy: svgDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="500" height="700">
       <defs>
         <linearGradient id="adoHairH" x1="0" y1="0" x2="0" y2="1">
@@ -802,6 +852,57 @@ export const VN_SPRITES = {
       <path d="M180 130 Q250 70 310 130" fill="#60a5fa" opacity="0.5"/>
     </svg>`),
 
+    idle: svgDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="500" height="700">
+      <defs>
+        <linearGradient id="kouHairI" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2563eb"/>
+          <stop offset="100%" stop-color="#1e3a8a"/>
+        </linearGradient>
+        <linearGradient id="kouHoodieI" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#dbeafe"/>
+          <stop offset="100%" stop-color="#93c5fd"/>
+        </linearGradient>
+      </defs>
+      <!-- Pastel Blue Hoodie (Quiet Listening Pose) -->
+      <path d="M120 460 C120 380, 180 350, 250 350 C320 350, 380 380, 380 460 L410 700 L90 700 Z" fill="url(#kouHoodieI)"/>
+      <path d="M190 350 C190 440, 310 440, 310 350 Z" fill="#bfdbfe"/>
+      <path d="M225 400 L225 480 M275 400 L275 480" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="225" cy="485" r="4" fill="#3b82f6"/>
+      <circle cx="275" cy="485" r="4" fill="#3b82f6"/>
+      <!-- Cute Cat Pin -->
+      <circle cx="165" cy="430" r="14" fill="#fbbf24"/>
+      <polygon points="155,420 159,412 165,418" fill="#d97706"/>
+      <polygon points="175,420 171,412 165,418" fill="#d97706"/>
+
+      <!-- Neck & Face -->
+      <polygon points="220,290 280,290 270,360 230,360" fill="#fce7f3"/>
+      <path d="M170 190 C170 300, 330 300, 330 190 C330 120, 170 120, 170 190 Z" fill="#eff6ff"/>
+
+      <!-- Soft Sparkling Attentive Eyes (Listening Up to Senior) -->
+      <ellipse cx="215" cy="205" rx="14" ry="15" fill="#1d4ed8"/>
+      <circle cx="212" cy="199" r="5" fill="#ffffff"/>
+      <circle cx="218" cy="209" r="2.5" fill="#93c5fd"/>
+      <ellipse cx="285" cy="205" rx="14" ry="15" fill="#1d4ed8"/>
+      <circle cx="282" cy="199" r="5" fill="#ffffff"/>
+      <circle cx="288" cy="209" r="2.5" fill="#93c5fd"/>
+
+      <!-- Soft Curved Brows -->
+      <path d="M200 182 Q215 187 230 182" stroke="#1e40af" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M270 182 Q285 187 300 182" stroke="#1e40af" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+      <!-- Gentle Resting Closed Mouth -->
+      <circle cx="250" cy="225" r="2" fill="#3b82f6"/>
+      <path d="M242 246 Q250 250 258 246" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+      <!-- Cute Cheek Blush While Listening -->
+      <ellipse cx="205" cy="226" rx="12" ry="6" fill="#f472b6" opacity="0.3"/>
+      <ellipse cx="295" cy="226" rx="12" ry="6" fill="#f472b6" opacity="0.3"/>
+
+      <!-- Soft Fluffy Blue Hair -->
+      <path d="M160 170 C140 90, 200 40, 250 40 C310 40, 360 90, 340 170 C360 230, 340 310, 330 330 C320 250, 310 200, 310 180 C280 140, 220 140, 190 180 C190 200, 180 250, 170 330 C160 310, 140 230, 160 170 Z" fill="url(#kouHairI)"/>
+      <path d="M180 130 Q250 70 310 130" fill="#60a5fa" opacity="0.5"/>
+    </svg>`),
+
     happy: svgDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="500" height="700">
       <defs>
         <linearGradient id="kouHairH" x1="0" y1="0" x2="0" y2="1">
@@ -1079,6 +1180,52 @@ export const VN_SPRITES = {
       <path d="M150 160 C130 80, 190 30, 250 30 C310 30, 370 80, 350 160 C370 220, 350 300, 340 320 C330 240, 320 180, 310 160 C280 120, 220 120, 190 160 C180 180, 170 240, 160 320 C150 300, 130 220, 150 160 Z" fill="url(#renHair)"/>
       <path d="M180 110 Q250 60 310 110" fill="#a855f7" opacity="0.6"/>
       <path d="M230 100 Q250 160 270 100" fill="url(#renHair)"/>
+    </svg>`),
+
+    idle: svgDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="500" height="700">
+      <defs>
+        <linearGradient id="renHairI" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#581c87"/>
+          <stop offset="100%" stop-color="#1e1b4b"/>
+        </linearGradient>
+        <linearGradient id="renJacketI" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#18181b"/>
+          <stop offset="100%" stop-color="#09090b"/>
+        </linearGradient>
+      </defs>
+      <!-- Leather Jacket (Cool Effortless Listening Pose) -->
+      <path d="M110 460 C110 370, 170 340, 250 340 C330 340, 390 370, 390 460 L430 700 L70 700 Z" fill="url(#renJacketI)"/>
+      <polygon points="210,340 290,340 260,490 240,490" fill="#ffffff"/>
+      <path d="M225 380 Q250 420 275 380" stroke="#94a3b8" stroke-width="3" fill="none"/>
+      <!-- Silver Earring -->
+      <circle cx="168" cy="205" r="4" fill="#cbd5e1"/>
+
+      <!-- Neck & Face -->
+      <polygon points="220,280 280,280 270,350 230,350" fill="#fce7f3"/>
+      <path d="M170 180 C170 290, 330 290, 330 180 C330 110, 170 110, 170 180 Z" fill="#fdf2f8"/>
+
+      <!-- Confident Observant Eyes (Listening Intently to MC) -->
+      <ellipse cx="215" cy="196" rx="14" ry="14" fill="#d97706"/>
+      <circle cx="212" cy="191" r="4.5" fill="#ffffff"/>
+      <ellipse cx="285" cy="196" rx="14" ry="14" fill="#d97706"/>
+      <circle cx="282" cy="191" r="4.5" fill="#ffffff"/>
+
+      <!-- Calm Sharp Eyebrows -->
+      <path d="M200 176 Q215 170 230 178" stroke="#3b0764" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M270 178 Q285 170 300 176" stroke="#3b0764" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+
+      <!-- Relaxed Closed Mouth (Gentle Resting Half-Smirk) -->
+      <circle cx="250" cy="216" r="2" fill="#9333ea"/>
+      <path d="M242 238 Q252 238 260 234" stroke="#581c87" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+
+      <!-- Subtle Soft Teasing Blush -->
+      <ellipse cx="204" cy="218" rx="12" ry="5" fill="#f43f5e" opacity="0.2"/>
+      <ellipse cx="296" cy="218" rx="12" ry="5" fill="#f43f5e" opacity="0.2"/>
+
+      <!-- Messy Layered Purple Hair with Bangs -->
+      <path d="M150 160 C130 80, 190 30, 250 30 C310 30, 370 80, 350 160 C370 220, 350 300, 340 320 C330 240, 320 180, 310 160 C280 120, 220 120, 190 160 C180 180, 170 240, 160 320 C150 300, 130 220, 150 160 Z" fill="url(#renHairI)"/>
+      <path d="M180 110 Q250 60 310 110" fill="#a855f7" opacity="0.6"/>
+      <path d="M230 100 Q250 160 270 100" fill="url(#renHairI)"/>
     </svg>`),
 
     happy: svgDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="500" height="700">

@@ -51,6 +51,10 @@ async function startServer() {
   app.use("/fonts", express.static(path.join(process.cwd(), "fonts")));
   app.use("/fonts", express.static(path.join(baseDir, "fonts")));
 
+  // Serve scenario backgrounds, avatars, and assets directly from public/assets
+  app.use("/assets", express.static(path.join(process.cwd(), "public", "assets"), { maxAge: 0, etag: true }));
+  app.use("/assets", express.static(path.join(baseDir, "public", "assets"), { maxAge: 0, etag: true }));
+
   // Vite middleware in dev, pre-built static assets in production
   if (!isProduction) {
     const vite = await createViteServer({

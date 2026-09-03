@@ -315,8 +315,8 @@ const UI_STRINGS = {
     tabLIs: "LIs",
     tabGuidebook: "Guidebook",
     tabSettings: "Settings",
-    sentenceBuilderTab: "Sentence Builder",
-    freeTextTab: "Free Text Chat",
+    sentenceBuilderTab: "Word Build",
+    freeTextTab: "Free Chat",
     sendSentenceBtn: "Send Built Sentence",
     freeInputPlaceholder: "Type custom message in target language...",
     selectLevelLabel: "Select Level:",
@@ -703,7 +703,7 @@ function updateCooldownUI(remainingSec) {
       sendFreeBtn.disabled = false;
       sendFreeBtn.style.opacity = "1";
       sendFreeBtn.style.cursor = "pointer";
-      sendFreeBtn.textContent = "➤";
+      sendFreeBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px; margin-left:2px; margin-top:-2px;">send</span>';
     }
     if (freeInput) {
       freeInput.disabled = false;
@@ -1465,9 +1465,9 @@ function applyUiLanguage() {
 
   // Feature Input Mode Tabs
   const sentenceTabBtn = document.getElementById("modeSentenceBuilderBtn");
-  if (sentenceTabBtn) sentenceTabBtn.textContent = s.sentenceBuilderTab;
+  if (sentenceTabBtn) sentenceTabBtn.title = s.sentenceBuilderTab || "Word Build";
   const freeTabBtn = document.getElementById("modeFreeTextBtn");
-  if (freeTabBtn) freeTabBtn.textContent = s.freeTextTab;
+  if (freeTabBtn) freeTabBtn.title = s.freeTextTab || "Free Chat";
 
   const submitSentenceBtn = document.getElementById("submitSentenceBtn");
   if (submitSentenceBtn && !submitSentenceBtn.disabled) submitSentenceBtn.textContent = s.sendSentenceBtn;
@@ -6139,7 +6139,14 @@ function renderStoryMode() {
         </div>
 
         <div class="story-scenario-preview-card">
-          <div class="story-scenario-preview-bg" style="background-image: url('${sc.bgImage || `/assets/scenarios/scenario_${sc.id}.jpg`}'), url('${bgSvg}');"></div>
+          <div class="story-scenario-preview-bg">
+            <img 
+              src="${sc.bgImage || `/assets/scenarios/scenario_${sc.id}.jpg`}" 
+              alt="${sc.title}" 
+              class="story-preview-bg-img"
+              onerror="window.handleScenarioThumbError(this, ${sc.id})"
+            />
+          </div>
           <div class="story-scenario-preview-info">
             <div class="story-square-level-tag" style="width: fit-content;">Level ${sc.level} Date</div>
             <div class="story-scenario-preview-title">
@@ -6182,7 +6189,15 @@ function renderStoryMode() {
 
     return `
       <div class="story-scenario-square ${clearedByAny ? 'passed' : ''}" data-scenario-idx="${idx}" onclick="openStoryPartnerSelect(${sc.id})" title="Click to choose partner and start ${sc.title}">
-        <div class="story-square-backdrop" style="background-image: url('${sc.bgImage || `/assets/scenarios/scenario_${sc.id}.jpg`}'), url('${bgSvg}');"></div>
+        <div class="story-square-backdrop">
+          <img 
+            src="${sc.bgImage || `/assets/scenarios/scenario_${sc.id}.jpg`}" 
+            alt="${sc.title}" 
+            class="story-square-backdrop-img"
+            loading="lazy"
+            onerror="window.handleScenarioThumbError(this, ${sc.id})"
+          />
+        </div>
         <div class="story-square-gradient-overlay"></div>
 
         <div class="story-square-top-row">
@@ -6417,6 +6432,41 @@ window.closeFutureScenarioModal = function() {
   }
 };
 
+
+window.handleScenarioThumbError = function(img, scenarioId) {
+  if (!img) return;
+  const step = parseInt(img.dataset.failStep || "0", 10);
+  const scId = Number(scenarioId) || 1;
+  const altNames = {
+    1: "library",
+    2: "cafe",
+    3: "riverbank",
+    4: "festival",
+    5: "rooftop"
+  };
+  const name = altNames[scId] || "library";
+
+  if (step === 0) {
+    img.dataset.failStep = "1";
+    img.src = `/assets/scenarios/${name}.jpg`;
+  } else if (step === 1) {
+    img.dataset.failStep = "2";
+    img.src = `/assets/scenarios/scenario_${scId}.jpeg`;
+  } else if (step === 2) {
+    img.dataset.failStep = "3";
+    img.src = `/assets/scenarios/${name}.jpeg`;
+  } else if (step === 3) {
+    img.dataset.failStep = "4";
+    img.src = `/assets/scenarios/scenario_${scId}.png`;
+  } else {
+    img.onerror = null;
+    const bgKey = getScenarioBackgroundKey(scId);
+    const bgSvg = (window.VN_SCENERY_SVGS && window.VN_SCENERY_SVGS[bgKey]) || "";
+    if (bgSvg) {
+      img.src = bgSvg;
+    }
+  }
+};
 
 function getScenarioBackgroundKey(scenarioId) {
   switch (Number(scenarioId)) {
@@ -6694,7 +6744,13 @@ function renderStoryGameplay() {
   container.innerHTML = `
     <div class="vn-date-stage ${session.isUiHidden ? 'vn-cg-hidden-ui' : ''}" id="vnDateStage">
       <!-- Background Scenery Layer -->
-      <div class="vn-stage-backdrop" style="background-image: url('${bgSvg}');">
+      <div class="vn-stage-backdrop">
+        <img 
+          src="${scenario.bgImage || `/assets/scenarios/scenario_${scenario.id}.jpg`}" 
+          alt="${scenario.title}" 
+          class="vn-stage-backdrop-img"
+          onerror="window.handleScenarioThumbError(this, ${scenario.id})"
+        />
         ${getScenarioParticlesHtml(scenario.id)}
       </div>
 
@@ -6960,7 +7016,13 @@ function completeStoryScenario() {
   container.innerHTML = `
     <div class="vn-date-stage vn-ending-stage">
       <!-- Background Scenery Layer -->
-      <div class="vn-stage-backdrop" style="background-image: url('${bgSvg}');">
+      <div class="vn-stage-backdrop">
+        <img 
+          src="${scenario.bgImage || `/assets/scenarios/scenario_${scenario.id}.jpg`}" 
+          alt="${scenario.title}" 
+          class="vn-stage-backdrop-img"
+          onerror="window.handleScenarioThumbError(this, ${scenario.id})"
+        />
         ${getScenarioParticlesHtml(scenario.id)}
       </div>
 
