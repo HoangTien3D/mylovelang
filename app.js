@@ -5125,8 +5125,24 @@ function setupWordBankPrompt(tierObj, char) {
   // Deduplicate while preserving order
   const chips = Array.from(new Set(flatChips));
 
-  guideEl.textContent = promptText;
+  if (guideEl) {
+    guideEl.textContent = promptText;
+  }
+  const defaultPlaceholder = promptText ? `${promptText} (tap chips below)` : `Click word chips below to build your sentence...`;
+  boxEl.innerHTML = `<span style="color:var(--text-muted); font-size:12px;" id="constructedPlaceholder">${defaultPlaceholder}</span>`;
   chipsGrid.innerHTML = "";
+  chipsGrid.scrollLeft = 0;
+
+  // Add smooth wheel scrolling support for horizontal carousel
+  if (!chipsGrid._hasWheelListener) {
+    chipsGrid.addEventListener("wheel", (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && chipsGrid.scrollWidth > chipsGrid.clientWidth) {
+        e.preventDefault();
+        chipsGrid.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+    chipsGrid._hasWheelListener = true;
+  }
 
   chips.forEach((word) => {
     const chip = document.createElement("button");

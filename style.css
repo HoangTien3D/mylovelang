@@ -3132,6 +3132,49 @@ body {
   pointer-events: auto !important;
 }
 
+/* Mobile Carousel Scroll: Single Line to Optimize Vertical Space */
+@media (max-width: 820px) {
+  .word-chips-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    gap: 7px !important;
+    padding: 3px 4px 6px 4px !important;
+    margin-top: 2px !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(217, 0, 87, 0.3) rgba(217, 0, 87, 0.05);
+    touch-action: pan-x pan-y;
+  }
+
+  .word-chips-grid::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .word-chips-grid::-webkit-scrollbar-track {
+    background: rgba(217, 0, 87, 0.05);
+    border-radius: 4px;
+  }
+
+  .word-chips-grid::-webkit-scrollbar-thumb {
+    background: rgba(217, 0, 87, 0.3);
+    border-radius: 4px;
+  }
+
+  .word-chips-grid .word-chip {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    scroll-snap-align: start;
+    font-size: 13px !important;
+    padding: 6px 13px !important;
+    min-height: 35px !important;
+  }
+}
+
 .word-chip {
   background: #ffffff;
   border: 1px solid rgba(160, 140, 190, 0.35);
