@@ -2010,7 +2010,7 @@ body {
   filter: drop-shadow(0 12px 28px rgba(31, 21, 46, 0.22)) drop-shadow(0 0 20px rgba(217, 0, 87, 0.12));
   transition: filter 0.3s ease;
   user-select: none;
-  transform: scale(1.35);
+  transform: scale(1.6);
   transform-origin: bottom center;
   -webkit-user-drag: none;
   flex-shrink: 0;
