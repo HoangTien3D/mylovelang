@@ -7,7 +7,7 @@
 
 import { inject } from "@vercel/analytics";
 import { STORY_SCENARIOS, getScenarioQuestions } from "./storyData.js";
-import { VN_SCENERY_SVGS, VN_SPRITES, playVNSound, speakVNLine } from "./src/vnVisuals.js";
+import { VN_SCENERY_SVGS, VN_SPRITES, playVNSound, playCuteSound, speakVNLine } from "./src/vnVisuals.js";
 
 // Initialize Vercel Analytics
 try {
@@ -289,7 +289,7 @@ window.cleanEmojiText = cleanEmojiText;
 // UI Language Dictionary (English, Vietnamese & Japanese)
 const UI_STRINGS = {
   en: {
-    appLangBtn: "English",
+    appLangBtn: "🇬🇧 English",
     appLangLabel: "App Language (UI)",
     landingSubtitle: "Learn romance, vocabulary & real-world conversations with charming love interests",
     landingPlayBtn: "Play Now",
@@ -301,6 +301,8 @@ const UI_STRINGS = {
     guidebookSubtitle: "Special letters, typing rules, word forms & romance vocabulary",
     settingsTitle: "App Settings",
     settingsSubtitle: "Customize theme, language preferences & story progress",
+    subscriptionTitle: "Subscription",
+    subscriptionSubtitle: "Subscription tiers, usage quotas & AI learning features",
     apiKeyLabel: "Gemini API Key",
     keyActive: "Key Active",
     keyRequired: "Key Required",
@@ -314,6 +316,7 @@ const UI_STRINGS = {
     tabStory: "Story",
     tabLIs: "LIs",
     tabGuidebook: "Guidebook",
+    tabSubscription: "Subscription",
     tabSettings: "Settings",
     sentenceBuilderTab: "Word Build",
     freeTextTab: "Free Chat",
@@ -327,7 +330,7 @@ const UI_STRINGS = {
     playTier: "Play Tier",
   },
   vi: {
-    appLangBtn: "Tiếng Việt",
+    appLangBtn: "🇻🇳 Tiếng Việt",
     appLangLabel: "Ngôn ngữ ứng dụng",
     landingSubtitle: "Học ngôn ngữ lãng mạn, từ vựng & giao tiếp đời thực cùng các chàng trai quyến rũ",
     landingPlayBtn: "Chơi Ngay",
@@ -339,6 +342,8 @@ const UI_STRINGS = {
     guidebookSubtitle: "Chữ cái đặc biệt, quy tắc gõ, dạng từ & từ vựng tình cảm",
     settingsTitle: "Cài Đặt Ứng Dụng",
     settingsSubtitle: "Tùy chỉnh giao diện, ngôn ngữ & tiến trình câu chuyện",
+    subscriptionTitle: "Gói Đăng Ký",
+    subscriptionSubtitle: "Các gói tài khoản, hạn ngạch sử dụng & tính năng học tập",
     apiKeyLabel: "Mã Khóa Gemini API Key",
     keyActive: "Đã Hoạt Động",
     keyRequired: "Cần Mã Khóa",
@@ -352,6 +357,7 @@ const UI_STRINGS = {
     tabStory: "Cốt Truyện",
     tabLIs: "Nhân vật",
     tabGuidebook: "Cẩm Nang",
+    tabSubscription: "Gói Đăng Ký",
     tabSettings: "Cài đặt",
     sentenceBuilderTab: "Ghép Câu",
     freeTextTab: "Nhắn Tự Do",
@@ -365,7 +371,7 @@ const UI_STRINGS = {
     playTier: "Chơi Cấp Độ",
   },
   ja: {
-    appLangBtn: "日本語",
+    appLangBtn: "🇯🇵 日本語",
     appLangLabel: "アプリ言語 (UI)",
     landingSubtitle: "魅力的なキャラクターたちとロマンス、語彙、日常会話を学ぼう",
     landingPlayBtn: "今すぐプレイ",
@@ -377,6 +383,8 @@ const UI_STRINGS = {
     guidebookSubtitle: "特殊文字、入力規則、語形変化、ロマンス語彙",
     settingsTitle: "アプリ設定",
     settingsSubtitle: "テーマ、言語設定、ストーリー進行度の管理",
+    subscriptionTitle: "サブスクリプション",
+    subscriptionSubtitle: "プラン別利用枠、AI学習機能、利用制限",
     apiKeyLabel: "Gemini APIキー",
     keyActive: "有効",
     keyRequired: "キーが必要です",
@@ -390,6 +398,7 @@ const UI_STRINGS = {
     tabStory: "ストーリー",
     tabLIs: "キャラ",
     tabGuidebook: "ガイド",
+    tabSubscription: "サブスクリプション",
     tabSettings: "設定",
     sentenceBuilderTab: "文章作成",
     freeTextTab: "フリーチャット",
@@ -697,7 +706,7 @@ function updateCooldownUI(remainingSec) {
       submitBtn.disabled = false;
       submitBtn.style.opacity = "1";
       submitBtn.style.cursor = "pointer";
-      submitBtn.textContent = s.sendSentenceBtn || "Send Built Sentence ❤️";
+      submitBtn.textContent = s.sendSentenceBtn || "Send Built Sentence";
     }
     if (sendFreeBtn) {
       sendFreeBtn.disabled = false;
@@ -748,6 +757,7 @@ let userState = {
   },
   storyProgress: JSON.parse(localStorage.getItem("otome_story_progress")) || { ado: {}, kou: {}, ren: {} },
   selectedStoryChar: localStorage.getItem("otome_story_char") || "ado",
+  googleAccount: JSON.parse(localStorage.getItem("otome_google_account") || "null"),
 };
 
 // OpenKoto Guidebook State
@@ -938,6 +948,47 @@ function autoDetectAndSelectMobilePlatform() {
   switchInstallPlatformTab(isIOS ? 'ios' : 'android');
 }
 
+// Multi-page Setup Wizard State & Navigation
+let currentSetupStep = 1;
+
+function goToSetupStep(stepNumber) {
+  if (stepNumber < 1) stepNumber = 1;
+  if (stepNumber > 3) stepNumber = 3;
+
+  // Validate step 2 when trying to proceed from step 2 to step 3
+  if (stepNumber === 3 && currentSetupStep === 2) {
+    const nameInput = document.getElementById("modalUserName");
+    if (nameInput && !nameInput.value.trim()) {
+      nameInput.focus();
+      nameInput.reportValidity?.();
+      return;
+    }
+  }
+
+  currentSetupStep = stepNumber;
+
+  // Update step panels visibility
+  for (let i = 1; i <= 3; i++) {
+    const pageEl = document.getElementById(`setupPage${i}`);
+    const nodeEl = document.getElementById(`setupStepNode${i}`);
+    if (pageEl) {
+      pageEl.classList.toggle("active", i === stepNumber);
+    }
+    if (nodeEl) {
+      nodeEl.classList.toggle("active", i === stepNumber);
+      nodeEl.classList.toggle("completed", i < stepNumber);
+    }
+  }
+
+  // Update progress bar fill
+  const progressFill = document.getElementById("setupWizardProgressFill");
+  if (progressFill) {
+    const percent = stepNumber === 1 ? 0 : stepNumber === 2 ? 50 : 100;
+    progressFill.style.width = `${percent}%`;
+  }
+}
+window.goToSetupStep = goToSetupStep;
+
 // Landing Page Navigation & Setup Menu Controls
 function openLandingSetupMenu() {
   const modal = document.getElementById("userProfileModal");
@@ -945,7 +996,9 @@ function openLandingSetupMenu() {
     modal.style.display = "flex";
     void modal.offsetWidth;
     modal.classList.add("active");
+    goToSetupStep(1);
     syncProfileInputsUI();
+    syncGoogleAuthUI();
     selectModalTargetLang(userState.targetLanguage || "vi");
     autoDetectAndSelectMobilePlatform();
   }
@@ -963,6 +1016,256 @@ function closeLandingSetupMenu() {
   }
 }
 window.closeLandingSetupMenu = closeLandingSetupMenu;
+
+// ========================================================
+// GOOGLE OAUTH & PROGRESS CLOUD SAVE ENGINE (SETUP SCREEN)
+// ========================================================
+function syncGoogleAuthUI() {
+  const unlinkedEl = document.getElementById("setupGoogleUnlinked");
+  const linkedEl = document.getElementById("setupGoogleLinked");
+
+  if (!unlinkedEl || !linkedEl) return;
+
+  if (userState.googleAccount && (userState.googleAccount.email || userState.googleAccount.id)) {
+    unlinkedEl.style.display = "none";
+    linkedEl.style.display = "block";
+
+    const nameEl = document.getElementById("setupGoogleUserName");
+    const emailEl = document.getElementById("setupGoogleUserEmail");
+    const avatarEl = document.getElementById("setupGoogleUserAvatar");
+    const syncTimeEl = document.getElementById("setupGoogleSyncTime");
+
+    if (nameEl) nameEl.textContent = userState.googleAccount.name || "Google Protagonist";
+    if (emailEl) emailEl.textContent = userState.googleAccount.email || "user@gmail.com";
+    if (avatarEl) {
+      avatarEl.src = userState.googleAccount.picture || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(userState.googleAccount.name || "user")}`;
+    }
+    if (syncTimeEl) {
+      const lastSync = localStorage.getItem("otome_google_last_sync");
+      syncTimeEl.textContent = lastSync ? `Last saved: ${new Date(lastSync).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "Progress Synced";
+    }
+  } else {
+    unlinkedEl.style.display = "block";
+    linkedEl.style.display = "none";
+  }
+}
+window.syncGoogleAuthUI = syncGoogleAuthUI;
+
+async function handleGoogleSignInClick() {
+  const btnText = document.getElementById("setupGoogleBtnText");
+  const statusEl = document.getElementById("setupGoogleStatusMessage");
+
+  if (btnText) btnText.textContent = "Connecting to Google...";
+  if (statusEl) {
+    statusEl.style.display = "none";
+    statusEl.textContent = "";
+  }
+
+  try {
+    const res = await fetch("/api/auth/google/url");
+    const data = await res.json();
+
+    if (data.configured && data.url) {
+      // Open Google OAuth in a centered popup window
+      const width = 520;
+      const height = 640;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2.5;
+
+      const popup = window.open(
+        data.url,
+        "GoogleSignInPopup",
+        `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes`
+      );
+
+      if (!popup || popup.closed || typeof popup.closed === "undefined") {
+        // Fallback if popup blocker intercepted
+        window.location.href = data.url;
+      }
+    } else {
+      // Show Google linking modal
+      openGoogleOAuthModal(data.redirectUri, data.devUrl, data.sharedUrl);
+    }
+  } catch (err) {
+    console.warn("Failed to get Google Auth URL, showing fallback setup modal:", err);
+    openGoogleOAuthModal();
+  } finally {
+    if (btnText) btnText.textContent = "Save Progress with Google";
+  }
+}
+window.handleGoogleSignInClick = handleGoogleSignInClick;
+
+function openGoogleOAuthModal(redirectUri, devUrl, sharedUrl) {
+  const modal = document.getElementById("googleOAuthModal");
+  if (!modal) return;
+
+  const noticeEl = document.getElementById("oauthSetupNotice");
+  const urlDisplay = document.getElementById("oauthCallbackUrlDisplay");
+  if (noticeEl) noticeEl.style.display = "block";
+  if (urlDisplay && (redirectUri || devUrl)) {
+    urlDisplay.textContent = redirectUri || devUrl;
+  }
+
+  const emailInput = document.getElementById("googleManualEmail");
+  const nameInput = document.getElementById("googleManualName");
+  if (emailInput && !emailInput.value && userState.userProfile?.name) {
+    if (nameInput) nameInput.value = userState.userProfile.name;
+  }
+
+  modal.style.display = "flex";
+}
+window.openGoogleOAuthModal = openGoogleOAuthModal;
+
+function closeGoogleOAuthModal() {
+  const modal = document.getElementById("googleOAuthModal");
+  if (modal) modal.style.display = "none";
+}
+window.closeGoogleOAuthModal = closeGoogleOAuthModal;
+
+async function confirmGoogleAccountLink() {
+  const emailInput = document.getElementById("googleManualEmail");
+  const nameInput = document.getElementById("googleManualName");
+  const email = (emailInput?.value || "").trim();
+  const name = (nameInput?.value || "").trim() || (userState.userProfile?.name || "Otome Protagonist");
+
+  if (!email || !email.includes("@")) {
+    showGoogleStatusMessage("Please enter a valid Google email address.", "#ef4444");
+    return;
+  }
+
+  const googleUser = {
+    id: "google_" + btoa(email).replace(/[^a-zA-Z0-9]/g, "").substring(0, 16),
+    email: email,
+    name: name,
+    picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email)}`,
+    verifiedEmail: true,
+  };
+
+  closeGoogleOAuthModal();
+  await completeGoogleAuth(googleUser);
+}
+window.confirmGoogleAccountLink = confirmGoogleAccountLink;
+
+async function completeGoogleAuth(googleUser) {
+  userState.googleAccount = googleUser;
+  localStorage.setItem("otome_google_account", JSON.stringify(googleUser));
+
+  syncGoogleAuthUI();
+  showGoogleStatusMessage(`✓ Connected as ${googleUser.name || googleUser.email}! Syncing progress...`, "#10b981");
+
+  // Check if there is existing saved progress on remote for this account
+  try {
+    const loadRes = await fetch(`/api/auth/load-progress?googleId=${encodeURIComponent(googleUser.id)}&email=${encodeURIComponent(googleUser.email)}`);
+    const loadData = await loadRes.json();
+
+    if (loadData.found && loadData.data?.progress) {
+      const p = loadData.data.progress;
+      if (p.totalHearts > (userState.totalHearts || 0)) {
+        userState.totalHearts = p.totalHearts;
+      }
+      if (p.affection) {
+        userState.affection = { ...userState.affection, ...p.affection };
+      }
+      if (p.currentTiers) {
+        userState.currentTiers = { ...userState.currentTiers, ...p.currentTiers };
+      }
+      if (p.storyProgress) {
+        userState.storyProgress = { ...userState.storyProgress, ...p.storyProgress };
+      }
+      if (typeof saveLocalState === "function") saveLocalState();
+      if (typeof updateHeartsUI === "function") updateHeartsUI();
+      if (typeof renderChatList === "function") renderChatList();
+    }
+  } catch (err) {
+    console.warn("Could not load remote progress:", err);
+  }
+
+  // Save current progress to cloud
+  await saveUserProgressNow();
+}
+window.completeGoogleAuth = completeGoogleAuth;
+
+async function saveUserProgressNow() {
+  if (!userState.googleAccount) return;
+
+  const syncTimeEl = document.getElementById("setupGoogleSyncTime");
+  if (syncTimeEl) syncTimeEl.textContent = "Syncing with Google Cloud...";
+
+  const progressPayload = {
+    totalHearts: userState.totalHearts,
+    streak: userState.streak,
+    affection: userState.affection,
+    currentTiers: userState.currentTiers,
+    chatStep: userState.chatStep,
+    targetLanguage: userState.targetLanguage,
+    userProfile: userState.userProfile,
+    storyProgress: userState.storyProgress,
+    selectedStoryChar: userState.selectedStoryChar,
+    unlockedCharacters: userState.unlockedCharacters,
+  };
+
+  try {
+    const res = await fetch("/api/auth/save-progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        googleUser: userState.googleAccount,
+        progress: progressPayload,
+      }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      const now = new Date().toISOString();
+      localStorage.setItem("otome_google_last_sync", now);
+      if (syncTimeEl) {
+        syncTimeEl.textContent = `Last saved: ${new Date(now).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+      }
+      showGoogleStatusMessage("✓ Progress successfully saved to Google Cloud!", "#10b981");
+    }
+  } catch (err) {
+    console.error("Failed to save progress to Google:", err);
+    if (syncTimeEl) syncTimeEl.textContent = "Sync failed (retrying soon)";
+  }
+}
+window.saveUserProgressNow = saveUserProgressNow;
+
+function handleGoogleSignOut() {
+  userState.googleAccount = null;
+  localStorage.removeItem("otome_google_account");
+  localStorage.removeItem("otome_google_last_sync");
+  syncGoogleAuthUI();
+  showGoogleStatusMessage("Google account disconnected.", "#716b80");
+}
+window.handleGoogleSignOut = handleGoogleSignOut;
+
+function showGoogleStatusMessage(msg, color) {
+  const statusEl = document.getElementById("setupGoogleStatusMessage");
+  if (!statusEl) return;
+  statusEl.textContent = msg;
+  statusEl.style.color = color || "var(--text-main)";
+  statusEl.style.background = color ? `${color}18` : "rgba(160, 140, 190, 0.1)";
+  statusEl.style.display = "block";
+  setTimeout(() => {
+    if (statusEl.textContent === msg) {
+      statusEl.style.display = "none";
+    }
+  }, 4000);
+}
+window.showGoogleStatusMessage = showGoogleStatusMessage;
+
+// Listen for OAuth Popup PostMessage Events
+window.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "GOOGLE_AUTH_SUCCESS") {
+    const googleUser = event.data.user;
+    if (googleUser) {
+      completeGoogleAuth(googleUser);
+    }
+  } else if (event.data && event.data.type === "GOOGLE_AUTH_ERROR") {
+    showGoogleStatusMessage("Google Authentication error: " + (event.data.error || ""), "#ef4444");
+  }
+});
+
 
 // Routing & Subdomain Navigation Engine
 function parseRouteFromLocation() {
@@ -1025,6 +1328,9 @@ function parseRouteFromLocation() {
   if (normalizedPath === "/guidebook" || normalizedPath === "/guide" || normalizedPath === "/progress") {
     return { view: "guidebook" };
   }
+  if (normalizedPath === "/subscription" || normalizedPath === "/shop" || normalizedPath === "/pricing") {
+    return { view: "subscription" };
+  }
   if (normalizedPath === "/settings" || normalizedPath === "/setting") {
     return { view: "settings" };
   }
@@ -1082,6 +1388,15 @@ function navigateRoute(routeObj, updateHistory = true) {
     closeActiveChat(false);
     switchTab("progress", false);
     if (updateHistory) updateRouteUrl("/guidebook", false);
+  } else if (routeObj.view === "shop" || routeObj.view === "subscription") {
+    enterAppFromLanding(false);
+    closeActiveChat(false);
+    switchTab("settings", false);
+    setTimeout(() => {
+      const subEl = document.getElementById("settingsSubscriptionGroup");
+      if (subEl) subEl.scrollIntoView({ behavior: "smooth" });
+    }, 150);
+    if (updateHistory) updateRouteUrl("/settings", false);
   } else if (routeObj.view === "settings") {
     enterAppFromLanding(false);
     closeActiveChat(false);
@@ -1174,7 +1489,10 @@ function saveUserProfile(name, pronouns, age) {
   localStorage.setItem("otome_profile_setup_done", "true");
 
   syncProfileInputsUI();
-  logDashboardEvent(`👤 Profile saved: ${profile.name} (${profile.pronouns}, age ${profile.age})`);
+  if (userState.googleAccount) {
+    saveUserProgressNow();
+  }
+  logDashboardEvent(`Profile saved: ${profile.name} (${profile.pronouns}, age ${profile.age})`);
 }
 
 function syncProfileInputsUI() {
@@ -1198,6 +1516,8 @@ function syncProfileInputsUI() {
   if (badge) {
     badge.textContent = profile.name && profile.name !== "MC" ? `Saved (${profile.name})` : "Default (MC)";
   }
+
+  syncGoogleAuthUI();
 }
 
 function checkAndShowUserProfileModal() {
@@ -1338,6 +1658,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderChatList();
   renderCharactersList();
   renderGuidebook();
+  renderPricingShop();
   
   // Initial Subdomain & Route Resolution
   const initialRoute = parseRouteFromLocation();
@@ -1373,13 +1694,82 @@ function updateClock() {
   }
 }
 
-// Global UI Click Listener for Telemetry
-document.addEventListener("click", () => {
+// Global UI Click Listener for Telemetry & Adorable Sound Effects
+document.addEventListener("click", (e) => {
   analyticsData.clicks++;
   const dash = document.getElementById("secretDashboard");
   if (dash && dash.classList.contains("visible")) {
     const totalClicksEl = document.getElementById("dashTotalClicks");
     if (totalClicksEl) totalClicksEl.textContent = analyticsData.clicks;
+  }
+
+  // Cute sound effects for all buttons and interactive controls across the entire app
+  try {
+    const target = e.target;
+    if (!target) return;
+    const clickable = target.closest(
+      "button, [role='button'], a, input[type='button'], input[type='submit'], input[type='radio'], input[type='checkbox'], " +
+      ".tab-btn, .nav-circle-home-btn, .choice-btn, .vn-choice-btn, .shop-currency-btn, .shop-tier-tab, .shop-tier-card, .shop-tier-select-btn, " +
+      ".landing-play-btn, .landing-ui-lang-btn, .landing-lang-option, " +
+      ".messenger-arrow-btn, .setup-pill, .openkoto-tab-btn, .openkoto-tool-btn, .openkoto-action-btn, .openkoto-word-item, " +
+      ".openkoto-filter-btn, .openkoto-vocab-row, .openkoto-chat-item, .openkoto-history-chip, .openkoto-dropzone, " +
+      ".desktop-sprite-img, .floating-companion-wrap, .chat-item, .chat-tab, .sentence-tile, .word-tile, .heart-btn, " +
+      ".mode-chip, .tier-progress-card, .btn, .clickable, .vn-adv-nameplate, .vn-stage-sprite-standee"
+    );
+
+    if (clickable && typeof playCuteSound === "function") {
+      // Differentiate sound type by interaction context
+      if (
+        clickable.classList.contains("tab-btn") ||
+        clickable.classList.contains("nav-circle-home-btn") ||
+        clickable.dataset.tab ||
+        clickable.classList.contains("openkoto-tab-btn") ||
+        clickable.classList.contains("chat-tab") ||
+        clickable.classList.contains("shop-tier-tab")
+      ) {
+        playCuteSound("tab");
+      } else if (
+        clickable.id === "sendBtn" ||
+        clickable.classList.contains("send-btn") ||
+        clickable.id === "landingPlayBtn" ||
+        clickable.classList.contains("landing-play-btn")
+      ) {
+        playCuteSound("send");
+      } else if (
+        clickable.classList.contains("heart-btn") ||
+        clickable.closest(".desktop-companion-float") ||
+        clickable.classList.contains("desktop-sprite-img") ||
+        clickable.classList.contains("vn-stage-sprite-standee") ||
+        clickable.dataset.sound === "heart"
+      ) {
+        playCuteSound("heart");
+      } else if (
+        clickable.classList.contains("shop-currency-btn") ||
+        clickable.classList.contains("shop-tier-card") ||
+        clickable.classList.contains("shop-tier-select-btn") ||
+        clickable.classList.contains("choice-btn") ||
+        clickable.classList.contains("vn-choice-btn") ||
+        clickable.classList.contains("setup-pill") ||
+        clickable.classList.contains("landing-lang-option") ||
+        clickable.classList.contains("mode-chip") ||
+        clickable.classList.contains("sentence-tile") ||
+        clickable.classList.contains("word-tile")
+      ) {
+        playCuteSound("pop");
+      } else if (
+        clickable.classList.contains("setup-modal-close-btn") ||
+        clickable.classList.contains("modal-close-btn") ||
+        clickable.classList.contains("close-btn") ||
+        clickable.dataset.sound === "dismiss"
+      ) {
+        playCuteSound("dismiss");
+      } else {
+        // Universal sweet bubbly tap for all other buttons & interactive controls
+        playCuteSound("tap");
+      }
+    }
+  } catch (err) {
+    // Gracefully ignore audio context interruptions
   }
 });
 
@@ -1448,6 +1838,11 @@ function applyUiLanguage() {
   if (settingsHeader) settingsHeader.textContent = s.settingsTitle;
   const settingsSubtitle = document.querySelector("#view-settings .section-subtitle");
   if (settingsSubtitle) settingsSubtitle.textContent = s.settingsSubtitle;
+
+  const subTitle = document.getElementById("settingsSubscriptionTitle");
+  if (subTitle) subTitle.textContent = s.subscriptionTitle || "Subscription";
+  const subSubtitle = document.getElementById("settingsSubscriptionSubtitle");
+  if (subSubtitle) subSubtitle.textContent = s.subscriptionSubtitle || "Subscription tiers, usage quotas & AI learning features";
 
   // Navigation Tab Labels
   document.querySelectorAll(".tab-btn").forEach((btn) => {
@@ -1558,7 +1953,7 @@ function setAppTheme(theme) {
     document.body.classList.remove("dark-theme");
   }
   updateThemeUi();
-  logDashboardEvent(`🌙 Theme switched to: ${theme}`);
+  logDashboardEvent(`Theme switched to: ${theme}`);
 }
 window.setAppTheme = setAppTheme;
 
@@ -1571,7 +1966,7 @@ function updateThemeUi() {
   if (lightBtn) lightBtn.classList.toggle("active", currentTheme === "light");
   if (darkBtn) darkBtn.classList.toggle("active", currentTheme === "dark");
   if (statusBadge) {
-    statusBadge.textContent = currentTheme === "dark" ? "🌙 Dark Twilight" : "☀️ Light Mode";
+    statusBadge.textContent = currentTheme === "dark" ? "Dark Twilight" : "Light Mode";
   }
 }
 
@@ -1800,7 +2195,7 @@ function initUI() {
         const bubble = toggleBtn.closest(".msg-bubble");
         if (bubble) {
           const isExpanded = bubble.classList.toggle("expanded");
-          toggleBtn.textContent = isExpanded ? "💡 Hide Translation & Tips" : "💡 Click for Translation & Tips";
+          toggleBtn.textContent = isExpanded ? "Hide Translation & Tips" : "Click for Translation & Tips";
         }
       }
     });
@@ -2109,10 +2504,10 @@ function interactWithFloatingCompanion() {
   currentCompanionQuoteIndex = (currentCompanionQuoteIndex + 1) % quotes.length;
   const selectedQuote = quotes[currentCompanionQuoteIndex];
   
-  let mood = "Happy & Chatty 💕";
-  if (normalizedId === "kou") mood = "Blushing Tsundere 😳";
-  if (normalizedId === "ren") mood = "Playfully Teasing 😏";
-  if (normalizedId === "ado") mood = "Adoring Junior 🥺✨";
+  let mood = "Happy & Chatty";
+  if (normalizedId === "kou") mood = "Blushing Tsundere";
+  if (normalizedId === "ren") mood = "Playfully Teasing";
+  if (normalizedId === "ado") mood = "Adoring Junior";
 
   // Gentle interaction bonus: +0.2% up to 5 times per session to feel natural
   if (!userState.companionPokeCount) userState.companionPokeCount = 0;
@@ -2120,7 +2515,7 @@ function interactWithFloatingCompanion() {
     userState.companionPokeCount++;
     increaseAffection(normalizedId, 0.2);
   } else {
-    triggerHeartBurst("💕");
+    triggerHeartBurst("+Affection");
   }
   updateFloatingCompanion(normalizedId, selectedQuote, mood);
 
@@ -2147,6 +2542,15 @@ function switchTab(tabName, updateUrl = true) {
     return;
   }
 
+  if (tabName === "shop" || tabName === "subscription") {
+    switchTab("settings", updateUrl);
+    setTimeout(() => {
+      const subEl = document.getElementById("settingsSubscriptionGroup");
+      if (subEl) subEl.scrollIntoView({ behavior: "smooth" });
+    }, 80);
+    return;
+  }
+
   const chatWin = document.getElementById("chatWindow");
   if (chatWin) {
     chatWin.classList.remove("active");
@@ -2158,6 +2562,13 @@ function switchTab(tabName, updateUrl = true) {
   if (tabBar) tabBar.classList.remove("hidden-in-chat");
   activeCharacterId = null;
 
+  if (tabName !== "story") {
+    const viewStory = document.getElementById("view-story");
+    if (viewStory) viewStory.classList.remove("playing-vn-gameplay");
+    const appFrame = document.getElementById("appFrame");
+    if (appFrame) appFrame.classList.remove("playing-vn-gameplay");
+  }
+
   document.querySelectorAll(".tab-btn").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.tab === tabName);
   });
@@ -2165,9 +2576,22 @@ function switchTab(tabName, updateUrl = true) {
     sec.classList.toggle("active", sec.id === `view-${tabName}`);
   });
 
-  if (tabName === "chats") renderChatList();
-  if (tabName === "story") renderStoryMode();
+  if (tabName === "chats") {
+    renderChatList();
+    setTimeout(() => {
+      scrollToMessengerCard(0);
+      updateMessengerCarouselIndicators();
+    }, 40);
+  }
+  if (tabName === "story") {
+    renderStoryMode();
+    setTimeout(() => {
+      scrollToStoryCard(0);
+      updateStoryCarouselIndicators();
+    }, 50);
+  }
   if (tabName === "progress" || tabName === "guidebook") renderGuidebook();
+  if (tabName === "settings") renderPricingShop();
 
   if (updateUrl) {
     const routePath = (tabName === "progress" || tabName === "guidebook") ? "/guidebook" : `/${tabName}`;
@@ -2213,7 +2637,7 @@ function updateKeySavedStatus(isSaved) {
     statusEl.textContent = "Key Active";
     statusEl.style.color = "var(--accent-emerald)";
   } else {
-    statusEl.textContent = "⚠️ Key Required";
+    statusEl.textContent = "Key Required";
     statusEl.style.color = "var(--accent-coral)";
   }
 }
@@ -2278,9 +2702,9 @@ function renderChatList() {
     const relInfo = getRelationshipInfo(affectionPct);
     let badgeHtml = "";
     if (isPout) {
-      badgeHtml = `<span class="square-pout-badge">💢 Pouting</span>`;
+      badgeHtml = `<span class="square-pout-badge">Pouting</span>`;
     } else if (unreadCount > 0) {
-      badgeHtml = `<span class="square-unread-badge">🔴 ${unreadCount}</span>`;
+      badgeHtml = `<span class="square-unread-badge">${unreadCount} unread</span>`;
     }
 
     let pfpCoverHtml = `
@@ -2366,7 +2790,7 @@ function renderChatList() {
     <div class="square-card-bottom-info">
       <div class="square-char-name locked-name">
         <span>New Companion</span>
-        <span class="locked-name-icon">🔒</span>
+        <span class="locked-name-icon"><span class="material-symbols-outlined" style="font-size:16px;">lock</span></span>
       </div>
       <div class="square-char-role locked-role">Upcoming Story &amp; Love Interest</div>
       <div class="square-action-row">
@@ -2423,6 +2847,7 @@ function updateMessengerCarouselIndicators() {
       minDistance = dist;
       activeIndex = idx;
     }
+    card.classList.toggle("is-centered", dist < 45);
   });
 
   const dots = dotsContainer.querySelectorAll(".carousel-dot");
@@ -2432,8 +2857,8 @@ function updateMessengerCarouselIndicators() {
 
   const prevBtn = document.getElementById("msgCarouselPrev");
   const nextBtn = document.getElementById("msgCarouselNext");
-  if (prevBtn) prevBtn.disabled = container.scrollLeft <= 5;
-  if (nextBtn) nextBtn.disabled = container.scrollLeft + container.clientWidth >= container.scrollWidth - 5;
+  if (prevBtn) prevBtn.disabled = activeIndex <= 0;
+  if (nextBtn) nextBtn.disabled = activeIndex >= cards.length - 1;
 }
 
 window.scrollMessengerCarousel = function(direction) {
@@ -2441,16 +2866,33 @@ window.scrollMessengerCarousel = function(direction) {
   if (!container) return;
   const cards = container.querySelectorAll(".square-char-card");
   if (!cards.length) return;
-  const cardWidth = (cards[0].offsetWidth || 340) + 20;
-  container.scrollBy({ left: direction * cardWidth, behavior: "smooth" });
+
+  const scrollLeft = container.scrollLeft;
+  const center = scrollLeft + container.clientWidth / 2;
+  let activeIndex = 0;
+  let minDistance = Infinity;
+
+  cards.forEach((card, idx) => {
+    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+    const dist = Math.abs(center - cardCenter);
+    if (dist < minDistance) {
+      minDistance = dist;
+      activeIndex = idx;
+    }
+  });
+
+  const nextIndex = Math.max(0, Math.min(cards.length - 1, activeIndex + direction));
+  scrollToMessengerCard(nextIndex);
 };
 
 window.scrollToMessengerCard = function(index) {
   const container = document.getElementById("chatListContainer");
   if (!container) return;
   const cards = container.querySelectorAll(".square-char-card");
-  if (cards[index]) {
-    cards[index].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  if (cards && cards[index]) {
+    const card = cards[index];
+    const targetScroll = card.offsetLeft - (container.clientWidth - card.offsetWidth) / 2;
+    container.scrollTo({ left: Math.max(0, targetScroll), behavior: "smooth" });
   }
 };
 
@@ -2761,7 +3203,7 @@ function importSelectedChatMsgsToOpenkoto(autoAnalyze = false) {
   const indices = (openkotoState.selectedChatMsgs || []).sort((a, b) => a - b);
   
   if (indices.length === 0) {
-    alert("Please select at least one message using the checkboxes, or choose '⚡ Last 6 Msgs'.");
+    alert("Please select at least one message using the checkboxes, or choose 'Last 6 Msgs'.");
     return;
   }
 
@@ -3292,7 +3734,7 @@ function saveCurrentOpenkotoLesson() {
   const toast = document.createElement("div");
   toast.className = "reset-success-toast";
   toast.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; display:block; background:#7c3aed; color:#ffffff; font-weight:800; padding:10px 18px; border-radius:30px; box-shadow:0 6px 20px rgba(124,58,237,0.4);";
-  toast.innerHTML = `💾 Lesson saved to your Media Library!`;
+  toast.innerHTML = `Lesson saved to your Media Library!`;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2500);
 }
@@ -3462,7 +3904,7 @@ function renderOpenkotoStudioView(container) {
         <div class="openkoto-studio-header">
           <div class="openkoto-studio-title-row">
             <div class="openkoto-studio-title">
-              ✨ ${lesson.title || "AI Media Learning Pack"}
+              ${lesson.title || "AI Media Learning Pack"}
             </div>
             <span class="openkoto-level-tag">${lesson.level || "Beginner (A1)"}</span>
           </div>
@@ -3512,7 +3954,7 @@ function renderOpenkotoStudioView(container) {
         <!-- SMART INTERACTIVE READER (Line-by-line + Clickable Word Tokens) -->
         <div class="openkoto-reader-card">
           <div class="openkoto-reader-title">
-            <span>📖 Interactive Smart Reader (Tap any word for details)</span>
+            <span>Interactive Smart Reader (Tap any word for details)</span>
             <span style="font-size:13px; font-weight:700; color:var(--text-muted);">${(lesson.sentences || []).length} Sentences</span>
           </div>
 
@@ -3528,7 +3970,7 @@ function renderOpenkotoStudioView(container) {
                   `).join("")}
                   
                   <button class="openkoto-tool-btn" style="padding:4px 8px; font-size:12px; background:rgba(69,90,159,0.1); color:var(--text-main); border:none; margin-left:auto;" type="button" onclick="speakOpenkotoPhrase('${encodeURIComponent(sent.original || "").replace(/'/g, "\\'")}', '${openkotoState.targetLang}')">
-                    🔊
+                    <span class="material-symbols-outlined" style="font-size:16px;">volume_up</span>
                   </button>
                 </div>
 
@@ -3541,7 +3983,7 @@ function renderOpenkotoStudioView(container) {
                 ` : ""}
 
                 ${sent.grammarNotes ? `
-                  <div class="openkoto-sentence-notes">💡 ${sent.grammarNotes}</div>
+                  <div class="openkoto-sentence-notes">Notes: ${sent.grammarNotes}</div>
                 ` : ""}
               </div>
             `).join("")}
@@ -3552,7 +3994,7 @@ function renderOpenkotoStudioView(container) {
         ${(lesson.vocabularyList || []).length > 0 ? `
           <div class="openkoto-card">
             <div style="font-size:15.5px; font-weight:800; color:var(--primary-pink); display:flex; align-items:center; justify-content:space-between;">
-              <span>⭐ Key Vocabulary Extracted</span>
+              <span>Key Vocabulary Extracted</span>
               <span style="font-size:13px; color:var(--text-muted);">${lesson.vocabularyList.length} words</span>
             </div>
             
@@ -3573,7 +4015,7 @@ function renderOpenkotoStudioView(container) {
                   ` : ""}
                   <div style="display:flex; gap:8px; margin-top:6px;">
                     <button class="openkoto-tool-btn" style="flex:1; background:rgba(69,90,159,0.08); color:var(--text-main); border:1px solid rgba(69,90,159,0.2); justify-content:center; font-size:13px; padding:8px;" type="button" onclick="speakOpenkotoPhrase('${encodeURIComponent(v.term || "").replace(/'/g, "\\'")}', '${openkotoState.targetLang}')">
-                      🔊 Listen
+                      <span class="material-symbols-outlined" style="font-size:15px; margin-right:4px;">volume_up</span> Listen
                     </button>
                     <button class="openkoto-tool-btn" style="flex:1; background:rgba(217,0,87,0.08); color:var(--primary-pink); border:1px solid rgba(217,0,87,0.25); justify-content:center; font-size:13px; padding:8px;" type="button" onclick="saveOpenkotoFlashcard('${encodeURIComponent(v.term)}', '${encodeURIComponent(v.reading || "")}', '${encodeURIComponent(v.pos || "")}', '${encodeURIComponent(v.meaning)}', '${encodeURIComponent(v.example || "")}')">
                       ⭐ Bookmark
@@ -3589,19 +4031,19 @@ function renderOpenkotoStudioView(container) {
         ${(lesson.grammarPoints || []).length > 0 ? `
           <div class="openkoto-card">
             <div style="font-size:15.5px; font-weight:800; color:var(--accent-violet);">
-              🎓 Sentence Formulas &amp; Romance Nuances
+              Sentence Formulas &amp; Romance Nuances
             </div>
             <div style="display:flex; flex-direction:column; gap:10px;">
               ${lesson.grammarPoints.map((g) => `
                 <div style="background:#fdfbff; border:1px solid rgba(124,58,237,0.2); border-radius:14px; padding:12px 14px;">
                   <div style="font-size:15px; font-weight:800; color:var(--accent-violet); margin-bottom:6px;">
-                    📌 ${g.pattern}
+                    ${g.pattern}
                   </div>
                   <div style="font-size:14px; color:var(--text-main); margin-bottom:6px; line-height:1.45;">
                     ${g.explanation}
                   </div>
                   ${g.example ? `<div style="font-size:13px; color:var(--text-muted); background:rgba(124,58,237,0.05); padding:6px 10px; border-radius:8px; margin-bottom:6px;">Ex: ${g.example}</div>` : ""}
-                  ${g.romanceContext ? `<div style="font-size:13px; color:var(--primary-pink); font-weight:700;">💕 Dating Tip: ${g.romanceContext}</div>` : ""}
+                  ${g.romanceContext ? `<div style="font-size:13px; color:var(--primary-pink); font-weight:700;">Dating Tip: ${g.romanceContext}</div>` : ""}
                 </div>
               `).join("")}
             </div>
@@ -3611,7 +4053,7 @@ function renderOpenkotoStudioView(container) {
         <!-- INTERACTIVE PRACTICE SUITE (4 Modes) -->
         <div class="openkoto-quiz-card">
           <div style="font-size:15.5px; font-weight:800; color:var(--text-main); margin-bottom:10px;">
-            🎯 Interactive Practice Arena (Media Quizzes)
+            Interactive Practice Arena (Media Quizzes)
           </div>
 
           <div class="openkoto-quiz-mode-tabs">
@@ -3644,7 +4086,7 @@ function renderOpenkotoStudioView(container) {
               </div>
               ${openkotoState.activeQuizState.answered["mc"] ? `
                 <div style="padding:12px 14px; background:rgba(16,185,129,0.1); border-radius:12px; font-size:13.5px; color:#065f46; line-height:1.45;">
-                  💡 <strong>Explanation:</strong> ${mcQuiz.explanation || "Great job!"}
+                  <strong>Explanation:</strong> ${mcQuiz.explanation || "Great job!"}
                 </div>
               ` : ""}
             </div>
@@ -3682,7 +4124,7 @@ function renderOpenkotoStudioView(container) {
 
               <div style="display:flex; gap:10px; align-items:center;">
                 <button class="openkoto-tool-btn" style="background:rgba(69,90,159,0.1); color:var(--text-main); border:1px solid rgba(69,90,159,0.25); padding:8px 14px; font-size:13px;" type="button" onclick="resetOpenkotoScramble()">
-                  🔄 Reset Words
+                  Reset Words
                 </button>
                 ${openkotoState.activeQuizState.scrambleRemaining.length === 0 ? `
                   <div style="font-size:13.5px; font-weight:800; color:#10b981; display:flex; align-items:center;">
@@ -3716,7 +4158,7 @@ function renderOpenkotoStudioView(container) {
               </div>
               ${openkotoState.activeQuizState.answered["cloze"] ? `
                 <div style="padding:12px 14px; background:rgba(16,185,129,0.1); border-radius:12px; font-size:13.5px; color:#065f46; line-height:1.45;">
-                  💡 ${clozeQuiz.explanation || "Correct choice!"}
+                  ${clozeQuiz.explanation || "Correct choice!"}
                 </div>
               ` : ""}
             </div>
@@ -3726,7 +4168,7 @@ function renderOpenkotoStudioView(container) {
           ${openkotoState.activeQuizMode === "roleplay" && roleplayQuiz ? `
             <div style="background:#fdfbff; border:1.5px solid rgba(217,0,87,0.25); border-radius:14px; padding:16px;">
               <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-                <div style="font-size:28px;">💬</div>
+                <span class="material-symbols-outlined" style="font-size:28px; color:var(--primary-pink);">forum</span>
                 <div>
                   <div style="font-size:15px; font-weight:800; color:var(--primary-pink);">${roleplayQuiz.partnerName || "Character"}</div>
                   <div style="font-size:14.5px; font-weight:700; color:var(--text-main);">"${roleplayQuiz.partnerDialogue}"</div>
@@ -3747,7 +4189,7 @@ function renderOpenkotoStudioView(container) {
 
               ${openkotoState.activeQuizState.roleplayAnswered ? `
                 <div style="margin-top:12px; padding:12px 14px; background:rgba(217,0,87,0.08); border-radius:12px; font-size:13.5px; color:var(--primary-pink); font-weight:700; line-height:1.45;">
-                  💌 ${openkotoState.activeQuizState.roleplayAnswered.feedback}
+                  ${openkotoState.activeQuizState.roleplayAnswered.feedback}
                 </div>
               ` : ""}
             </div>
@@ -3770,12 +4212,12 @@ function renderOpenkotoStudioView(container) {
 
           <div class="openkoto-word-meaning">${openkotoState.activeWordPopover.meaning}</div>
           ${openkotoState.activeWordPopover.note ? `
-            <div class="openkoto-word-tip">💡 ${openkotoState.activeWordPopover.note}</div>
+            <div class="openkoto-word-tip">${openkotoState.activeWordPopover.note}</div>
           ` : ""}
 
           <div class="openkoto-word-actions">
             <button class="openkoto-word-action-btn" style="background:rgba(69,90,159,0.1); color:var(--text-main);" type="button" onclick="speakOpenkotoPhrase('${encodeURIComponent(openkotoState.activeWordPopover.word).replace(/'/g, "\\'")}', '${openkotoState.targetLang}')">
-              🔊 Pronounce
+              <span class="material-symbols-outlined" style="font-size:15px; margin-right:4px;">volume_up</span> Pronounce
             </button>
             <button class="openkoto-word-action-btn" style="background:var(--primary-pink); color:#ffffff;" type="button" onclick="saveOpenkotoFlashcard('${encodeURIComponent(openkotoState.activeWordPopover.word)}', '${encodeURIComponent(openkotoState.activeWordPopover.phonetic)}', '${encodeURIComponent(openkotoState.activeWordPopover.pos)}', '${encodeURIComponent(openkotoState.activeWordPopover.meaning)}', '')">
               ⭐ Add Flashcard
@@ -3869,10 +4311,10 @@ function renderOpenkotoStudioView(container) {
                 <div class="openkoto-chat-toolbar-actions">
                   ${history.length > 0 ? `
                     <button type="button" class="openkoto-chat-tool-btn" onclick="importRecentChatExchanges('${charId}', 6, false)" title="Load last 3 exchanges into text">
-                      ⚡ Last 6 Msgs
+                      Last 6 Msgs
                     </button>
                     <button type="button" class="openkoto-chat-tool-btn" onclick="selectAllOpenkotoChatMsgs()">
-                      ☑️ Select All
+                      Select All
                     </button>
                     ${selectedCount > 0 ? `
                       <button type="button" class="openkoto-chat-tool-btn danger" onclick="clearOpenkotoChatMsgSelection()">
@@ -3891,7 +4333,7 @@ function renderOpenkotoStudioView(container) {
                   <div style="font-size:12.5px; color:var(--text-muted); margin-top:2px;">Chat with ${char.name} in the Chatroom first, or use a sample preset!</div>
                   <div style="display:flex; gap:8px; margin-top:12px;">
                     <button type="button" class="primary-btn" style="font-size:12px; padding:6px 16px; border-radius:10px;" onclick="openChat('${charId}')">
-                      💬 Open ${char.name}'s Chat
+                      <span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">chat</span> Open ${char.name}'s Chat
                     </button>
                   </div>
                 </div>
@@ -3934,10 +4376,10 @@ function renderOpenkotoStudioView(container) {
                   </div>
                   <div class="openkoto-chat-selected-actions">
                     <button type="button" class="openkoto-chat-import-btn" onclick="importSelectedChatMsgsToOpenkoto(false)">
-                      📋 Load into Text
+                      Load into Text
                     </button>
                     <button type="button" class="openkoto-chat-import-btn primary" onclick="importSelectedChatMsgsToOpenkoto(true)">
-                      ⚡ Analyze Now
+                      Analyze Now
                     </button>
                   </div>
                 </div>
@@ -3984,11 +4426,11 @@ function renderOpenkotoStudioView(container) {
           <div class="openkoto-control-group">
             <label for="openkotoFocusSelect" class="openkoto-control-label">Learning Focus / Context</label>
             <select id="openkotoFocusSelect" class="openkoto-select" onchange="setOpenkotoCustomFocus(this.value)">
-              <option value="Romance, Flirting & Everyday Life">💕 Romance &amp; Flirting</option>
-              <option value="Everyday Natural Slang & Banter">💬 Colloquial Slang</option>
-              <option value="Polite & Respectful Forms">🎓 Polite Forms</option>
-              <option value="Travel & Food Culture">🍜 Travel &amp; Food</option>
-              <option value="Anime & Drama Dialogue">🎌 Anime &amp; Drama</option>
+              <option value="Romance, Flirting & Everyday Life">Romance &amp; Flirting</option>
+              <option value="Everyday Natural Slang & Banter">Colloquial Slang</option>
+              <option value="Polite & Respectful Forms">Polite Forms</option>
+              <option value="Travel & Food Culture">Travel &amp; Food</option>
+              <option value="Anime & Drama Dialogue">Anime &amp; Drama</option>
             </select>
           </div>
         </div>
@@ -4036,12 +4478,12 @@ function renderOpenkotoLibraryView(container) {
       <!-- Saved Vocabulary Cards -->
       <div class="openkoto-card">
         <div style="font-size:15.5px; font-weight:800; color:var(--primary-pink); margin-bottom:12px;">
-          📚 Bookmarked Vocabulary Terms
+          Bookmarked Vocabulary Terms
         </div>
 
         ${cards.length === 0 ? `
           <div style="text-align:center; padding:28px 14px; color:var(--text-muted); font-size:14px; line-height:1.5;">
-            No flashcards saved yet. Tap "⭐ Add Flashcard" on any word in the OpenKoto AI Reader!
+            No flashcards saved yet. Tap "Add Flashcard" on any word in the OpenKoto AI Reader!
           </div>
         ` : `
           <div class="openkoto-vocab-grid">
@@ -4057,7 +4499,7 @@ function renderOpenkotoLibraryView(container) {
                 <div class="openkoto-vocab-def">${c.meaning}</div>
                 <div style="display:flex; gap:8px; margin-top:8px;">
                   <button class="openkoto-tool-btn" style="flex:1; background:rgba(69,90,159,0.08); color:var(--text-main); justify-content:center; font-size:14px; padding:8px;" type="button" onclick="speakOpenkotoPhrase('${encodeURIComponent(c.term).replace(/'/g, "\\'")}', '${c.lang || "vi"}')">
-                    🔊 Listen
+                    <span class="material-symbols-outlined" style="font-size:15px; margin-right:4px;">volume_up</span> Listen
                   </button>
                   <button class="openkoto-tool-btn" style="background:rgba(239,68,68,0.1); color:#ef4444; border:none; padding:8px 12px; font-size:13px;" type="button" onclick="deleteOpenkotoFlashcard('${c.id}')">
                     ✕
@@ -4072,7 +4514,7 @@ function renderOpenkotoLibraryView(container) {
       <!-- Saved Media Lessons -->
       <div class="openkoto-card">
         <div style="font-size:15.5px; font-weight:800; color:var(--accent-violet); margin-bottom:12px;">
-          💾 Saved Media Lessons (${lessons.length})
+          Saved Media Lessons (${lessons.length})
         </div>
 
         ${lessons.length === 0 ? `
@@ -4194,20 +4636,20 @@ function getChibiStickerForCharacter(speakerId) {
     return {
       src: "/stickers/chibi_kou.png",
       name: "Kou",
-      caption: "Chị giỏi lắm! Kou luôn ở đây cổ vũ chị! 💕"
+      caption: "Chị giỏi lắm! Kou luôn ở đây cổ vũ chị!"
     };
   }
   if (norm.includes("ren")) {
     return {
       src: "/stickers/chibi_ren.png",
       name: "Ren",
-      caption: "Làm tốt lắm, nhóc! Nhìn anh mà lấy động lực này. 💜"
+      caption: "Làm tốt lắm, nhóc! Nhìn anh mà lấy động lực này."
     };
   }
   return {
     src: "/stickers/chibi_ado.png",
     name: "Ado",
-    caption: "Cố lên nhé! Tớ đã chuẩn bị tài liệu rồi, cậu làm được mà! 📚"
+    caption: "Cố lên nhé! Tớ đã chuẩn bị tài liệu rồi, cậu làm được mà!"
   };
 }
 window.getChibiStickerForCharacter = getChibiStickerForCharacter;
@@ -4242,7 +4684,7 @@ function createHeartBurstAtElement(el) {
     const originX = rect.left + rect.width / 2;
     const originY = rect.top + rect.height / 2;
     
-    const particles = ["💕", "✨", "🌟", "💖", "🌸", "⭐", "🎉"];
+    const particles = ["✦", "•", "⋆", "+", "·"];
     for (let i = 0; i < 7; i++) {
       const p = document.createElement("span");
       p.textContent = particles[Math.floor(Math.random() * particles.length)];
@@ -4293,7 +4735,7 @@ function showChibiStickerPopup(speakerId, customSrc, customCaption) {
       <button type="button" class="chibi-popup-close-btn" onclick="dismissChibiStickerPopup()" title="Close">✕</button>
       <img src="${src}" class="chibi-popup-img" alt="${charName} Chibi Sticker" onerror="this.onerror=null; this.src='${stickerInfo.src}';" onclick="handleChibiStickerTap('${speakerId}', '${cleanEmojiText(caption)}', this)" />
       <div class="chibi-popup-speaker">
-        <span>✨ ${charName}</span>
+        <span>${charName}</span>
         <span style="font-size:11px; opacity:0.8; font-weight:700;">(Chibi Motivator)</span>
       </div>
       <div class="chibi-popup-quote">"${cleanEmojiText(caption)}"</div>
@@ -4329,7 +4771,7 @@ function handleChibiStickerTap(speakerId, customCaption, el) {
   
   const stickerInfo = getChibiStickerForCharacter(speakerId);
   const caption = customCaption || stickerInfo.caption;
-  showToastNotification(`✨ ${stickerInfo.name} Motivator: "${caption}"`);
+  showToastNotification(`${stickerInfo.name} Motivator: "${caption}"`);
 }
 window.handleChibiStickerTap = handleChibiStickerTap;
 
@@ -4442,15 +4884,15 @@ function updateVnDialogueBox(latestLiMsg, char) {
   if (speakerNameEl) speakerNameEl.textContent = speakerName;
   if (emotionBadgeEl) {
     const emotionLabels = {
-      idle: "🌿 Idle",
-      fear: "⚡ Fear",
-      happy: "✨ Happy",
-      angry: "🔥 Angry",
-      pout: "💢 Pout",
-      sad: "💧 Sad",
-      normal: "💬 Talking"
+      idle: "Idle",
+      fear: "Fear",
+      happy: "Happy",
+      angry: "Angry",
+      pout: "Pout",
+      sad: "Sad",
+      normal: "Talking"
     };
-    emotionBadgeEl.textContent = emotionLabels[emotion] || "💬 Talking";
+    emotionBadgeEl.textContent = emotionLabels[emotion] || "Talking";
     emotionBadgeEl.className = `vn-emotion-badge emotion-${emotion}`;
     emotionBadgeEl.style.display = "inline-flex";
   }
@@ -4463,7 +4905,7 @@ function updateVnDialogueBox(latestLiMsg, char) {
   const showRomaji = userState.showRomaji !== false;
   if (bubbleRomajiEl) {
     if (latestLiMsg && latestLiMsg.romaji && showRomaji) {
-      bubbleRomajiEl.textContent = `🔤 ${latestLiMsg.romaji}`;
+      bubbleRomajiEl.textContent = latestLiMsg.romaji;
       bubbleRomajiEl.style.display = "inline-block";
     } else {
       bubbleRomajiEl.style.display = "none";
@@ -4711,7 +5153,7 @@ function renderChatHistory() {
           <div class="chibi-sticker-pill" onclick="showChibiStickerPopup('${speakerStickerId}', '${msg.sticker}', '${cleanEmojiText(stickerCap)}')" title="View Motivator Sticker Popup">
             <span class="material-symbols-outlined" style="font-size:15px; color:var(--primary-pink);">favorite</span>
             <span><strong>${speakerName}:</strong> "${cleanEmojiText(stickerCap)}"</span>
-            <span class="chibi-sticker-pill-tag">✨ Pop-up</span>
+            <span class="chibi-sticker-pill-tag">Pop-up</span>
           </div>
         ` : '';
 
@@ -4907,7 +5349,7 @@ function setupStarterChoicesPrompt(char) {
         ${romajiHtml}
         <div class="starter-option-trans">${opt.translation || ""}</div>
       </div>
-      <div class="starter-option-send-icon">➤</div>
+      <div class="starter-option-send-icon"><span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></div>
     `;
 
     card.onclick = () => {
@@ -5027,7 +5469,7 @@ function setupTierInputControls(tierObj, char, isInitialLoad = false) {
   }
 
   if (labelEl && tierObj) labelEl.textContent = `Tier ${tierObj.level}`;
-  if (multEl && tierObj) multEl.textContent = `+${tierObj.heartsPerAns || 10} ❤️ / answer`;
+  if (multEl && tierObj) multEl.textContent = `+${tierObj.heartsPerAns || 10} pts / answer`;
 
   // Always configure both Starter Choice Options and Contextual Word Bank for current conversation step
   setupStarterChoicesPrompt(char);
@@ -5302,7 +5744,7 @@ function addUserMessageToHistory(text) {
   if (isFarewellMessage(text)) {
     userState.saidGoodbye[charId] = true;
     if (lastMessageWasLi) lastMessageWasLi[charId] = false;
-    logDashboardEvent(`👋 User said goodbye to ${CHARACTERS[charId]?.name || charId}. Stopping automatic texts for this chat.`);
+    logDashboardEvent(`User said goodbye to ${CHARACTERS[charId]?.name || charId}. Stopping automatic texts for this chat.`);
   } else {
     userState.saidGoodbye[charId] = false;
   }
@@ -5579,9 +6021,9 @@ async function triggerLLMResponse(userText, tierObj) {
         sender: "li",
         speaker: charId,
         speakerName: char.name,
-        text: responseData.characterResponse || responseData.text || "Chào bạn nha! Rất vui được gặp! ❤️",
+        text: responseData.characterResponse || responseData.text || "Chào bạn nha! Rất vui được gặp!",
         romaji: responseData.romaji || null,
-        translation: responseData.translation || "Hello! So happy to talk with you! ❤️",
+        translation: responseData.translation || "Hello! So happy to talk with you!",
         tip: responseData.tip || "Keep practicing your conversation skills!",
         fix: responseData.correction || responseData.fix || null,
         evalColor: responseData.evalColor || "green",
@@ -5612,7 +6054,7 @@ async function triggerLLMResponse(userText, tierObj) {
 
     // Update Floating Companion with recent response & mood & emotion
     const companionQuote = responseData.characterResponse || (latestMsg ? latestMsg.text : null);
-    updateFloatingCompanion(charId, companionQuote, responseData.evalColor === "green" ? "Blushing & Impressed 💕" : "Observing carefully ✨", charEmotion);
+    updateFloatingCompanion(charId, companionQuote, responseData.evalColor === "green" ? "Blushing & Impressed" : "Observing carefully", charEmotion);
 
     setupTierInputControls(tierObj || TIERS[0], char);
     syncUserDataToConvex(`Post-chat response sync (${char.name})`);
@@ -5667,7 +6109,7 @@ function generateInCharacterFallback(char, userText, tierObj) {
       correction: fallbackFix,
       encouragement: fallbackEncouragement,
       sendSticker: fallbackWantsSticker,
-      stickerCaption: "Cố lên nhé! Tớ đã chuẩn bị tài liệu rồi, cậu làm được mà! 📚",
+      stickerCaption: "Cố lên nhé! Tớ đã chuẩn bị tài liệu rồi, cậu làm được mà!",
       starterOptions: [
         { text: "Chào Ado, tiền bối cũng nhớ Ado!", translation: "Hello Ado, I miss you too!" },
         { text: "Được chứ, đi chơi thôi Ado ơi!", translation: "Sure, let's hang out Ado!" },
@@ -5700,7 +6142,7 @@ function generateInCharacterFallback(char, userText, tierObj) {
       correction: fallbackFix,
       encouragement: fallbackEncouragement,
       sendSticker: fallbackWantsSticker,
-      stickerCaption: "Chị giỏi lắm! Kou luôn ở đây cổ vũ chị! 💕",
+      stickerCaption: "Chị giỏi lắm! Kou luôn ở đây cổ vũ chị!",
       starterOptions: [
         { text: "Cảm ơn Kou nhé, tớ sẽ cố gắng!", translation: "Thanks Kou, I will do my best!" },
         { text: "Kou chu đáo quá, đừng ngại nha.", translation: "You're so thoughtful, don't be shy." },
@@ -5733,7 +6175,7 @@ function generateInCharacterFallback(char, userText, tierObj) {
       correction: fallbackFix,
       encouragement: fallbackEncouragement,
       sendSticker: fallbackWantsSticker,
-      stickerCaption: "Làm tốt lắm, nhóc! Nhìn anh mà lấy động lực này. 💜",
+      stickerCaption: "Làm tốt lắm, nhóc! Nhìn anh mà lấy động lực này.",
       starterOptions: [
         { text: "Em chào anh Ren nhé!", translation: "Hello Ren!" },
         { text: "Em không phải là nhóc đâu!", translation: "I am not a kid!" },
@@ -5806,7 +6248,7 @@ function getRelationshipInfo(affectionPct) {
       stage: "Acquaintance",
       stageVi: "Người Quen",
       stageJa: "知人",
-      icon: "🤍",
+      icon: "",
       badgeClass: "stage-acquaintance",
       desc: "Polite & formal. Icebreaking conversations.",
       nextThreshold: 20
@@ -5816,7 +6258,7 @@ function getRelationshipInfo(affectionPct) {
       stage: "Casual Friend",
       stageVi: "Bạn Thân Thiết",
       stageJa: "友達",
-      icon: "💛",
+      icon: "",
       badgeClass: "stage-casual-friend",
       desc: "Warm smiles & shared banter. Barriers dropping.",
       nextThreshold: 45
@@ -5826,7 +6268,7 @@ function getRelationshipInfo(affectionPct) {
       stage: "Close Confidant",
       stageVi: "Tri Kỷ Tri Âm",
       stageJa: "親友",
-      icon: "💖",
+      icon: "",
       badgeClass: "stage-close-confidant",
       desc: "Heart flutters & mutual trust. Private moments shared.",
       nextThreshold: 70
@@ -5836,7 +6278,7 @@ function getRelationshipInfo(affectionPct) {
       stage: "Romantic Spark",
       stageVi: "Tình Cảm Chớm Nở",
       stageJa: "恋の予感",
-      icon: "💘",
+      icon: "",
       badgeClass: "stage-romantic-spark",
       desc: "Unmistakable romantic tension & gentle blushes.",
       nextThreshold: 90
@@ -5846,7 +6288,7 @@ function getRelationshipInfo(affectionPct) {
       stage: "Sweethearts",
       stageVi: "Người Yêu Đắm Say",
       stageJa: "恋人",
-      icon: "💍",
+      icon: "",
       badgeClass: "stage-sweethearts",
       desc: "Devoted bond. Deep emotional intimacy and true love.",
       nextThreshold: 100
@@ -5960,7 +6402,7 @@ function checkTierLevelUp(charId) {
 }
 
 // Heart Particle Visual Animation
-function triggerHeartBurst(customText = "❤️ +10") {
+function triggerHeartBurst(customText = "+10") {
   const frame = document.getElementById("appFrame");
   const heart = document.createElement("div");
   heart.className = "heart-burst";
@@ -6000,7 +6442,7 @@ function decreaseAffection(charId, amount = 2.5) {
       toast.className = "milestone-toast";
       document.body.appendChild(toast);
     }
-    toast.innerHTML = `<span>💔</span> <span>Relationship with <strong>${charName}</strong> dropped to <strong>${newStage.stage}</strong> (${newAff}%)</span>`;
+    toast.innerHTML = `<span>Relationship with <strong>${charName}</strong> dropped to <strong>${newStage.stage}</strong> (${newAff}%)</span>`;
     toast.classList.add("show");
     setTimeout(() => {
       toast.classList.remove("show");
@@ -6047,6 +6489,10 @@ function renderStoryMode() {
     renderStoryGameplay();
     return;
   }
+
+  container.classList.remove("playing-vn-gameplay");
+  const appFrame = document.getElementById("appFrame");
+  if (appFrame) appFrame.classList.remove("playing-vn-gameplay");
 
   const availableChars = [
     { 
@@ -6150,15 +6596,15 @@ function renderStoryMode() {
           <div class="story-scenario-preview-info">
             <div class="story-square-level-tag" style="width: fit-content;">Level ${sc.level} Date</div>
             <div class="story-scenario-preview-title">
-              <span>${sc.icon}</span>
+              <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle; margin-right:4px;">${sc.icon}</span>
               <span>${sc.title}</span>
             </div>
             <div class="story-scenario-preview-desc">${sc.description || sc.desc}</div>
             <div class="story-scenario-preview-tags">
-              <span class="story-meta-tag">📍 ${sc.location}</span>
-              <span class="story-meta-tag">🎭 ${sc.tone}</span>
-              <span class="story-meta-tag">🎯 ${sc.totalQuestions || 7} Interactive Acts</span>
-              <span class="story-meta-tag">🏆 Pass: ≥${sc.passingScore || 5}/${sc.totalQuestions || 7} Correct</span>
+              <span class="story-meta-tag"><span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle; margin-right:4px;">place</span>${sc.location}</span>
+              <span class="story-meta-tag"><span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle; margin-right:4px;">theater_comedy</span>${sc.tone}</span>
+              <span class="story-meta-tag"><span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle; margin-right:4px;">quiz</span>${sc.totalQuestions || 7} Interactive Acts</span>
+              <span class="story-meta-tag"><span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle; margin-right:4px;">military_tech</span>Pass: ≥${sc.passingScore || 5}/${sc.totalQuestions || 7} Correct</span>
             </div>
           </div>
         </div>
@@ -6203,17 +6649,17 @@ function renderStoryMode() {
         <div class="story-square-top-row">
           <div class="story-square-level-tag">Level ${sc.level}</div>
           <div class="story-square-status-pill ${clearedByAny ? 'cleared' : ''}">
-            ${clearedByAny ? '✨ Cleared' : `⭐ ${sc.totalQuestions || 7} Questions`}
+            ${clearedByAny ? 'Cleared' : `${sc.totalQuestions || 7} Questions`}
           </div>
         </div>
 
         <div class="story-square-center-icon">
-          ${sc.icon}
+          <span class="material-symbols-outlined" style="font-size:36px; color:var(--primary-pink);">${sc.icon}</span>
         </div>
 
         <div class="story-square-bottom-content">
           <div class="story-square-title">${sc.title}</div>
-          <div class="story-square-loc">📍 ${sc.location}</div>
+          <div class="story-square-loc">${sc.location}</div>
           <div class="story-square-action-row">
             <span class="story-square-theme-tag">${sc.tone}</span>
             <div class="story-square-select-btn">
@@ -6252,7 +6698,7 @@ function renderStoryMode() {
 
       <div class="story-square-bottom-content">
         <div class="story-square-title locked-name">Special Date Episodes</div>
-        <div class="story-square-loc locked-role">📍 Secret Hot Springs &amp; Travel</div>
+        <div class="story-square-loc locked-role">Secret Hot Springs &amp; Travel</div>
         <div class="story-square-action-row">
           <span class="story-square-theme-tag locked-snippet">Upcoming Romance Stories</span>
           <div class="story-square-select-btn locked-select-btn">
@@ -6267,7 +6713,7 @@ function renderStoryMode() {
   container.innerHTML = `
     <div class="story-squares-wrapper">
       <div class="story-hub-hero">
-        <div class="story-hero-badge">💕 VISUAL NOVEL DATE SCENARIOS</div>
+        <div class="story-hero-badge">VISUAL NOVEL DATE SCENARIOS</div>
         <h2 class="story-hero-title">Choose Your Date Scenario</h2>
         <p class="story-hero-subtitle">
           Swipe or scroll through the date settings below to begin your visual novel experience. 
@@ -6275,25 +6721,21 @@ function renderStoryMode() {
         </p>
       </div>
 
-      <div class="messenger-section-header story-carousel-header">
-       
-        <div class="messenger-carousel-arrows">
-          <button class="messenger-arrow-btn" id="storyCarouselPrev" type="button" aria-label="Previous date scenario" onclick="scrollStoryCarousel(-1)">
-            <span class="material-symbols-outlined">chevron_left</span>
-          </button>
-          <button class="messenger-arrow-btn" id="storyCarouselNext" type="button" aria-label="Next date scenario" onclick="scrollStoryCarousel(1)">
-            <span class="material-symbols-outlined">chevron_right</span>
-          </button>
-        </div>
-      </div>
-
       <div class="messenger-carousel-outer story-carousel-outer">
         <div class="story-squares-carousel" id="storyCarouselContainer">
           ${squaresHtml}
           ${futureScenarioCardHtml}
         </div>
-        <div class="messenger-carousel-indicators" id="storyCarouselIndicators">
-          <!-- Dots populated dynamically -->
+        <div class="messenger-carousel-footer story-carousel-footer" id="storyCarouselFooter">
+          <button class="messenger-arrow-btn carousel-prev-btn" id="storyCarouselPrev" type="button" aria-label="Previous date scenario" onclick="scrollStoryCarousel(-1)">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <div class="messenger-carousel-indicators" id="storyCarouselIndicators">
+            <!-- Dots populated dynamically -->
+          </div>
+          <button class="messenger-arrow-btn carousel-next-btn" id="storyCarouselNext" type="button" aria-label="Next date scenario" onclick="scrollStoryCarousel(1)">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
         </div>
       </div>
     </div>
@@ -6345,6 +6787,7 @@ function updateStoryCarouselIndicators() {
       minDistance = dist;
       activeIndex = idx;
     }
+    card.classList.toggle("is-centered", dist < 45);
   });
 
   const dots = dotsContainer.querySelectorAll(".carousel-dot");
@@ -6354,8 +6797,8 @@ function updateStoryCarouselIndicators() {
 
   const prevBtn = document.getElementById("storyCarouselPrev");
   const nextBtn = document.getElementById("storyCarouselNext");
-  if (prevBtn) prevBtn.disabled = container.scrollLeft <= 5;
-  if (nextBtn) nextBtn.disabled = container.scrollLeft + container.clientWidth >= container.scrollWidth - 5;
+  if (prevBtn) prevBtn.disabled = activeIndex <= 0;
+  if (nextBtn) nextBtn.disabled = activeIndex >= cards.length - 1;
 }
 window.updateStoryCarouselIndicators = updateStoryCarouselIndicators;
 
@@ -6364,16 +6807,33 @@ window.scrollStoryCarousel = function(direction) {
   if (!container) return;
   const cards = container.querySelectorAll(".story-scenario-square");
   if (!cards.length) return;
-  const cardWidth = (cards[0].offsetWidth || 340) + 20;
-  container.scrollBy({ left: direction * cardWidth, behavior: "smooth" });
+
+  const scrollLeft = container.scrollLeft;
+  const center = scrollLeft + container.clientWidth / 2;
+  let activeIndex = 0;
+  let minDistance = Infinity;
+
+  cards.forEach((card, idx) => {
+    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+    const dist = Math.abs(center - cardCenter);
+    if (dist < minDistance) {
+      minDistance = dist;
+      activeIndex = idx;
+    }
+  });
+
+  const nextIndex = Math.max(0, Math.min(cards.length - 1, activeIndex + direction));
+  scrollToStoryCard(nextIndex);
 };
 
 window.scrollToStoryCard = function(index) {
   const container = document.getElementById("storyCarouselContainer");
   if (!container) return;
   const cards = container.querySelectorAll(".story-scenario-square");
-  if (cards[index]) {
-    cards[index].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  if (cards && cards[index]) {
+    const card = cards[index];
+    const targetScroll = card.offsetLeft - (container.clientWidth - card.offsetWidth) / 2;
+    container.scrollTo({ left: Math.max(0, targetScroll), behavior: "smooth" });
   }
 };
 
@@ -6507,29 +6967,29 @@ function getScenarioParticlesHtml(scenarioId) {
     // Riverbank: drifting sakura petals
     return `
       <div class="vn-particles vn-particles-sakura">
-        <span class="vn-petal p1">🌸</span>
-        <span class="vn-petal p2">🌸</span>
-        <span class="vn-petal p3">🌸</span>
-        <span class="vn-petal p4">🌸</span>
+        <span class="vn-petal p1">✦</span>
+        <span class="vn-petal p2">✦</span>
+        <span class="vn-petal p3">✦</span>
+        <span class="vn-petal p4">✦</span>
       </div>
     `;
   } else if (scId === 4) {
     // Festival: glowing sparks & lantern embers
     return `
       <div class="vn-particles vn-particles-festival">
-        <span class="vn-spark s1">✨</span>
-        <span class="vn-spark s2">🏮</span>
-        <span class="vn-spark s3">✨</span>
-        <span class="vn-spark s4">🎆</span>
+        <span class="vn-spark s1">·</span>
+        <span class="vn-spark s2">·</span>
+        <span class="vn-spark s3">·</span>
+        <span class="vn-spark s4">·</span>
       </div>
     `;
   } else if (scId === 5) {
     // Rooftop: twinkling stars & celestial motes
     return `
       <div class="vn-particles vn-particles-stars">
-        <span class="vn-star st1">✨</span>
+        <span class="vn-star st1">⋆</span>
         <span class="vn-star st2">⭐</span>
-        <span class="vn-star st3">✨</span>
+        <span class="vn-star st3">⋆</span>
         <span class="vn-shooting-star"></span>
       </div>
     `;
@@ -6560,13 +7020,6 @@ function startStoryScenario(scenarioId, charId = null) {
 
   playVNSound("click");
   renderStoryGameplay();
-
-  // Play opening voice line for first question
-  setTimeout(() => {
-    if (activeStorySession && activeStorySession.questions[0]) {
-      speakVNLine(activeStorySession.questions[0].promptDialogue, targetLang);
-    }
-  }, 400);
 }
 window.startStoryScenario = startStoryScenario;
 
@@ -6595,19 +7048,12 @@ function toggleVnSubtitles() {
 window.toggleVnSubtitles = toggleVnSubtitles;
 
 function playCurrentVnVoiceLine() {
-  if (!activeStorySession) return;
-  const session = activeStorySession;
-  const currentQ = session.questions[session.currentQuestionIdx];
-  const targetLang = userState.targetLanguage || "vi";
-  if (currentQ && currentQ.promptDialogue) {
-    speakVNLine(currentQ.promptDialogue, targetLang);
-    // Subtle sprite reaction bounce
-    const spriteEl = document.querySelector(".vn-stage-sprite-standee");
-    if (spriteEl) {
-      spriteEl.classList.remove("vn-sprite-bounce");
-      void spriteEl.offsetWidth; // trigger reflow
-      spriteEl.classList.add("vn-sprite-bounce");
-    }
+  // Voice removed in story mode per user request
+  const spriteEl = document.querySelector(".vn-stage-sprite-standee");
+  if (spriteEl) {
+    spriteEl.classList.remove("vn-sprite-bounce");
+    void spriteEl.offsetWidth; // trigger reflow
+    spriteEl.classList.add("vn-sprite-bounce");
   }
 }
 window.playCurrentVnVoiceLine = playCurrentVnVoiceLine;
@@ -6617,8 +7063,7 @@ function reactToSpriteClick() {
   const session = activeStorySession;
   session.spriteEmotion = session.spriteEmotion === "blush" ? "happy" : "blush";
   playVNSound("heart");
-  triggerHeartBurst("💖");
-  playCurrentVnVoiceLine();
+  triggerHeartBurst("+Affection");
   renderStoryGameplay();
 }
 window.reactToSpriteClick = reactToSpriteClick;
@@ -6626,6 +7071,10 @@ window.reactToSpriteClick = reactToSpriteClick;
 function renderStoryGameplay() {
   const container = document.getElementById("view-story");
   if (!container || !activeStorySession) return;
+
+  container.classList.add("playing-vn-gameplay");
+  const appFrame = document.getElementById("appFrame");
+  if (appFrame) appFrame.classList.add("playing-vn-gameplay");
 
   const session = activeStorySession;
   const scenario = STORY_SCENARIOS.find(s => s.id === session.scenarioId) || STORY_SCENARIOS[0];
@@ -6657,7 +7106,7 @@ function renderStoryGameplay() {
     if (isAnswered) {
       if (idx === correctIdx) {
         optClass += " choice-correct";
-        statusPill = `<span class="vn-choice-status-badge badge-correct">✓ Match (+1💖)</span>`;
+        statusPill = `<span class="vn-choice-status-badge badge-correct">✓ Match (+1)</span>`;
       } else if (idx === existingAns.selectedIdx) {
         optClass += " choice-incorrect";
         statusPill = `<span class="vn-choice-status-badge badge-incorrect">✗ Miss</span>`;
@@ -6689,7 +7138,7 @@ function renderStoryGameplay() {
     feedbackHtml = `
       <div class="vn-feedback-overlay ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}">
         <div class="vn-feedback-header">
-          <div class="vn-feedback-icon">${isCorrect ? '💖' : '💧'}</div>
+          <div class="vn-feedback-icon">${isCorrect ? '<span class="material-symbols-outlined" style="color:var(--primary-pink); font-size:28px;">favorite</span>' : '<span class="material-symbols-outlined" style="color:var(--text-muted); font-size:28px;">sentiment_dissatisfied</span>'}</div>
           <div class="vn-feedback-title">
             <strong>${isCorrect ? 'Charming Response! (+1 Heart Point)' : 'Not Quite What They Hoped For'}</strong>
             <span class="vn-feedback-sub">${isCorrect ? `${charData.name} smiles warmly at your words.` : `${charData.name} looks a bit caught off guard.`}</span>
@@ -6698,7 +7147,7 @@ function renderStoryGameplay() {
         <p class="vn-feedback-expl">${currentQ.explanation || 'Express genuine feelings and politeness.'}</p>
         <div class="vn-feedback-action">
           <button class="vn-next-act-btn" onclick="handleNextStoryQuestion()" type="button">
-            <span>${isLastQuestion ? 'Complete Date & See Ending 🎉' : 'Next Scene (Act ' + (qIndex + 2) + ') →'}</span>
+            <span>${isLastQuestion ? 'Complete Date & See Ending' : 'Next Scene (Act ' + (qIndex + 2) + ') →'}</span>
             <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
           </button>
         </div>
@@ -6709,9 +7158,9 @@ function renderStoryGameplay() {
   // Emotion floating reaction badge above character head
   let emotionBubble = "";
   if (session.spriteEmotion === "blush") {
-    emotionBubble = `<div class="vn-sprite-reaction-bubble blush">😳 💖</div>`;
+    emotionBubble = `<div class="vn-sprite-reaction-bubble blush"><span class="material-symbols-outlined" style="font-size:18px; color:var(--primary-pink);">favorite</span></div>`;
   } else if (session.spriteEmotion === "happy") {
-    emotionBubble = `<div class="vn-sprite-reaction-bubble happy">✨ 💖</div>`;
+    emotionBubble = `<div class="vn-sprite-reaction-bubble happy"><span class="material-symbols-outlined" style="font-size:18px; color:var(--primary-pink);">favorite</span></div>`;
   }
 
   // Generate Backlog History items
@@ -6724,14 +7173,14 @@ function renderStoryGameplay() {
       <div class="vn-backlog-dialogue">${item.promptDialogue}</div>
       ${item.promptTrans ? `<div class="vn-backlog-trans">"${item.promptTrans}"</div>` : ''}
       <div class="vn-backlog-choice ${item.isCorrect ? 'choice-pass' : 'choice-miss'}">
-        <span>Your Response: <strong>${item.userChoice}</strong> ${item.isCorrect ? '💖 (Correct)' : '⚠️'}</span>
+        <span>Your Response: <strong>${item.userChoice}</strong> ${item.isCorrect ? '(Correct)' : '(Incorrect)'}</span>
       </div>
     </div>
   `).join("") : `<div class="vn-backlog-empty">No past acts in this date yet. Make your first choice!</div>`;
 
   const passReq = scenario.passingScore || 5;
   const heartsGaugeHtml = Array.from({ length: totalQ }).map((_, i) => 
-    i < session.score ? `<span class="vn-heart-icon active">💖</span>` : `<span class="vn-heart-icon inactive">🤍</span>`
+    i < session.score ? `<span class="vn-heart-icon active"><span class="material-symbols-outlined" style="font-size:16px;">favorite</span></span>` : `<span class="vn-heart-icon inactive"><span class="material-symbols-outlined" style="font-size:16px;">favorite_border</span></span>`
   ).join("");
 
   const currentDialogue = currentQ.promptDialogue || currentQ.partnerDialogue || "";
@@ -6768,16 +7217,12 @@ function renderStoryGameplay() {
             <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
             <span>Exit</span>
           </button>
-          <div class="vn-scene-badge">
-            <span class="vn-scene-level">LVL ${scenario.level}</span>
-            <span class="vn-scene-title">${scenario.icon} ${scenario.title}</span>
-          </div>
         </div>
 
         <div class="vn-hud-center">
-          <div class="vn-hearts-gauge" title="Affection Pass Gauge: ${session.score}/${passReq} Needed">
+          <div class="vn-hearts-gauge" title="Affection: ${session.score}/${totalQ}">
             <div class="vn-hearts-row">${heartsGaugeHtml}</div>
-            <div class="vn-hearts-label">Score: <strong>${session.score}</strong> / ${totalQ} (${session.score >= passReq ? '✨ PASSING' : `${passReq} to Pass`})</div>
+            <span class="vn-hearts-score-count">${session.score}/${totalQ}</span>
           </div>
         </div>
 
@@ -6799,46 +7244,42 @@ function renderStoryGameplay() {
 
       <!-- Situation Cue Narrative Ribbon -->
       <div class="vn-scene-cue-ribbon">
-        <span class="vn-cue-tag">📍 Act ${qIndex + 1}/${totalQ}</span>
+        <span class="vn-cue-tag">Act ${qIndex + 1}/${totalQ}</span>
         <span class="vn-cue-text">${currentSituation}</span>
       </div>
 
-      <!-- Floating Visual Novel Choice Branches Tray -->
-      <div class="vn-choices-tray ${isAnswered ? 'tray-locked' : ''}">
-        <div class="vn-choices-tray-header">
-          <span>💖 Choose Your Response to ${charData.name}:</span>
-        </div>
-        <div class="vn-choices-list">
-          ${optionsHtml}
-        </div>
-      </div>
-
-      <!-- Classic Visual Novel ADV Bottom Dialogue Textbox -->
-      <div class="vn-adv-textbox">
-        <div class="vn-adv-nameplate-row">
-          <div class="vn-adv-nameplate char-${session.charId}">
-            <span class="vn-nameplate-gem">💎</span>
-            <span class="vn-nameplate-text">${charData.name}</span>
-            <span class="vn-nameplate-role">(${charData.role || 'Love Interest'})</span>
-          </div>
-
-          <div class="vn-adv-controls">
-            <button class="vn-voice-play-btn" onclick="playCurrentVnVoiceLine()" type="button" title="Listen to ${charData.name}'s voice">
-              <span class="material-symbols-outlined" style="font-size:16px;">volume_up</span>
-              <span>Voice</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="vn-adv-dialogue-content">
-          <div class="vn-adv-dialogue-text">
-            ${wrappedDialogue}
-          </div>
-          ${session.showTranslation ? `
-            <div class="vn-adv-dialogue-trans">
-              "${currentTrans}"
+      <!-- Bottom Visual Novel Interaction Area (Question First, Choices Below) -->
+      <div class="vn-bottom-stage-area">
+        <!-- Classic Visual Novel ADV Dialogue Textbox (Question/Prompt Comes First) -->
+        <div class="vn-adv-textbox">
+          <div class="vn-adv-nameplate-row">
+            <div class="vn-adv-nameplate char-${session.charId}">
+              <span class="vn-nameplate-gem"><span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle;">diamond</span></span>
+              <span class="vn-nameplate-text">${charData.name}</span>
+              <span class="vn-nameplate-role">(${charData.role || 'Love Interest'})</span>
             </div>
-          ` : ''}
+          </div>
+
+          <div class="vn-adv-dialogue-content">
+            <div class="vn-adv-dialogue-text">
+              ${wrappedDialogue}
+            </div>
+            ${session.showTranslation ? `
+              <div class="vn-adv-dialogue-trans">
+                "${currentTrans}"
+              </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <!-- Floating Visual Novel Choice Branches Tray (Below Dialogue Textbox) -->
+        <div class="vn-choices-tray ${isAnswered ? 'tray-locked' : ''}">
+          <div class="vn-choices-tray-header">
+            <span>Choose Your Response to ${charData.name}:</span>
+          </div>
+          <div class="vn-choices-list">
+            ${optionsHtml}
+          </div>
         </div>
       </div>
 
@@ -6847,7 +7288,7 @@ function renderStoryGameplay() {
 
       <!-- CG Mode Floating Hint (visible only when UI is hidden) -->
       <div class="vn-cg-overlay-hint" onclick="toggleVnUiVisibility()">
-        <span>👁️ CG Viewing Mode • Tap anywhere to restore Visual Novel UI</span>
+        <span>CG Viewing Mode • Tap anywhere to restore Visual Novel UI</span>
       </div>
 
       <!-- Dialogue Backlog History Modal -->
@@ -6886,7 +7327,7 @@ function handleStoryOptionSelect(selectedIdx) {
     session.score++;
     session.spriteEmotion = "happy";
     playVNSound("correct");
-    triggerHeartBurst("💕 Charming Response!");
+    triggerHeartBurst("Charming Response!");
   } else {
     session.spriteEmotion = "sad";
     playVNSound("wrong");
@@ -6930,17 +7371,6 @@ function handleNextStoryQuestion() {
     session.isAnsweringLocked = false;
     session.spriteEmotion = "normal";
     renderStoryGameplay();
-
-    // Auto voice current line
-    setTimeout(() => {
-      if (activeStorySession) {
-        const nextQ = activeStorySession.questions[activeStorySession.currentQuestionIdx];
-        if (nextQ) {
-          const nextDialogue = nextQ.promptDialogue || nextQ.partnerDialogue;
-          if (nextDialogue) speakVNLine(nextDialogue, targetLang);
-        }
-      }
-    }, 300);
   } else {
     completeStoryScenario();
   }
@@ -6989,8 +7419,8 @@ function completeStoryScenario() {
     newAff = Math.min(100, Math.round((prevAff + scenario.affPassGain) * 10) / 10);
     userState.affection[charId] = newAff;
     userState.totalHearts += scenario.rewardHearts;
-    penaltyOrGainText = `+${scenario.affPassGain}% Affection Gain & +${scenario.rewardHearts} 💖 Hearts`;
-    triggerHeartBurst(`🎉 Date Passed! +${scenario.affPassGain}%`);
+    penaltyOrGainText = `+${scenario.affPassGain}% Affection Gain & +${scenario.rewardHearts} Hearts`;
+    triggerHeartBurst(`Date Passed! +${scenario.affPassGain}%`);
   } else {
     playVNSound("wrong");
     // Fail: Decrease relationship status
@@ -7007,11 +7437,6 @@ function completeStoryScenario() {
   const partnerDialogue = isPassed 
     ? (scenario.partnerReactionPass && (scenario.partnerReactionPass[charId] || scenario.partnerReactionPass.ado)) || "Hôm nay tuyệt vời lắm!" 
     : (scenario.partnerReactionFail && (scenario.partnerReactionFail[charId] || scenario.partnerReactionFail.ado)) || "Lần sau chúng mình cố gắng hơn nhé.";
-
-  // Speak partner's ending quote
-  setTimeout(() => {
-    speakVNLine(partnerDialogue, targetLang);
-  }, 400);
 
   container.innerHTML = `
     <div class="vn-date-stage vn-ending-stage">
@@ -7034,31 +7459,27 @@ function completeStoryScenario() {
       <!-- Ending Card Overlay -->
       <div class="vn-ending-card-overlay ${isPassed ? 'ending-passed' : 'ending-failed'}">
         <div class="vn-ending-badge">
-          <span>${isPassed ? '🏆 S-RANK ROMANTIC CLEAR' : '💔 AWKWARD MOMENT ENDING'}</span>
+          <span>${isPassed ? 'S-RANK ROMANTIC CLEAR' : 'AWKWARD MOMENT ENDING'}</span>
         </div>
 
         <h3 class="vn-ending-title">${isPassed ? `True Romance Clear with ${charData.name}!` : `Awkward Date with ${charData.name}`}</h3>
         
         <div class="vn-ending-score-pill">
           <span class="vn-score-num">${score} / ${total} Correct</span>
-          <span class="vn-score-req">${isPassed ? `✨ Target Met (≥${passReq}/${total})` : `⚠️ ${passReq}/${total} Required to Pass`}</span>
+          <span class="vn-score-req">${isPassed ? `Target Met (≥${passReq}/${total})` : `${passReq}/${total} Required to Pass`}</span>
         </div>
 
         <!-- Ending Partner Reaction Dialogue -->
         <div class="vn-ending-speech-box">
           <div class="vn-ending-speaker-row">
             <span class="vn-ending-speaker">${charData.name}:</span>
-            <button class="vn-voice-play-btn mini" onclick="speakVNLine('${partnerDialogue.replace(/'/g, "\\'")}', '${targetLang}')" type="button">
-              <span class="material-symbols-outlined" style="font-size:14px;">volume_up</span>
-              <span>Voice</span>
-            </button>
           </div>
           <p class="vn-ending-quote">"${partnerDialogue}"</p>
         </div>
 
         <!-- Relationship Status Delta -->
         <div class="vn-ending-stakes-delta ${isPassed ? 'delta-gain' : 'delta-loss'}">
-          <strong>${isPassed ? '✨ Bond Deepened:' : '⚠️ Relationship Status Decreased:'}</strong>
+          <strong>${isPassed ? 'Bond Deepened:' : 'Relationship Status Decreased:'}</strong>
           <div>${penaltyOrGainText}</div>
           <div style="font-size:12px; margin-top:4px; opacity:0.9;">Current Affection: <strong>${newAff}%</strong> (${relInfo.icon} ${relInfo.stage})</div>
         </div>
@@ -7257,7 +7678,7 @@ function initScaffoldTooltipEngine() {
         ${phonetic ? `<span class="scaffold-tooltip-phonetic">${phonetic}</span>` : ""}
       </div>
       <div class="scaffold-tooltip-def">${def}</div>
-      ${note ? `<div class="scaffold-tooltip-note">💡 ${note}</div>` : ""}
+      ${note ? `<div class="scaffold-tooltip-note">${note}</div>` : ""}
     `;
 
     const rect = target.getBoundingClientRect();
@@ -7319,12 +7740,12 @@ function renderPhoneticChips(charId, targetLang = "vi") {
   if (targetLang === "ja") {
     if (title) title.textContent = "Japanese Romaji & Pitch Guide 🇯🇵";
     const jaChips = [
-      { text: "Senpai", note: "Senior / Upperclassman", sym: "★" },
-      { text: "Arigatou", note: "Thank you (Gratitude)", sym: "♡" },
-      { text: "Suki desu", note: "I like you (Romance)", sym: "♥" },
-      { text: "Issho ni", note: "Together with you", sym: "✦" },
-      { text: "Kawaii", note: "Cute / Endearing", sym: "✿" },
-      { text: "Ohanashi", note: "Conversation / Chat", sym: "♪" }
+      { text: "Senpai", note: "Senior / Upperclassman", sym: "•" },
+      { text: "Arigatou", note: "Thank you (Gratitude)", sym: "•" },
+      { text: "Suki desu", note: "I like you (Romance)", sym: "•" },
+      { text: "Issho ni", note: "Together with you", sym: "•" },
+      { text: "Kawaii", note: "Cute / Endearing", sym: "•" },
+      { text: "Ohanashi", note: "Conversation / Chat", sym: "•" }
     ];
     jaChips.forEach((item) => {
       const chip = document.createElement("div");
@@ -7339,11 +7760,11 @@ function renderPhoneticChips(charId, targetLang = "vi") {
   } else if (targetLang === "en") {
     if (title) title.textContent = "English Pronunciation & Accent Guide 🇬🇧";
     const enChips = [
-      { text: "Senpai", note: "Upperclassman mentor", sym: "★" },
-      { text: "Hang out", note: "Spend time together", sym: "☕" },
-      { text: "Thoughtful", note: "Caring & considerate", sym: "♡" },
-      { text: "Study notes", note: "Prepared learning materials", sym: "📚" },
-      { text: "Miss you", note: "Affectionate longing", sym: "♥" }
+      { text: "Senpai", note: "Upperclassman mentor", sym: "•" },
+      { text: "Hang out", note: "Spend time together", sym: "•" },
+      { text: "Thoughtful", note: "Caring & considerate", sym: "•" },
+      { text: "Study notes", note: "Prepared learning materials", sym: "•" },
+      { text: "Miss you", note: "Affectionate longing", sym: "•" }
     ];
     enChips.forEach((item) => {
       const chip = document.createElement("div");
@@ -7364,8 +7785,8 @@ function renderPhoneticChips(charId, targetLang = "vi") {
       { text: "Ngã (ã) ~", note: "High broken glottal tone (e.g. dễ thương)", sym: "~" },
       { text: "Nặng (ạ) •", note: "Drop dot tone (e.g. đẹp, học, ạ)", sym: "•" },
       { text: "Ngang (a) —", note: "Level neutral tone (e.g. em, anh, ngoan)", sym: "—" },
-      { text: "nhé / nha", note: "Gentle sweet ending particles", sym: "♡" },
-      { text: "ạ", note: "Polite reverence to seniors", sym: "★" }
+      { text: "nhé / nha", note: "Gentle sweet ending particles", sym: "•" },
+      { text: "ạ", note: "Polite reverence to seniors", sym: "•" }
     ];
     viChips.forEach((item) => {
       const chip = document.createElement("div");
@@ -7405,12 +7826,12 @@ function renderGrammarDrawer(category = "romance") {
 
   body.innerHTML = `
     <div class="grammar-cat-bar">
-      <button class="grammar-cat-btn ${category === 'romance' ? 'active' : ''}" onclick="renderGrammarDrawer('romance')">💖 Romance & Compliments</button>
-      <button class="grammar-cat-btn ${category === 'polite' ? 'active' : ''}" onclick="renderGrammarDrawer('polite')">🙏 Polite Gratitude</button>
-      <button class="grammar-cat-btn ${category === 'hangout' ? 'active' : ''}" onclick="renderGrammarDrawer('hangout')">☕ Dates & Hangouts</button>
-      <button class="grammar-cat-btn ${category === 'teasing' ? 'active' : ''}" onclick="renderGrammarDrawer('teasing')">😏 Playful Teasing</button>
-      <button class="grammar-cat-btn ${category === 'pronouns' ? 'active' : ''}" onclick="renderGrammarDrawer('pronouns')">👥 Pronoun Matrix</button>
-      <button class="grammar-cat-btn ${category === 'particles' ? 'active' : ''}" onclick="renderGrammarDrawer('particles')">💬 Emotion Particles</button>
+      <button class="grammar-cat-btn ${category === 'romance' ? 'active' : ''}" onclick="renderGrammarDrawer('romance')">Romance & Compliments</button>
+      <button class="grammar-cat-btn ${category === 'polite' ? 'active' : ''}" onclick="renderGrammarDrawer('polite')">Polite Gratitude</button>
+      <button class="grammar-cat-btn ${category === 'hangout' ? 'active' : ''}" onclick="renderGrammarDrawer('hangout')">Dates & Hangouts</button>
+      <button class="grammar-cat-btn ${category === 'teasing' ? 'active' : ''}" onclick="renderGrammarDrawer('teasing')">Playful Teasing</button>
+      <button class="grammar-cat-btn ${category === 'pronouns' ? 'active' : ''}" onclick="renderGrammarDrawer('pronouns')">Pronoun Matrix</button>
+      <button class="grammar-cat-btn ${category === 'particles' ? 'active' : ''}" onclick="renderGrammarDrawer('particles')">Emotion Particles</button>
     </div>
     <div id="grammarCardsList" style="display:flex; flex-direction:column; gap:10px; margin-top:8px;"></div>
   `;
@@ -7421,7 +7842,7 @@ function renderGrammarDrawer(category = "romance") {
     list.innerHTML = `
       <div class="grammar-formula-card">
         <div class="grammar-formula-header">
-          <span class="grammar-formula-name">👥 Character Addressing Matrix</span>
+          <span class="grammar-formula-name">Character Addressing Matrix</span>
           <span class="grammar-formula-badge">Essential Culture</span>
         </div>
         <p style="font-size:12px; color:var(--text-muted); line-height:1.4;">
@@ -7456,7 +7877,7 @@ function renderGrammarDrawer(category = "romance") {
     list.innerHTML = `
       <div class="grammar-formula-card">
         <div class="grammar-formula-header">
-          <span class="grammar-formula-name">✨ Sentence-Ending Tone Modifiers</span>
+          <span class="grammar-formula-name">Sentence-Ending Tone Modifiers</span>
           <span class="grammar-formula-badge">Emotional Scaffolding</span>
         </div>
         <div style="display:flex; flex-direction:column; gap:8px; font-size:12px;">
@@ -7611,7 +8032,7 @@ function insertFormulaIntoChat(textToInsert) {
   }
 
   toggleGrammarDrawer(false);
-  triggerHeartBurst("💡 Inserted!");
+  triggerHeartBurst("Inserted!");
 }
 window.insertFormulaIntoChat = insertFormulaIntoChat;
 
@@ -7638,13 +8059,22 @@ function saveLocalState() {
   localStorage.setItem("otome_user_profile", JSON.stringify(userState.userProfile || { name: "MC", pronouns: "she/her", age: "20" }));
   localStorage.setItem("otome_story_progress", JSON.stringify(userState.storyProgress || {}));
   localStorage.setItem("otome_story_char", userState.selectedStoryChar || "ado");
+
+  // Debounced auto-save to Google Cloud if account is connected
+  if (userState.googleAccount && typeof saveUserProgressNow === "function") {
+    const lastSync = localStorage.getItem("otome_google_last_sync");
+    const now = Date.now();
+    if (!lastSync || now - new Date(lastSync).getTime() > 30000) {
+      saveUserProgressNow();
+    }
+  }
 }
 
 // Synchronize User Data to Convex Cloud (`/sync-user`)
 async function syncUserDataToConvex(reason = "") {
   try {
     const statusEl = document.getElementById("convexSyncStatus");
-    if (statusEl) statusEl.textContent = "🟡 Syncing...";
+    if (statusEl) statusEl.textContent = "Syncing...";
 
     const payload = {
       userId: userState.userId,
@@ -7664,15 +8094,15 @@ async function syncUserDataToConvex(reason = "") {
 
     if (res.ok) {
       analyticsData.convexSyncCount++;
-      if (statusEl) statusEl.textContent = "🟢 Convex Synced";
+      if (statusEl) statusEl.textContent = "Convex Synced";
       logDashboardEvent(`Convex [/sync-user] sync successful (${reason}).`);
     } else {
-      if (statusEl) statusEl.textContent = "🔴 Sync Offline";
+      if (statusEl) statusEl.textContent = "Sync Offline";
       logDashboardEvent(`Convex [/sync-user] returned status ${res.status}.`);
     }
   } catch (err) {
     const statusEl = document.getElementById("convexSyncStatus");
-    if (statusEl) statusEl.textContent = "🔴 Sync Offline";
+    if (statusEl) statusEl.textContent = "Sync Offline";
     logDashboardEvent(`Convex [/sync-user] fetch error: ${err.message}`);
   }
 }
@@ -7752,15 +8182,252 @@ async function uploadAnalyticsToConvex() {
     if (res.ok) {
       const json = await res.json();
       analyticsData.convexSyncCount++;
-      if (statusEl) statusEl.textContent = "Status: Telemetry Synced to Convex 🟢";
+      if (statusEl) statusEl.textContent = "Status: Telemetry Synced to Convex";
       logDashboardEvent(`Uploaded analytics payload to Convex: ${JSON.stringify(json.convexData || json)}`);
     } else {
-      if (statusEl) statusEl.textContent = `Status: Failed (${res.status}) 🔴`;
+      if (statusEl) statusEl.textContent = `Status: Failed (${res.status})`;
       logDashboardEvent(`Analytics upload failed with status ${res.status}`);
     }
   } catch (err) {
-    if (statusEl) statusEl.textContent = "Status: Error 🔴";
+    if (statusEl) statusEl.textContent = "Status: Error";
     logDashboardEvent(`Analytics upload error: ${err.message}`);
   }
 }
+
+// ==========================================================================
+// SHOP PAGE & TOKENOMICS ARCHITECTURE (READ-ONLY DISPLAY WITH CURRENCY TOGGLE)
+// ==========================================================================
+let currentShopCurrency = "VND";
+let selectedShopTier = "plus";
+
+const SHOP_CURRENCIES = {
+  VND: {
+    symbol: "₫",
+    label: "VND (₫)",
+    rateFromVnd: 1,
+    formatRetail: (vnd) => vnd === 0 ? "0 ₫" : `${vnd.toLocaleString("vi-VN")} ₫`,
+    formatCost: (vnd) => `~${vnd.toLocaleString("vi-VN")} ₫`,
+    unit: "/ tháng",
+  },
+  USD: {
+    symbol: "$",
+    label: "USD ($)",
+    rateFromVnd: 1 / 25400,
+    formatRetail: (vnd) => {
+      if (vnd === 0) return "$0";
+      if (vnd === 49000) return "$1.99";
+      if (vnd === 149000) return "$5.99";
+      return `$${(vnd / 25400).toFixed(2)}`;
+    },
+    formatCost: (vnd) => {
+      const usd = vnd / 25400;
+      return usd < 0.01 ? `< $0.01` : `~$${usd.toFixed(2)}`;
+    },
+    unit: "/ month",
+  },
+  JPY: {
+    symbol: "¥",
+    label: "JPY (¥)",
+    rateFromVnd: 155 / 25400,
+    formatRetail: (vnd) => {
+      if (vnd === 0) return "¥0";
+      if (vnd === 49000) return "¥300";
+      if (vnd === 149000) return "¥920";
+      return `¥${Math.round((vnd * 155) / 25400)}`;
+    },
+    formatCost: (vnd) => `~¥${Math.round((vnd * 155) / 25400)}`,
+    unit: "/ 月",
+  },
+  EUR: {
+    symbol: "€",
+    label: "EUR (€)",
+    rateFromVnd: 1 / 27500,
+    formatRetail: (vnd) => {
+      if (vnd === 0) return "0 €";
+      if (vnd === 49000) return "€1.89";
+      if (vnd === 149000) return "€5.49";
+      return `€${(vnd / 27500).toFixed(2)}`;
+    },
+    formatCost: (vnd) => {
+      const eur = vnd / 27500;
+      return eur < 0.01 ? `< 0.01 €` : `~${eur.toFixed(2)} €`;
+    },
+    unit: "/ mois",
+  },
+};
+
+function changeShopCurrency(currency) {
+  if (!SHOP_CURRENCIES[currency]) return;
+  currentShopCurrency = currency;
+
+  const selectEl = document.getElementById("shopCurrencySelect");
+  if (selectEl && selectEl.value !== currency) {
+    selectEl.value = currency;
+  }
+
+  document.querySelectorAll(".shop-currency-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.id === `currBtn${currency}`);
+  });
+
+  renderPricingShop();
+}
+window.changeShopCurrency = changeShopCurrency;
+
+function selectShopTier(tierId) {
+  selectedShopTier = tierId;
+  renderPricingShop();
+  if (typeof playCuteSound === "function") {
+    playCuteSound("pop");
+  }
+  // Scroll card into view inside the horizontal flexbox if needed
+  setTimeout(() => {
+    const card = document.querySelector(`.shop-tier-card[data-tier="${tierId}"]`);
+    if (card) {
+      card.scrollIntoView({ behavior: "smooth", inline: "nearest", block: "nearest" });
+    }
+  }, 40);
+}
+window.selectShopTier = selectShopTier;
+
+function renderPricingShop() {
+  const container = document.getElementById("shopContentArea");
+  if (!container) return;
+
+  const curr = SHOP_CURRENCIES[currentShopCurrency] || SHOP_CURRENCIES.VND;
+
+  // Simplified tiers with prominent prices and features
+  const tiers = [
+    {
+      id: "free",
+      icon: "🌱",
+      name: "Free Tier",
+      userType: "Casual Learning",
+      retailVnd: 0,
+      badgeText: "Casual User",
+      badgeClass: "badge-casual",
+      cardClass: "",
+      modelBadge: "Gemma 3 4B + Gemma 4 31B",
+      tagline: "Free forever • No credit card required",
+      limits: [
+        "<strong>20 messages / day</strong> (~600 msgs/mo) using <strong>Gemma 3 4B</strong>",
+        "<strong>2 Media Packs / month</strong> generated with <strong>Gemma 4 31B</strong>",
+        "Standard conversational memory & dialogue buffer",
+        "Single-device local profile backup",
+      ],
+    },
+    {
+      id: "plus",
+      icon: "⭐",
+      name: "Otome Plus Tier",
+      userType: "Most Popular • Student Core",
+      retailVnd: 49000,
+      badgeText: "MOST POPULAR",
+      badgeClass: "badge-popular",
+      cardClass: "featured",
+      modelBadge: "Gemma 3 12B + Gemma 4 31B",
+      tagline: "Billed monthly • Cancel anytime",
+      limits: [
+        "<strong>2,000 messages / month</strong> powered by <strong>Gemma 3 12B</strong>",
+        "<strong>15 Custom Lesson Packs / month</strong> on <strong>Gemma 4 31B</strong>",
+        "Deep emotional character roleplay & dating storylines",
+        "Extended context memory & multi-chapter progression",
+        "Priority AI response speed & zero queue waiting",
+      ],
+    },
+    {
+      id: "vip",
+      icon: "👑",
+      name: "Soulmate VIP Tier",
+      userType: "Unlimited Romance & Media Mastery",
+      retailVnd: 149000,
+      badgeText: "VIP ALL ACCESS",
+      badgeClass: "badge-vip",
+      cardClass: "vip",
+      modelBadge: "Gemma 3 12B Unlimited + 31B",
+      tagline: "Full unlimited access • VIP priority queue",
+      limits: [
+        "<strong>Unlimited messages</strong> (~5,000+ msgs/mo on <strong>Gemma 3 12B</strong>)",
+        "<strong>Unlimited Lesson Packs</strong> (~40+ packs/mo on <strong>Gemma 4 31B</strong>)",
+        "Deepest romantic affinity & personalized memory vectors",
+        "Instant priority queue with fastest LLM response latency",
+        "Premium multi-track listening & pitch accent breakdowns",
+      ],
+    },
+  ];
+
+  let tiersHtml = tiers
+    .map((tier) => {
+      const formattedRetail = curr.formatRetail(tier.retailVnd);
+      const isSelected = tier.id === selectedShopTier;
+
+      return `
+        <div class="shop-tier-card ${tier.cardClass} ${isSelected ? 'active-selected' : ''}" data-tier="${tier.id}" onclick="selectShopTier('${tier.id}')">
+          <div class="shop-tier-top-row">
+            <div class="shop-tier-top-badge ${tier.badgeClass}">
+              <span>${tier.badgeText}</span>
+            </div>
+            ${isSelected ? `
+              <div class="shop-selected-indicator">
+                <span class="material-symbols-outlined" style="font-size:15px;">check_circle</span>
+                <span>Selected</span>
+              </div>
+            ` : `
+              <div class="shop-selected-indicator" style="opacity:0.6; color:var(--text-muted); background:transparent;">
+                <span class="material-symbols-outlined" style="font-size:15px;">radio_button_unchecked</span>
+                <span>Click to view</span>
+              </div>
+            `}
+          </div>
+
+          <div class="shop-tier-header">
+            <h3 class="shop-tier-name">${tier.name}</h3>
+            <span class="shop-tier-sub">${tier.userType}</span>
+          </div>
+
+          <!-- Prominent Price Presentation -->
+          <div class="shop-price-container">
+            <div class="shop-price-val-wrap">
+              <span class="shop-price-number">${formattedRetail}</span>
+              <span class="shop-price-subtext">${curr.unit}</span>
+            </div>
+            <div class="shop-price-tagline">${tier.tagline}</div>
+          </div>
+
+          <!-- Prominent Features List -->
+          <div class="shop-features-wrap">
+            <div class="shop-section-subtitle-sm">Included Features &amp; Quotas</div>
+            <ul class="shop-feature-list">
+              ${tier.limits
+                .map(
+                  (lim) => `
+                <li class="shop-feature-item">
+                  <span class="material-symbols-outlined shop-feature-icon">check_circle</span>
+                  <span>${lim}</span>
+                </li>
+              `
+                )
+                .join("")}
+            </ul>
+          </div>
+
+          <!-- Interactive Plan Switch Button -->
+          <button type="button" class="shop-tier-select-btn" onclick="event.stopPropagation(); selectShopTier('${tier.id}')">
+            <span class="material-symbols-outlined" style="font-size:18px;">${isSelected ? 'verified' : 'swap_horiz'}</span>
+            <span>${isSelected ? 'Active Selection' : `Switch to ${tier.name}`}</span>
+          </button>
+        </div>
+      `;
+    })
+    .join("");
+
+  container.innerHTML = `
+    <!-- Dedicated Flex Box for All Three Subscription Tiers Side-By-Side (No Wrap) -->
+    <div class="subscription-flex-box" id="subscriptionFlexBox">
+      <div class="shop-tiers-flex shop-tiers-grid" id="shopTiersFlex">
+        ${tiersHtml}
+      </div>
+    </div>
+  `;
+}
+window.renderPricingShop = renderPricingShop;
 

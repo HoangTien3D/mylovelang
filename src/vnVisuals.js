@@ -1453,104 +1453,172 @@ export const VN_SPRITES = {
 };
 
 // ==========================================================================
-// 3. SOUND SYNTHESIZER & SPEECH ENGINE
+// 3. SOUND SYNTHESIZER (CUTE RETRO & ANIME OTOME SOUND EFFECTS)
 // ==========================================================================
 let vnAudioCtx = null;
+let lastSoundPlayTime = 0;
 
-export function playVNSound(type = "click") {
+export function playVNSound(type = "tap") {
   try {
+    const nowMs = Date.now();
+    // Guard against rapid duplicate clicks (min 35ms cooldown)
+    if (nowMs - lastSoundPlayTime < 35 && type === "tap") return;
+    lastSoundPlayTime = nowMs;
+
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return;
     if (!vnAudioCtx) vnAudioCtx = new AudioContext();
-    if (vnAudioCtx.state === "suspended") vnAudioCtx.resume();
+    if (vnAudioCtx.state === "suspended") {
+      vnAudioCtx.resume().catch(() => {});
+    }
 
-    const now = vnAudioCtx.currentTime;
+    const t = vnAudioCtx.currentTime;
 
-    if (type === "click" || type === "hover") {
+    if (type === "tap" || type === "click") {
+      // Cute bubbly pop: quick bouncy upward sine sweep
       const osc = vnAudioCtx.createOscillator();
       const gain = vnAudioCtx.createGain();
       osc.type = "sine";
-      osc.frequency.setValueAtTime(type === "hover" ? 440 : 660, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      osc.frequency.setValueAtTime(680, t);
+      osc.frequency.exponentialRampToValueAtTime(1250, t + 0.045);
+      gain.gain.setValueAtTime(0.09, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
       osc.connect(gain);
       gain.connect(vnAudioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.05);
-    } else if (type === "correct" || type === "heart") {
-      // Romantic Chime chord (E5 -> G#5 -> B5 -> E6)
-      const freqs = [659.25, 830.61, 987.77, 1318.51];
+      osc.start(t);
+      osc.stop(t + 0.055);
+    } else if (type === "pop") {
+      // High sweet bubble pop
+      const osc = vnAudioCtx.createOscillator();
+      const gain = vnAudioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(920, t);
+      osc.frequency.exponentialRampToValueAtTime(1580, t + 0.04);
+      gain.gain.setValueAtTime(0.08, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+      osc.connect(gain);
+      gain.connect(vnAudioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.05);
+    } else if (type === "tab") {
+      // Cheerful two-tone cute chime (C6 -> G6)
+      const notes = [1046.5, 1567.98];
+      notes.forEach((freq, i) => {
+        const osc = vnAudioCtx.createOscillator();
+        const gain = vnAudioCtx.createGain();
+        const start = t + i * 0.045;
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0.07, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.12);
+        osc.connect(gain);
+        gain.connect(vnAudioCtx.destination);
+        osc.start(start);
+        osc.stop(start + 0.13);
+      });
+    } else if (type === "send") {
+      // Cute 3-note ascending notification whoosh (F6 -> A6 -> C7)
+      const freqs = [1396.91, 1760.0, 2093.0];
+      freqs.forEach((freq, idx) => {
+        const osc = vnAudioCtx.createOscillator();
+        const gain = vnAudioCtx.createGain();
+        const start = t + idx * 0.035;
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0.06, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.1);
+        osc.connect(gain);
+        gain.connect(vnAudioCtx.destination);
+        osc.start(start);
+        osc.stop(start + 0.11);
+      });
+    } else if (type === "correct" || type === "heart" || type === "sparkle") {
+      // Cute romantic sparkling chime chord (E5 -> G#5 -> B5 -> E6 -> G#6)
+      const freqs = [659.25, 830.61, 987.77, 1318.51, 1661.22];
       freqs.forEach((f, idx) => {
         const osc = vnAudioCtx.createOscillator();
         const gain = vnAudioCtx.createGain();
+        const start = t + idx * 0.05;
         osc.type = "sine";
-        osc.frequency.setValueAtTime(f, now + idx * 0.06);
-        gain.gain.setValueAtTime(0, now + idx * 0.06);
-        gain.gain.linearRampToValueAtTime(0.12, now + idx * 0.06 + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.35);
+        osc.frequency.setValueAtTime(f, start);
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.09, start + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.32);
         osc.connect(gain);
         gain.connect(vnAudioCtx.destination);
-        osc.start(now + idx * 0.06);
-        osc.stop(now + idx * 0.06 + 0.35);
+        osc.start(start);
+        osc.stop(start + 0.33);
       });
+    } else if (type === "dismiss") {
+      // Cute soft descending water drop
+      const osc = vnAudioCtx.createOscillator();
+      const gain = vnAudioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(650, t);
+      osc.frequency.exponentialRampToValueAtTime(420, t + 0.07);
+      gain.gain.setValueAtTime(0.07, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+      osc.connect(gain);
+      gain.connect(vnAudioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.08);
+    } else if (type === "hover") {
+      const osc = vnAudioCtx.createOscillator();
+      const gain = vnAudioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(740, t);
+      gain.gain.setValueAtTime(0.03, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+      osc.connect(gain);
+      gain.connect(vnAudioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.035);
     } else if (type === "wrong") {
       const osc = vnAudioCtx.createOscillator();
       const gain = vnAudioCtx.createGain();
       osc.type = "triangle";
-      osc.frequency.setValueAtTime(220, now);
-      osc.frequency.linearRampToValueAtTime(160, now + 0.2);
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.frequency.setValueAtTime(260, t);
+      osc.frequency.linearRampToValueAtTime(180, t + 0.18);
+      gain.gain.setValueAtTime(0.1, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
       osc.connect(gain);
       gain.connect(vnAudioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.2);
+      osc.start(t);
+      osc.stop(t + 0.19);
     } else if (type === "clear") {
       // Fanfare sequence
-      const notes = [523.25, 659.25, 783.99, 1046.5];
+      const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51];
       notes.forEach((f, i) => {
         const osc = vnAudioCtx.createOscillator();
         const gain = vnAudioCtx.createGain();
+        const start = t + i * 0.1;
         osc.type = "sine";
-        osc.frequency.setValueAtTime(f, now + i * 0.12);
-        gain.gain.setValueAtTime(0.15, now + i * 0.12);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.4);
+        osc.frequency.setValueAtTime(f, start);
+        gain.gain.setValueAtTime(0.11, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
         osc.connect(gain);
         gain.connect(vnAudioCtx.destination);
-        osc.start(now + i * 0.12);
-        osc.stop(now + i * 0.12 + 0.4);
+        osc.start(start);
+        osc.stop(start + 0.36);
       });
     }
   } catch (e) {
-    console.log("Audio synthesis notice:", e);
+    // Audio synthesis fallback
   }
 }
 
-// Speak line using browser speech synthesis
+export const playCuteSound = playVNSound;
+
+// Voice in story mode removed per user request
 export function speakVNLine(text, lang = "vi") {
-  try {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    if (lang === "vi") {
-      utter.lang = "vi-VN";
-    } else if (lang === "ja") {
-      utter.lang = "ja-JP";
-    } else {
-      utter.lang = "en-US";
-    }
-    utter.rate = 0.92;
-    utter.pitch = 1.05;
-    window.speechSynthesis.speak(utter);
-  } catch (e) {
-    console.log("Speech synthesis notice:", e);
-  }
+  // Voice removed in story mode
+  return;
 }
 
 if (typeof window !== "undefined") {
   window.VN_SPRITES = VN_SPRITES;
   window.VN_SCENERY_SVGS = VN_SCENERY_SVGS;
   window.playVNSound = playVNSound;
+  window.playCuteSound = playCuteSound;
   window.speakVNLine = speakVNLine;
 }

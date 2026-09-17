@@ -7,6 +7,12 @@ import chatHandler from "./api/chat";
 import analyticsHandler from "./api/analytics";
 import syncUserHandler from "./api/sync-user";
 import mediaLearningHandler from "./api/media-learning";
+import {
+  getGoogleAuthUrl,
+  handleOAuthCallback,
+  handleSaveProgress,
+  handleLoadProgress,
+} from "./api/auth";
 
 dotenv.config();
 
@@ -39,6 +45,12 @@ async function startServer() {
   app.post("/api/analytics", (req, res) => analyticsHandler(req as any, res as any));
   app.post("/api/sync-user", (req, res) => syncUserHandler(req as any, res as any));
   app.post("/api/media-learning", (req, res) => mediaLearningHandler(req as any, res as any));
+
+  // Google OAuth progress saving routes
+  app.get("/api/auth/google/url", (req, res) => getGoogleAuthUrl(req, res));
+  app.get(["/auth/callback", "/auth/callback/"], (req, res) => handleOAuthCallback(req, res));
+  app.post("/api/auth/save-progress", (req, res) => handleSaveProgress(req, res));
+  app.get("/api/auth/load-progress", (req, res) => handleLoadProgress(req, res));
 
   // Serve custom chibi stickers directly from public/stickers, stickers, or bundle folder
   const baseDir = typeof __dirname !== "undefined" ? __dirname : process.cwd();

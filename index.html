@@ -6,10 +6,10 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Otome Lingua" />
+  <meta name="apple-mobile-web-app-title" content="Mylovelanguage" />
   <meta name="theme-color" content="#455A9F" />
   <meta name="description" content="A Duolingo competitor disguised as an Otome dating simulation with 10-tier difficulty progression, Story Mode date scenarios, OpenKoto AI Media Learning Lab in Cẩm Nang, Gemini API integration, and analytics dashboard." />
-  <meta property="og:title" content="Otome Lingua" />
+  <meta property="og:title" content="Mylovelanguage" />
   <meta property="og:description" content="A Duolingo competitor disguised as an Otome dating simulation with 10-tier difficulty progression, Story Mode date scenarios, OpenKoto AI Media Learning Lab in Cẩm Nang, Gemini API integration, and analytics dashboard." />
   <link rel="manifest" href="/manifest.webmanifest" />
   <title>Otome Lingua</title>
@@ -133,22 +133,22 @@
             </h2>
             <p class="section-subtitle">Swipe or scroll to select a Love Interest and chat</p>
           </div>
-          <div class="messenger-carousel-arrows">
-            <button class="messenger-arrow-btn" id="msgCarouselPrev" type="button" aria-label="Previous character" onclick="scrollMessengerCarousel(-1)">
-              <span class="material-symbols-outlined">chevron_left</span>
-            </button>
-            <button class="messenger-arrow-btn" id="msgCarouselNext" type="button" aria-label="Next character" onclick="scrollMessengerCarousel(1)">
-              <span class="material-symbols-outlined">chevron_right</span>
-            </button>
-          </div>
         </div>
 
         <div class="messenger-carousel-outer">
           <div class="chat-list messenger-carousel" id="chatListContainer">
             <!-- Populated dynamically by app.js -->
           </div>
-          <div class="messenger-carousel-indicators" id="messengerCarouselIndicators">
-            <!-- Dots populated dynamically by app.js -->
+          <div class="messenger-carousel-footer" id="msgCarouselFooter">
+            <button class="messenger-arrow-btn carousel-prev-btn" id="msgCarouselPrev" type="button" aria-label="Previous character" onclick="scrollMessengerCarousel(-1)">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <div class="messenger-carousel-indicators" id="messengerCarouselIndicators">
+              <!-- Dots populated dynamically by app.js -->
+            </div>
+            <button class="messenger-arrow-btn carousel-next-btn" id="msgCarouselNext" type="button" aria-label="Next character" onclick="scrollMessengerCarousel(1)">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
           </div>
         </div>
       </section>
@@ -157,7 +157,7 @@
       <section class="view-section" id="view-story">
         <div class="section-header">
           <h2 class="section-title">Story: Date Scenarios</h2>
-          <p class="section-subtitle">Take part in immersive date challenges. Get 5/7 correct to deepen your romance!</p>
+          <p class="section-subtitle">Take part in Dating challenges. Get 5/7 correct to deepen your romance!</p>
         </div>
 
         <!-- Story Date Scenarios Container (Rendered by app.js) -->
@@ -169,7 +169,7 @@
       <!-- VIEW 3: OPENKOTO AI MEDIA LAB -->
       <section class="view-section" id="view-progress">
         <div class="section-header">
-          <h2 class="section-title" id="guidebookMainTitle">✨ Text/Media Analysis</h2>
+          <h2 class="section-title" id="guidebookMainTitle">Text/Media Analysis</h2>
           <p class="section-subtitle" id="guidebookMainSub">Transform images, audio files, videos, dialogue &amp; lyrics into interactive AI lessons &amp; flashcards</p>
         </div>
 
@@ -197,10 +197,41 @@
           <p class="section-subtitle">Customize theme, language preferences & story progress</p>
         </div>
 
+        <!-- Subscription Setting Group -->
+        <div class="settings-group subscription-group" id="settingsSubscriptionGroup">
+          <div class="settings-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="material-symbols-outlined" style="color:var(--primary-pink); font-size:22px;">card_membership</span>
+              <span id="settingsSubscriptionTitle" style="font-size:16px; font-weight:800;">Subscription</span>
+            </div>
+            <!-- Currency Switcher Dropdown -->
+            <div class="shop-currency-dropdown-wrap">
+              <label for="shopCurrencySelect" class="shop-currency-label">Currency:</label>
+              <div class="shop-currency-select-box">
+                <span class="shop-currency-icon material-symbols-outlined">payments</span>
+                <select id="shopCurrencySelect" class="shop-currency-select" onchange="changeShopCurrency(this.value)" aria-label="Select pricing currency">
+                  <option value="VND" selected>₫ VND</option>
+                  <option value="USD">$ USD</option>
+                  <option value="JPY">¥ JPY</option>
+                  <option value="EUR">€ EUR</option>
+                </select>
+                <span class="shop-currency-arrow material-symbols-outlined">arrow_drop_down</span>
+              </div>
+            </div>
+          </div>
+          <p id="settingsSubscriptionSubtitle" style="font-size:12.5px; color:var(--text-muted); margin-top:4px; margin-bottom:14px;">
+            Subscription tiers, usage quotas &amp; AI learning features
+          </p>
+
+          <div class="shop-content-area" id="shopContentArea">
+            <!-- Populated dynamically by renderPricingShop() in app.js -->
+          </div>
+        </div>
+
         <!-- Unified Language Preferences Panel (Target Learning Language + App UI Language) -->
         <div class="settings-group">
           <div class="settings-label">
-            <span>🌐 Language Preferences</span>
+            <span>Language Preferences</span>
           </div>
           <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:16px;">
             Configure your target learning language and general app interface language.
@@ -210,7 +241,7 @@
           <div class="settings-subgroup">
             <div class="settings-subgroup-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
               <span style="font-size:13.5px; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:6px;">
-                <span>🎯 Target Learning Language</span>
+                <span>Target Learning Language</span>
               </span>
               <span id="targetLangStatusBadge" class="status-chip-badge">🇻🇳 Vietnamese</span>
             </div>
@@ -237,7 +268,7 @@
           <div class="settings-subgroup">
             <div class="settings-subgroup-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
               <span style="font-size:13.5px; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:6px;">
-                <span>📱 App / UI Language (Ngôn ngữ giao diện)</span>
+                <span>App / UI Language (Ngôn ngữ giao diện)</span>
               </span>
             </div>
             <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:10px;">
@@ -260,7 +291,7 @@
         <!-- User Profile Setting (How LIs Address You) -->
         <div class="settings-group">
           <div class="settings-label">
-            <span>👤 User Profile (How LIs Address You)</span>
+            <span>User Profile</span>
             <span id="profileStatusBadge" class="status-chip-badge" style="background:rgba(217,0,87,0.12); color:var(--primary-pink); font-weight:800;">Saved</span>
           </div>
           <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
@@ -292,7 +323,7 @@
               Save Profile Settings
             </button>
             <button class="option-pill-btn" type="button" onclick="openLandingSetupMenu()" style="width:100%; margin-top:4px; border:1.5px solid rgba(217,0,87,0.3); font-weight:800; color:var(--primary-pink); background:rgba(217,0,87,0.06);">
-              ✨ Open Full Language &amp; Character Setup Menu
+              Open Full Language &amp; Character Setup Menu
             </button>
             <div id="profileSavedToast" class="reset-success-toast" style="display:none; background:rgba(16,185,129,0.15); color:var(--accent-emerald); border:1px solid rgba(16,185,129,0.3);">
               ✓ Profile settings updated! Ado, Kou &amp; Ren will now address you accordingly.
@@ -303,7 +334,7 @@
         <!-- Dark Mode / Theme Setting -->
         <div class="settings-group">
           <div class="settings-label">
-            <span>🌙 Appearance &amp; Theme</span>
+            <span>Appearance &amp; Theme</span>
             <span id="themeStatusBadge" class="status-chip-badge">Light Mode</span>
           </div>
           <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
@@ -311,10 +342,10 @@
           </p>
           <div class="setting-options-grid">
             <button type="button" class="option-pill-btn active" id="themeLightBtn" onclick="setAppTheme('light')">
-              ☀️ Light Theme
+              Light Theme
             </button>
             <button type="button" class="option-pill-btn" id="themeDarkBtn" onclick="setAppTheme('dark')">
-              🌙 Dark Twilight Mode
+              Dark Twilight Mode
             </button>
           </div>
         </div>
@@ -322,7 +353,7 @@
         <!-- Mobile Fullscreen & Display Setting -->
         <div class="settings-group">
           <div class="settings-label">
-            <span>📱 Mobile Fullscreen (Hide Browser Bar)</span>
+            <span>Mobile Fullscreen (Hide Browser Bar)</span>
             <span id="fullscreenStatusBadge" class="status-chip-badge">Standard</span>
           </div>
           <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
@@ -333,7 +364,7 @@
             <span id="settingsFullscreenText">Toggle Fullscreen Mode</span>
           </button>
           <div style="margin-top:10px; padding:10px 12px; background:rgba(69,90,159,0.08); border-radius:12px; border:1px solid rgba(69,90,159,0.2); font-size:12px; color:var(--text-main); line-height:1.45;">
-            <strong>💡 iPhone / iPad tip:</strong> In Safari, tap the <strong>Share</strong> button (⎋) and select <strong>"Add to Home Screen"</strong> (⊞) to run Otome Lingua as a standalone full screen app with zero browser bars!
+            <strong>iPhone / iPad tip:</strong> In Safari, tap the <strong>Share</strong> button (⎋) and select <strong>"Add to Home Screen"</strong> (⊞) to run Otome Lingua as a standalone full screen app with zero browser bars!
           </div>
         </div>
 
@@ -342,7 +373,7 @@
         <!-- Hidden Gemini API key block for system compatibility -->
         <div class="settings-group" id="geminiApiKeyGroup" style="display:none;">
           <div class="settings-label">
-            <span>🔑 Gemini API Key</span>
+            <span>Gemini API Key</span>
             <span id="keySavedStatus" style="color:var(--accent-emerald); font-size:11px;">Key Active</span>
           </div>
           <input type="password" id="openRouterKeyInput" class="setting-input" placeholder="sk-or-v1-..." />
@@ -352,7 +383,7 @@
         <!-- Reset Progress Setting -->
         <div class="settings-group danger-group">
           <div class="settings-label" style="color: var(--primary-pink); display:flex; align-items:center; gap:6px;">
-            <span>🔄 Reset Story & Chat Progress</span>
+            <span>Reset Story & Chat Progress</span>
           </div>
           <button class="primary-btn reset-action-btn" id="resetStoryBtn" type="button">
             Reset All Story Progress & Replay
@@ -395,7 +426,7 @@
             <button id="vnExportToMediaLabBtn" type="button" class="vn-romaji-toggle-btn" onclick="exportCurrentChatToMediaLab()" title="Import & Study Chat in AI Media Lab">
               <span class="material-symbols-outlined" style="font-size:17px;">auto_awesome</span>
             </button>
-            <button id="vnMotivatorBtn" type="button" class="vn-romaji-toggle-btn" onclick="requestChibiMotivatorSticker()" title="Ask Love Interest for a Motivator Sticker 💕">
+            <button id="vnMotivatorBtn" type="button" class="vn-romaji-toggle-btn" onclick="requestChibiMotivatorSticker()" title="Ask Love Interest for a Motivator Sticker">
               <span class="material-symbols-outlined" style="font-size:17px; color:var(--primary-pink);">favorite</span>
             </button>
             <button id="vnFullscreenBtn" type="button" class="vn-backlog-btn" title="Fullscreen / Hide Browser Bar" onclick="toggleAppFullscreen()">
@@ -432,7 +463,7 @@
             <!-- Desktop Tap-to-Interact Hint Badge -->
             <div class="vn-stage-desktop-hint" id="vnStageDesktopHint">
               <span class="material-symbols-outlined" style="font-size:15px; color:var(--primary-pink);">favorite</span>
-              <span>Tap avatar to interact 💕</span>
+              <span>Tap avatar to interact</span>
             </div>
           </div>
 
@@ -595,9 +626,10 @@
 
     </main>
 
-    <!-- Bottom Tab Navigation Dock with Separate Circle Home Button -->
+    <!-- Bottom Tab Navigation Dock -->
     <div class="bottom-nav-dock">
-      <button class="nav-circle-home-btn" id="tabBtnLanding" type="button" onclick="returnToLandingPage()" title="Return to Title / Landing Screen" aria-label="Home">
+      <!-- Desktop Separate Circle Home Button (Positioned to the left of the tab bar on desktop) -->
+      <button class="nav-circle-home-btn desktop-home-btn" id="tabBtnLandingDesktop" type="button" onclick="returnToLandingPage()" title="Return to Title / Landing Screen" aria-label="Home">
         <span class="material-symbols-outlined">home</span>
       </button>
       <nav class="tab-bar">
@@ -609,9 +641,13 @@
           <span class="tab-icon material-symbols-outlined">auto_stories</span>
           <span>Story</span>
         </button>
+        <!-- Mobile Centered Circle Home Button (Positioned in the middle of tab bar on mobile) -->
+        <button class="nav-circle-home-btn mobile-home-btn" id="tabBtnLandingMobile" type="button" onclick="returnToLandingPage()" title="Return to Title / Landing Screen" aria-label="Home">
+          <span class="material-symbols-outlined">home</span>
+        </button>
         <button class="tab-btn" data-tab="progress" onclick="switchTab('progress')">
-          <span class="tab-icon material-symbols-outlined">auto_awesome</span>
-          <span>AI Media Lab</span>
+          <span class="tab-icon material-symbols-outlined">menu_book</span>
+          <span>Guidebook</span>
         </button>
         <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">
           <span class="tab-icon material-symbols-outlined">settings</span>
@@ -627,7 +663,7 @@
     <div class="setup-modal-card">
       <div class="setup-modal-header">
         <div class="setup-modal-badge">
-          <span>🌸 STORY &amp; LANGUAGE SETUP</span>
+          <span>STORY &amp; LANGUAGE SETUP</span>
         </div>
         <button type="button" class="setup-modal-close-btn" onclick="closeLandingSetupMenu()" title="Close">
           <span class="material-symbols-outlined" style="font-size:20px;">close</span>
@@ -635,158 +671,283 @@
       </div>
 
       <div class="setup-modal-intro">
-        <h2 class="setup-modal-title">Personalize Your Romance 💕</h2>
+        <h2 class="setup-modal-title">Personalize Your Romance</h2>
       
       </div>
 
       <form id="userProfileForm" onsubmit="event.preventDefault(); saveUserProfileFromModal();">
-        <!-- 1. TARGET LEARNING LANGUAGE -->
-        <div class="setup-field-group">
-          <label class="setup-field-label">
-            <span>🌐 Targeted Language to Learn</span>
-            <span class="setup-required-star">*</span>
-          </label>
-          <div class="setup-target-lang-grid">
-            <button type="button" class="setup-lang-card active" id="modalTargetViBtn" onclick="selectModalTargetLang('vi')">
-              <span class="setup-lang-flag">🇻🇳</span>
-              <div class="setup-lang-info">
-                <span class="setup-lang-name">Tiếng Việt (Vietnamese)</span>
-              </div>
-              <span class="setup-lang-check">✓</span>
-            </button>
-            <button type="button" class="setup-lang-card" id="modalTargetEnBtn" onclick="selectModalTargetLang('en')">
-              <span class="setup-lang-flag">🇬🇧</span>
-              <div class="setup-lang-info">
-                <span class="setup-lang-name">English</span>
-              </div>
-              <span class="setup-lang-check">✓</span>
-            </button>
-            <button type="button" class="setup-lang-card" id="modalTargetJaBtn" onclick="selectModalTargetLang('ja')">
-              <span class="setup-lang-flag">🇯🇵</span>
-              <div class="setup-lang-info">
-                <span class="setup-lang-name">日本語 (Japanese)</span>
-              </div>
-              <span class="setup-lang-check">✓</span>
-            </button>
+        <!-- Wizard Step Progress Indicator -->
+        <div class="setup-wizard-progress" id="setupWizardProgress">
+          <div class="setup-wizard-step-node active" id="setupStepNode1" onclick="goToSetupStep(1)">
+            <span class="setup-wizard-step-num">1</span>
+            <span class="setup-wizard-step-title">Language</span>
+          </div>
+          <div class="setup-wizard-progress-bar">
+            <div class="setup-wizard-progress-fill" id="setupWizardProgressFill"></div>
+          </div>
+          <div class="setup-wizard-step-node" id="setupStepNode2" onclick="goToSetupStep(2)">
+            <span class="setup-wizard-step-num">2</span>
+            <span class="setup-wizard-step-title">Profile</span>
+          </div>
+          <div class="setup-wizard-progress-bar"></div>
+          <div class="setup-wizard-step-node" id="setupStepNode3" onclick="goToSetupStep(3)">
+            <span class="setup-wizard-step-num">3</span>
+            <span class="setup-wizard-step-title">Save Data</span>
           </div>
         </div>
 
-        <!-- 2. NAME / NICKNAME -->
-        <div class="setup-field-group">
-          <label for="modalUserName" class="setup-field-label">
-            <span>👤 Your Name / Nickname</span>
-            <span class="setup-required-star">*</span>
-          </label>
-          <div class="setup-input-wrapper">
-            <input type="text" id="modalUserName" class="setup-input" placeholder="e.g. Alex, MC, Linh..." value="MC" required />
-          </div>
-        </div>
-
-        <!-- 3. PRONOUNS & AGE (2-COLUMN GRID) -->
-        <div class="setup-two-col-grid">
-          <div class="setup-field-group">
-            <label for="modalUserPronouns" class="setup-field-label">
-              <span>✨ Pronouns</span>
-            </label>
-            <select id="modalUserPronouns" class="setup-select">
-              <option value="she/her">she / her</option>
-              <option value="he/him">he / him</option>
-              <option value="they/them">they / them</option>
-              <option value="she/they">she / they</option>
-              <option value="he/they">he / they</option>
-              <option value="any/all">any / all</option>
-            </select>
+        <!-- PAGE 1: TARGET LANGUAGE SELECTION -->
+        <div class="setup-page-panel active" id="setupPage1">
+          <div class="setup-page-heading">
+            <h3 class="setup-page-title">Select Target Language</h3>
+            <p class="setup-page-subtitle">Choose the language you wish to learn and practice during your romance story.</p>
           </div>
 
           <div class="setup-field-group">
-            <label for="modalUserAge" class="setup-field-label">
-              <span>🎂 Age</span>
+            <label class="setup-field-label">
+              <span>🌐 Targeted Language to Learn</span>
+              <span class="setup-required-star">*</span>
             </label>
-            <input type="number" id="modalUserAge" class="setup-input" placeholder="e.g. 20" value="20" min="13" max="100" />
+            <div class="setup-target-lang-grid">
+              <button type="button" class="setup-lang-card active" id="modalTargetViBtn" onclick="selectModalTargetLang('vi')">
+                <span class="setup-lang-flag">🇻🇳</span>
+                <div class="setup-lang-info">
+                  <span class="setup-lang-name">Tiếng Việt (Vietnamese)</span>
+                </div>
+                <span class="setup-lang-check">✓</span>
+              </button>
+              <button type="button" class="setup-lang-card" id="modalTargetEnBtn" onclick="selectModalTargetLang('en')">
+                <span class="setup-lang-flag">🇬🇧</span>
+                <div class="setup-lang-info">
+                  <span class="setup-lang-name">English</span>
+                </div>
+                <span class="setup-lang-check">✓</span>
+              </button>
+              <button type="button" class="setup-lang-card" id="modalTargetJaBtn" onclick="selectModalTargetLang('ja')">
+                <span class="setup-lang-flag">🇯🇵</span>
+                <div class="setup-lang-info">
+                  <span class="setup-lang-name">日本語 (Japanese)</span>
+                </div>
+                <span class="setup-lang-check">✓</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="setup-page-nav-actions">
+            <button type="button" class="setup-nav-btn setup-next-btn" onclick="goToSetupStep(2)">
+              <span>Next: Name &amp; Pronouns</span>
+              <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+            </button>
           </div>
         </div>
 
-        <!-- MOBILE ADD TO HOMESCREEN ACCORDION/BANNER (VISIBLE ONLY ON MOBILE/TABLET) -->
-        <div class="mobile-install-guide" id="mobileInstallGuide">
-          <div class="mobile-install-header" onclick="toggleMobileInstallAccordion()">
-            <div class="mobile-install-title-group">
-              <span class="mobile-install-icon">📲</span>
-              <div>
-                <div class="mobile-install-heading">Install Fullscreen Web App</div>
-                <div class="mobile-install-subheading">Hide browser bars for an authentic otome visual novel</div>
-              </div>
-            </div>
-            <span class="material-symbols-outlined mobile-install-arrow" id="mobileInstallArrow">expand_more</span>
+        <!-- PAGE 2: NAME & PRONOUNS -->
+        <div class="setup-page-panel" id="setupPage2">
+          <div class="setup-page-heading">
+            <h3 class="setup-page-title">Name &amp; Pronouns</h3>
+            <p class="setup-page-subtitle">Personalize how love interests and characters address you throughout the story.</p>
           </div>
 
-          <div class="mobile-install-body" id="mobileInstallBody">
-            <!-- OS Platform Tabs -->
-            <div class="install-platform-tabs">
-              <button type="button" class="install-tab-btn active" id="installTabIosBtn" onclick="switchInstallPlatformTab('ios')">
-                <span>🍎 iOS (Safari)</span>
-              </button>
-              <button type="button" class="install-tab-btn" id="installTabAndroidBtn" onclick="switchInstallPlatformTab('android')">
-                <span>🤖 Android (Chrome)</span>
-              </button>
+          <!-- Name / Nickname -->
+          <div class="setup-field-group">
+            <label for="modalUserName" class="setup-field-label">
+              <span>Your Name / Nickname</span>
+              <span class="setup-required-star">*</span>
+            </label>
+            <div class="setup-input-wrapper">
+              <input type="text" id="modalUserName" class="setup-input" placeholder="e.g. Alex, MC, Linh..." value="MC" required />
+            </div>
+          </div>
+
+          <!-- Pronouns & Age (2-Column Grid) -->
+          <div class="setup-two-col-grid">
+            <div class="setup-field-group">
+              <label for="modalUserPronouns" class="setup-field-label">
+                <span>Pronouns</span>
+              </label>
+              <select id="modalUserPronouns" class="setup-select">
+                <option value="she/her">she / her</option>
+                <option value="he/him">he / him</option>
+                <option value="they/them">they / them</option>
+                <option value="she/they">she / they</option>
+                <option value="he/they">he / they</option>
+                <option value="any/all">any / all</option>
+              </select>
             </div>
 
-            <!-- iOS Instructions Panel -->
-            <div class="install-panel active" id="installPanelIos">
-              <div class="install-step-item">
-                <div class="install-step-num">1</div>
-                <div class="install-step-text">Open this page in <strong>Safari</strong> on your iPhone or iPad.</div>
-              </div>
-              <div class="install-step-item">
-                <div class="install-step-num">2</div>
-                <div class="install-step-text">Tap the <strong>Share</strong> button <span class="install-badge-icon">⎋</span> at the bottom or top of Safari.</div>
-              </div>
-              <div class="install-step-item">
-                <div class="install-step-num">3</div>
-                <div class="install-step-text">Scroll down and tap <strong>"Add to Home Screen"</strong> <span class="install-badge-icon">⊞</span>, then tap <strong>Add</strong>.</div>
-              </div>
-              <div class="install-step-item">
-                <div class="install-step-num">4</div>
-                <div class="install-step-text">Launch from your Home Screen icon to enjoy seamless full-screen gameplay without address bars!</div>
-              </div>
+            <div class="setup-field-group">
+              <label for="modalUserAge" class="setup-field-label">
+                <span>Age</span>
+              </label>
+              <input type="number" id="modalUserAge" class="setup-input" placeholder="e.g. 20" value="20" min="13" max="100" />
             </div>
+          </div>
 
-            <!-- Android Instructions Panel -->
-            <div class="install-panel" id="installPanelAndroid">
-              <div class="install-step-item">
-                <div class="install-step-num">1</div>
-                <div class="install-step-text">Open this page in <strong>Chrome</strong> or your mobile browser.</div>
-              </div>
-              <div class="install-step-item">
-                <div class="install-step-num">2</div>
-                <div class="install-step-text">Tap the three vertical dots menu <span class="install-badge-icon">⋮</span> in the top-right corner.</div>
-              </div>
-              <div class="install-step-item">
-                <div class="install-step-num">3</div>
-                <div class="install-step-text">Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</div>
-              </div>
-              <div class="install-step-item">
-                <div class="install-step-num">4</div>
-                <div class="install-step-text">Confirm installation and launch from your app drawer for true edge-to-edge full screen!</div>
-              </div>
-            </div>
+          <div class="setup-page-nav-actions setup-two-btn-row">
+            <button type="button" class="setup-nav-btn setup-back-btn" onclick="goToSetupStep(1)">
+              <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+              <span>Back</span>
+            </button>
+            <button type="button" class="setup-nav-btn setup-next-btn" onclick="goToSetupStep(3)">
+              <span>Next: Save Progress</span>
+              <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+            </button>
           </div>
         </div>
 
-        <!-- ACTION BUTTONS -->
-        <div class="setup-actions-group">
-          <button type="submit" class="setup-start-btn" id="saveProfileModalBtn">
-            <span>Start Story</span>
-            <span class="material-symbols-outlined" style="font-size:20px;">favorite</span>
-          </button>
+        <!-- PAGE 3: SAVE PROGRESS DATA -->
+        <div class="setup-page-panel" id="setupPage3">
+          <div class="setup-page-heading">
+            <h3 class="setup-page-title">Save Progress Data</h3>
+            <p class="setup-page-subtitle">Choose where to store your story choices, relationship stats, and vocabulary progress.</p>
+          </div>
+
+          <div class="setup-field-group setup-storage-group" id="setupStorageGroup">
+            <div class="setup-storage-cards-stack">
+              <!-- Option 1: Local Storage & Start Story -->
+              <div class="setup-google-card setup-local-card" id="setupLocalCard">
+                <div class="setup-storage-card-header">
+                  <div class="setup-storage-title-wrap">
+                    <span class="setup-storage-title">📱 Local Device Storage</span>
+                    <span class="setup-optional-badge badge-local-storage">OFFLINE</span>
+                  </div>
+                </div>
+                
+                <button type="submit" class="google-oauth-btn setup-local-start-btn" id="saveProfileModalBtn">
+                  <span class="material-symbols-outlined" style="font-size:20px; color:var(--primary-pink);">storage</span>
+                  <span class="setup-local-btn-text">Start Story</span>
+                  <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary-pink);">favorite</span>
+                </button>
+              </div>
+
+              <!-- Option 2: Google Sign-On OAuth Cloud Save -->
+              <div class="setup-google-card" id="setupGoogleCard">
+                <div class="setup-storage-card-header">
+                  <div class="setup-storage-title-wrap">
+                    <span class="setup-storage-title">☁️ Cloud Save &amp; Google Sign-In</span>
+                    <span class="setup-optional-badge">ONLINE</span>
+                  </div>
+                </div>
+
+                <!-- Unlinked State -->
+                <div id="setupGoogleUnlinked" class="setup-google-state">
+                  <p class="setup-google-desc">
+                    Sign in with Google to automatically backup your progress
+                  </p>
+                  <button type="button" class="google-oauth-btn" id="setupGoogleSignInBtn" onclick="handleGoogleSignInClick()">
+                    <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    </svg>
+                    <span id="setupGoogleBtnText">Save Progress with Google</span>
+                  </button>
+                </div>
+
+                <!-- Linked State -->
+                <div id="setupGoogleLinked" class="setup-google-state" style="display:none;">
+                  <div class="setup-google-user-row">
+                    <div class="setup-google-avatar-wrap">
+                      <img id="setupGoogleUserAvatar" src="" alt="Google Profile" class="setup-google-avatar" />
+                      <span class="setup-google-avatar-badge">✓</span>
+                    </div>
+                    <div class="setup-google-user-details">
+                      <div class="setup-google-user-name" id="setupGoogleUserName">Google User</div>
+                      <div class="setup-google-user-email" id="setupGoogleUserEmail">user@gmail.com</div>
+                      <div class="setup-google-sync-tag">
+                        <span class="material-symbols-outlined" style="font-size:14px; color:#10b981;">cloud_done</span>
+                        <span id="setupGoogleSyncTime">Progress Synced</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="setup-google-card-actions">
+                    <button type="button" class="setup-google-sync-btn" onclick="saveUserProgressNow()">
+                      <span class="material-symbols-outlined" style="font-size:16px;">sync</span>
+                      <span>Sync Progress Now</span>
+                    </button>
+                    <button type="button" class="setup-google-disconnect-btn" onclick="handleGoogleSignOut()">
+                      <span>Disconnect</span>
+                    </button>
+                  </div>
+                  <button type="button" class="google-oauth-btn setup-google-start-btn" onclick="saveUserProfileFromModal()">
+                    <span class="material-symbols-outlined" style="font-size:18px; color:#4285F4;">cloud_done</span>
+                    <span>Start Story with Google Save</span>
+                    <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary-pink);">favorite</span>
+                  </button>
+                </div>
+
+                <div id="setupGoogleStatusMessage" class="setup-google-status" style="display:none;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Back Button for Step 3 -->
+          <div class="setup-page-nav-actions" style="margin-top: 14px;">
+            <button type="button" class="setup-nav-btn setup-back-btn" onclick="goToSetupStep(2)">
+              <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+              <span>Back to Name &amp; Pronouns</span>
+            </button>
+          </div>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- GOOGLE OAUTH CONFIGURATION & ACCOUNT CONNECT MODAL -->
+  <div id="googleOAuthModal" class="setup-modal-backdrop" style="display:none; z-index:1100;">
+    <div class="setup-modal-card" style="max-width:440px;">
+      <div class="setup-modal-header">
+        <div class="setup-modal-badge" style="background:rgba(66,133,244,0.15); color:#4285F4; border-color:rgba(66,133,244,0.3);">
+          <span>GOOGLE ACCOUNT SYNC</span>
+        </div>
+        <button type="button" class="setup-modal-close-btn" onclick="closeGoogleOAuthModal()">
+          <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+        </button>
+      </div>
+
+      <div class="setup-modal-intro">
+        <h3 class="setup-modal-title" style="font-size:18px;">Connect Google Account</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">
+          Link your Google Account to synchronize your romance stats, affection, and chat progress.
+        </p>
+      </div>
+
+      <div class="oauth-setup-notice" id="oauthSetupNotice" style="display:none; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:12px; padding:12px; margin-bottom:14px; font-size:12px; color:var(--text-main);">
+        <strong>⚙️ Real Google OAuth Credentials:</strong>
+        <p style="margin:4px 0 0 0; color:var(--text-muted);">
+          To enable live Google popups, configure <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code> in environment settings.
+          <br/><span style="display:inline-block; margin-top:4px;">Authorized Callback URI:</span>
+          <br/><code style="word-break:break-all; font-size:11px; color:#4285F4;" id="oauthCallbackUrlDisplay">https://ais-dev-n274nxwzdnva4ja6cpeitd-577346821946.asia-southeast1.run.app/auth/callback</code>
+        </p>
+      </div>
+
+      <div class="setup-field-group">
+        <label for="googleManualEmail" class="setup-field-label">
+          <span>Google Email Address</span>
+        </label>
+        <input type="email" id="googleManualEmail" class="setup-input" placeholder="e.g. you@gmail.com" />
+      </div>
+
+      <div class="setup-field-group">
+        <label for="googleManualName" class="setup-field-label">
+          <span>Your Display Name</span>
+        </label>
+        <input type="text" id="googleManualName" class="setup-input" placeholder="e.g. Alex" />
+      </div>
+
+      <div class="setup-actions-group" style="margin-top:14px;">
+        <button type="button" class="primary-btn" onclick="confirmGoogleAccountLink()" style="width:100%;">
+          <span>Link Account &amp; Save Progress</span>
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- API KEY INITIAL SETUP MODAL (API Key Required for LLM functionality) -->
   <div id="apiKeyModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(10,5,20,0.88); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:1000; padding:20px;">
     <div style="background:var(--bg-card); border:1px solid var(--primary-pink); border-radius:24px; padding:24px; max-width:400px; width:100%; box-shadow:0 10px 40px rgba(255,51,119,0.3);">
-      <h2 style="font-size:20px; font-weight:800; color:#fff; margin-bottom:8px;">Welcome to Otome Lingua! ❤️</h2>
+      <h2 style="font-size:20px; font-weight:800; color:#fff; margin-bottom:8px;">Welcome to Otome Lingua!</h2>
       <p style="font-size:13px; color:var(--text-muted); line-height:1.4; margin-bottom:16px;">
         An <strong>OpenRouter API Key</strong> is <strong>required</strong> to activate real-time Gemma 4 LLM responses for Vietnamese and English romance chats. Enter your key below (saved securely in <code>localStorage</code>).
       </p>
@@ -804,7 +965,7 @@
   <div class="secret-dashboard-overlay" id="secretDashboard">
     <div class="dash-header">
       <div class="dash-title">
-        <span>⚡ MLL TELEMETRY & MANAGEMENT DASHBOARD</span>
+        <span>MLL TELEMETRY & MANAGEMENT DASHBOARD</span>
       </div>
       <button id="closeDashBtn" style="background:transparent; border:1px solid #00ffcc; color:#00ffcc; padding:4px 12px; border-radius:6px; cursor:pointer; font-family:monospace;">
         CLOSE [ESC]
@@ -844,7 +1005,7 @@
 
     <div style="margin-bottom:20px; display:flex; gap:12px; align-items:center;">
       <button id="dashUploadBtn" style="background:#00ffcc; color:#000; border:none; padding:12px 20px; border-radius:8px; font-weight:bold; font-family:monospace; cursor:pointer; box-shadow:0 0 15px #00ffcc;">
-        🚀 Upload Analytics to Convex (`/analytics`)
+        Upload Analytics to Convex (`/analytics`)
       </button>
       <span id="dashUploadStatus" style="font-size:12px; color:#fff;">Status: Ready</span>
     </div>
