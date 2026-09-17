@@ -8,6 +8,9 @@
 import { inject } from "@vercel/analytics";
 import { STORY_SCENARIOS, getScenarioQuestions } from "./storyData.js";
 import { VN_SCENERY_SVGS, VN_SPRITES, playVNSound, playCuteSound, speakVNLine } from "./src/vnVisuals.js";
+if (typeof window !== "undefined") {
+  window.VN_SPRITES = VN_SPRITES;
+}
 
 // Initialize Vercel Analytics
 try {
@@ -2682,6 +2685,64 @@ function logDashboardEvent(msg) {
   box.scrollTop = box.scrollHeight;
 }
 
+// Character Emotions Definition for Desktop Hover Showcase
+const CHARACTER_EMOTIONS = [
+  { id: "normal", name: "Normal", vi: "Bình thường", emoji: "😌", desc: "Composed & calm" },
+  { id: "happy", name: "Happy", vi: "Vui vẻ", emoji: "😊", desc: "Radiant & warm smile" },
+  { id: "blush", name: "Blush", vi: "Ngại ngùng", emoji: "😳", desc: "Flustered red cheeks" },
+  { id: "pout", name: "Pout", vi: "Dỗi hờn", emoji: "🥺", desc: "Cute sulking pout" },
+  { id: "angry", name: "Angry", vi: "Tức giận", emoji: "😤", desc: "Stern tsundere scowl" },
+  { id: "sad", name: "Sad", vi: "Buồn bã", emoji: "😢", desc: "Soft & vulnerable" },
+  { id: "fear", name: "Shocked", vi: "Kinh ngạc", emoji: "😲", desc: "Surprised reaction" },
+  { id: "idle", name: "Idle", vi: "Thảnh thơi", emoji: "☕", desc: "Relaxed posture" },
+];
+
+window.previewCharEmotion = function(charId, emotionId, name, vi, desc) {
+  const heroImg = document.getElementById(`cardHeroImg-${charId}`);
+  if (heroImg && window.VN_SPRITES && window.VN_SPRITES[charId]) {
+    const sprite = window.VN_SPRITES[charId][emotionId] || window.VN_SPRITES[charId].normal;
+    if (sprite) {
+      heroImg.src = sprite;
+    }
+  }
+  const badge = document.getElementById(`activeEmotionBadge-${charId}`);
+  if (badge) {
+    badge.textContent = `${name} (${vi})`;
+  }
+  const overlay = document.getElementById(`hoverOverlay-${charId}`);
+  if (overlay) {
+    overlay.querySelectorAll(".desktop-emotion-chip").forEach(btn => {
+      if (btn.getAttribute("data-emotion") === emotionId) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+  }
+};
+
+window.resetCardEmotion = function(charId) {
+  const heroImg = document.getElementById(`cardHeroImg-${charId}`);
+  const char = (typeof CHARACTERS !== "undefined" && CHARACTERS[charId]) || (typeof BASE_CHARACTERS !== "undefined" && BASE_CHARACTERS[charId]);
+  if (heroImg && char) {
+    heroImg.src = char.avatar;
+  }
+  const badge = document.getElementById(`activeEmotionBadge-${charId}`);
+  if (badge) {
+    badge.textContent = "😌 Normal (Bình thường)";
+  }
+  const overlay = document.getElementById(`hoverOverlay-${charId}`);
+  if (overlay) {
+    overlay.querySelectorAll(".desktop-emotion-chip").forEach(btn => {
+      if (btn.getAttribute("data-emotion") === "normal") {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+  }
+};
+
 // Render Chatrooms List Carousel
 function renderChatList() {
   const container = document.getElementById("chatListContainer");
@@ -2709,13 +2770,34 @@ function renderChatList() {
     }
 
     let pfpCoverHtml = `
-      <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.png';" />
+      <img src="${char.avatar}" id="cardHeroImg-${char.id}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.png';" />
     `;
+
+    // Generate emotion preview chips for desktop hover overlay
+    const emotionsHtml = CHARACTER_EMOTIONS.map(em => {
+      const spriteUrl = (window.VN_SPRITES && window.VN_SPRITES[char.id] && window.VN_SPRITES[char.id][em.id]) || char.avatar;
+      return `
+        <button
+          type="button"
+          class="desktop-emotion-chip ${em.id === 'normal' ? 'active' : ''}"
+          data-emotion="${em.id}"
+          title="${em.name} (${em.vi}) - ${em.desc}"
+          onmouseenter="previewCharEmotion('${char.id}', '${em.id}', '${em.name}', '${em.vi}', '${em.desc}')"
+          onclick="event.stopPropagation(); previewCharEmotion('${char.id}', '${em.id}', '${em.name}', '${em.vi}', '${em.desc}')"
+        >
+          <span class="desktop-emotion-chip-circle">
+            <img src="${spriteUrl}" alt="${em.name}" />
+          </span>
+          <span class="desktop-emotion-chip-text">${em.emoji} ${em.name}</span>
+        </button>
+      `;
+    }).join("");
 
     const card = document.createElement("div");
     card.className = "chat-card square-char-card";
     card.setAttribute("data-card-index", idx);
     card.onclick = () => openChatroom(char.id);
+    card.onmouseleave = () => window.resetCardEmotion(char.id);
 
     card.innerHTML = `
       <div class="square-pfp-bg-wrap">
@@ -2751,6 +2833,59 @@ function renderChatList() {
             <span class="material-symbols-outlined">chat</span>
           </button>
         </div>
+      </div>
+
+      <!-- Desktop Hover Feature: Emotions Showcase & Quick Character Intro -->
+      <div class="desktop-char-hover-overlay" id="hoverOverlay-${char.id}">
+        <div class="desktop-overlay-header">
+          <div class="desktop-overlay-profile">
+            <img src="${char.avatar}" class="desktop-overlay-pfp" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.png';" />
+            <div class="desktop-overlay-titles">
+              <div class="desktop-overlay-name-line">
+                <span class="desktop-overlay-char-name">${char.name}</span>
+                <span class="desktop-overlay-flag">${char.flag}</span>
+              </div>
+              <span class="desktop-overlay-archetype">${char.archetype || char.role}</span>
+            </div>
+          </div>
+          <span class="desktop-overlay-aff-chip relationship-milestone-badge ${relInfo.badgeClass}">
+            <span class="material-symbols-outlined" style="font-size:12px; color:var(--primary-pink);">favorite</span>
+            <span>${relInfo.icon} ${affectionPct}%</span>
+          </span>
+        </div>
+
+        <div class="desktop-overlay-intro-card">
+          <div class="desktop-overlay-intro-label">
+            <span class="material-symbols-outlined" style="font-size:13px; color:#f472b6;">auto_awesome</span>
+            <span>Quick Introduction</span>
+          </div>
+          <p class="desktop-overlay-intro-bio">${char.personality || char.role}</p>
+          <div class="desktop-overlay-voice-chip">
+            <span class="material-symbols-outlined" style="font-size:12px; color:#a78bfa;">record_voice_over</span>
+            <span>${char.sampleVoice || 'Anime Character Voice Tone'}</span>
+          </div>
+        </div>
+
+        <div class="desktop-overlay-emotions-box">
+          <div class="desktop-overlay-emotions-bar">
+            <div class="desktop-overlay-emotions-label">
+              <span class="material-symbols-outlined" style="font-size:13px; color:#fbbf24;">mood</span>
+              <span>All Expressions (${CHARACTER_EMOTIONS.length})</span>
+            </div>
+            <span class="desktop-overlay-emotion-indicator" id="activeEmotionBadge-${char.id}">
+              😌 Normal (Bình thường)
+            </span>
+          </div>
+          <div class="desktop-overlay-emotions-grid">
+            ${emotionsHtml}
+          </div>
+        </div>
+
+        <button class="desktop-overlay-chat-btn" type="button" onclick="event.stopPropagation(); openChatroom('${char.id}');">
+          <span class="material-symbols-outlined" style="font-size:15px;">chat</span>
+          <span>Start Chatting with ${char.name}</span>
+          <span class="material-symbols-outlined" style="font-size:14px; margin-left:auto;">arrow_forward</span>
+        </button>
       </div>
     `;
 
@@ -2818,10 +2953,18 @@ function renderChatList() {
     }
   }
 
-  // Bind scroll event to update indicators
+  // Bind scroll event to update indicators and wheel scrolling
   if (!container.dataset.scrollBound) {
     container.dataset.scrollBound = "true";
     container.addEventListener("scroll", updateMessengerCarouselIndicators, { passive: true });
+
+    // Smooth horizontal wheel scrolling support on desktop
+    container.addEventListener("wheel", (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && container.scrollWidth > container.clientWidth) {
+        e.preventDefault();
+        container.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
   }
 
   // Initial indicator update
