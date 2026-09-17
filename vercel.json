@@ -3,6 +3,30 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/auth/callback",
+      "destination": "/api/auth?subpath=callback"
+    },
+    {
+      "source": "/auth/callback/",
+      "destination": "/api/auth?subpath=callback"
+    },
+    {
+      "source": "/api/auth/google/url",
+      "destination": "/api/auth?subpath=google/url"
+    },
+    {
+      "source": "/api/auth/save-progress",
+      "destination": "/api/auth?subpath=save-progress"
+    },
+    {
+      "source": "/api/auth/load-progress",
+      "destination": "/api/auth?subpath=load-progress"
+    },
+    {
+      "source": "/api/auth/:subpath*",
+      "destination": "/api/auth?subpath=:subpath*"
+    },
+    {
       "source": "/((?!api/.*).*)",
       "destination": "/index.html"
     }

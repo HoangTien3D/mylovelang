@@ -1102,8 +1102,9 @@ function openGoogleOAuthModal(redirectUri, devUrl, sharedUrl) {
   const noticeEl = document.getElementById("oauthSetupNotice");
   const urlDisplay = document.getElementById("oauthCallbackUrlDisplay");
   if (noticeEl) noticeEl.style.display = "block";
-  if (urlDisplay && (redirectUri || devUrl)) {
-    urlDisplay.textContent = redirectUri || devUrl;
+  if (urlDisplay) {
+    const activeCallbackUrl = redirectUri || `${window.location.origin}/auth/callback`;
+    urlDisplay.textContent = activeCallbackUrl;
   }
 
   const emailInput = document.getElementById("googleManualEmail");

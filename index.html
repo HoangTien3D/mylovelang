@@ -914,11 +914,14 @@
       </div>
 
       <div class="oauth-setup-notice" id="oauthSetupNotice" style="display:none; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:12px; padding:12px; margin-bottom:14px; font-size:12px; color:var(--text-main);">
-        <strong>⚙️ Real Google OAuth Credentials:</strong>
+        <strong>⚙️ Google OAuth Credentials Setup:</strong>
         <p style="margin:4px 0 0 0; color:var(--text-muted);">
-          To enable live Google popups, configure <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code> in environment settings.
-          <br/><span style="display:inline-block; margin-top:4px;">Authorized Callback URI:</span>
-          <br/><code style="word-break:break-all; font-size:11px; color:#4285F4;" id="oauthCallbackUrlDisplay">https://ais-dev-n274nxwzdnva4ja6cpeitd-577346821946.asia-southeast1.run.app/auth/callback</code>
+          To enable live Google login, set <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code> in your environment settings.
+          <br/><span style="display:inline-block; margin-top:6px; font-weight:600;">Authorized Redirect URI (add to Google Cloud Console):</span>
+          <div style="display:flex; align-items:center; gap:6px; margin-top:4px; background:rgba(0,0,0,0.2); padding:6px 10px; border-radius:8px;">
+            <code style="word-break:break-all; font-size:11.5px; color:#60a5fa; flex:1;" id="oauthCallbackUrlDisplay">/auth/callback</code>
+            <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('oauthCallbackUrlDisplay').textContent); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy', 1500);" style="background:#3b82f6; color:#fff; border:none; border-radius:6px; padding:3px 8px; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;">Copy</button>
+          </div>
         </p>
       </div>
 
