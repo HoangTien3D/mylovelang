@@ -8456,7 +8456,6 @@ function renderPricingShop() {
         "<strong>20 messages / day</strong> (~600 msgs/mo) using <strong>Gemma 3 4B</strong>",
         "<strong>2 Media Packs / month</strong> generated with <strong>Gemma 4 31B</strong>",
         "Standard conversational memory & dialogue buffer",
-        "Single-device local profile backup",
       ],
     },
     {
@@ -8475,7 +8474,6 @@ function renderPricingShop() {
         "<strong>15 Custom Lesson Packs / month</strong> on <strong>Gemma 4 31B</strong>",
         "Deep emotional character roleplay & dating storylines",
         "Extended context memory & multi-chapter progression",
-        "Priority AI response speed & zero queue waiting",
       ],
     },
     {
@@ -8493,8 +8491,6 @@ function renderPricingShop() {
         "<strong>Unlimited messages</strong> (~5,000+ msgs/mo on <strong>Gemma 3 12B</strong>)",
         "<strong>Unlimited Lesson Packs</strong> (~40+ packs/mo on <strong>Gemma 4 31B</strong>)",
         "Deepest romantic affinity & personalized memory vectors",
-        "Instant priority queue with fastest LLM response latency",
-        "Premium multi-track listening & pitch accent breakdowns",
       ],
     },
   ];
