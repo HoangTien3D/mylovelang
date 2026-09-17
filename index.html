@@ -12,7 +12,7 @@
   <meta property="og:title" content="Mylovelanguage" />
   <meta property="og:description" content="A Duolingo competitor disguised as an Otome dating simulation with 10-tier difficulty progression, Story Mode date scenarios, OpenKoto AI Media Learning Lab in Cẩm Nang, Gemini API integration, and analytics dashboard." />
   <link rel="manifest" href="/manifest.webmanifest" />
-  <title>Otome Lingua</title>
+  <title>My Love Language</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -149,6 +149,14 @@
             <button class="messenger-arrow-btn carousel-next-btn" id="msgCarouselNext" type="button" aria-label="Next character" onclick="scrollMessengerCarousel(1)">
               <span class="material-symbols-outlined">chevron_right</span>
             </button>
+          </div>
+        </div>
+
+        <!-- Centered Character Hover Showcase Overlay (Emotions + Introduction) -->
+        <div class="chat-centered-showcase-overlay" id="chatCenteredShowcase" style="display: none;" aria-hidden="true" onmouseenter="handleShowcaseMouseEnter()" onmouseleave="handleShowcaseMouseLeave()">
+          <div class="chat-centered-showcase-backdrop" onclick="closeCenteredShowcase()"></div>
+          <div class="chat-centered-showcase-card" id="chatShowcaseCard" role="dialog" aria-modal="true">
+            <!-- Populated dynamically by app.js showCenteredShowcase() -->
           </div>
         </div>
       </section>
