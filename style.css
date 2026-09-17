@@ -1233,7 +1233,7 @@ body {
     flex: 0 0 var(--carousel-box-width) !important;
     width: var(--carousel-box-width) !important;
     max-width: var(--carousel-box-width) !important;
-    min-height: 440px;
+    min-height: 540px;
     padding: 16px 16px 18px 16px;
   }
 }
@@ -10709,7 +10709,7 @@ body.dark-theme .story-section-title {
   border: 1.5px solid rgba(54, 72, 149, 0.35);
   border-radius: 8px;
   color: #364895;
-  font-size: 11px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.2;
   cursor: pointer;
