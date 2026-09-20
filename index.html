@@ -121,6 +121,57 @@
     <!-- Main Mobile App Frame -->
     <div class="app-container" id="appFrame">
 
+      <!-- DESKTOP LAPTOP THEME BAR (VISIBLE ONLY ON DESKTOP) -->
+      <header class="desktop-laptop-bar" id="desktopLaptopBar" aria-label="Laptop System Bar">
+        <div class="laptop-bar-left">
+          <div class="laptop-window-controls" title="OS Controls">
+            <span class="laptop-ctrl-dot dot-close"></span>
+            <span class="laptop-ctrl-dot dot-min"></span>
+            <span class="laptop-ctrl-dot dot-max"></span>
+          </div>
+          <div class="laptop-bar-divider"></div>
+          <div class="laptop-stat-item" title="Wi-Fi">
+            <span class="material-symbols-outlined laptop-icon">wifi</span>
+          </div>
+          <div class="laptop-stat-item" id="laptopVolumeStat" title="Audio" onclick="window.toggleLaptopMute && window.toggleLaptopMute()">
+            <span class="material-symbols-outlined laptop-icon" id="laptopVolumeIcon">volume_up</span>
+            <span class="laptop-stat-num" id="laptopVolumeNum">100%</span>
+          </div>
+        </div>
+
+        <div class="laptop-bar-center">
+          <button type="button" class="laptop-bar-icon-btn" id="laptopThemeBtn" onclick="window.toggleLaptopTheme && window.toggleLaptopTheme()" title="Theme">
+            <span class="material-symbols-outlined laptop-icon" id="laptopThemeIcon">dark_mode</span>
+          </button>
+        </div>
+
+        <div class="laptop-bar-right">
+          <div class="laptop-stat-item laptop-notif-item" id="laptopNotifItem" title="Notifications" onclick="window.handleLaptopNotifClick && window.handleLaptopNotifClick()">
+            <span class="material-symbols-outlined laptop-icon">notifications</span>
+            <span class="laptop-pill-badge" id="laptopNotifCount">3</span>
+          </div>
+
+          <div class="laptop-bar-divider"></div>
+
+          <div class="laptop-stat-item" id="laptopBatteryItem" title="Battery">
+            <span class="material-symbols-outlined laptop-icon" id="laptopBatteryIcon">battery_charging_full</span>
+            <span class="laptop-stat-num" id="laptopBatteryVal">98%</span>
+          </div>
+
+          <div class="laptop-bar-divider"></div>
+
+          <div class="laptop-stat-item" id="laptopDateItem" title="Date">
+            <span class="material-symbols-outlined laptop-icon">calendar_today</span>
+            <span class="laptop-stat-num" id="laptopDateNum">09/19</span>
+          </div>
+
+          <div class="laptop-stat-item" id="laptopTimeItem" title="Time">
+            <span class="material-symbols-outlined laptop-icon">schedule</span>
+            <span class="laptop-stat-num" id="laptopTimeNum">07:45</span>
+          </div>
+        </div>
+      </header>
+
     <!-- Main Dynamic Views Content Area -->
     <main class="main-content">
 
@@ -135,42 +186,237 @@
           </div>
         </div>
 
-        <div class="messenger-carousel-outer">
-          <div class="chat-list messenger-carousel" id="chatListContainer">
-            <!-- Populated dynamically by app.js -->
-          </div>
-          <div class="messenger-carousel-footer" id="msgCarouselFooter">
-            <button class="messenger-arrow-btn carousel-prev-btn" id="msgCarouselPrev" type="button" aria-label="Previous character" onclick="scrollMessengerCarousel(-1)">
-              <span class="material-symbols-outlined">chevron_left</span>
-            </button>
-            <div class="messenger-carousel-indicators" id="messengerCarouselIndicators">
-              <!-- Dots populated dynamically by app.js -->
+        <div class="carousel-stage-container">
+          <!-- Desktop Objective Notes Window Tab (Left side, separate from scroll) -->
+          <aside class="desktop-objective-pc-window" id="desktopObjectiveWindow-chats" aria-label="Quick Objectives">
+            <!-- PC Window Titlebar / Tab -->
+            <div class="pc-window-titlebar">
+              <div class="pc-window-dots">
+                <span class="pc-dot dot-close"></span>
+                <span class="pc-dot dot-min"></span>
+                <span class="pc-dot dot-max"></span>
+              </div>
+              <div class="pc-window-tab">
+                <span class="material-symbols-outlined pc-tab-icon">task_alt</span>
+                <span class="pc-tab-title">tasks.txt</span>
+              </div>
+              <span class="pc-tasks-count" data-obj-counter="true">0/5</span>
             </div>
-            <button class="messenger-arrow-btn carousel-next-btn" id="msgCarouselNext" type="button" aria-label="Next character" onclick="scrollMessengerCarousel(1)">
-              <span class="material-symbols-outlined">chevron_right</span>
-            </button>
+
+            <!-- Notes Body / Checklist -->
+            <div class="pc-note-body">
+              <div class="pc-note-tasks" data-obj-list="true">
+                <div class="pc-task-item" data-task-id="chat" onclick="toggleObjectiveTask('chat')">
+                  <span class="pc-task-checkbox"><span class="material-symbols-outlined chk-icon">check</span></span>
+                  <span class="pc-task-label">Chat with LI</span>
+                  <button type="button" class="pc-task-jump-btn" title="Open Chats" onclick="event.stopPropagation(); switchView('chats');">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </div>
+                <div class="pc-task-item" data-task-id="date" onclick="toggleObjectiveTask('date')">
+                  <span class="pc-task-checkbox"><span class="material-symbols-outlined chk-icon">check</span></span>
+                  <span class="pc-task-label">Date Scenario</span>
+                  <button type="button" class="pc-task-jump-btn" title="Open Story Mode" onclick="event.stopPropagation(); switchView('story');">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </div>
+                <div class="pc-task-item" data-task-id="media" onclick="toggleObjectiveTask('media')">
+                  <span class="pc-task-checkbox"><span class="material-symbols-outlined chk-icon">check</span></span>
+                  <span class="pc-task-label">Media Lab</span>
+                  <button type="button" class="pc-task-jump-btn" title="Open Media Lab" onclick="event.stopPropagation(); switchView('progress');">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </div>
+                <div class="pc-task-item" data-task-id="shop" onclick="toggleObjectiveTask('shop')">
+                  <span class="pc-task-checkbox"><span class="material-symbols-outlined chk-icon">check</span></span>
+                  <span class="pc-task-label">Visit Boutique</span>
+                  <button type="button" class="pc-task-jump-btn" title="Open Shop" onclick="event.stopPropagation(); switchView('shop');">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </div>
+                <div class="pc-task-item" data-task-id="profile" onclick="toggleObjectiveTask('profile')">
+                  <span class="pc-task-checkbox"><span class="material-symbols-outlined chk-icon">check</span></span>
+                  <span class="pc-task-label">Profile &amp; Setup</span>
+                  <button type="button" class="pc-task-jump-btn" title="Open Profile" onclick="event.stopPropagation(); openProfileModal();">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </div>
+              </div>
+              <div class="pc-note-footer">
+                <div class="pc-note-progress-track">
+                  <div class="pc-note-progress-fill" data-obj-fill="true" style="width: 0%;"></div>
+                </div>
+                <div class="pc-note-footer-meta">
+                  <span class="pc-note-status-num" data-obj-percent="true">0%</span>
+                  <button type="button" class="pc-note-reset-btn" title="Reset tasks" onclick="resetObjectives()">
+                    <span class="material-symbols-outlined">restart_alt</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="carousel-stage-main">
+            <div class="messenger-carousel-outer">
+              <div class="chat-list messenger-carousel" id="chatListContainer">
+                <!-- Populated dynamically by app.js -->
+              </div>
+            </div>
+            <div class="messenger-carousel-footer" id="msgCarouselFooter">
+              <button class="messenger-arrow-btn carousel-prev-btn" id="msgCarouselPrev" type="button" aria-label="Previous character" onclick="scrollMessengerCarousel(-1)">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <div class="messenger-carousel-indicators" id="messengerCarouselIndicators">
+                <!-- Dots populated dynamically by app.js -->
+              </div>
+              <button class="messenger-arrow-btn carousel-next-btn" id="msgCarouselNext" type="button" aria-label="Next character" onclick="scrollMessengerCarousel(1)">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
           </div>
+
+          <!-- Desktop OpenKoto Guide Window Tab (Right side, minimal text & icons) -->
+          <aside class="desktop-objective-pc-window desktop-openkoto-pc-window" id="desktopOpenkotoWindow-chats" aria-label="OpenKoto Guide">
+            <!-- PC Window Titlebar / Tab -->
+            <div class="pc-window-titlebar">
+              <div class="pc-window-dots">
+                <span class="pc-dot dot-close"></span>
+                <span class="pc-dot dot-min"></span>
+                <span class="pc-dot dot-max"></span>
+              </div>
+              <div class="pc-window-tab">
+                <span class="material-symbols-outlined pc-tab-icon" style="color: #f472b6;">auto_stories</span>
+                <span class="pc-tab-title">openkoto.txt</span>
+              </div>
+              <span class="pc-tasks-count openkoto-tag-badge">AI LAB</span>
+            </div>
+
+            <!-- Guide Body (Minimal text & icons) -->
+            <div class="pc-note-body openkoto-guide-body">
+              <div class="openkoto-guide-steps">
+                <div class="openkoto-guide-step">
+                  <span class="openkoto-step-num">1</span>
+                  <div class="openkoto-step-info">
+                    <span class="openkoto-step-title">Select Messages</span>
+                    <span class="openkoto-step-desc">Pick chat lines with your LI to generate custom lessons.</span>
+                  </div>
+                </div>
+                <div class="openkoto-guide-step">
+                  <span class="openkoto-step-num">2</span>
+                  <div class="openkoto-step-info">
+                    <span class="openkoto-step-title">Media &amp; Speech</span>
+                    <span class="openkoto-step-desc">Attach photos or voice clips for vocabulary breakdown.</span>
+                  </div>
+                </div>
+                <div class="openkoto-guide-step">
+                  <span class="openkoto-step-num">3</span>
+                  <div class="openkoto-step-info">
+                    <span class="openkoto-step-title">Smart Reader</span>
+                    <span class="openkoto-step-desc">Tap any word for instant translations &amp; audio.</span>
+                  </div>
+                </div>
+                <div class="openkoto-guide-step">
+                  <span class="openkoto-step-num">4</span>
+                  <div class="openkoto-guide-step-info">
+                    <span class="openkoto-step-title">Export Cards</span>
+                    <span class="openkoto-step-desc">Save flashcards or export study decks to Anki.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="pc-note-footer openkoto-guide-footer">
+                <button type="button" class="openkoto-guide-launch-btn" onclick="switchView('progress')">
+                  <span>Open Media Lab</span>
+                  <span class="material-symbols-outlined" style="font-size: 14px;">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          </aside>
         </div>
 
-        <!-- Centered Character Hover Showcase Overlay (Emotions + Introduction) -->
-        <div class="chat-centered-showcase-overlay" id="chatCenteredShowcase" style="display: none;" aria-hidden="true" onmouseenter="handleShowcaseMouseEnter()" onmouseleave="handleShowcaseMouseLeave()">
-          <div class="chat-centered-showcase-backdrop" onclick="closeCenteredShowcase()"></div>
-          <div class="chat-centered-showcase-card" id="chatShowcaseCard" role="dialog" aria-modal="true">
-            <!-- Populated dynamically by app.js showCenteredShowcase() -->
+        <!-- Character Emotion Slideshow & Introduction Box (Cursor Follower on Desktop / Modal on Mobile) -->
+        <div class="cursor-emotion-showcase-overlay" id="cursorEmotionOverlay" style="display: none;" aria-hidden="true">
+          <div class="cursor-emotion-backdrop" id="cursorEmotionBackdrop" onclick="window.closeEmotionShowcase()"></div>
+          <div class="cursor-emotion-box" id="cursorEmotionBox" role="dialog" aria-modal="true">
+            <!-- Background Emotion Sprite Slideshow -->
+            <div class="cursor-emotion-sprite-wrap">
+              <img id="cursorEmotionSprite" src="" alt="Character Emotion" class="cursor-emotion-sprite" />
+              <div class="cursor-emotion-scrim"></div>
+            </div>
+
+            <!-- Foreground Content: Top Emotion Status & Progress Dots -->
+            <div class="cursor-emotion-header">
+              <div class="cursor-emotion-badge" id="cursorEmotionBadge">
+                <span class="cursor-emotion-emoji" id="cursorEmotionEmoji">😌</span>
+                <span class="cursor-emotion-name" id="cursorEmotionName">Normal</span>
+                <span class="cursor-emotion-vi" id="cursorEmotionVi">(Bình thường)</span>
+              </div>
+              <div class="cursor-emotion-dots" id="cursorEmotionDots">
+                <!-- 8 progress dots for the 8 emotions -->
+              </div>
+            </div>
+
+            <!-- Middle/Bottom: Text Overlay on top about the Introduction -->
+            <div class="cursor-emotion-body">
+              <div class="cursor-emotion-identity">
+                <div class="cursor-emotion-title-row">
+                  <h4 class="cursor-char-name" id="cursorCharName">Character</h4>
+                  <span class="cursor-char-flag" id="cursorCharFlag">🇯🇵</span>
+                  <span class="cursor-char-archetype" id="cursorCharArchetype">Role</span>
+                </div>
+                <div class="cursor-char-aff-row" id="cursorCharAffRow">
+                  <span class="cursor-char-aff-badge" id="cursorCharAffBadge">
+                    <span class="material-symbols-outlined" style="font-size:12px; color:var(--primary-pink);">favorite</span>
+                    <span id="cursorCharAffText">0% Affection</span>
+                  </span>
+                  <span class="cursor-char-status">
+                    <span class="cursor-live-dot"></span>
+                    <span>Online &amp; Ready</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="cursor-intro-card">
+                <div class="cursor-intro-label">
+                  <span class="material-symbols-outlined" style="font-size:13px; color:#f472b6;">auto_awesome</span>
+                  <span>Quick Introduction</span>
+                </div>
+                <p class="cursor-intro-bio" id="cursorCharBio">Character bio and personality details...</p>
+                <div class="cursor-voice-note" id="cursorVoiceNote">
+                  <span class="material-symbols-outlined" style="font-size:12px; color:#c4b5fd;">record_voice_over</span>
+                  <span id="cursorVoiceText">Voice style tone</span>
+                </div>
+              </div>
+
+              <!-- Mobile Mode Actions (Shown only on mobile modal) -->
+              <div class="cursor-mobile-actions" id="cursorMobileActions" style="display: none;">
+                <button type="button" class="cursor-mobile-btn-close" onclick="window.closeEmotionShowcase()">
+                  Close
+                </button>
+                <button type="button" class="cursor-mobile-btn-chat" id="cursorMobileChatBtn">
+                  <span class="material-symbols-outlined" style="font-size:16px;">chat</span>
+                  <span>Chat with <span id="cursorChatBtnName">Character</span></span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <!-- VIEW 2: STORY DATE SCENARIOS -->
       <section class="view-section" id="view-story">
-        <div class="section-header">
-          <h2 class="section-title">Story: Date Scenarios</h2>
-          <p class="section-subtitle">Take part in Dating challenges. Get 5/7 correct to deepen your romance!</p>
-        </div>
+        <div class="story-squares-wrapper">
+          <div class="section-header messenger-section-header story-section-header">
+            <div class="messenger-header-text">
+              <h2 class="section-title">
+                <span>Date Scenarios</span>
+              </h2>
+              <p class="section-subtitle">Swipe or scroll to select a Date Scenario and partner</p>
+            </div>
+          </div>
 
-        <!-- Story Date Scenarios Container (Rendered by app.js) -->
-        <div id="storyContainer">
-          <!-- Dynamic Content: Scenarios List or Active Gameplay Stage or Results -->
+          <div class="carousel-stage-container">
+            <!-- Dynamic Content: Scenarios List and Desktop Objective Window rendered by app.js -->
+          </div>
         </div>
       </section>
 
@@ -345,9 +591,6 @@
             <span>Appearance &amp; Theme</span>
             <span id="themeStatusBadge" class="status-chip-badge">Light Mode</span>
           </div>
-          <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
-            Toggle between bright crisp theme and dark romantic twilight theme:
-          </p>
           <div class="setting-options-grid">
             <button type="button" class="option-pill-btn active" id="themeLightBtn" onclick="setAppTheme('light')">
               Light Theme
@@ -365,7 +608,7 @@
             <span id="fullscreenStatusBadge" class="status-chip-badge">Standard</span>
           </div>
           <p style="font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:12px;">
-            Hide the mobile address and navigation bars to expand Otome Lingua into a true edge-to-edge full screen visual novel:
+            Hide phone navigations to expand Mylovelanguage into a full screen experience:
           </p>
           <button class="primary-btn" id="toggleFullscreenSettingsBtn" type="button" onclick="toggleAppFullscreen()" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; height:46px; font-weight:800; font-size:14px; background:linear-gradient(135deg, #364895 0%, #9083C4 100%);">
             <span class="material-symbols-outlined" id="settingsFullscreenIcon" style="font-size:20px;">fullscreen</span>
@@ -816,23 +1059,29 @@
               <div class="setup-google-card setup-local-card" id="setupLocalCard">
                 <div class="setup-storage-card-header">
                   <div class="setup-storage-title-wrap">
-                    <span class="setup-storage-title">📱 Local Device Storage</span>
+                    <span class="setup-storage-title">📱 Local Storage</span>
                     <span class="setup-optional-badge badge-local-storage">OFFLINE</span>
                   </div>
                 </div>
                 
-                <button type="submit" class="google-oauth-btn setup-local-start-btn" id="saveProfileModalBtn">
-                  <span class="material-symbols-outlined" style="font-size:20px; color:var(--primary-pink);">storage</span>
-                  <span class="setup-local-btn-text">Start Story</span>
-                  <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary-pink);">favorite</span>
-                </button>
+                <p class="setup-google-desc">
+                  Save your choices, romance stats &amp; vocab offline in this browser
+                </p>
+
+                <div class="setup-card-bottom-action">
+                  <button type="submit" class="google-oauth-btn setup-local-start-btn" id="saveProfileModalBtn">
+                    <span class="material-symbols-outlined" style="font-size:20px; color:var(--primary-pink);">storage</span>
+                    <span class="setup-local-btn-text">Start Story</span>
+                    <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary-pink);">favorite</span>
+                  </button>
+                </div>
               </div>
 
               <!-- Option 2: Google Sign-On OAuth Cloud Save -->
               <div class="setup-google-card" id="setupGoogleCard">
                 <div class="setup-storage-card-header">
                   <div class="setup-storage-title-wrap">
-                    <span class="setup-storage-title">☁️ Cloud Save &amp; Google Sign-In</span>
+                    <span class="setup-storage-title">☁️ Cloud Save</span>
                     <span class="setup-optional-badge">ONLINE</span>
                   </div>
                 </div>
@@ -840,17 +1089,19 @@
                 <!-- Unlinked State -->
                 <div id="setupGoogleUnlinked" class="setup-google-state">
                   <p class="setup-google-desc">
-                    Sign in with Google to automatically backup your progress
+                    Sign in with Google to backup &amp; sync your progress across devices
                   </p>
-                  <button type="button" class="google-oauth-btn" id="setupGoogleSignInBtn" onclick="handleGoogleSignInClick()">
-                    <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                    </svg>
-                    <span id="setupGoogleBtnText">Save Progress with Google</span>
-                  </button>
+                  <div class="setup-card-bottom-action">
+                    <button type="button" class="google-oauth-btn" id="setupGoogleSignInBtn" onclick="handleGoogleSignInClick()">
+                      <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                      </svg>
+                      <span id="setupGoogleBtnText">Google Sign-In</span>
+                    </button>
+                  </div>
                 </div>
 
                 <!-- Linked State -->
@@ -872,17 +1123,19 @@
                   <div class="setup-google-card-actions">
                     <button type="button" class="setup-google-sync-btn" onclick="saveUserProgressNow()">
                       <span class="material-symbols-outlined" style="font-size:16px;">sync</span>
-                      <span>Sync Progress Now</span>
+                      <span>Sync</span>
                     </button>
                     <button type="button" class="setup-google-disconnect-btn" onclick="handleGoogleSignOut()">
                       <span>Disconnect</span>
                     </button>
                   </div>
-                  <button type="button" class="google-oauth-btn setup-google-start-btn" onclick="saveUserProfileFromModal()">
-                    <span class="material-symbols-outlined" style="font-size:18px; color:#4285F4;">cloud_done</span>
-                    <span>Start Story with Google Save</span>
-                    <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary-pink);">favorite</span>
-                  </button>
+                  <div class="setup-card-bottom-action">
+                    <button type="button" class="google-oauth-btn setup-google-start-btn" onclick="saveUserProfileFromModal()">
+                      <span class="material-symbols-outlined" style="font-size:18px; color:#4285F4;">cloud_done</span>
+                      <span>Start Story</span>
+                      <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary-pink);">favorite</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div id="setupGoogleStatusMessage" class="setup-google-status" style="display:none;"></div>

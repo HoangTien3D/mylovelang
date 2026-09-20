@@ -1031,7 +1031,7 @@ function syncGoogleAuthUI() {
 
   if (userState.googleAccount && (userState.googleAccount.email || userState.googleAccount.id)) {
     unlinkedEl.style.display = "none";
-    linkedEl.style.display = "block";
+    linkedEl.style.display = "flex";
 
     const nameEl = document.getElementById("setupGoogleUserName");
     const emailEl = document.getElementById("setupGoogleUserEmail");
@@ -1048,7 +1048,7 @@ function syncGoogleAuthUI() {
       syncTimeEl.textContent = lastSync ? `Last saved: ${new Date(lastSync).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "Progress Synced";
     }
   } else {
-    unlinkedEl.style.display = "block";
+    unlinkedEl.style.display = "flex";
     linkedEl.style.display = "none";
   }
 }
@@ -1685,7 +1685,7 @@ function startTimer() {
   }, 1000);
 }
 
-// Live Digital Clock
+// Live Digital Clock & Desktop Laptop Status Bar
 function updateClock() {
   const now = new Date();
   const hours = now.getHours();
@@ -1696,7 +1696,322 @@ function updateClock() {
   if (clockEl) {
     clockEl.textContent = `${formattedHours}:${minutes} ${ampm}`;
   }
+
+  // Desktop Laptop Theme Bar (Live numeric date & time, minimal text/letters)
+  const laptopTimeEl = document.getElementById("laptopTimeNum");
+  if (laptopTimeEl) {
+    const hours24 = hours.toString().padStart(2, "0");
+    laptopTimeEl.textContent = `${hours24}:${minutes}`;
+  }
+  const laptopDateEl = document.getElementById("laptopDateNum");
+  if (laptopDateEl) {
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
+    const day = now.getDate().toString().padStart(2, "0");
+    laptopDateEl.textContent = `${month}/${day}`;
+  }
 }
+
+// Desktop Laptop Bar Feature Controls
+let isLaptopMuted = false;
+window.toggleLaptopMute = function() {
+  isLaptopMuted = !isLaptopMuted;
+  const icon = document.getElementById("laptopVolumeIcon");
+  const num = document.getElementById("laptopVolumeNum");
+  if (icon) icon.textContent = isLaptopMuted ? "volume_off" : "volume_up";
+  if (num) num.textContent = isLaptopMuted ? "0%" : "100%";
+  if (typeof playCuteSound === "function" && !isLaptopMuted) playCuteSound("tap");
+};
+
+window.toggleLaptopTheme = function() {
+  const currentTheme = userState.theme || (document.body.classList.contains("dark-theme") ? "dark" : "light");
+  const nextTheme = currentTheme === "dark" ? "light" : "dark";
+  if (typeof setAppTheme === "function") {
+    setAppTheme(nextTheme);
+  } else {
+    document.body.classList.toggle("dark-theme", nextTheme === "dark");
+  }
+  const themeIcon = document.getElementById("laptopThemeIcon");
+  if (themeIcon) {
+    themeIcon.textContent = nextTheme === "dark" ? "light_mode" : "dark_mode";
+  }
+};
+
+window.handleLaptopNotifClick = function() {
+  if (typeof playCuteSound === "function") playCuteSound("notif");
+  if (typeof switchView === "function") switchView("chats");
+};
+
+function initLaptopBattery() {
+  const batteryVal = document.getElementById("laptopBatteryVal");
+  const batteryIcon = document.getElementById("laptopBatteryIcon");
+  if (!batteryVal) return;
+
+  if (typeof navigator !== "undefined" && navigator.getBattery) {
+    navigator.getBattery().then((battery) => {
+      const render = () => {
+        const pct = Math.round((battery.level || 0.98) * 100);
+        batteryVal.textContent = `${pct}%`;
+        if (batteryIcon) {
+          if (battery.charging) {
+            batteryIcon.textContent = "battery_charging_full";
+          } else if (pct <= 20) {
+            batteryIcon.textContent = "battery_alert";
+          } else if (pct <= 60) {
+            batteryIcon.textContent = "battery_3_bar";
+          } else {
+            batteryIcon.textContent = "battery_full";
+          }
+        }
+      };
+      render();
+      battery.addEventListener("levelchange", render);
+      battery.addEventListener("chargingchange", render);
+    }).catch(() => {
+      batteryVal.textContent = "98%";
+    });
+  } else {
+    batteryVal.textContent = "98%";
+  }
+}
+
+// Initialize laptop bar upon startup
+document.addEventListener("DOMContentLoaded", () => {
+  initLaptopBattery();
+  updateClock();
+  syncObjectivesUI();
+});
+setTimeout(() => {
+  initLaptopBattery();
+  updateClock();
+  syncObjectivesUI();
+}, 200);
+
+// ==========================================================================
+// DESKTOP OBJECTIVE WINDOW (PC WINDOW TAB NOTEBOOK)
+// ==========================================================================
+const DEFAULT_OBJECTIVES = {
+  chat: false,
+  date: false,
+  media: false,
+  shop: false,
+  profile: false
+};
+
+let userObjectives = (function() {
+  try {
+    const saved = localStorage.getItem("otome_pc_objectives");
+    return saved ? { ...DEFAULT_OBJECTIVES, ...JSON.parse(saved) } : { ...DEFAULT_OBJECTIVES };
+  } catch (e) {
+    return { ...DEFAULT_OBJECTIVES };
+  }
+})();
+
+function saveObjectives() {
+  try {
+    localStorage.setItem("otome_pc_objectives", JSON.stringify(userObjectives));
+  } catch (e) {}
+}
+
+function syncObjectivesUI() {
+  const taskIds = Object.keys(DEFAULT_OBJECTIVES);
+  let completedCount = 0;
+  taskIds.forEach(id => {
+    if (userObjectives[id]) completedCount++;
+  });
+
+  const total = taskIds.length;
+  const pct = Math.round((completedCount / total) * 100);
+
+  document.querySelectorAll("[data-obj-counter='true']").forEach(el => {
+    el.textContent = `${completedCount}/${total}`;
+  });
+
+  document.querySelectorAll("[data-obj-percent='true']").forEach(el => {
+    el.textContent = `${pct}%`;
+  });
+
+  document.querySelectorAll("[data-obj-fill='true']").forEach(el => {
+    el.style.width = `${pct}%`;
+  });
+
+  document.querySelectorAll(".pc-task-item").forEach(item => {
+    const taskId = item.getAttribute("data-task-id");
+    if (!taskId) return;
+    const isDone = !!userObjectives[taskId];
+    item.classList.toggle("is-completed", isDone);
+  });
+}
+window.syncObjectivesUI = syncObjectivesUI;
+
+window.toggleObjectiveTask = function(taskId) {
+  if (userObjectives[taskId] === undefined) return;
+  userObjectives[taskId] = !userObjectives[taskId];
+  saveObjectives();
+  syncObjectivesUI();
+  if (typeof playCuteSound === "function") {
+    if (userObjectives[taskId]) {
+      const allDone = Object.values(userObjectives).every(Boolean);
+      playCuteSound(allDone ? "levelup" : "tap");
+    } else {
+      playCuteSound("tap");
+    }
+  }
+};
+
+window.completeObjectiveTask = function(taskId) {
+  if (userObjectives[taskId] === false) {
+    userObjectives[taskId] = true;
+    saveObjectives();
+    syncObjectivesUI();
+  }
+};
+
+window.resetObjectives = function() {
+  userObjectives = { ...DEFAULT_OBJECTIVES };
+  saveObjectives();
+  syncObjectivesUI();
+  if (typeof playCuteSound === "function") playCuteSound("tap");
+};
+
+function renderDesktopObjectiveWindowHtml(suffix = "chats") {
+  return `
+    <aside class="desktop-objective-pc-window" id="desktopObjectiveWindow-${suffix}" aria-label="Quick Objectives">
+      <!-- PC Window Titlebar / Tab -->
+      <div class="pc-window-titlebar">
+        <div class="pc-window-dots">
+          <span class="pc-dot dot-close"></span>
+          <span class="pc-dot dot-min"></span>
+          <span class="pc-dot dot-max"></span>
+        </div>
+        <div class="pc-window-tab">
+          <span class="material-symbols-outlined pc-tab-icon">task_alt</span>
+          <span class="pc-tab-title">tasks.txt</span>
+        </div>
+        <span class="pc-tasks-count" data-obj-counter="true">0/5</span>
+      </div>
+
+      <!-- Notes Body / Checklist -->
+      <div class="pc-note-body">
+        <div class="pc-note-tasks" data-obj-list="true">
+          <div class="pc-task-item" data-task-id="chat" onclick="toggleObjectiveTask('chat')">
+            <span class="pc-task-checkbox"><span class="material-symbols-outlined chk-icon">check</span></span>
+            <span class="pc-task-label">Chat with LI</span>
+            <button type="button" class="pc-task-jump-btn" title="Open Chats" onclick="event.stopPropagation(); switchTab('chats');">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+          <div class="pc-task-item" data-task-id="date" onclick="toggleObjectiveTask('date')">
+            <span class="pc-task-checkbox"><span class="material-symbols-outlined chk-icon">check</span></span>
+            <span class="pc-task-label">Date Scenario</span>
+            <button type="button" class="pc-task-jump-btn" title="Open Story Mode" onclick="event.stopPropagation(); switchTab('story');">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+          <div class="pc-task-item" data-task-id="media" onclick="toggleObjectiveTask('media')">
+            <span class="pc-task-checkbox"><span class="material-symbols-outlined chk-icon">check</span></span>
+            <span class="pc-task-label">Media Lab</span>
+            <button type="button" class="pc-task-jump-btn" title="Open Media Lab" onclick="event.stopPropagation(); switchTab('progress');">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+          <div class="pc-task-item" data-task-id="shop" onclick="toggleObjectiveTask('shop')">
+            <span class="pc-task-checkbox"><span class="material-symbols-outlined chk-icon">check</span></span>
+            <span class="pc-task-label">Visit Boutique</span>
+            <button type="button" class="pc-task-jump-btn" title="Open Shop" onclick="event.stopPropagation(); switchTab('shop');">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+          <div class="pc-task-item" data-task-id="profile" onclick="toggleObjectiveTask('profile')">
+            <span class="pc-task-checkbox"><span class="material-symbols-outlined chk-icon">check</span></span>
+            <span class="pc-task-label">Profile &amp; Setup</span>
+            <button type="button" class="pc-task-jump-btn" title="Open Profile" onclick="event.stopPropagation(); openLandingSetupMenu();">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+        <div class="pc-note-footer">
+          <div class="pc-note-progress-track">
+            <div class="pc-note-progress-fill" data-obj-fill="true" style="width: 0%;"></div>
+          </div>
+          <div class="pc-note-footer-meta">
+            <span class="pc-note-status-num" data-obj-percent="true">0%</span>
+            <button type="button" class="pc-note-reset-btn" title="Reset tasks" onclick="resetObjectives()">
+              <span class="material-symbols-outlined">restart_alt</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  `;
+}
+window.renderDesktopObjectiveWindowHtml = renderDesktopObjectiveWindowHtml;
+
+function renderDesktopOpenkotoGuideWindowHtml(suffix = "chats") {
+  return `
+    <aside class="desktop-objective-pc-window desktop-openkoto-pc-window" id="desktopOpenkotoWindow-${suffix}" aria-label="OpenKoto Guide">
+      <!-- PC Window Titlebar / Tab -->
+      <div class="pc-window-titlebar">
+        <div class="pc-window-dots">
+          <span class="pc-dot dot-close"></span>
+          <span class="pc-dot dot-min"></span>
+          <span class="pc-dot dot-max"></span>
+        </div>
+        <div class="pc-window-tab">
+          <span class="material-symbols-outlined pc-tab-icon" style="color: #f472b6;">auto_stories</span>
+          <span class="pc-tab-title">openkoto.txt</span>
+        </div>
+        <span class="pc-tasks-count openkoto-tag-badge">AI LAB</span>
+      </div>
+
+      <!-- Guide Body (Minimal text & icons) -->
+      <div class="pc-note-body openkoto-guide-body">
+        <div class="openkoto-guide-steps">
+          <div class="openkoto-guide-step">
+            <span class="openkoto-step-num">1</span>
+            <div class="openkoto-guide-step-info">
+              <span class="openkoto-step-title">Select Messages</span>
+              <span class="openkoto-step-desc">Pick chat lines with your LI to generate custom lessons.</span>
+            </div>
+          </div>
+          <div class="openkoto-guide-step">
+            <span class="openkoto-step-num">2</span>
+            <div class="openkoto-guide-step-info">
+              <span class="openkoto-step-title">Media &amp; Speech</span>
+              <span class="openkoto-step-desc">Attach photos or voice clips for vocabulary breakdown.</span>
+            </div>
+          </div>
+          <div class="openkoto-guide-step">
+            <span class="openkoto-step-num">3</span>
+            <div class="openkoto-guide-step-info">
+              <span class="openkoto-step-title">Smart Reader</span>
+              <span class="openkoto-step-desc">Tap any word for instant translations &amp; audio.</span>
+            </div>
+          </div>
+          <div class="openkoto-guide-step">
+            <span class="openkoto-step-num">4</span>
+            <div class="openkoto-guide-step-info">
+              <span class="openkoto-step-title">Export Cards</span>
+              <span class="openkoto-step-desc">Save flashcards or export study decks to Anki.</span>
+            </div>
+          </div>
+        </div>
+        <div class="pc-note-footer openkoto-guide-footer">
+          <button type="button" class="openkoto-guide-launch-btn" onclick="switchView('progress')">
+            <span>Open Media Lab</span>
+            <span class="material-symbols-outlined" style="font-size: 14px;">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+  `;
+}
+window.renderDesktopOpenkotoGuideWindowHtml = renderDesktopOpenkotoGuideWindowHtml;
+window.switchView = function(tabName) {
+  if (typeof switchTab === "function") switchTab(tabName);
+};
+window.openProfileModal = function() {
+  if (typeof openLandingSetupMenu === "function") openLandingSetupMenu();
+};
 
 // Global UI Click Listener for Telemetry & Adorable Sound Effects
 document.addEventListener("click", (e) => {
@@ -1971,6 +2286,10 @@ function updateThemeUi() {
   if (darkBtn) darkBtn.classList.toggle("active", currentTheme === "dark");
   if (statusBadge) {
     statusBadge.textContent = currentTheme === "dark" ? "Dark Twilight" : "Light Mode";
+  }
+  const laptopThemeIcon = document.getElementById("laptopThemeIcon");
+  if (laptopThemeIcon) {
+    laptopThemeIcon.textContent = currentTheme === "dark" ? "light_mode" : "dark_mode";
   }
 }
 
@@ -2547,6 +2866,7 @@ function switchTab(tabName, updateUrl = true) {
   }
 
   if (tabName === "shop" || tabName === "subscription") {
+    if (typeof completeObjectiveTask === "function") completeObjectiveTask("shop");
     switchTab("settings", updateUrl);
     setTimeout(() => {
       const subEl = document.getElementById("settingsSubscriptionGroup");
@@ -2589,13 +2909,20 @@ function switchTab(tabName, updateUrl = true) {
   }
   if (tabName === "story") {
     renderStoryMode();
-    setTimeout(() => {
-      scrollToStoryCard(0);
-      updateStoryCarouselIndicators();
-    }, 50);
+    if (typeof completeObjectiveTask === "function") completeObjectiveTask("date");
   }
-  if (tabName === "progress" || tabName === "guidebook") renderGuidebook();
-  if (tabName === "settings") renderPricingShop();
+  if (tabName === "progress" || tabName === "guidebook") {
+    renderGuidebook();
+    if (typeof completeObjectiveTask === "function") completeObjectiveTask("media");
+  }
+  if (tabName === "settings") {
+    renderPricingShop();
+    if (typeof completeObjectiveTask === "function") completeObjectiveTask("profile");
+  }
+
+  if (typeof syncObjectivesUI === "function") {
+    setTimeout(syncObjectivesUI, 50);
+  }
 
   if (updateUrl) {
     const routePath = (tabName === "progress" || tabName === "guidebook") ? "/guidebook" : `/${tabName}`;
@@ -2743,6 +3070,261 @@ window.resetCardEmotion = function(charId) {
   }
 };
 
+/* ==========================================================================
+   CHARACTER EMOTION SLIDESHOW & INTRO OVERLAY
+   - Automated scrolling/cycling slideshow through all 8 expressions
+   - High-contrast text overlay on top with character's quick introduction
+   - Follows mouse cursor smoothly on desktop
+   - On mobile/touch: triggered via click event as a centered modal with backdrop
+   ========================================================================== */
+let cursorSlideshowTimer = null;
+let currentSlideshowChar = null;
+let currentEmotionIndex = 0;
+let isMobileModalOpen = false;
+
+function isTouchOrMobileDevice() {
+  return (
+    ('ontouchstart' in window) ||
+    (navigator.maxTouchPoints > 0) ||
+    window.innerWidth <= 820
+  );
+}
+
+function renderSlideshowDots() {
+  const dotsContainer = document.getElementById("cursorEmotionDots");
+  if (!dotsContainer) return;
+  dotsContainer.innerHTML = CHARACTER_EMOTIONS.map((em, idx) => `
+    <span class="cursor-emotion-dot ${idx === currentEmotionIndex ? 'active' : ''}" title="${em.name} (${em.vi})"></span>
+  `).join("");
+}
+
+function updateSlideshowEmotion(idx) {
+  if (!currentSlideshowChar) return;
+  currentEmotionIndex = idx % CHARACTER_EMOTIONS.length;
+  const em = CHARACTER_EMOTIONS[currentEmotionIndex];
+
+  const spriteEl = document.getElementById("cursorEmotionSprite");
+  const charId = currentSlideshowChar.id;
+  const spriteUrl = (window.VN_SPRITES && window.VN_SPRITES[charId] && window.VN_SPRITES[charId][em.id]) ||
+    (window.VN_SPRITES && window.VN_SPRITES[charId] && window.VN_SPRITES[charId].normal) ||
+    currentSlideshowChar.avatar;
+
+  if (spriteEl) {
+    spriteEl.src = spriteUrl;
+  }
+
+  const emojiEl = document.getElementById("cursorEmotionEmoji");
+  const nameEl = document.getElementById("cursorEmotionName");
+  const viEl = document.getElementById("cursorEmotionVi");
+  if (emojiEl) emojiEl.textContent = em.emoji;
+  if (nameEl) nameEl.textContent = em.name;
+  if (viEl) viEl.textContent = `(${em.vi})`;
+
+  const dotsContainer = document.getElementById("cursorEmotionDots");
+  if (dotsContainer) {
+    const dots = dotsContainer.querySelectorAll(".cursor-emotion-dot");
+    dots.forEach((dot, dIdx) => {
+      if (dIdx === currentEmotionIndex) {
+        dot.classList.add("active");
+      } else {
+        dot.classList.remove("active");
+      }
+    });
+  }
+}
+
+function startSlideshowCycle() {
+  stopSlideshowCycle();
+  // Continuously cycle through each emotion in the slideshow every 1.25s
+  cursorSlideshowTimer = setInterval(() => {
+    updateSlideshowEmotion(currentEmotionIndex + 1);
+  }, 1250);
+}
+
+function stopSlideshowCycle() {
+  if (cursorSlideshowTimer) {
+    clearInterval(cursorSlideshowTimer);
+    cursorSlideshowTimer = null;
+  }
+}
+
+function populateShowcaseCard(char) {
+  currentSlideshowChar = char;
+  currentEmotionIndex = 0;
+
+  const affectionPct = (typeof userState !== "undefined" && userState.affection && userState.affection[char.id]) || 0;
+  const relInfo = typeof getRelationshipInfo === "function" ? getRelationshipInfo(affectionPct) : { name: "Acquaintance", icon: "🌱", badgeClass: "rel-acquaintance" };
+
+  const nameEl = document.getElementById("cursorCharName");
+  const flagEl = document.getElementById("cursorCharFlag");
+  const archetypeEl = document.getElementById("cursorCharArchetype");
+  const bioEl = document.getElementById("cursorCharBio");
+  const voiceEl = document.getElementById("cursorVoiceText");
+  const affText = document.getElementById("cursorCharAffText");
+  const affBadge = document.getElementById("cursorCharAffBadge");
+
+  if (nameEl) nameEl.textContent = char.name;
+  if (flagEl) flagEl.textContent = char.flag || "";
+  if (archetypeEl) archetypeEl.textContent = char.archetype || char.role || "Companion";
+  if (bioEl) bioEl.textContent = char.personality || char.role || "A charming anime companion.";
+  if (voiceEl) voiceEl.textContent = char.sampleVoice || "Expressive anime voice";
+  if (affText) affText.textContent = `${relInfo.icon} ${affectionPct}% Affection (${relInfo.name})`;
+  if (affBadge) {
+    affBadge.className = `cursor-char-aff-badge ${relInfo.badgeClass || ''}`;
+  }
+
+  renderSlideshowDots();
+  updateSlideshowEmotion(0);
+}
+
+function positionCursorBox(e) {
+  const box = document.getElementById("cursorEmotionBox");
+  if (!box || !e) return;
+
+  const boxWidth = box.offsetWidth || 440;
+  const boxHeight = box.offsetHeight || 560;
+  let targetX = e.clientX + 20;
+  let targetY = e.clientY - 25;
+
+  // Viewport horizontal boundary check
+  if (targetX + boxWidth > window.innerWidth - 16) {
+    targetX = e.clientX - boxWidth - 20;
+  }
+  if (targetX < 12) targetX = 12;
+
+  // Viewport vertical boundary check
+  if (targetY + boxHeight > window.innerHeight - 16) {
+    targetY = window.innerHeight - boxHeight - 16;
+  }
+  if (targetY < 12) targetY = 12;
+
+  box.style.left = `${targetX}px`;
+  box.style.top = `${targetY}px`;
+  box.style.transform = "none";
+}
+
+window.handleCardMouseEnter = function(e, charId) {
+  // Mobile and touch devices ignore hover completely
+  if (isTouchOrMobileDevice() || isMobileModalOpen) return;
+
+  const char = (typeof CHARACTERS !== "undefined" && CHARACTERS[charId]) || (typeof BASE_CHARACTERS !== "undefined" && BASE_CHARACTERS[charId]);
+  if (!char) return;
+
+  const overlay = document.getElementById("cursorEmotionOverlay");
+  const backdrop = document.getElementById("cursorEmotionBackdrop");
+  const box = document.getElementById("cursorEmotionBox");
+  const mobileActions = document.getElementById("cursorMobileActions");
+
+  if (mobileActions) mobileActions.style.display = "none";
+  if (backdrop) backdrop.style.display = "none";
+
+  if (box) {
+    box.classList.remove("mobile-modal-mode");
+  }
+
+  populateShowcaseCard(char);
+  if (e) positionCursorBox(e);
+
+  if (overlay) {
+    overlay.style.display = "block";
+    overlay.setAttribute("aria-hidden", "false");
+  }
+
+  startSlideshowCycle();
+};
+
+window.handleCardMouseMove = function(e) {
+  if (isTouchOrMobileDevice() || isMobileModalOpen) return;
+  positionCursorBox(e);
+};
+
+window.handleCardMouseLeave = function() {
+  if (isTouchOrMobileDevice() || isMobileModalOpen) return;
+  stopDesktopShowcase();
+};
+
+function stopDesktopShowcase() {
+  stopSlideshowCycle();
+  const overlay = document.getElementById("cursorEmotionOverlay");
+  if (overlay && !isMobileModalOpen) {
+    overlay.style.display = "none";
+    overlay.setAttribute("aria-hidden", "true");
+  }
+  currentSlideshowChar = null;
+}
+
+// Mobile Click Event Trigger: Opens centered modal showcase
+window.openMobileEmotionShowcase = function(charId) {
+  const char = (typeof CHARACTERS !== "undefined" && CHARACTERS[charId]) || (typeof BASE_CHARACTERS !== "undefined" && BASE_CHARACTERS[charId]);
+  if (!char) return;
+
+  isMobileModalOpen = true;
+  populateShowcaseCard(char);
+
+  const overlay = document.getElementById("cursorEmotionOverlay");
+  const backdrop = document.getElementById("cursorEmotionBackdrop");
+  const box = document.getElementById("cursorEmotionBox");
+  const mobileActions = document.getElementById("cursorMobileActions");
+  const chatBtn = document.getElementById("cursorMobileChatBtn");
+  const chatBtnName = document.getElementById("cursorChatBtnName");
+
+  if (mobileActions) mobileActions.style.display = "flex";
+  if (backdrop) backdrop.style.display = "block";
+  if (chatBtnName) chatBtnName.textContent = char.name;
+
+  if (chatBtn) {
+    chatBtn.onclick = () => {
+      window.closeEmotionShowcase();
+      openChatroom(char.id);
+    };
+  }
+
+  if (box) {
+    box.classList.add("mobile-modal-mode");
+    box.style.left = "50%";
+    box.style.top = "50%";
+    box.style.transform = "translate(-50%, -50%)";
+  }
+
+  if (overlay) {
+    overlay.classList.add("modal-active");
+    overlay.style.display = "block";
+    overlay.setAttribute("aria-hidden", "false");
+  }
+
+  startSlideshowCycle();
+};
+
+window.closeEmotionShowcase = function() {
+  stopSlideshowCycle();
+  isMobileModalOpen = false;
+
+  const overlay = document.getElementById("cursorEmotionOverlay");
+  const backdrop = document.getElementById("cursorEmotionBackdrop");
+  const box = document.getElementById("cursorEmotionBox");
+  const mobileActions = document.getElementById("cursorMobileActions");
+
+  if (overlay) {
+    overlay.style.display = "none";
+    overlay.classList.remove("modal-active");
+    overlay.setAttribute("aria-hidden", "true");
+  }
+  if (backdrop) backdrop.style.display = "none";
+  if (mobileActions) mobileActions.style.display = "none";
+  if (box) {
+    box.classList.remove("mobile-modal-mode");
+  }
+  currentSlideshowChar = null;
+};
+
+// Aliases for compatibility
+window.showCenteredShowcase = function(charId) {
+  window.openMobileEmotionShowcase(charId);
+};
+window.closeCenteredShowcase = function() {
+  window.closeEmotionShowcase();
+};
+
 // Render Chatrooms List Carousel
 function renderChatList() {
   const container = document.getElementById("chatListContainer");
@@ -2773,37 +3355,37 @@ function renderChatList() {
       <img src="${char.avatar}" id="cardHeroImg-${char.id}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.png';" />
     `;
 
-    // Generate emotion preview chips for desktop hover overlay
-    const emotionsHtml = CHARACTER_EMOTIONS.map(em => {
-      const spriteUrl = (window.VN_SPRITES && window.VN_SPRITES[char.id] && window.VN_SPRITES[char.id][em.id]) || char.avatar;
-      return `
-        <button
-          type="button"
-          class="desktop-emotion-chip ${em.id === 'normal' ? 'active' : ''}"
-          data-emotion="${em.id}"
-          title="${em.name} (${em.vi}) - ${em.desc}"
-          onmouseenter="previewCharEmotion('${char.id}', '${em.id}', '${em.name}', '${em.vi}', '${em.desc}')"
-          onclick="event.stopPropagation(); previewCharEmotion('${char.id}', '${em.id}', '${em.name}', '${em.vi}', '${em.desc}')"
-        >
-          <span class="desktop-emotion-chip-circle">
-            <img src="${spriteUrl}" alt="${em.name}" />
-          </span>
-          <span class="desktop-emotion-chip-text">${em.emoji} ${em.name}</span>
-        </button>
-      `;
-    }).join("");
-
     const card = document.createElement("div");
     card.className = "chat-card square-char-card";
     card.setAttribute("data-card-index", idx);
-    card.onclick = () => openChatroom(char.id);
-    card.onmouseleave = () => window.resetCardEmotion(char.id);
+
+    // Click behavior:
+    // On mobile / touch: clicking card triggers the character emotion slideshow & intro overlay!
+    // On desktop: clicking card immediately enters the chatroom
+    card.onclick = () => {
+      if (isTouchOrMobileDevice()) {
+        window.openMobileEmotionShowcase(char.id);
+      } else {
+        openChatroom(char.id);
+      }
+    };
+
+    // Desktop hover & cursor following
+    card.onmouseenter = (e) => window.handleCardMouseEnter(e, char.id);
+    card.onmousemove = (e) => window.handleCardMouseMove(e);
+    card.onmouseleave = () => window.handleCardMouseLeave();
 
     card.innerHTML = `
       <div class="square-pfp-bg-wrap">
         ${pfpCoverHtml}
         <div class="square-card-scrim"></div>
       </div>
+
+      <!-- Quick Intro & Emotions Trigger Pill (Clickable on both mobile & desktop) -->
+      <button type="button" class="square-inspect-pill" onclick="event.stopPropagation(); window.openMobileEmotionShowcase('${char.id}');" title="Showcase All Emotions &amp; Intro">
+        <span class="material-symbols-outlined" style="font-size:13px;">visibility</span>
+        <span>Intro &amp; Emotions</span>
+      </button>
 
       <div class="square-card-top-badges">
         <div class="square-status-badge">
@@ -2833,59 +3415,6 @@ function renderChatList() {
             <span class="material-symbols-outlined">chat</span>
           </button>
         </div>
-      </div>
-
-      <!-- Desktop Hover Feature: Emotions Showcase & Quick Character Intro -->
-      <div class="desktop-char-hover-overlay" id="hoverOverlay-${char.id}">
-        <div class="desktop-overlay-header">
-          <div class="desktop-overlay-profile">
-            <img src="${char.avatar}" class="desktop-overlay-pfp" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.png';" />
-            <div class="desktop-overlay-titles">
-              <div class="desktop-overlay-name-line">
-                <span class="desktop-overlay-char-name">${char.name}</span>
-                <span class="desktop-overlay-flag">${char.flag}</span>
-              </div>
-              <span class="desktop-overlay-archetype">${char.archetype || char.role}</span>
-            </div>
-          </div>
-          <span class="desktop-overlay-aff-chip relationship-milestone-badge ${relInfo.badgeClass}">
-            <span class="material-symbols-outlined" style="font-size:12px; color:var(--primary-pink);">favorite</span>
-            <span>${relInfo.icon} ${affectionPct}%</span>
-          </span>
-        </div>
-
-        <div class="desktop-overlay-intro-card">
-          <div class="desktop-overlay-intro-label">
-            <span class="material-symbols-outlined" style="font-size:13px; color:#f472b6;">auto_awesome</span>
-            <span>Quick Introduction</span>
-          </div>
-          <p class="desktop-overlay-intro-bio">${char.personality || char.role}</p>
-          <div class="desktop-overlay-voice-chip">
-            <span class="material-symbols-outlined" style="font-size:12px; color:#a78bfa;">record_voice_over</span>
-            <span>${char.sampleVoice || 'Anime Character Voice Tone'}</span>
-          </div>
-        </div>
-
-        <div class="desktop-overlay-emotions-box">
-          <div class="desktop-overlay-emotions-bar">
-            <div class="desktop-overlay-emotions-label">
-              <span class="material-symbols-outlined" style="font-size:13px; color:#fbbf24;">mood</span>
-              <span>All Expressions (${CHARACTER_EMOTIONS.length})</span>
-            </div>
-            <span class="desktop-overlay-emotion-indicator" id="activeEmotionBadge-${char.id}">
-              😌 Normal (Bình thường)
-            </span>
-          </div>
-          <div class="desktop-overlay-emotions-grid">
-            ${emotionsHtml}
-          </div>
-        </div>
-
-        <button class="desktop-overlay-chat-btn" type="button" onclick="event.stopPropagation(); openChatroom('${char.id}');">
-          <span class="material-symbols-outlined" style="font-size:15px;">chat</span>
-          <span>Start Chatting with ${char.name}</span>
-          <span class="material-symbols-outlined" style="font-size:14px; margin-left:auto;">arrow_forward</span>
-        </button>
       </div>
     `;
 
@@ -2971,28 +3500,40 @@ function renderChatList() {
   updateMessengerCarouselIndicators();
 }
 
-function updateMessengerCarouselIndicators() {
+let currentMessengerCardIndex = 0;
+
+function updateMessengerCarouselIndicators(forcedActiveIndex) {
   const container = document.getElementById("chatListContainer");
   const dotsContainer = document.getElementById("messengerCarouselIndicators");
   if (!container || !dotsContainer) return;
   const cards = container.querySelectorAll(".square-char-card");
   if (!cards.length) return;
 
-  const scrollLeft = container.scrollLeft;
-  const center = scrollLeft + container.clientWidth / 2;
+  let activeIndex = typeof forcedActiveIndex === "number" ? forcedActiveIndex : currentMessengerCardIndex;
 
-  let activeIndex = 0;
-  let minDistance = Infinity;
-
-  cards.forEach((card, idx) => {
-    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-    const dist = Math.abs(center - cardCenter);
-    if (dist < minDistance) {
-      minDistance = dist;
-      activeIndex = idx;
+  if (typeof forcedActiveIndex !== "number") {
+    const containerRect = container.getBoundingClientRect();
+    if (containerRect.width > 0) {
+      const containerCenter = containerRect.left + containerRect.width / 2;
+      let minDistance = Infinity;
+      cards.forEach((card, idx) => {
+        const cardRect = card.getBoundingClientRect();
+        const cardCenter = cardRect.left + cardRect.width / 2;
+        const dist = Math.abs(containerCenter - cardCenter);
+        if (dist < minDistance) {
+          minDistance = dist;
+          activeIndex = idx;
+        }
+        card.classList.toggle("is-centered", dist < 50);
+      });
     }
-    card.classList.toggle("is-centered", dist < 45);
-  });
+  } else {
+    cards.forEach((card, idx) => {
+      card.classList.toggle("is-centered", idx === forcedActiveIndex);
+    });
+  }
+
+  currentMessengerCardIndex = activeIndex;
 
   const dots = dotsContainer.querySelectorAll(".carousel-dot");
   dots.forEach((dot, idx) => {
@@ -3011,21 +3552,23 @@ window.scrollMessengerCarousel = function(direction) {
   const cards = container.querySelectorAll(".square-char-card");
   if (!cards.length) return;
 
-  const scrollLeft = container.scrollLeft;
-  const center = scrollLeft + container.clientWidth / 2;
-  let activeIndex = 0;
-  let minDistance = Infinity;
+  const containerRect = container.getBoundingClientRect();
+  let currentIndex = currentMessengerCardIndex;
+  if (containerRect.width > 0) {
+    const containerCenter = containerRect.left + containerRect.width / 2;
+    let minDistance = Infinity;
+    cards.forEach((card, idx) => {
+      const cardRect = card.getBoundingClientRect();
+      const cardCenter = cardRect.left + cardRect.width / 2;
+      const dist = Math.abs(containerCenter - cardCenter);
+      if (dist < minDistance) {
+        minDistance = dist;
+        currentIndex = idx;
+      }
+    });
+  }
 
-  cards.forEach((card, idx) => {
-    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-    const dist = Math.abs(center - cardCenter);
-    if (dist < minDistance) {
-      minDistance = dist;
-      activeIndex = idx;
-    }
-  });
-
-  const nextIndex = Math.max(0, Math.min(cards.length - 1, activeIndex + direction));
+  const nextIndex = Math.max(0, Math.min(cards.length - 1, currentIndex + direction));
   scrollToMessengerCard(nextIndex);
 };
 
@@ -3033,11 +3576,28 @@ window.scrollToMessengerCard = function(index) {
   const container = document.getElementById("chatListContainer");
   if (!container) return;
   const cards = container.querySelectorAll(".square-char-card");
-  if (cards && cards[index]) {
-    const card = cards[index];
-    const targetScroll = card.offsetLeft - (container.clientWidth - card.offsetWidth) / 2;
+  if (!cards.length) return;
+
+  const targetIdx = Math.max(0, Math.min(cards.length - 1, index));
+  currentMessengerCardIndex = targetIdx;
+  const targetCard = cards[targetIdx];
+  if (!targetCard) return;
+
+  const containerRect = container.getBoundingClientRect();
+  const cardRect = targetCard.getBoundingClientRect();
+
+  if (containerRect.width > 0) {
+    const cardCenter = cardRect.left + cardRect.width / 2;
+    const containerCenter = containerRect.left + containerRect.width / 2;
+    const delta = cardCenter - containerCenter;
+    const targetScroll = container.scrollLeft + delta;
     container.scrollTo({ left: Math.max(0, targetScroll), behavior: "smooth" });
+  } else {
+    const cardWidth = targetCard.offsetWidth || 350;
+    container.scrollLeft = targetIdx * (cardWidth + 20);
   }
+
+  updateMessengerCarouselIndicators(targetIdx);
 };
 
 window.openFutureCharacterModal = function() {
@@ -4376,28 +4936,25 @@ function renderOpenkotoStudioView(container) {
     return;
   }
 
+  // If activeSource was previously text or camera, ensure safe fallback to upload
+  if (openkotoState.activeSource !== "upload" && openkotoState.activeSource !== "chat") {
+    openkotoState.activeSource = "upload";
+  }
+
   // If no active lesson, render Studio Upload / Builder Form
   container.innerHTML = `
     <div class="openkoto-container">
       <!-- Studio Input Card -->
       <div class="openkoto-card">
-        <!-- Media Source Tabs -->
+        <!-- Media Source Tabs (Upload File & Import Chat) -->
         <div class="openkoto-source-tabs">
           <button class="openkoto-source-btn ${openkotoState.activeSource === "upload" ? "active" : ""}" type="button" onclick="setOpenkotoSource('upload')">
             <span class="material-symbols-outlined">upload_file</span>
             <span>Upload File</span>
           </button>
-          <button class="openkoto-source-btn ${openkotoState.activeSource === "text" ? "active" : ""}" type="button" onclick="setOpenkotoSource('text')">
-            <span class="material-symbols-outlined">edit_note</span>
-            <span>Paste Text</span>
-          </button>
           <button class="openkoto-source-btn ${openkotoState.activeSource === "chat" ? "active" : ""}" type="button" onclick="setOpenkotoSource('chat')">
             <span class="material-symbols-outlined">forum</span>
             <span>Import Chat</span>
-          </button>
-          <button class="openkoto-source-btn ${openkotoState.activeSource === "camera" ? "active" : ""}" type="button" onclick="setOpenkotoSource('camera')">
-            <span class="material-symbols-outlined">photo_camera</span>
-            <span>Take Photo</span>
           </button>
         </div>
 
@@ -4411,12 +4968,7 @@ function renderOpenkotoStudioView(container) {
           </div>
         ` : ""}
 
-        <!-- 2. PASTE TEXT / LYRICS -->
-        ${openkotoState.activeSource === "text" ? `
-          <textarea id="openkotoTextInput" class="openkoto-textarea" placeholder="Paste dialogue, lyrics, romance messages, article excerpts, or video subtitles here...">${openkotoState.pastedText}</textarea>
-        ` : ""}
-
-        <!-- 3. CHAT IMPORTER DECK -->
+        <!-- 2. CHAT IMPORTER DECK -->
         ${openkotoState.activeSource === "chat" ? (() => {
           const charId = openkotoState.selectedChatChar || "ado";
           const char = CHARACTERS[charId] || CHARACTERS.ado;
@@ -4454,7 +5006,7 @@ function renderOpenkotoStudioView(container) {
                 </div>
                 <div class="openkoto-chat-toolbar-actions">
                   ${history.length > 0 ? `
-                    <button type="button" class="openkoto-chat-tool-btn" onclick="importRecentChatExchanges('${charId}', 6, false)" title="Load last 3 exchanges into text">
+                    <button type="button" class="openkoto-chat-tool-btn" onclick="importRecentChatExchanges('${charId}', 6, true)" title="Create lesson from last 6 messages">
                       Last 6 Msgs
                     </button>
                     <button type="button" class="openkoto-chat-tool-btn" onclick="selectAllOpenkotoChatMsgs()">
@@ -4474,7 +5026,7 @@ function renderOpenkotoStudioView(container) {
                 <div class="openkoto-chat-empty">
                   <span class="material-symbols-outlined" style="font-size:38px; color:var(--primary-pink); opacity:0.85;">chat_bubble_outline</span>
                   <div style="font-weight:700; color:var(--text-main); font-size:14.5px; margin-top:6px;">No conversation messages yet with ${char.name}</div>
-                  <div style="font-size:12.5px; color:var(--text-muted); margin-top:2px;">Chat with ${char.name} in the Chatroom first, or use a sample preset!</div>
+                  <div style="font-size:12.5px; color:var(--text-muted); margin-top:2px;">Chat with ${char.name} in the Chatroom first, or upload a media file!</div>
                   <div style="display:flex; gap:8px; margin-top:12px;">
                     <button type="button" class="primary-btn" style="font-size:12px; padding:6px 16px; border-radius:10px;" onclick="openChat('${charId}')">
                       <span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">chat</span> Open ${char.name}'s Chat
@@ -4501,9 +5053,9 @@ function renderOpenkotoStudioView(container) {
                           <div class="openkoto-chat-msg-text">${cleanEmojiText(msg.text || "")}</div>
                           ${msg.translation ? `<div class="openkoto-chat-msg-trans">${cleanEmojiText(msg.translation)}</div>` : ""}
                         </div>
-                        <button type="button" class="openkoto-chat-quick-import-btn" title="Import this message into text" onclick="event.stopPropagation(); importSingleChatMsgToMediaLab('${charId}', ${idx}, false);">
-                          <span class="material-symbols-outlined" style="font-size:15px;">arrow_forward</span>
-                          <span>Import</span>
+                        <button type="button" class="openkoto-chat-quick-import-btn" title="Create lesson from this message" onclick="event.stopPropagation(); importSingleChatMsgToMediaLab('${charId}', ${idx}, true);">
+                          <span class="material-symbols-outlined" style="font-size:15px;">auto_awesome</span>
+                          <span>Learn</span>
                         </button>
                       </div>
                     `;
@@ -4519,11 +5071,8 @@ function renderOpenkotoStudioView(container) {
                     <span><strong>${selectedCount}</strong> message${selectedCount > 1 ? "s" : ""} selected</span>
                   </div>
                   <div class="openkoto-chat-selected-actions">
-                    <button type="button" class="openkoto-chat-import-btn" onclick="importSelectedChatMsgsToOpenkoto(false)">
-                      Load into Text
-                    </button>
                     <button type="button" class="openkoto-chat-import-btn primary" onclick="importSelectedChatMsgsToOpenkoto(true)">
-                      Analyze Now
+                      Create Lesson from Selected
                     </button>
                   </div>
                 </div>
@@ -4531,16 +5080,6 @@ function renderOpenkotoStudioView(container) {
             </div>
           `;
         })() : ""}
-
-        <!-- 4. CAMERA SNAPSHOT -->
-        ${openkotoState.activeSource === "camera" ? `
-          <div class="openkoto-dropzone" onclick="document.getElementById('openkotoCameraInput').click();">
-            <input type="file" id="openkotoCameraInput" style="display:none;" accept="image/*" capture="environment" onchange="handleOpenkotoFileSelect(event)" />
-            <span class="material-symbols-outlined openkoto-dropzone-icon">photo_camera</span>
-            <div class="openkoto-dropzone-title">Snap photo of text, menu, manga or signs</div>
-            <div class="openkoto-dropzone-sub">Uses camera to scan and extract language lessons</div>
-          </div>
-        ` : ""}
 
         <!-- Attached Media Preview Bar -->
         ${openkotoState.fileName || openkotoState.mediaBase64 ? `
@@ -4583,7 +5122,7 @@ function renderOpenkotoStudioView(container) {
         <button class="openkoto-action-btn" type="button" onclick="generateOpenkotoLesson()" ${openkotoState.isLoading ? "disabled" : ""}>
           ${openkotoState.isLoading ? `
             <span class="material-symbols-outlined" style="animation:spin 1s linear infinite;">sync</span>
-            <span>OpenKoto AI is analyzing media &amp; building lesson...</span>
+            <span>Creating your lesson</span>
           ` : `
             <span class="material-symbols-outlined">auto_awesome</span>
             <span>Create your lesson</span>
@@ -4710,6 +5249,7 @@ function openChatroom(charId, updateUrl = true) {
   lastMessageWasLi[charId] = false;
   saveLocalState();
   renderChatList();
+  if (typeof completeObjectiveTask === "function") completeObjectiveTask("chat");
 
   const char = CHARACTERS[charId];
   if (!char) return;
@@ -6611,6 +7151,7 @@ function selectStoryCharacter(charId) {
 window.selectStoryCharacter = selectStoryCharacter;
 
 function openStoryPartnerSelect(scenarioId) {
+  if (window._justSwipedStoryCarousel) return;
   selectedScenarioForPartner = Number(scenarioId);
   if (typeof playVNSound === "function") playVNSound("click");
   renderStoryMode();
@@ -6856,31 +7397,37 @@ function renderStoryMode() {
 
   container.innerHTML = `
     <div class="story-squares-wrapper">
-      <div class="story-hub-hero">
-        <div class="story-hero-badge">VISUAL NOVEL DATE SCENARIOS</div>
-        <h2 class="story-hero-title">Choose Your Date Scenario</h2>
-        <p class="story-hero-subtitle">
-          Swipe or scroll through the date settings below to begin your visual novel experience. 
-          Pick a scenario, then choose which love interest (Ado, Kou, or Ren) to take on the date!
-        </p>
+      <div class="section-header messenger-section-header story-section-header">
+        <div class="messenger-header-text">
+          <h2 class="section-title">
+            <span>Date Scenarios</span>
+          </h2>
+          <p class="section-subtitle">Swipe or scroll to select a Date Scenario and partner</p>
+        </div>
       </div>
 
-      <div class="messenger-carousel-outer story-carousel-outer">
-        <div class="story-squares-carousel" id="storyCarouselContainer">
-          ${squaresHtml}
-          ${futureScenarioCardHtml}
-        </div>
-        <div class="messenger-carousel-footer story-carousel-footer" id="storyCarouselFooter">
-          <button class="messenger-arrow-btn carousel-prev-btn" id="storyCarouselPrev" type="button" aria-label="Previous date scenario" onclick="scrollStoryCarousel(-1)">
-            <span class="material-symbols-outlined">chevron_left</span>
-          </button>
-          <div class="messenger-carousel-indicators" id="storyCarouselIndicators">
-            <!-- Dots populated dynamically -->
+      <div class="carousel-stage-container">
+        ${renderDesktopObjectiveWindowHtml("story")}
+        <div class="carousel-stage-main">
+          <div class="messenger-carousel-outer story-carousel-outer">
+            <div class="story-squares-carousel" id="storyCarouselContainer">
+              ${squaresHtml}
+              ${futureScenarioCardHtml}
+            </div>
           </div>
-          <button class="messenger-arrow-btn carousel-next-btn" id="storyCarouselNext" type="button" aria-label="Next date scenario" onclick="scrollStoryCarousel(1)">
-            <span class="material-symbols-outlined">chevron_right</span>
-          </button>
+          <div class="messenger-carousel-footer story-carousel-footer" id="storyCarouselFooter">
+            <button class="messenger-arrow-btn carousel-prev-btn" id="storyCarouselPrev" type="button" aria-label="Previous date scenario" onclick="scrollStoryCarousel(-1)">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <div class="messenger-carousel-indicators" id="storyCarouselIndicators">
+              <!-- Dots populated dynamically -->
+            </div>
+            <button class="messenger-arrow-btn carousel-next-btn" id="storyCarouselNext" type="button" aria-label="Next date scenario" onclick="scrollStoryCarousel(1)">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
         </div>
+        ${renderDesktopOpenkotoGuideWindowHtml("story")}
       </div>
     </div>
   `;
@@ -6888,9 +7435,38 @@ function renderStoryMode() {
   // Initialize carousel indicators & scroll listener
   setTimeout(() => {
     initStoryCarousel();
+    syncObjectivesUI();
   }, 50);
 }
 window.renderStoryMode = renderStoryMode;
+
+let currentStoryCardIndex = 0;
+
+function findClosestStoryCardIndex() {
+  const container = document.getElementById("storyCarouselContainer");
+  if (!container) return currentStoryCardIndex;
+  const cards = container.querySelectorAll(".story-scenario-square");
+  if (!cards.length) return 0;
+
+  const containerRect = container.getBoundingClientRect();
+  if (containerRect.width <= 0) return currentStoryCardIndex;
+
+  const containerCenter = containerRect.left + containerRect.width / 2;
+  let minDistance = Infinity;
+  let closestIndex = 0;
+
+  cards.forEach((card, idx) => {
+    const cardRect = card.getBoundingClientRect();
+    const cardCenter = cardRect.left + cardRect.width / 2;
+    const dist = Math.abs(containerCenter - cardCenter);
+    if (dist < minDistance) {
+      minDistance = dist;
+      closestIndex = idx;
+    }
+  });
+
+  return closestIndex;
+}
 
 function initStoryCarousel() {
   const container = document.getElementById("storyCarouselContainer");
@@ -6901,15 +7477,70 @@ function initStoryCarousel() {
   if (!cards.length) return;
 
   dotsContainer.innerHTML = Array.from({ length: cards.length }).map((_, idx) => `
-    <button class="carousel-dot ${idx === 0 ? 'active' : ''}" type="button" aria-label="Go to scenario ${idx + 1}" onclick="scrollToStoryCard(${idx})"></button>
+    <button class="carousel-dot ${idx === currentStoryCardIndex ? 'active' : ''}" type="button" aria-label="Go to scenario ${idx + 1}" onclick="scrollToStoryCard(${idx})"></button>
   `).join("");
 
-  container.removeEventListener("scroll", updateStoryCarouselIndicators);
-  container.addEventListener("scroll", updateStoryCarouselIndicators, { passive: true });
+  if (!container.dataset.carouselBound) {
+    container.dataset.carouselBound = "true";
+
+    // Scroll listener updates active dot & center styles
+    container.addEventListener("scroll", () => {
+      if (container.classList.contains("is-dragging")) return;
+      updateStoryCarouselIndicators();
+    }, { passive: true });
+
+    // Smooth horizontal wheel / trackpad scrolling support on desktop
+    container.addEventListener("wheel", (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && container.scrollWidth > container.clientWidth) {
+        e.preventDefault();
+        container.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+
+    // Desktop Mouse Drag / Swipe gesture support
+    let isDown = false;
+    let startX = 0;
+    let initialScrollLeft = 0;
+    let dragDistance = 0;
+
+    container.addEventListener("mousedown", (e) => {
+      if (e.button !== 0) return; // Only primary mouse button
+      isDown = true;
+      dragDistance = 0;
+      startX = e.pageX;
+      initialScrollLeft = container.scrollLeft;
+      container.classList.add("is-dragging");
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      const walk = e.pageX - startX;
+      dragDistance = Math.abs(walk);
+      if (dragDistance > 4) {
+        container.scrollLeft = initialScrollLeft - walk;
+      }
+    });
+
+    window.addEventListener("mouseup", () => {
+      if (!isDown) return;
+      isDown = false;
+      container.classList.remove("is-dragging");
+      if (dragDistance > 10) {
+        window._justSwipedStoryCarousel = true;
+        setTimeout(() => { window._justSwipedStoryCarousel = false; }, 200);
+        // Snap cleanly to closest card
+        const closest = findClosestStoryCardIndex();
+        scrollToStoryCard(closest);
+      } else {
+        updateStoryCarouselIndicators();
+      }
+    });
+  }
+
   updateStoryCarouselIndicators();
 }
 
-function updateStoryCarouselIndicators() {
+function updateStoryCarouselIndicators(forcedActiveIndex) {
   const container = document.getElementById("storyCarouselContainer");
   const dotsContainer = document.getElementById("storyCarouselIndicators");
   if (!container || !dotsContainer) return;
@@ -6917,21 +7548,11 @@ function updateStoryCarouselIndicators() {
   const cards = container.querySelectorAll(".story-scenario-square");
   if (!cards.length) return;
 
-  const scrollLeft = container.scrollLeft;
-  const containerWidth = container.clientWidth;
-  const center = scrollLeft + containerWidth / 2;
-
-  let activeIndex = 0;
-  let minDistance = Infinity;
+  const activeIndex = typeof forcedActiveIndex === "number" ? forcedActiveIndex : findClosestStoryCardIndex();
+  currentStoryCardIndex = activeIndex;
 
   cards.forEach((card, idx) => {
-    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-    const dist = Math.abs(center - cardCenter);
-    if (dist < minDistance) {
-      minDistance = dist;
-      activeIndex = idx;
-    }
-    card.classList.toggle("is-centered", dist < 45);
+    card.classList.toggle("is-centered", idx === activeIndex);
   });
 
   const dots = dotsContainer.querySelectorAll(".carousel-dot");
@@ -6952,21 +7573,9 @@ window.scrollStoryCarousel = function(direction) {
   const cards = container.querySelectorAll(".story-scenario-square");
   if (!cards.length) return;
 
-  const scrollLeft = container.scrollLeft;
-  const center = scrollLeft + container.clientWidth / 2;
-  let activeIndex = 0;
-  let minDistance = Infinity;
-
-  cards.forEach((card, idx) => {
-    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-    const dist = Math.abs(center - cardCenter);
-    if (dist < minDistance) {
-      minDistance = dist;
-      activeIndex = idx;
-    }
-  });
-
-  const nextIndex = Math.max(0, Math.min(cards.length - 1, activeIndex + direction));
+  // Determine current active index reliably
+  const baseIndex = currentStoryCardIndex;
+  const nextIndex = Math.max(0, Math.min(cards.length - 1, baseIndex + direction));
   scrollToStoryCard(nextIndex);
 };
 
@@ -6974,14 +7583,41 @@ window.scrollToStoryCard = function(index) {
   const container = document.getElementById("storyCarouselContainer");
   if (!container) return;
   const cards = container.querySelectorAll(".story-scenario-square");
-  if (cards && cards[index]) {
-    const card = cards[index];
-    const targetScroll = card.offsetLeft - (container.clientWidth - card.offsetWidth) / 2;
-    container.scrollTo({ left: Math.max(0, targetScroll), behavior: "smooth" });
+  if (!cards.length) return;
+
+  const targetIdx = Math.max(0, Math.min(cards.length - 1, index));
+  currentStoryCardIndex = targetIdx;
+  const targetCard = cards[targetIdx];
+  if (!targetCard) return;
+
+  const containerRect = container.getBoundingClientRect();
+  const cardRect = targetCard.getBoundingClientRect();
+
+  if (containerRect.width > 0) {
+    const cardCenter = cardRect.left + cardRect.width / 2;
+    const containerCenter = containerRect.left + containerRect.width / 2;
+    const delta = cardCenter - containerCenter;
+    const targetScroll = Math.max(0, Math.round(container.scrollLeft + delta));
+
+    // Temporarily bypass scroll-snap to prevent snap abortion during smooth scroll
+    container.style.scrollSnapType = "none";
+    container.scrollTo({ left: targetScroll, behavior: "smooth" });
+
+    clearTimeout(container._snapTimer);
+    container._snapTimer = setTimeout(() => {
+      container.style.scrollSnapType = "";
+      updateStoryCarouselIndicators(targetIdx);
+    }, 450);
+  } else {
+    const cardWidth = targetCard.offsetWidth || 350;
+    container.scrollLeft = targetIdx * (cardWidth + 20);
   }
+
+  updateStoryCarouselIndicators(targetIdx);
 };
 
 window.openFutureScenarioModal = function() {
+  if (window._justSwipedStoryCarousel) return;
   let modal = document.getElementById("futureScenarioModal");
   if (!modal) {
     modal = document.createElement("div");
