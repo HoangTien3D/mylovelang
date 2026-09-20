@@ -903,7 +903,7 @@ body:has(#view-story.active:not(.playing-vn-gameplay)) {
 @media (min-width: 1024px) {
   .main-content:has(#view-chats.active),
   .main-content:has(#view-story.active:not(.playing-vn-gameplay)) {
-    padding: 8px 32px 82px 32px !important;
+    padding: 6px clamp(12px, 2vw, 28px) clamp(56px, 7vh, 76px) clamp(12px, 2vw, 28px) !important;
   }
 }
 
@@ -1502,20 +1502,20 @@ body.dark-theme .story-carousel-outer {
 
 @media (min-width: 1024px) {
   :root {
-    --carousel-box-width: clamp(380px, 28vw, 450px) !important;
+    --carousel-box-width: clamp(320px, 25vw, 420px) !important;
   }
 
   /* Desktop Titles & Subtitles Bigger */
   .section-title {
-    font-size: clamp(32px, 2.8vw, 44px) !important;
+    font-size: clamp(30px, 2.6vw, 42px) !important;
     letter-spacing: -0.5px !important;
     line-height: 1.2 !important;
   }
 
   .section-subtitle {
-    font-size: clamp(16px, 1.3vw, 20px) !important;
-    margin-top: 6px !important;
-    line-height: 1.5 !important;
+    font-size: clamp(15px, 1.2vw, 18px) !important;
+    margin-top: 5px !important;
+    line-height: 1.4 !important;
   }
 
   .story-hero-title {
@@ -1535,7 +1535,7 @@ body.dark-theme .story-carousel-outer {
     width: 100% !important;
     max-width: 100% !important;
     border-radius: 28px !important;
-    padding: 16px 0 14px 0 !important;
+    padding: 12px 0 10px 0 !important;
     box-shadow: 0 4px 20px rgba(31, 21, 46, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05) !important;
   }
 
@@ -1544,11 +1544,11 @@ body.dark-theme .story-carousel-outer {
     flex: 0 0 var(--carousel-box-width) !important;
     width: var(--carousel-box-width) !important;
     max-width: var(--carousel-box-width) !important;
-    height: clamp(470px, 58vh, 580px) !important;
-    max-height: calc(100dvh - 210px) !important;
-    min-height: 450px !important;
-    border-radius: 26px !important;
-    padding: 22px 22px 24px 22px !important;
+    height: clamp(370px, calc(100dvh - 220px), 530px) !important;
+    max-height: calc(100dvh - 180px) !important;
+    min-height: 350px !important;
+    border-radius: 24px !important;
+    padding: clamp(14px, 1.6vh, 22px) clamp(14px, 1.4vw, 22px) !important;
   }
 
   .square-char-name {
@@ -13306,24 +13306,26 @@ body.dark-theme .google-oauth-btn:hover {
 @media (min-width: 1024px) {
   .carousel-stage-container {
     display: grid !important;
-    grid-template-columns: 1fr auto 1fr !important;
+    grid-template-columns: minmax(180px, 1fr) auto minmax(180px, 1fr) !important;
     align-items: center !important;
     justify-items: center !important;
     width: 100% !important;
     max-width: 1440px !important;
     margin: 0 auto !important;
     box-sizing: border-box !important;
-    padding: 0 16px !important;
+    padding: 0 clamp(6px, 1vw, 16px) !important;
     position: relative !important;
+    gap: clamp(4px, 0.8vw, 12px) !important;
   }
 
   .desktop-objective-pc-window {
     display: flex !important;
     flex-direction: column;
-    width: 250px;
-    min-width: 240px;
-    max-width: 260px;
-    flex-shrink: 0;
+    width: clamp(200px, 17vw, 250px);
+    min-width: 185px;
+    max-width: 255px;
+    flex-shrink: 1;
+    max-height: min(440px, calc(100dvh - 170px));
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.78);
     backdrop-filter: blur(20px);
@@ -13341,14 +13343,14 @@ body.dark-theme .google-oauth-btn:hover {
   .desktop-objective-pc-window:not(.desktop-openkoto-pc-window) {
     grid-column: 1 !important;
     justify-self: end !important;
-    margin-right: clamp(16px, 2.2vw, 36px) !important;
+    margin-right: clamp(4px, 1vw, 24px) !important;
     margin-left: 0 !important;
   }
 
   .desktop-openkoto-pc-window {
     grid-column: 3 !important;
     justify-self: start !important;
-    margin-left: clamp(16px, 2.2vw, 36px) !important;
+    margin-left: clamp(4px, 1vw, 24px) !important;
     margin-right: 0 !important;
   }
 
@@ -13358,7 +13360,7 @@ body.dark-theme .google-oauth-btn:hover {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    width: clamp(480px, 38vw, 580px) !important;
+    width: clamp(380px, 32vw, 540px) !important;
     max-width: 100% !important;
   }
 
@@ -13524,11 +13526,16 @@ body.dark-theme .google-oauth-btn:hover {
 
   /* Notes Body */
   .pc-note-body {
-    padding: 12px 14px 14px 14px;
+    padding: clamp(8px, 1.1vh, 12px) clamp(8px, 1vw, 14px);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(253, 250, 255, 0.8) 100%);
+    overflow-y: auto;
+    max-height: calc(100% - 36px);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(160, 140, 190, 0.35) transparent;
+    box-sizing: border-box;
   }
 
   body.dark-theme .pc-note-body {
@@ -13748,23 +13755,28 @@ body.dark-theme .openkoto-tag-badge {
 }
 
 .openkoto-guide-body {
-  padding: 10px 12px !important;
+  padding: clamp(8px, 1vh, 10px) clamp(8px, 1vw, 12px) !important;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  overflow-y: auto;
+  max-height: calc(100% - 36px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 114, 182, 0.35) transparent;
+  box-sizing: border-box;
 }
 
 .openkoto-guide-steps {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .openkoto-guide-step {
   display: flex;
   align-items: flex-start;
-  gap: 9px;
-  padding: 6px 8px;
+  gap: 8px;
+  padding: clamp(4px, 0.6vh, 6px) clamp(6px, 0.6vw, 8px);
   border-radius: 9px;
   background: rgba(255, 255, 255, 0.45);
   border: 1px solid rgba(160, 140, 190, 0.14);
@@ -13785,13 +13797,13 @@ body.dark-theme .openkoto-guide-step:hover {
 }
 
 .openkoto-step-num {
-  width: 19px;
-  height: 19px;
-  min-width: 19px;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
   border-radius: 50%;
   background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
   color: #ffffff;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 800;
   display: inline-flex;
   align-items: center;
@@ -13803,15 +13815,19 @@ body.dark-theme .openkoto-guide-step:hover {
 .openkoto-step-info {
   display: flex;
   flex-direction: column;
-  gap: 1.5px;
+  gap: 1px;
   min-width: 0;
+  overflow: hidden;
 }
 
 .openkoto-step-title {
-  font-size: 11.5px;
+  font-size: clamp(10.5px, 0.85vw, 11.5px);
   font-weight: 800;
   color: var(--text-main, #1e1b4b);
   line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body.dark-theme .openkoto-step-title {
@@ -13819,8 +13835,8 @@ body.dark-theme .openkoto-step-title {
 }
 
 .openkoto-step-desc {
-  font-size: 10.5px;
-  line-height: 1.35;
+  font-size: clamp(9.5px, 0.75vw, 10.5px);
+  line-height: 1.3;
   color: var(--text-muted, #716b80);
 }
 

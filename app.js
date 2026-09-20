@@ -1958,7 +1958,7 @@ function renderDesktopOpenkotoGuideWindowHtml(suffix = "chats") {
         </div>
         <div class="pc-window-tab">
           <span class="material-symbols-outlined pc-tab-icon" style="color: #f472b6;">auto_stories</span>
-          <span class="pc-tab-title">openkoto.txt</span>
+          <span class="pc-tab-title">guidebook.txt</span>
         </div>
         <span class="pc-tasks-count openkoto-tag-badge">AI LAB</span>
       </div>
