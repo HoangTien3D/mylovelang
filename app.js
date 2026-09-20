@@ -108,8 +108,8 @@ const BASE_CHARACTERS = {
   ado: {
     id: "ado",
     name: "Ado",
-    avatar: "/assets/characters/ado_avatar.png",
-    sprite: "/assets/characters/ado_fullbody.png",
+    avatar: "/assets/characters/ado/normal.png",
+    sprite: "/assets/characters/ado/normal.png",
     archetype: "Strict Classmate",
     role: "Strict & Reliable Classmate",
     personality: "Strict, dutiful classmate who keeps you on track. Tsundere at heart—acts tough and official, but blushes and softens up when you get close.",
@@ -136,8 +136,8 @@ const BASE_CHARACTERS = {
   kou: {
     id: "kou",
     name: "Kou",
-    avatar: "/assets/characters/kou_avatar.png",
-    sprite: "/assets/characters/kou_fullbody.png",
+    avatar: "/assets/characters/kou/normal.png",
+    sprite: "/assets/characters/kou/normal.png",
     archetype: "Cute Junior",
     role: "Cute & Clingy Underclassman",
     personality: "Cute, innocent, and clingy underclassman. Always follows you around, adores you, and seeks your attention and affection!",
@@ -164,8 +164,8 @@ const BASE_CHARACTERS = {
   ren: {
     id: "ren",
     name: "Ren",
-    avatar: "/assets/characters/ren_avatar.png",
-    sprite: "/assets/characters/ren_fullbody.png",
+    avatar: "/assets/characters/ren/normal.png",
+    sprite: "/assets/characters/ren/normal.png",
     archetype: "Flirty Senior",
     role: "Flirty & Assertive Senior",
     personality: "Aggressive, flirty, teasing senior (senpai). Loves to bully and tease you playfully, asserting his charm whenever you're around.",
@@ -3012,31 +3012,73 @@ function logDashboardEvent(msg) {
   box.scrollTop = box.scrollHeight;
 }
 
-// Character Emotions Definition for Desktop Hover Showcase
+// Character Emotions Definition for Desktop Hover Showcase & Previews
 const CHARACTER_EMOTIONS = [
-  { id: "normal", name: "Normal", vi: "Bình thường", emoji: "😌", desc: "Composed & calm" },
-  { id: "happy", name: "Happy", vi: "Vui vẻ", emoji: "😊", desc: "Radiant & warm smile" },
-  { id: "blush", name: "Blush", vi: "Ngại ngùng", emoji: "😳", desc: "Flustered red cheeks" },
-  { id: "pout", name: "Pout", vi: "Dỗi hờn", emoji: "🥺", desc: "Cute sulking pout" },
-  { id: "angry", name: "Angry", vi: "Tức giận", emoji: "😤", desc: "Stern tsundere scowl" },
-  { id: "sad", name: "Sad", vi: "Buồn bã", emoji: "😢", desc: "Soft & vulnerable" },
-  { id: "fear", name: "Shocked", vi: "Kinh ngạc", emoji: "😲", desc: "Surprised reaction" },
-  { id: "idle", name: "Idle", vi: "Thảnh thơi", emoji: "☕", desc: "Relaxed posture" },
+  { id: "normal", name: "Normal", vi: "Bình thường", emoji: "😌", desc: "Composed & calm", file: "normal.png" },
+  { id: "idle", name: "Idle", vi: "Thảnh thơi", emoji: "☕", desc: "Relaxed posture", file: "idle.png" },
+  { id: "happy", name: "Happy", vi: "Vui vẻ", emoji: "😊", desc: "Radiant & warm smile", file: "happy.png" },
+  { id: "blush", name: "Blush", vi: "Ngại ngùng", emoji: "😳", desc: "Flustered red cheeks", file: "blush.png" },
+  { id: "pout", name: "Pout", vi: "Dỗi hờn", emoji: "🥺", desc: "Cute sulking pout", file: "pout.png" },
+  { id: "angry", name: "Angry", vi: "Tức giận", emoji: "😤", desc: "Stern tsundere scowl", file: "angry.png" },
+  { id: "fear", name: "Shocked", vi: "Kinh ngạc", emoji: "😲", desc: "Surprised reaction", file: "fear.png" },
+  { id: "sad", name: "Sad", vi: "Buồn bã", emoji: "😢", desc: "Soft & vulnerable", file: "sad.png" },
 ];
 
-window.previewCharEmotion = function(charId, emotionId, name, vi, desc) {
-  const heroImg = document.getElementById(`cardHeroImg-${charId}`);
-  if (heroImg && window.VN_SPRITES && window.VN_SPRITES[charId]) {
-    const sprite = window.VN_SPRITES[charId][emotionId] || window.VN_SPRITES[charId].normal;
-    if (sprite) {
-      heroImg.src = sprite;
+/**
+ * Robust image loader for character emotion sprites and main square cards.
+ * First loads from the character's respective directory (/assets/characters/[charId]/[emotion].png).
+ * Cascades through normal.png, idle.png, avatar.png, and SVG vectors if a specific file is pending.
+ */
+function setCharacterImageWithFallbacks(imgEl, charId, emotion = "normal") {
+  if (!imgEl) return;
+  const normalizedId = (charId === "bao" ? "ado" : (charId === "julian" ? "kou" : charId)) || "ado";
+
+  const primary = `/assets/characters/${normalizedId}/${emotion}.png`;
+  const normalPng = `/assets/characters/${normalizedId}/normal.png`;
+  const idlePng = `/assets/characters/${normalizedId}/idle.png`;
+  const avatarPng = `/assets/characters/${normalizedId}_avatar.png`;
+  const fullbodyPng = `/assets/characters/${normalizedId}_fullbody.png`;
+  const avatarSvg = `/assets/characters/${normalizedId}_avatar.svg`;
+  const vectorSvg = (window.VN_SPRITES && window.VN_SPRITES[normalizedId] && (window.VN_SPRITES[normalizedId][emotion] || window.VN_SPRITES[normalizedId].normal)) || `/assets/characters/${normalizedId}_fullbody.svg`;
+
+  const candidates = [primary];
+  if (emotion !== "normal") candidates.push(normalPng);
+  if (emotion !== "idle") candidates.push(idlePng);
+  candidates.push(avatarPng);
+  candidates.push(fullbodyPng);
+  candidates.push(avatarSvg);
+  if (vectorSvg && !candidates.includes(vectorSvg)) candidates.push(vectorSvg);
+
+  let attempt = 0;
+  imgEl.onerror = function() {
+    attempt++;
+    if (attempt < candidates.length) {
+      this.src = candidates[attempt];
+    } else {
+      this.onerror = null;
     }
+  };
+  imgEl.src = candidates[0];
+}
+window.setCharacterImageWithFallbacks = setCharacterImageWithFallbacks;
+
+window.handleCharImgFallback = function(imgEl, charId, emotion = "normal") {
+  setCharacterImageWithFallbacks(imgEl, charId, emotion);
+};
+
+window.previewCharEmotion = function(charId, emotionId, name, vi, desc) {
+  const normalizedId = (charId === "bao" ? "ado" : (charId === "julian" ? "kou" : charId)) || "ado";
+  const heroImg = document.getElementById(`cardHeroImg-${normalizedId}`);
+  if (heroImg) {
+    setCharacterImageWithFallbacks(heroImg, normalizedId, emotionId);
   }
-  const badge = document.getElementById(`activeEmotionBadge-${charId}`);
+
+  const badge = document.getElementById(`activeEmotionBadge-${normalizedId}`);
   if (badge) {
-    badge.textContent = `${name} (${vi})`;
+    badge.textContent = `${name || emotionId} (${vi || ''})`;
   }
-  const overlay = document.getElementById(`hoverOverlay-${charId}`);
+
+  const overlay = document.getElementById(`hoverOverlay-${normalizedId}`);
   if (overlay) {
     overlay.querySelectorAll(".desktop-emotion-chip").forEach(btn => {
       if (btn.getAttribute("data-emotion") === emotionId) {
@@ -3049,16 +3091,16 @@ window.previewCharEmotion = function(charId, emotionId, name, vi, desc) {
 };
 
 window.resetCardEmotion = function(charId) {
-  const heroImg = document.getElementById(`cardHeroImg-${charId}`);
-  const char = (typeof CHARACTERS !== "undefined" && CHARACTERS[charId]) || (typeof BASE_CHARACTERS !== "undefined" && BASE_CHARACTERS[charId]);
-  if (heroImg && char) {
-    heroImg.src = char.avatar;
+  const normalizedId = (charId === "bao" ? "ado" : (charId === "julian" ? "kou" : charId)) || "ado";
+  const heroImg = document.getElementById(`cardHeroImg-${normalizedId}`);
+  if (heroImg) {
+    setCharacterImageWithFallbacks(heroImg, normalizedId, "normal");
   }
-  const badge = document.getElementById(`activeEmotionBadge-${charId}`);
+  const badge = document.getElementById(`activeEmotionBadge-${normalizedId}`);
   if (badge) {
     badge.textContent = "😌 Normal (Bình thường)";
   }
-  const overlay = document.getElementById(`hoverOverlay-${charId}`);
+  const overlay = document.getElementById(`hoverOverlay-${normalizedId}`);
   if (overlay) {
     overlay.querySelectorAll(".desktop-emotion-chip").forEach(btn => {
       if (btn.getAttribute("data-emotion") === "normal") {
@@ -3073,7 +3115,8 @@ window.resetCardEmotion = function(charId) {
 /* ==========================================================================
    CHARACTER EMOTION SLIDESHOW & INTRO OVERLAY
    - Automated scrolling/cycling slideshow through all 8 expressions
-   - High-contrast text overlay on top with character's quick introduction
+   - Uses character directory files (ado/angry.png, ren/fear.png, kou/idle.png, etc.)
+   - Synchronizes both floating showcase preview and main square-card image
    - Follows mouse cursor smoothly on desktop
    - On mobile/touch: triggered via click event as a centered modal with backdrop
    ========================================================================== */
@@ -3094,32 +3137,67 @@ function renderSlideshowDots() {
   const dotsContainer = document.getElementById("cursorEmotionDots");
   if (!dotsContainer) return;
   dotsContainer.innerHTML = CHARACTER_EMOTIONS.map((em, idx) => `
-    <span class="cursor-emotion-dot ${idx === currentEmotionIndex ? 'active' : ''}" title="${em.name} (${em.vi})"></span>
+    <button type="button" class="cursor-emotion-dot ${idx === currentEmotionIndex ? 'active' : ''}" 
+      title="${em.name} (${em.vi}) • ${em.file || em.id + '.png'}" 
+      onclick="event.stopPropagation(); window.jumpToSlideshowEmotion(${idx});" 
+      onmouseenter="window.jumpToSlideshowEmotion(${idx});"></button>
   `).join("");
 }
+
+function renderSlideshowChips() {
+  const chipsContainer = document.getElementById("cursorEmotionChipsBar");
+  if (!chipsContainer) return;
+  chipsContainer.innerHTML = CHARACTER_EMOTIONS.map((em, idx) => `
+    <button type="button" class="cursor-quick-chip ${idx === currentEmotionIndex ? 'active' : ''}" 
+      title="${em.name} (${em.vi}) • ${em.file || em.id + '.png'}" 
+      onclick="event.stopPropagation(); window.jumpToSlideshowEmotion(${idx});" 
+      onmouseenter="window.jumpToSlideshowEmotion(${idx});">
+      <span class="chip-emoji">${em.emoji}</span>
+      <span class="chip-label">${em.name}</span>
+      <span class="chip-file">.${em.file || em.id + '.png'}</span>
+    </button>
+  `).join("");
+}
+
+window.jumpToSlideshowEmotion = function(idx) {
+  stopSlideshowCycle();
+  updateSlideshowEmotion(idx);
+  // Auto-resume slideshow after brief pause
+  if (cursorSlideshowTimer) clearTimeout(cursorSlideshowTimer);
+  cursorSlideshowTimer = setTimeout(() => {
+    if (currentSlideshowChar) {
+      startSlideshowCycle();
+    }
+  }, 2500);
+};
 
 function updateSlideshowEmotion(idx) {
   if (!currentSlideshowChar) return;
   currentEmotionIndex = idx % CHARACTER_EMOTIONS.length;
   const em = CHARACTER_EMOTIONS[currentEmotionIndex];
+  const charId = (currentSlideshowChar.id === "bao" ? "ado" : (currentSlideshowChar.id === "julian" ? "kou" : currentSlideshowChar.id)) || "ado";
 
+  // 1. Update showcase preview sprite using character directory files (angry.png, fear.png, idle.png, etc.)
   const spriteEl = document.getElementById("cursorEmotionSprite");
-  const charId = currentSlideshowChar.id;
-  const spriteUrl = (window.VN_SPRITES && window.VN_SPRITES[charId] && window.VN_SPRITES[charId][em.id]) ||
-    (window.VN_SPRITES && window.VN_SPRITES[charId] && window.VN_SPRITES[charId].normal) ||
-    currentSlideshowChar.avatar;
-
   if (spriteEl) {
-    spriteEl.src = spriteUrl;
+    setCharacterImageWithFallbacks(spriteEl, charId, em.id);
   }
 
+  // 2. Synchronize main square card hero image on the chat carousel with the same file
+  const heroImg = document.getElementById(`cardHeroImg-${charId}`);
+  if (heroImg) {
+    setCharacterImageWithFallbacks(heroImg, charId, em.id);
+  }
+
+  // 3. Update top badge label & emoji
   const emojiEl = document.getElementById("cursorEmotionEmoji");
   const nameEl = document.getElementById("cursorEmotionName");
   const viEl = document.getElementById("cursorEmotionVi");
   if (emojiEl) emojiEl.textContent = em.emoji;
   if (nameEl) nameEl.textContent = em.name;
-  if (viEl) viEl.textContent = `(${em.vi})`;
+  if (viEl) viEl.textContent = `(${em.vi} • ${em.file || em.id + '.png'})`;
 
+  // 4. Update dots
   const dotsContainer = document.getElementById("cursorEmotionDots");
   if (dotsContainer) {
     const dots = dotsContainer.querySelectorAll(".cursor-emotion-dot");
@@ -3128,6 +3206,19 @@ function updateSlideshowEmotion(idx) {
         dot.classList.add("active");
       } else {
         dot.classList.remove("active");
+      }
+    });
+  }
+
+  // 5. Update emotion quick chips
+  const chipsContainer = document.getElementById("cursorEmotionChipsBar");
+  if (chipsContainer) {
+    const chips = chipsContainer.querySelectorAll(".cursor-quick-chip");
+    chips.forEach((chip, cIdx) => {
+      if (cIdx === currentEmotionIndex) {
+        chip.classList.add("active");
+      } else {
+        chip.classList.remove("active");
       }
     });
   }
@@ -3174,6 +3265,7 @@ function populateShowcaseCard(char) {
   }
 
   renderSlideshowDots();
+  renderSlideshowChips();
   updateSlideshowEmotion(0);
 }
 
@@ -3245,6 +3337,13 @@ window.handleCardMouseLeave = function() {
 
 function stopDesktopShowcase() {
   stopSlideshowCycle();
+  if (currentSlideshowChar) {
+    const charId = (currentSlideshowChar.id === "bao" ? "ado" : (currentSlideshowChar.id === "julian" ? "kou" : currentSlideshowChar.id)) || "ado";
+    const heroImg = document.getElementById(`cardHeroImg-${charId}`);
+    if (heroImg) {
+      setCharacterImageWithFallbacks(heroImg, charId, "normal");
+    }
+  }
   const overlay = document.getElementById("cursorEmotionOverlay");
   if (overlay && !isMobileModalOpen) {
     overlay.style.display = "none";
@@ -3297,6 +3396,13 @@ window.openMobileEmotionShowcase = function(charId) {
 
 window.closeEmotionShowcase = function() {
   stopSlideshowCycle();
+  if (currentSlideshowChar) {
+    const charId = (currentSlideshowChar.id === "bao" ? "ado" : (currentSlideshowChar.id === "julian" ? "kou" : currentSlideshowChar.id)) || "ado";
+    const heroImg = document.getElementById(`cardHeroImg-${charId}`);
+    if (heroImg) {
+      setCharacterImageWithFallbacks(heroImg, charId, "normal");
+    }
+  }
   isMobileModalOpen = false;
 
   const overlay = document.getElementById("cursorEmotionOverlay");
@@ -3352,7 +3458,7 @@ function renderChatList() {
     }
 
     let pfpCoverHtml = `
-      <img src="${char.avatar}" id="cardHeroImg-${char.id}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.png';" />
+      <img src="/assets/characters/${char.id}/normal.png" id="cardHeroImg-${char.id}" class="square-pfp-img" alt="${char.name}" onerror="window.handleCharImgFallback(this, '${char.id}', 'normal');" />
     `;
 
     const card = document.createElement("div");
@@ -3663,7 +3769,7 @@ function renderCharactersList() {
     const relInfo = getRelationshipInfo(affectionPct);
 
     let pfpCoverHtml = `
-      <img src="${char.avatar}" class="square-pfp-img" alt="${char.name}" onerror="this.onerror=null; this.src='/assets/characters/${char.id}_avatar.png';" />
+      <img src="/assets/characters/${char.id}/normal.png" class="square-pfp-img" alt="${char.name}" onerror="window.handleCharImgFallback(this, '${char.id}', 'normal');" />
     `;
 
     const card = document.createElement("div");
