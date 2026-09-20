@@ -1307,17 +1307,60 @@ body.dark-theme .story-carousel-outer {
     box-sizing: border-box !important;
   }
 
-  /* Remove section-subtitle and section-title on mobile (both story and chat page) */
+  /* Restore section title on mobile (both story and chat page) */
   #view-chats .messenger-section-header,
   #view-story .messenger-section-header,
   #view-chats .section-header,
-  #view-story .section-header,
-  #view-chats .section-title,
-  #view-story .section-title,
-  #view-chats .section-subtitle,
-  #view-story .section-subtitle,
+  #view-story .section-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    margin-bottom: clamp(4px, 1.2vh, 10px) !important;
+    padding: clamp(6px, 1.4vh, 14px) 16px 0 16px !important;
+    flex-shrink: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
   #view-chats .messenger-header-text,
   #view-story .messenger-header-text {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: auto !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  #view-chats .section-title,
+  #view-story .section-title {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: clamp(30px, 5.2vw, 40px) !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.3px !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    text-shadow: 0 2px 8px rgba(24, 14, 40, 0.5) !important;
+    color: #ffffff !important;
+  }
+
+  #view-chats .section-subtitle,
+  #view-story .section-subtitle {
     display: none !important;
     height: 0 !important;
     max-height: 0 !important;
@@ -1335,7 +1378,8 @@ body.dark-theme .story-carousel-outer {
     width: 100% !important;
     max-width: 100% !important;
     padding: 0 !important;
-    margin: auto 0 !important;
+    margin: 0 auto !important;
+    margin-top: clamp(6px, 1.5vh, 14px) !important;
     flex: 0 1 auto !important;
   }
 
@@ -1348,7 +1392,8 @@ body.dark-theme .story-carousel-outer {
     max-width: 100% !important;
     padding: 0 !important;
     margin: 0 auto !important;
-    margin-top: clamp(14px, 3.2vh, 28px) !important;
+    margin-top: clamp(12px, 2.8vh, 24px) !important;
+    transform: translateY(clamp(8px, 1.8vh, 16px));
   }
 
   /* Carousel wrapper fills up the screen on left and right for both chats and stories */
