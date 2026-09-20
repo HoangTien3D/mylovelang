@@ -877,9 +877,9 @@ body {
 
 /* Centered Messenger & Story View Sections (Viewport-Contained, No Screen Scroll) */
 .app-container:has(#view-chats.active),
-.app-container:has(#view-story.active:not(.playing-vn-gameplay)),
+.app-container:has(#view-story.active:not(.playing-vn-gameplay):not(.selecting-partner):not(:has(.story-partner-screen))),
 body:has(#view-chats.active),
-body:has(#view-story.active:not(.playing-vn-gameplay)) {
+body:has(#view-story.active:not(.playing-vn-gameplay):not(.selecting-partner):not(:has(.story-partner-screen))) {
   overflow: hidden !important;
   height: 100% !important;
   max-height: 100vh !important;
@@ -887,7 +887,7 @@ body:has(#view-story.active:not(.playing-vn-gameplay)) {
 }
 
 .main-content:has(#view-chats.active),
-.main-content:has(#view-story.active:not(.playing-vn-gameplay)) {
+.main-content:has(#view-story.active:not(.playing-vn-gameplay):not(.selecting-partner):not(:has(.story-partner-screen))) {
   overflow: hidden !important;
   overflow-y: hidden !important;
   height: 100% !important;
@@ -902,7 +902,7 @@ body:has(#view-story.active:not(.playing-vn-gameplay)) {
 
 @media (min-width: 1024px) {
   .main-content:has(#view-chats.active),
-  .main-content:has(#view-story.active:not(.playing-vn-gameplay)) {
+  .main-content:has(#view-story.active:not(.playing-vn-gameplay):not(.selecting-partner):not(:has(.story-partner-screen))) {
     padding: 6px clamp(12px, 2vw, 28px) clamp(56px, 7vh, 76px) clamp(12px, 2vw, 28px) !important;
   }
 }
@@ -915,7 +915,7 @@ body:has(#view-story.active:not(.playing-vn-gameplay)) {
 }
 
 #view-chats.view-section.active,
-#view-story.view-section.active:not(.playing-vn-gameplay) {
+#view-story.view-section.active:not(.playing-vn-gameplay):not(.selecting-partner):not(:has(.story-partner-screen)) {
   display: flex !important;
   flex: 1;
   flex-direction: column;
@@ -1246,7 +1246,7 @@ body.dark-theme .story-carousel-outer {
 @media (max-width: 640px) {
   /* Center view vertically and horizontally, fill available mobile screen */
   .main-content:has(#view-chats.active),
-  .main-content:has(#view-story.active:not(.playing-vn-gameplay)) {
+  .main-content:has(#view-story.active:not(.playing-vn-gameplay):not(.selecting-partner):not(:has(.story-partner-screen))) {
     height: 100% !important;
     max-height: calc(100dvh - 58px) !important;
     min-height: 0 !important;
@@ -1275,7 +1275,7 @@ body.dark-theme .story-carousel-outer {
 
   /* Only active views get flex centering on mobile */
   #view-chats.view-section.active,
-  #view-story.view-section.active:not(.playing-vn-gameplay) {
+  #view-story.view-section.active:not(.playing-vn-gameplay):not(.selecting-partner):not(:has(.story-partner-screen)) {
     height: 100% !important;
     max-height: 100% !important;
     flex: 1 1 100% !important;
@@ -1305,6 +1305,107 @@ body.dark-theme .story-carousel-outer {
     max-width: 100% !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
+  }
+
+  /* Love Interest Selection Screen (Mobile Scroll Fix) */
+  #view-story.view-section.active.selecting-partner,
+  #view-story.view-section.active:has(.story-partner-screen) {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: calc(100dvh - 58px) !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    padding: 12px 14px 100px 14px !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+  }
+
+  .main-content:has(#view-story.selecting-partner),
+  .main-content:has(#view-story .story-partner-screen) {
+    height: 100% !important;
+    max-height: calc(100dvh - 58px) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    box-sizing: border-box !important;
+  }
+
+  .story-partner-nav-bar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .story-back-scenarios-btn {
+    padding: 7px 12px !important;
+    font-size: 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .story-hero-badge {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  .story-scenario-preview-card {
+    padding: 14px !important;
+    border-radius: 16px !important;
+    gap: 12px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .story-scenario-preview-title {
+    font-size: 16.5px !important;
+  }
+
+  .story-scenario-preview-desc {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  .story-partner-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .story-partner-choice-card {
+    padding: 16px 14px !important;
+    border-radius: 18px !important;
+    gap: 10px !important;
+  }
+
+  .story-partner-avatar-wrap {
+    width: 74px !important;
+    height: 74px !important;
+  }
+
+  .story-partner-char-name {
+    font-size: 17px !important;
+  }
+
+  .story-partner-select-start-btn {
+    padding: 11px 16px !important;
+    font-size: 13px !important;
+    min-height: 44px !important;
   }
 
   /* Restore section title on mobile (both story and chat page) */
@@ -10390,12 +10491,52 @@ body.dark-theme .story-section-title {
 /* ==========================================================================
    LOVE INTEREST SELECTION SCREEN FOR CHOSEN DATE SCENARIO
    ========================================================================== */
+#view-story.view-section.active.selecting-partner,
+#view-story.view-section.active:has(.story-partner-screen) {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  scroll-behavior: smooth;
+  padding: 16px 20px 100px 20px !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+
+.main-content:has(#view-story.selecting-partner),
+.main-content:has(#view-story .story-partner-screen) {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
 .story-partner-screen {
   display: flex;
   flex-direction: column;
   gap: 18px;
   width: 100%;
+  max-width: 1180px;
+  min-height: min-content;
+  flex-shrink: 0 !important;
   animation: fadeIn 0.25s ease;
+  box-sizing: border-box;
 }
 
 .story-partner-nav-bar {

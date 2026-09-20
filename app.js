@@ -2888,9 +2888,15 @@ function switchTab(tabName, updateUrl = true) {
 
   if (tabName !== "story") {
     const viewStory = document.getElementById("view-story");
-    if (viewStory) viewStory.classList.remove("playing-vn-gameplay");
+    if (viewStory) {
+      viewStory.classList.remove("playing-vn-gameplay");
+      viewStory.classList.remove("selecting-partner");
+    }
     const appFrame = document.getElementById("appFrame");
-    if (appFrame) appFrame.classList.remove("playing-vn-gameplay");
+    if (appFrame) {
+      appFrame.classList.remove("playing-vn-gameplay");
+      appFrame.classList.remove("selecting-partner");
+    }
   }
 
   document.querySelectorAll(".tab-btn").forEach((btn) => {
@@ -7266,6 +7272,13 @@ window.openStoryPartnerSelect = openStoryPartnerSelect;
 
 function backToStoryScenarios() {
   selectedScenarioForPartner = null;
+  const container = document.getElementById("view-story");
+  if (container) {
+    container.classList.remove("selecting-partner");
+    container.scrollTop = 0;
+  }
+  const appFrame = document.getElementById("appFrame");
+  if (appFrame) appFrame.classList.remove("selecting-partner");
   if (typeof playVNSound === "function") playVNSound("click");
   renderStoryMode();
 }
@@ -7277,6 +7290,9 @@ function renderStoryMode() {
 
   // 1. If in active gameplay, render VN visual novel gameplay screen
   if (activeStorySession) {
+    container.classList.remove("selecting-partner");
+    const appFrame = document.getElementById("appFrame");
+    if (appFrame) appFrame.classList.remove("selecting-partner");
     renderStoryGameplay();
     return;
   }
@@ -7332,6 +7348,10 @@ function renderStoryMode() {
 
   // 2. If a Date Scenario Square was selected, render the LOVE INTEREST CHOICE SCREEN
   if (selectedScenarioForPartner) {
+    container.classList.add("selecting-partner");
+    if (appFrame) appFrame.classList.add("selecting-partner");
+    container.scrollTop = 0;
+
     const sc = STORY_SCENARIOS.find(s => s.id === selectedScenarioForPartner) || STORY_SCENARIOS[0];
     const bgKey = getScenarioBackgroundKey(sc.id);
     const bgSvg = (window.VN_SCENERY_SVGS && window.VN_SCENERY_SVGS[bgKey]) || "";
@@ -7413,6 +7433,9 @@ function renderStoryMode() {
   }
 
   // 3. DEFAULT VIEW: DATE SCENARIOS AS SQUARE CAROUSEL
+  container.classList.remove("selecting-partner");
+  if (appFrame) appFrame.classList.remove("selecting-partner");
+
   const squaresHtml = STORY_SCENARIOS.map((sc, idx) => {
     const bgKey = getScenarioBackgroundKey(sc.id);
     const bgSvg = (window.VN_SCENERY_SVGS && window.VN_SCENERY_SVGS[bgKey]) || "";
@@ -7883,6 +7906,11 @@ function getScenarioParticlesHtml(scenarioId) {
 }
 
 function startStoryScenario(scenarioId, charId = null) {
+  const viewStory = document.getElementById("view-story");
+  if (viewStory) viewStory.classList.remove("selecting-partner");
+  const appFrame = document.getElementById("appFrame");
+  if (appFrame) appFrame.classList.remove("selecting-partner");
+
   const chosenChar = charId || userState.selectedStoryChar || "ado";
   const scenario = STORY_SCENARIOS.find(s => s.id === scenarioId) || STORY_SCENARIOS[0];
   const targetLang = userState.targetLanguage || "vi";
