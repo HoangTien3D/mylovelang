@@ -948,9 +948,8 @@ body:has(#view-story.active:not(.playing-vn-gameplay)) {
 }
 
 .messenger-section-header .section-title {
-  font-size: clamp(19px, 2.3vh, 25px) !important;
   margin: 0 !important;
-  line-height: 1.2;
+  line-height: 1;
 }
 
 .messenger-section-header .section-subtitle {
@@ -1629,6 +1628,7 @@ body.dark-theme .story-carousel-outer {
   object-fit: cover;
   object-position: center 15%;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(3rem);
 }
 
 .square-char-card:hover .square-pfp-img {
@@ -2329,6 +2329,7 @@ body.dark-theme .story-carousel-outer {
   font-weight: 700;
   color: #ffffff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  opacity: 0;
 }
 
 .cursor-emotion-emoji {
@@ -2410,6 +2411,7 @@ body.dark-theme .story-carousel-outer {
   -webkit-backdrop-filter: blur(8px);
   transition: all 0.18s ease;
   flex-shrink: 0;
+  opacity: 0;
 }
 
 .cursor-quick-chip:hover {
@@ -2417,6 +2419,7 @@ body.dark-theme .story-carousel-outer {
   border-color: rgba(244, 114, 182, 0.6);
   color: #ffffff;
   transform: translateY(-1px);
+  opacity: 0;
 }
 
 .cursor-quick-chip.active {
@@ -2424,6 +2427,7 @@ body.dark-theme .story-carousel-outer {
   border-color: #f472b6;
   color: #ffffff;
   box-shadow: 0 0 10px rgba(244, 114, 182, 0.5);
+  opacity: 0;
 }
 
 .chip-emoji {

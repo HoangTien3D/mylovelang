@@ -7508,7 +7508,6 @@ function renderStoryMode() {
           <h2 class="section-title">
             <span>Date Scenarios</span>
           </h2>
-          <p class="section-subtitle">Swipe or scroll to select a Date Scenario and partner</p>
         </div>
       </div>
 
